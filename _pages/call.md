@@ -55,10 +55,10 @@ The review is dual-anonymous assuming good faith from both submitters and review
 ​
 
 ## Key Dates
-- **Abstract  deadline**: February 2nd AOE, 2024 (submit to [OpenReview](https://openreview.net/group?id=ICLR.cc/2023/BlogPosts&referrer=%5BHomepage%5D(%2F))).
+- **Abstract  deadline**: February 2nd AOE, 2024 (submit to OpenReview - to be announced soon).
 &nbsp;
 
-- **Submission  deadline**: February 10th AOE, 2024 (any modifications to your blog post, via a [pull request on github](https://github.com/iclr-blogposts/staging/pulls)).
+- **Submission  deadline**: February 10th AOE, 2024 (any modifications to your blog post, via a pull request on github).
 &nbsp;
 
 - **Notification of acceptance**: March 31st, 2024
