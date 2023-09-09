@@ -1,4 +1,4 @@
-# ICLR 2023 Blogposts Track
+# ICLR 2024 Blogposts Track
 
 This is the repository for the blogposts track. This website is based off of the [**al-folio**](https://github.com/alshedivat/al-folio) template.
 Some of their original documentation for using this template is included below, but you can find their full README in the original repo.
