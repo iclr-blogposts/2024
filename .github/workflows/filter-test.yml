@@ -12,20 +12,20 @@ jobs:
     name: detect what files changed
     runs-on: ubuntu-20.04
     timeout-minutes: 3
-    # Map a step output to a job output
-    outputs:
-      api_docs: ${{ steps.changes.outputs.api_docs }}
-      backend: ${{ steps.changes.outputs.backend_all }}
-      backend_dependencies: ${{ steps.changes.outputs.backend_dependencies }}
-      backend_any_type: ${{ steps.changes.outputs.backend_any_type }}
-      migration_lockfile: ${{ steps.changes.outputs.migration_lockfile }}
-      plugins: ${{ steps.changes.outputs.plugins }}
     steps:
-      - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e  # v2
-
-      - name: Check for backend file changes
-        uses: getsentry/paths-filter@66f7f1844185eb7fb6738ea4ea59d74bb99199e5  # v2
-        id: changes
-        with:
-          token: ${{ github.token }}
-          filters: .github/file-filters.yml
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        # Enable listing of files matching each filter.
+        # Paths to files will be available in `${FILTER_NAME}_files` output variable.
+        # Paths will be formatted as JSON array
+        list-files: json
+    
+        # In this example all changed files are passed to the following action to do
+        # some custom processing.
+        filters: |
+          changed:
+            - '**'
+    - name: Lint Markdown
+      run: |
+        cat steps.filter.outputs.changed_files
