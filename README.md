@@ -13,7 +13,7 @@ Submission guide: https://iclr-blogposts.github.io/2023/submitting
 
 ### Track Chairs
 
-- Gauthier Gidel, Mila, UdeM
+- Gauthier Gidel, Mila, UdeMsdhaehg
 - Charlie Gauthier, Mila, UdeM
 - David Dobre, Mila, UdeM
 - Claire Vernade, University of Tuebingen
