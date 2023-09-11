@@ -30,4 +30,4 @@ jobs:
             - '**'
     - name: Lint Markdown
       if: ${{ steps.filter.outputs.changed == 'true' }}
-      run: cat ${{ steps.filter.outputs.changed_files }}
+      run: echo ${{ steps.filter.outputs.changed_files }}
