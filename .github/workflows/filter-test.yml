@@ -18,14 +18,16 @@ jobs:
       with:
         # Enable listing of files matching each filter.
         # Paths to files will be available in `${FILTER_NAME}_files` output variable.
-        # Paths will be formatted as JSON array
-        list-files: json
+        # Paths will be escaped and space-delimited.
+        # Output is usable as command-line argument list in Linux shell
+        list-files: shell
     
-        # In this example all changed files are passed to the following action to do
-        # some custom processing.
+        # In this example changed files will be checked by linter.
+        # It doesn't make sense to lint deleted files.
+        # Therefore we specify we are only interested in added or modified files.
         filters: |
           changed:
             - '**'
     - name: Lint Markdown
-      run: |
-        cat steps.filter.outputs.changed_files
+      if: ${{ steps.filter.outputs.changed == 'true' }}
+      run: cat ${{ steps.filter.outputs.changed_files }}
