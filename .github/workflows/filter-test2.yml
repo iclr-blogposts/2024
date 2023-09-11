@@ -1,0 +1,33 @@
+name: filtertest
+
+on:
+  pull_request:
+
+# hack for https://github.com/actions/cache/issues/810#issuecomment-1222550359
+#env:
+#  SEGMENT_DOWNLOAD_TIMEOUT_MIN: 3
+
+jobs:
+  files-changed:
+    name: detect what files changed
+    runs-on: ubuntu-20.04
+    timeout-minutes: 3
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        # Enable listing of files matching each filter.
+        # Paths to files will be available in `${FILTER_NAME}_files` output variable.
+        # Paths will be escaped and space-delimited.
+        # Output is usable as command-line argument list in Linux shell
+        list-files: shell
+    
+        # In this example changed files will be checked by linter.
+        # It doesn't make sense to lint deleted files.
+        # Therefore we specify we are only interested in added or modified files.
+        filters: |
+          changed:
+            - '**'
+    - name: Lint Markdown
+      if: ${{ steps.filter.outputs.changed == 'true' }}
+      run: echo ${{ steps.filter.outputs.changed_files }}
