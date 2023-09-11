@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 3
     if: ${{ github.event.label.name == 'submission' }}
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
       id: filter
       with:
