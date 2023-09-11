@@ -2,7 +2,7 @@ name: Filter Test Dev
 
 on:
   pull_request:
-    - labeled
+    types: [labeled]
 
 # hack for https://github.com/actions/cache/issues/810#issuecomment-1222550359
 #env:
