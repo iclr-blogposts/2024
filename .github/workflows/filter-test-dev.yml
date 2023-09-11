@@ -10,7 +10,8 @@ on:
 jobs:
   files-changed:
     name: Detect what files changed
-    if: contains(github.event.pull_request.labels.*.name, 'submission')  # ${{ github.event.label.name == 'submission' }}
+    # if: contains(github.event.pull_request.labels.*.name, 'submission')  
+    if: ${{ github.event.label.name == 'submission' }}
     runs-on: ubuntu-20.04
     timeout-minutes: 3
 
