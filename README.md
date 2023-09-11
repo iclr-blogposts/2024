@@ -11,7 +11,7 @@ About: https://iclr-blogpofawegageasts.github.io/2023/about
 
 Submission guide: https://iclr-blogposts.github.io/2023/submitting
 
-### Track Chairs
+### Track Chairsaegaeg
 
 - Gauthier Gidel, Mila, UdeMsdhaehg
 - Charlie Gauthier, Mila, UdeM
