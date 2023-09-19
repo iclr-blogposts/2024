@@ -77,14 +77,14 @@ You need to take the following steps to get `al-folio` up and running in your lo
 - Then, clone this repository to your machine:
 
 ```bash
-$ git clone git@github.com:<your-username>/<your-repo-name>.git
-$ cd <your-repo-name>
+git clone git@github.com:<your-username>/<your-repo-name>.git
+cd <your-repo-name>
 ```
 
 Finally, run the following command that will pull a pre-built image from DockerHub and will run your website.
 
 ```bash
-$ ./bin/dockerhub_run.sh
+./bin/dockerhub_run.sh
 ```
 
 Note that when you run it for the first time, it will download a docker image of size 300MB or so.
@@ -99,13 +99,13 @@ First, download the necessary modules and install them into a docker image calle
   
 
 ```bash
-$ ./bin/docker_build_image.sh  
+./bin/docker_build_image.sh  
 ```
 
 Run the website!
 
 ```bash
-$ ./bin/docker_run.sh
+./bin/docker_run.sh
 ```
 
 > To change port number, you can edit `docker_run.sh` file.
@@ -121,10 +121,10 @@ $ ./bin/docker_run.sh
 Assuming you have [Ruby](https://www.ruby-lang.org/en/downloads/) and [Bundler](https://bundler.io/) installed on your system (*hint: for ease of managing ruby gems, consider using [rbenv](https://github.com/rbenv/rbenv)*), first [fork](https://guides.github.com/activities/forking/) the theme from `github.com:alshedivat/al-folio` to `github.com:<your-username>/<your-repo-name>` and do the following:
 
 ```bash
-$ git clone git@github.com:<your-username>/<your-repo-name>.git
-$ cd <your-repo-name>
-$ bundle install
-$ bundle exec jekyll serve
+git clone git@github.com:<your-username>/<your-repo-name>.git
+cd <your-repo-name>
+bundle install
+bundle exec jekyll serve
 ```
 
 Now, feel free to customize the theme however you like (don't forget to change the name!).
@@ -161,7 +161,7 @@ Starting version [v0.3.5](https://github.com/alshedivat/al-folio/releases/tag/v0
 
 If you need to manually re-deploy your website to GitHub pages, run the deploy script from the root directory of your repository:
 ```bash
-$ ./bin/deploy
+./bin/deploy
 ```
 uses the `master` branch for the source code and deploys the webpage to `gh-pages`.
 
@@ -171,7 +171,7 @@ uses the `master` branch for the source code and deploys the webpage to `gh-page
 
 If you decide to not use GitHub Pages and host your page elsewhere, simply run:
 ```bash
-$ bundle exec jekyll build
+bundle exec jekyll build
 ```
 which will (re-)generate the static webpage in the `_site/` folder.
 Then simply copy the contents of the `_site/` foder to your hosting server.
@@ -191,7 +191,7 @@ Firstly, from the deployment repo dir, checkout the git branch hosting your publ
 
 Then from the website sources dir (commonly your al-folio fork's clone):
 ```bash
-$ bundle exec jekyll build --destination $HOME/repo/publishing-source
+bundle exec jekyll build --destination $HOME/repo/publishing-source
 ```
 
 This will instruct jekyll to deploy the website under `$HOME/repo/publishing-source`.
@@ -221,9 +221,9 @@ If you installed **al-folio** as described above, you can upgrade to the latest 
 
 ```bash
 # Assuming the current directory is <your-repo-name>
-$ git remote add upstream https://github.com/alshedivat/al-folio.git
-$ git fetch upstream
-$ git rebase v0.3.5
+git remote add upstream https://github.com/alshedivat/al-folio.git
+git fetch upstream
+git rebase v0.3.5
 ```
 
 If you have extensively customized a previous version, it might be trickier to upgrade.
