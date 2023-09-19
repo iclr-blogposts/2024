@@ -55,16 +55,16 @@ The review is dual-anonymous assuming good faith from both submitters and review
 ​
 
 ## Key Dates
-- **Abstract  deadline**: February 2nd AOE, 2024 (submit to OpenReview - to be announced soon).
+- **Abstract  deadline**: December 4th UTC, 2023 (submit to OpenReview - link to be announced soon).
 &nbsp;
 
-- **Submission  deadline**: February 10th AOE, 2024 (any modifications to your blog post, via a pull request on github).
+- **Submission  deadline**: December 8th UTC, 2023 (any modifications to your blog post, via a pull request on github).
 &nbsp;
 
-- **Notification of acceptance**: March 31st, 2024
+- **Notification of acceptance**: January 30th, 2023
 &nbsp;
 
-- **Camera-ready merge**: April 28th, 2024
+- **Camera-ready merge**: March 15th, 2024
 
 
 ### Contact
