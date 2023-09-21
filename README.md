@@ -5,11 +5,11 @@ Some of their original documentation for using this template is included below, 
 
 ### Links
 
-Call for blog posts: https://iclr-blogposts.github.io/2023/call
+Call for blog posts: https://iclr-blogposts.github.io/2024/call
 
-About: https://iclr-blogposts.github.io/2023/about
+About: https://iclr-blogposts.github.io/2024/about
 
-Submission guide: https://iclr-blogposts.github.io/2023/submitting
+Submission guide: https://iclr-blogposts.github.io/2024/submitting
 
 ### Track Chairs
 

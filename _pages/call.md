@@ -14,22 +14,21 @@ nav_order: 2
   - If you are going to be presenting a poster in-person, please add the [blog post track sticker]({{ '/assets/pdf/sticker.pdf' | relative_url }}) to your poster.
  -->
 
-# Call for blogposts
+# Call for blog posts
 ​
-We invite all researchers and practicioners to submit a blogpost discussing work previously published at a top-tier venue to the ICLR 2024 blogpost track.
-The format and process for this blog post track is described below.
+We invite all researchers and practitioners to submit a blog post discussing work previously published at a top-tier venue to the ICLR 2024 blog post track.
+The format and process for this blog post track are described below.
 ​
 
 ### Content
 ​
 Write a post on a subject that has been published at a top-tier venue (ICLR, ICML, NeurIPS, AAAI, UAI, CVPR, SIGGRAPH, ECCV, ICCV, etc.) relatively recently.
-
-Past blogposts can be accessed [here](https://iclr-blogposts.github.io/2023/about).
+Past blog posts can be accessed [here](https://iclr-blogposts.github.io/2023/about).
 ​
 
 ### Conflict of interest
 ​
-The authors of the blog posts will have to declare their conflicts of interest (positive nor negative) with the paper (and their authors) they write about.
+The authors of the blog posts will have to declare their conflicts of interest (positive or negative) with the paper (and their authors) they write about.
 Conflicts of interest include:
 
   - Recent collaborators (less than 3 years)

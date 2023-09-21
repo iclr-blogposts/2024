@@ -2,10 +2,9 @@
 layout: about
 title: about
 permalink: /about
-redirect_to: /call
-# nav: true
-# nav_order: 1
-# subtitle:
+nav: true
+nav_order: 1
+subtitle:
 
 # profile:
 #   align: right
@@ -26,7 +25,9 @@ Blog posts are becoming an increasingly popular and useful way to talk about sci
 
 ## A Blog Post Conference Track
 
-Last year, we ran the **second** iteration of the <a href="[https://iclr-blogposts.github.io/2023/about](https://iclr-blogposts.github.io/2023/about)">Blogpost track at ICLR 2023</a>!<br>  It was very successful, with accepted posts presented in person at the main conference.
+Last year, we ran the **second** iteration of the [Blogpost track](https://iclr-blogposts.github.io/2023/about) at ICLR 2023!
+
+It was very successful, with accepted posts presented in person at the main conference.
 
 Our goal is to create a formal call for blog posts at ICLR to incentivize and reward researchers to review past work and summarize the outcomes, develop new intuitions, or highlight some shortcomings. A very influential initiative of this kind happened after the Second World War in France. Because of the lack of up-to-date textbooks, a collective of mathematicians under the pseudonym Nicolas Bourbaki [[Halmos 1957]](#Halm), decided to start a series of textbooks about the foundations of mathematics [[Bourbaki, 1939]](#Bour). In the same vein, we aim to provide a new way to summarize scientific knowledge in the ML community.
 
