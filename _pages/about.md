@@ -39,9 +39,10 @@ Due to the large diversity of topics that can be discussed in a blog post, we de
 
 **Submission deadline**: December 8th UTC, 2023(any modifications to your blog post, via a pull request on GitHub).
 
-**Notification of acceptance**: January 30th, 2024
+**Decision Notification**: January 30th, 2024
 
 **Camera-ready merge**: March 15th, 2024
+
 ### A call for blog posts discussing work previously published at ICLR
 
 ## Content 
@@ -53,7 +54,7 @@ Write a post on a subject that has been published at a top-tier venue (ICLR, ICM
 The authors of the blog posts will have to declare their conflicts of interest (positive or negative) with the paper (and the paper's authors) they write about. Conflicts of interest include:
 -   Recent collaborators (less than 3 years)
 -   Current institution ​ Reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post.  
--  **Blog Posts must not be used to highlight or advertise past publications of the authors or of their lab**.
+-  **Blog Posts must not be used to highlight or advertise past publications of the **authors or their lab****.
 
 We will only ask the authors to report if they have a conflict of interest. If so, reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post. 
 
@@ -92,7 +93,7 @@ We accept submissions in both Markdown and HTML. We believe this is a good trade
 
 <a name="Tran">David Tran, Alex Valtchanov, Keshav Ganapathy, Raymond Feng, Eric Slud, Micah Goldblum, and Tom Goldstein. An open review of OpenReview: A critical analysis of the machine learning conference review process. arXiv, 2020. </a>
 
-<a name="Lin">Hsuan-Tien Lin, Maria-Florina Balcan, Raia Hadsell, and Marc’Aurelio Ranzato. What we learned from neurips2020 reviewing process. Medium https://medium.com/@NeurIPSConf/what-we-learned-from-neurips-2020-reviewing-process-e24549eea38f, 2020. </a>
+<a name="Lin">Hsuan-Tien Lin, Maria-Florina Balcan, Raia Hadsell, and Marc’Aurelio Ranzato. What we learned from NeurIPS 2020 reviewing process. Medium https://medium.com/@NeurIPSConf/what-we-learned-from-neurips-2020-reviewing-process-e24549eea38f, 2020. </a>
 
 <a name="Brow">Eryn Brown and Chris Woolston. Why science blogging still matters. Nature, 2018.</a>
 
