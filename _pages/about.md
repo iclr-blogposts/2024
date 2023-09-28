@@ -53,8 +53,9 @@ Write a post on a subject that has been published at a top-tier venue (ICLR, ICM
 
 The authors of the blog posts will have to declare their conflicts of interest (positive or negative) with the paper (and the paper's authors) they write about. Conflicts of interest include:
 -   Recent collaborators (less than 3 years)
--   Current institution ​ Reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post.  
--  **Blog Posts must not be used to highlight or advertise past publications of the **authors or their lab****.
+-   Current institution
+
+Reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post. Blog Posts must not be used to highlight or advertise past publications of the authors or their lab.
 
 We will only ask the authors to report if they have a conflict of interest. If so, reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post. 
 
