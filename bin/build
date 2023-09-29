@@ -25,7 +25,7 @@ while [[ $# > 0 ]]; do
         SRC_BRANCH="$2"
         shift
         ;;
-        --slug)
+        -g|--slug)
         SLUG="$2"
         shift
         ;;
