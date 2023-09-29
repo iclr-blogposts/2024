@@ -102,7 +102,7 @@ export JEKYLL_ENV=production
 # BEFORE BUILDING, WE NEED TO CHANGE THE _config.yaml URL, OTHERWISE THE WEBSITE URLS ARE ALL WRONG
 echo $SLUG
 python -c 'import yaml;f=open("_config.yml");y=yaml.safe_load(f);y["url"] = ""; outfile=open("_config.yml", "w"); yaml.dump(y, outfile, default_flow_style=False, sort_keys=False)'
-PASS_SLUG=$SLUG python -c 'import yaml; import os; f=open("_config.yml");y=yaml.safe_load(f);y["baseurl"] = os.envirion["PASS_SLUG"]; outfile=open("_config.yml", "w"); yaml.dump(y, outfile, default_flow_style=False, sort_keys=False)'
+PASS_SLUG=$SLUG python -c 'import yaml; import os; f=open("_config.yml");y=yaml.safe_load(f);y["baseurl"] = os.environ["PASS_SLUG"]; outfile=open("_config.yml", "w"); yaml.dump(y, outfile, default_flow_style=False, sort_keys=False)'
 
 cat _config.yml
 
