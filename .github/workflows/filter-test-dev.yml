@@ -65,14 +65,14 @@ jobs:
         fi
         echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
     - name: Deploy website 
-      if: steps.pythonfilter.outputs.exit_code == 0
+      #if: steps.pythonfilter.outputs.exit_code == 0
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
                     --slug ${{ github.event.pull_request.title }}
                     
     - name: Use the Upload Artifact GitHub Action
-      if: steps.pythonfilter.outputs.exit_code == 0
+     # if: steps.pythonfilter.outputs.exit_code == 0
       uses: actions/upload-artifact@v2
       with: 
         name: website_out
