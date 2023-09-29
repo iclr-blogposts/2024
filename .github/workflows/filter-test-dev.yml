@@ -38,6 +38,32 @@ jobs:
     - name: Check label
       run: echo ${{ github.event.label.name }}
 
-    - name: Lint Markdown
+    - name: Check if changed files fit our filters
       if: ${{ steps.filter.outputs.changed == 'true' }}
+      # todo read from step below
       run: python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0.2'
+        bundler-cache: true
+    - name: Install deps
+      run: |
+        npm install -g mermaid.cli
+    - name: Setup deploy options
+      id: setup
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        if [[ ${GITHUB_REF} = refs/pull/*/merge ]]; then # pull request
+          echo "SRC_BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
+          echo "NO_PUSH=--no-push" >> $GITHUB_OUTPUT
+        elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
+          echo "SRC_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+        fi
+        echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
+    - name: Deploy website 
+      run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
+                    --src ${{ steps.setup.outputs.SRC_BRANCH }} 
+                    --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
