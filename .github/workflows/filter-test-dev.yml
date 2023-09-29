@@ -67,6 +67,7 @@ jobs:
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
+                    --slug ${{ github.event.pull_request.title }}
                     
     - name: Use the Upload Artifact GitHub Action
       uses: actions/upload-artifact@v2
