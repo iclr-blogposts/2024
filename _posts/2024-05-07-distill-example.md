@@ -41,6 +41,8 @@ toc:
   - name: Citations
   - name: Footnotes
   - name: Code Blocks
+  - name: Diagrams
+  - name: Tweets
   - name: Layouts
   - name: Other Typography?
 
@@ -244,7 +246,7 @@ This theme supports generating various diagrams from a text description using [j
 Below, we generate a few examples of such diagrams using languages such as [mermaid](https://mermaid-js.github.io/mermaid/){:target="\_blank"}, [plantuml](https://plantuml.com/){:target="\_blank"}, [vega-lite](https://vega.github.io/vega-lite/){:target="\_blank"}, etc.
 
 **Note:** different diagram-generation packages require external dependencies to be installed on your machine.
-Also, be mindful of that because of diagram generation the fist time you build your Jekyll website after adding new diagrams will be SLOW.
+Also, be mindful of that because of diagram generation the first time you build your Jekyll website after adding new diagrams will be SLOW.
 For any other details, please refer to [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} README.
 
 **Note:** This is not supported for local rendering! 
@@ -333,7 +335,7 @@ You can also inset the element a little from the edge of the browser by using th
 </div>
 
 The final layout is for marginalia, asides, and footnotes.
-It does not interrupt the normal flow of `.l-body` sized text except on mobile screen sizes.
+It does not interrupt the normal flow of `.l-body`-sized text except on mobile screen sizes.
 
 <div class="fake-img l-gutter">
   <p>.l-gutter</p>
@@ -362,9 +364,9 @@ Strikethrough uses two tildes. ~~Scratch this.~~
 
 ⋅⋅⋅To have a line break without a paragraph, you will need to use two trailing spaces.⋅⋅
 ⋅⋅⋅Note that this line is separate, but within the same paragraph.⋅⋅
-⋅⋅⋅(This is contrary to the typical GFM line break behaviour, where trailing spaces are not required.)
+⋅⋅⋅(This is contrary to the typical GFM line break behavior, where trailing spaces are not required.)
 
-* Unordered list can use asterisks
+* Unordered lists can use asterisks
 - Or minuses
 + Or pluses
 
@@ -409,7 +411,7 @@ alert(s);
  
 ```python
 s = "Python syntax highlighting"
-print s
+print(s)
 ```
  
 ```
