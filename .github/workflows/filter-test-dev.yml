@@ -50,9 +50,11 @@ jobs:
         ruby-version: '3.0.2'
         bundler-cache: true
     - name: Install deps
+      if: steps.pythonfilter.outcome == 'success'
       run: |
         npm install -g mermaid.cli
     - name: Setup deploy options
+      if: steps.pythonfilter.outcome == 'success'
       id: setup
       run: |
         git config --global user.name "GitHub Action"
@@ -65,6 +67,7 @@ jobs:
         fi
         echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
     - name: Deploy website 
+      if: steps.pythonfilter.outcome == 'success'
       #if: steps.pythonfilter.outputs.exit_code == 0
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
@@ -72,6 +75,7 @@ jobs:
                     --slug ${{ github.event.pull_request.title }}
                     
     - name: Use the Upload Artifact GitHub Action
+      if: steps.pythonfilter.outcome == 'success'
      # if: steps.pythonfilter.outputs.exit_code == 0
       uses: actions/upload-artifact@v2
       with: 
