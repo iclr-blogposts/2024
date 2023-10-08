@@ -51,7 +51,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '👋 Thanks for your submission! \n\nUnfortunately, we have detected that you have changed some files outside of the ones we allow you to changed. Here are all the files that you changed: ${{ steps.filter.outputs.changed_files }} \n\nPlease revert or remove the files that don't fit in the patterns above back to their original version and re-submit :)'
+            body: '👋 Thanks for your submission! \n\nYou changed these files: ${{ steps.filter.outputs.changed_files }}.\n\nRecall that you can only add or modify files related to your post!\n\nPlease revert or remove the offending files back to their original version and re-submit :)'
           })
     - name: Setup Ruby
       if: steps.pythonfilter.outcome == 'success'
@@ -99,5 +99,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the following URL! <TODO>'
+            body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the following URL! TODO'
           })
