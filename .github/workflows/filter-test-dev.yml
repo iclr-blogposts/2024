@@ -51,7 +51,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '👋 Thanks for your submission! Unfortunately, we have detected that you have changed some files outside of the ones we allow you to change! Please revert them back to their original version and re-submit :)'
+            body: '👋 Thanks for your submission! \n\nUnfortunately, we have detected that you have changed some files outside of the ones we allow you to change! \n\nYou changed these files: ${{ steps.filter.outputs.changed_files }}.\n\nPlease revert the offending files back to their original version and re-submit :)'
           })
     - name: Setup Ruby
       if: steps.pythonfilter.outcome == 'success'
