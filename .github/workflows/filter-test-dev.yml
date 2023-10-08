@@ -47,7 +47,7 @@ jobs:
       run: |
         FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
         echo $FILTEROUT
-        echo $FILTEROUT >> $GITHUB_OUTPUT
+        echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
         python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
     - uses: actions/github-script@v6
       if: always() && steps.pythonfilter.outcome == 'failure'
