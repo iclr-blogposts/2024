@@ -51,7 +51,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '👋 Thanks for your submission! \n\nUnfortunately, we have detected that you have changed some files outside of the ones we allow you to changed. You may only change files that fit in these patterns: _posts/SLUG.md, assets/img/SLUG/*, assets/html/SLUG/*, assets/bibliography/SLUG.bib \n\nHere are all the files that your changed: ${{ steps.filter.outputs.changed_files }}.\n\nPlease revert or remove the files that don't fit in the patterns above back to their original version and re-submit :)'
+            body: '👋 Thanks for your submission! \n\nUnfortunately, we have detected that you have changed some files outside of the ones we allow you to changed. Here are all the files that you changed: ${{ steps.filter.outputs.changed_files }} \n\nPlease revert or remove the files that don't fit in the patterns above back to their original version and re-submit :)'
           })
     - name: Setup Ruby
       if: steps.pythonfilter.outcome == 'success'
