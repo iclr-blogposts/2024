@@ -43,8 +43,18 @@ jobs:
       if: ${{ steps.filter.outputs.changed == 'true' }}
       # todo read from step below
       run: python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
-
+    - uses: actions/github-script@v6
+      if: steps.pythonfilter.outcome == 'failure'
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '👋 Thanks for your submission! Unfortunately, we have detected that you have changed some files outside of the ones we allow you to change! Please revert them back to their original version and re-submit :)'
+          })
     - name: Setup Ruby
+      if: steps.pythonfilter.outcome == 'success'
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.0.2'
@@ -81,3 +91,13 @@ jobs:
       with: 
         name: website_out
         path: site_out
+    - uses: actions/github-script@v6
+      if: steps.pythonfilter.outcome == 'success'
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the following URL! <TODO>'
+          })
