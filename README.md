@@ -39,7 +39,7 @@ Please view the original README on the [al-folio github repo](https://github.com
       - [Deployment](#deployment)
       - [Upgrading from a previous version](#upgrading-from-a-previous-version)
     + [FAQ](#faq)
-  * [Features](#features)
+  * [Features](#features)grs
     + [Publications](#publications)
     + [Collections](#collections)
     + [Layouts](#layouts)
