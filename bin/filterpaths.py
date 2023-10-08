@@ -43,6 +43,8 @@ else:
     print("PATHFILTERSUCCESS")
     SUCCESS = True
 
+print(" ".join(failed_paths))
+
 # example usage of this script:  python3 filter_file.py 2024-0a1-01-whateve _posts/2024-01-01-whateve.md assets/img/2024-01-01-whateve/bla.pic assets/html/2024-01-01-whateve/plot1.j assets/bibliography/2024-01-01-whateve.bib assets/img/2024-01-02-whateve/bla.pic
 if SUCCESS:
     exit(0)
