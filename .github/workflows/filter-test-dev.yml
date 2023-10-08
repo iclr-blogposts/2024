@@ -1,0 +1,103 @@
+name: Filter Test Dev
+
+on:
+  pull_request:
+    types: [labeled]
+
+# hack for https://github.com/actions/cache/issues/810#issuecomment-1222550359
+#env:
+#  SEGMENT_DOWNLOAD_TIMEOUT_MIN: 3
+
+jobs:
+  files-changed:
+    name: Detect what files changed
+    if: contains(github.event.pull_request.labels.*.name, 'submission')  
+    # if: ${{ github.event.label.name == 'submission' }}
+    runs-on: ubuntu-20.04
+    timeout-minutes: 3
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        # Enable listing of files matching each filter.
+        # Paths to files will be available in `${FILTER_NAME}_files` output variable.
+        # Paths will be escaped and space-delimited.
+        # Output is usable as command-line argument list in Linux shell
+        list-files: shell
+    
+        # In this example changed files will be checked by linter.
+        # It doesn't make sense to lint deleted files.
+        # Therefore we specify we are only interested in added or modified files.
+        filters: |
+          changed:
+            - '**'
+    - name: Check label
+      run: echo ${{ github.event.label.name }}
+
+    - name: Check if changed files fit our filters
+      id: pythonfilter
+      if: ${{ steps.filter.outputs.changed == 'true' }}
+      # todo read from step below
+      run: python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
+    - uses: actions/github-script@v6
+      if: always() && steps.pythonfilter.outcome == 'failure'
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '👋 Thanks for your submission! \n\nYou changed these files: ${{ steps.filter.outputs.changed_files }}.\n\nRecall that you can only add or modify files related to your post!\n\nPlease revert or remove the offending files back to their original version and re-submit :)'
+          })
+    - name: Setup Ruby
+      if: steps.pythonfilter.outcome == 'success'
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0.2'
+        bundler-cache: true
+    - name: Install deps
+      if: steps.pythonfilter.outcome == 'success'
+      run: |
+        npm install -g mermaid.cli
+    - name: Setup deploy options
+      if: steps.pythonfilter.outcome == 'success'
+      id: setup
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        if [[ ${GITHUB_REF} = refs/pull/*/merge ]]; then # pull request
+          echo "SRC_BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
+          echo "NO_PUSH=--no-push" >> $GITHUB_OUTPUT
+        elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
+          echo "SRC_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+        fi
+        echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
+    - name: Deploy website 
+      if: steps.pythonfilter.outcome == 'success'
+      #if: steps.pythonfilter.outputs.exit_code == 0
+      run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
+                    --src ${{ steps.setup.outputs.SRC_BRANCH }} 
+                    --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
+                    --slug ${{ github.event.pull_request.title }}
+                    
+    - name: Use the Upload Artifact GitHub Action
+      if: steps.pythonfilter.outcome == 'success'
+     # if: steps.pythonfilter.outputs.exit_code == 0
+      uses: actions/upload-artifact@v2
+      with: 
+        name: website_out
+        path: site_out
+    - uses: actions/github-script@v6
+      if: steps.pythonfilter.outcome == 'success'
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the following URL! TODO'
+          })
