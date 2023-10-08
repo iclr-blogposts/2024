@@ -15,6 +15,8 @@ jobs:
     # if: ${{ github.event.label.name == 'submission' }}
     runs-on: ubuntu-20.04
     timeout-minutes: 3
+    outputs:
+      offendingfiles: ${{ steps.pythonfilter.outputs.offendingfiles }}
 
     steps:
     - name: Checkout code
@@ -42,7 +44,11 @@ jobs:
       id: pythonfilter
       if: ${{ steps.filter.outputs.changed == 'true' }}
       # todo read from step below
-      run: python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
+      run: |
+        FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
+        echo $FILTEROUT
+        echo $FILTEROUT >> $GITHUB_OUTPUT
+        python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
     - uses: actions/github-script@v6
       if: always() && steps.pythonfilter.outcome == 'failure'
       with:
@@ -51,7 +57,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '👋 Thanks for your submission! \n\nYou changed these files: ${{ steps.filter.outputs.changed_files }}.\n\nRecall that you can only add or modify files related to your post!\n\nPlease revert or remove the offending files back to their original version and re-submit :)'
+            body: '👋 Thanks for your submission! \n\nHowever, you are not allowed to change these files: ${{ steps.pythinfilter.outputs.offendingfiles }}\n\nPlease revert or remove the offending files back to their original version and re-submit :)'
           })
     - name: Setup Ruby
       if: steps.pythonfilter.outcome == 'success'
