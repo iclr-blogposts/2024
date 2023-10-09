@@ -43,36 +43,35 @@ Due to the large diversity of topics that can be discussed in a blog post, we de
 
 **Camera-ready merge**: March 15th, 2024
 
-### A call for blog posts discussing work previously published at ICLR
+## A call for blog posts discussing work previously published at ICLR
 
-## Content 
+#### Content 
 
 Write a post on a subject that has been published at a top-tier venue (ICLR, ICML, NeurIPS, AAAI, UAI, CVPR, SIGGRAPH, ECCV, ICCV, etc.) relatively recently. 
 
-## Conflict of interest
+#### Conflict of interest
 
 The authors of the blog posts will have to declare their conflicts of interest (positive or negative) with the paper (and the paper's authors) they write about. Conflicts of interest include:
 -   Recent collaborators (less than 3 years)
--   Current institution
-
-Reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post. Blog Posts must not be used to highlight or advertise past publications of the authors or their lab.
+-   Current institution ​ Reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post.  
+-  **Blog Posts must not be used to highlight or advertise past publications of the **authors or their lab****.
 
 We will only ask the authors to report if they have a conflict of interest. If so, reviewers will be asked to judge if the submission is sufficiently critical and objective of the papers addressed in the blog post. 
 
 
 ## Publication 
 
-### Blog post
+#### Blog post
 
 The posts will be created and published under a unified template; see [the submission instructions]({{ '/submitting' | relative_url }}) and the [sample post]({{ '/blog/2022/distill-example' | relative_url }}) hosted on the blog of this website.
 
-### Poster
+#### Poster
 Additionally, accepted posts will have the option to present their work as a poster during the main poster session. For more information about the main poster session (time, poster format, etc.) please refer to the ICLR homepage.
 
 ## Submissions
 
 Our goal is to avoid heavily engineered, professionally-made blog posts ---Such as the “100+ hours” mentioned as a standard by the [Distill guidelines](https://distill.pub/journal/)---to entice ideas and clear writing rather than dynamic visualizations or embedded javascript engines.
-
+Please check our [submission instructions]({{ '/submitting' | relative_url }}) for more details.
 We accept submissions in both Markdown and HTML. We believe this is a good trade-off between complexity and flexibility. 
 
 ## Organizers

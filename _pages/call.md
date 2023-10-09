@@ -7,12 +7,10 @@ nav: true
 nav_order: 2
 ---
 
-<!-- **Announcements**: 
-- The track has concluded and accepted blogposts are viewable [here]({{ '/blog' | relative_url }})!
-- The poster session for the blog track will take place at **11:30** on **Tuesday May 2nd** in room **MH1-2-3-4**. 
-  - Check [here](https://iclr.cc/virtual/2023/workshop/14478) for more information, and come by to check out the posters!
-  - If you are going to be presenting a poster in-person, please add the [blog post track sticker]({{ '/assets/pdf/sticker.pdf' | relative_url }}) to your poster.
- -->
+**Announcements**: 
+- Instructions on getting started with building your blog posts have now been posted [here]({{ '/submitting' | relative_url }})!
+- More details on the process of opening a PR and submitting your post to OpenReview will be given closer to the submission deadline.
+
 
 # Call for blog posts
 ​
