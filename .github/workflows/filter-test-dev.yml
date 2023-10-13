@@ -101,10 +101,10 @@ jobs:
       run: |
         aws s3 sync --region eu-west-1 --acl public-read _site s3://iclr-blogposts-2024/${{ github.event.pull_request.title }}
      # if: steps.pythonfilter.outputs.exit_code == 0
-      uses: actions/upload-artifact@v2
-      with: 
-        name: website_out
-        path: site_out
+      # uses: actions/upload-artifact@v2
+      # with: 
+      #   name: website_out
+      #   path: site_out
     - uses: actions/github-script@v6
       if: steps.pythonfilter.outcome == 'success'
       with:
