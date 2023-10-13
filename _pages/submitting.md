@@ -91,13 +91,14 @@ This is in contrast to last year's Blog Post track, where we explicitly stated y
 
 ### Creating a Blog Post
 
-To create a blog post in Markdown format, you can modify the example Markdown post `_posts/2024-05-07-distill-example.md` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].md`, where `[SUBMISSION NAME]` is the name of your submission. While most users will want to create a post in the Markdown format, it is also possible to create a post in HTML format. For this, modify instead the example  `_posts/2024-05-08-distill-example2.html` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].html`
+To create a blog post in Markdown format, you can modify the [example]({% post_url 2024-05-07-distill-example %}) Markdown post `_posts/2024-05-07-distill-example.md` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].md`, where `[SUBMISSION NAME]` is the name of your submission. You can see the result of the sample post .
+
+While most users will want to create a post in the Markdown format, it is also possible to create a post in HTML format. For this, modify instead the example  `_posts/2024-05-08-distill-example2.html` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].html`. 
 
 
 You must modify the file's header (or 'front-matter') as needed.
 
 
-[sample post]({% post_url 2024-05-07-distill-example %})
 
  ```markdown
  ---
