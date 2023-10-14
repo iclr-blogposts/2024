@@ -94,13 +94,8 @@ jobs:
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
-                    --slug ${{ github.event.pull_request.title }}
-                    
-    - name: Use the Upload Artifact GitHub Action
-      if: steps.pythonfilter.outcome == 'success'
-      run: |
-        aws s3 sync --region eu-west-1 --acl public-read _site s3://iclr-blogposts-2024/${{ github.event.pull_request.title }}
-     # if: steps.pythonfilter.outputs.exit_code == 0
+                    --slug ${{ github.event.pull_request.title }}                    
+      # if: steps.pythonfilter.outputs.exit_code == 0
       # uses: actions/upload-artifact@v2
       # with: 
       #   name: website_out
