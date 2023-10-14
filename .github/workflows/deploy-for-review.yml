@@ -1,12 +1,10 @@
 name: Deploy post for review
 
-# read-write repo token
-# access to secrets
 on:
   workflow_run:
-    workflows: [Filter]
+    workflows: ["filter-test-dev"]
     types:
-      - requested
+      - completed
 
 jobs:
   on-success:

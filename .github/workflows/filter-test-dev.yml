@@ -1,4 +1,4 @@
-name: Filter
+name: filter-test-dev
 
 on:
   pull_request:
