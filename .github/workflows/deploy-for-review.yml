@@ -6,7 +6,7 @@ on:
   workflow_run:
     workflows: [Filter]
     types:
-      - completed
+      - requested
 
 jobs:
   on-success:
