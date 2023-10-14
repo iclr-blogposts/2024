@@ -88,11 +88,11 @@ jobs:
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
                     --slug ${{ github.event.pull_request.title }}                    
-      # if: steps.pythonfilter.outputs.exit_code == 0
-      # uses: actions/upload-artifact@v2
-      # with: 
-      #   name: website_out
-      #   path: site_out
+      if: steps.pythonfilter.outputs.exit_code == 0
+      uses: actions/upload-artifact@v2
+      with: 
+        name: website_out
+        path: site_out
     - uses: actions/github-script@v6
       if: steps.pythonfilter.outcome == 'success'
       with:
