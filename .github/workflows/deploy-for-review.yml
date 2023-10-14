@@ -4,7 +4,7 @@ name: Deploy post for review
 # access to secrets
 on:
   workflow_run:
-    workflows: [Filter Test Dev]
+    workflows: [Filter]
     types:
       - completed
 

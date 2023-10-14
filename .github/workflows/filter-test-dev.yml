@@ -1,4 +1,4 @@
-name: Filter Test Dev
+name: Filter
 
 on:
   pull_request:
