@@ -40,15 +40,15 @@ jobs:
     - name: Check label
       run: echo ${{ github.event.label.name }}
 
-    - name: Check if changed files fit our filters
-      id: pythonfilter
-      if: ${{ steps.filter.outputs.changed == 'true' }}
-      # todo read from step below
-      run: |
-        FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
-        echo $FILTEROUT
-        echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
-        python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
+    # - name: Check if changed files fit our filters
+    #   id: pythonfilter
+    #   if: ${{ steps.filter.outputs.changed == 'true' }}
+    #   # todo read from step below
+    #   run: |
+    #     FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
+    #     echo $FILTEROUT
+    #     echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
+    #     python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
     - uses: actions/github-script@v6
       if: always() && steps.pythonfilter.outcome == 'failure'
       with:
