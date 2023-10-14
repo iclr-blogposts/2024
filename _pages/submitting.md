@@ -30,7 +30,7 @@ For an example of a submission in the past which used an anonymous account in th
 The workflow you will use to participate in this track should be relatively familiar to you if have used [Github Pages](https://pages.github.com/). Specifically, our website uses the [Al-Folio](https://github.com/alshedivat/al-folio) template.
 This template uses Github Pages as part of its process, but it also utilizes a separate build step using [Github Actions](https://github.com/features/actions) and intermediary [Docker Images](https://www.docker.com/).
 
-**We stress that you must pay close attention to the steps presented in this guide. 
+**We recommend paying close attention to the steps presented in this guide. 
 Small mistakes here can have very hard-to-debug consequences.**
 
 ### Contents
@@ -58,7 +58,7 @@ For more details about any of these steps, please refer to the appropriate secti
 
 2. Create your blog post content as detailed in the [Creating a Blog Post](#creating-a-blog-post) section.
     In summary, to create your post, you will: 
-    - Create a Markdown or HTML file in the `_posts/` directory with the format `_posts/2024-05-07-[SUBMISSION NAME].md`. If you choose to write the post in HTML, then the posts' extension should be .html instead of .md.
+    - Create a Markdown or HTML file in the `_posts/` directory with the format `_posts/2024-05-07-[SUBMISSION NAME].md`. If you choose to write the post in HTML, then the extension of this last file should be .html instead of .md.
     - Add any static image assets will be added to `assets/img/2024-05-07-[SUBMISSION NAME]/`.
     - Add any interactive HTML figures will be added  to `assets/html/2024-05-07-[SUBMISSION NAME]/`. 
     - Put your citations into a bibtex file in `assets/bibliography/2024-05-07-[SUBMISSION NAME].bib`. 
@@ -234,13 +234,13 @@ To render your website locally, we follow the instructions for [Local setup usin
 
 Create and run the Docker image:
 
-    ```
-    ./bin/docker_run.sh
-    ```
+```bash
+./bin/docker_run.sh
+```
 
-    Remove the `Gemfile.lock` file if prompted.
-    This will create a docker image labeled as `al-folio:latest`. 
-    Don't use `dockerhub_run.sh`; this may result in issues with missing jekyll dependencies.
+Remove the `Gemfile.lock` file if prompted.
+This will create a docker image labeled as `al-folio:latest`. 
+Don't use `dockerhub_run.sh`; this may result in issues with missing jekyll dependencies.
 
 
 #### Method 2: Using Jekyll Manually
