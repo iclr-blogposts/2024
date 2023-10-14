@@ -39,7 +39,6 @@ jobs:
             - '**'
     - name: Check label
       run: echo ${{ github.event.label.name }}
-
     # - name: Check if changed files fit our filters
     #   id: pythonfilter
     #   if: ${{ steps.filter.outputs.changed == 'true' }}
