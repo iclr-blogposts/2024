@@ -17,7 +17,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           run_id: ${{ github.event.workflow_run.id }}
-          name: BuildArtifact
+          name: website_out
           path: ./site_out
           search_artifacts: true
       - run: unzip site.zip
