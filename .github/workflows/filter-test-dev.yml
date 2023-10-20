@@ -81,14 +81,14 @@ jobs:
           echo "SRC_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         fi
         echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
-    - name: Deploy website 
+    - name: Build website 
       if: steps.pythonfilter.outcome == 'success'
       #if: steps.pythonfilter.outputs.exit_code == 0
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
                     --slug ${{ github.event.pull_request.title }}                    
-      uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v2
       with: 
         name: website_out
         path: site_out
