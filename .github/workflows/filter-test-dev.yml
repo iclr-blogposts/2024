@@ -83,10 +83,13 @@ jobs:
         echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
     - name: Build website 
       # if: steps.pythonfilter.outcome == 'success'
-      run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
-                    --src ${{ steps.setup.outputs.SRC_BRANCH }} 
-                    --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
-                    --slug ${{ github.event.pull_request.title }}                    
+      run: |
+        bundle exec jekyll build --future           
+        # Delete and move files
+        find . -maxdepth 1 ! -name '_site' ! -name '.git' ! -name 'CNAME' ! -name '.gitignore' -exec rm -rf {} \;
+        zip -r site.zip _site/
+        mkdir site_out
+        mv site.zip site_out/
     - uses: actions/upload-artifact@v2
       with: 
         name: website_out
