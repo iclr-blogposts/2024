@@ -80,7 +80,7 @@ For more details about any of these steps, please refer to the appropriate secti
 
 ### Download the Blog Repository
 
-Download or fork our [repository]([https://github.com/iclr-blogposts/staging](https://github.com/iclr-blogposts/2024)). 
+Download or fork our [repository](https://github.com/iclr-blogposts/2024). 
 You will be submitting a pull request this repository.
 
 ### Creating a Blog Post
