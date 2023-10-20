@@ -39,15 +39,15 @@ jobs:
             - '**'
     - name: Check label
       run: echo ${{ github.event.label.name }}
-    - name: Check if changed files fit our filters
-      id: pythonfilter
-      if: ${{ steps.filter.outputs.changed == 'true' }}
-      # todo read from step below
-      run: |
-        FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
-        echo $FILTEROUT
-        echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
-        python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
+    # - name: Check if changed files fit our filters
+    #   id: pythonfilter
+    #   if: ${{ steps.filter.outputs.changed == 'true' }}
+    #   # todo read from step below
+    #   run: |
+    #     FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
+    #     echo $FILTEROUT
+    #     echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
+    #     python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
     - uses: actions/github-script@v6
       if: always() && steps.pythonfilter.outcome == 'failure'
       with:
@@ -59,17 +59,17 @@ jobs:
             body: "👋 Thanks for your submission! \n\n${{ steps.pythonfilter.outputs.offendingfiles }}\n\nPlease make the aforementioned changes and re-submit :)"
           })
     - name: Setup Ruby
-      if: steps.pythonfilter.outcome == 'success'
+      # if: steps.pythonfilter.outcome == 'success'
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.0.2'
         bundler-cache: true
     - name: Install deps
-      if: steps.pythonfilter.outcome == 'success'
+      # if: steps.pythonfilter.outcome == 'success'
       run: |
         npm install -g mermaid.cli
     - name: Setup deploy options
-      if: steps.pythonfilter.outcome == 'success'
+      # if: steps.pythonfilter.outcome == 'success'
       id: setup
       run: |
         git config --global user.name "GitHub Action"
@@ -82,8 +82,7 @@ jobs:
         fi
         echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
     - name: Build website 
-      if: steps.pythonfilter.outcome == 'success'
-      #if: steps.pythonfilter.outputs.exit_code == 0
+      # if: steps.pythonfilter.outcome == 'success'
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
