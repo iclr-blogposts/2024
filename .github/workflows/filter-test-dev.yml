@@ -92,7 +92,7 @@ jobs:
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
-                    --slug $SLUG                    
+                    --slug ${{env.SLUG}}                    
     - uses: actions/upload-artifact@v2
       with: 
         name: website_out
