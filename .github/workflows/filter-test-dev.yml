@@ -95,7 +95,7 @@ jobs:
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
                     --slug ${{env.SLUG}}
     - name: Save PR number
-      run: echo $PR_NUMBER > ./pr/pr_number.txt
+      run: echo $PR_NUMBER > site_out/pr_number.txt
     - uses: actions/upload-artifact@v2
       with: 
         name: website_out
