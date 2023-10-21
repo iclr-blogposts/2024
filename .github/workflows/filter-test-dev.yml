@@ -43,8 +43,9 @@ jobs:
     - name: Check label
       run: echo ${{ github.event.label.name }}
     - name: Save title slug
-      run: echo "SLUG=slugify ${{ github.event.pull_request.title }}" >> $GITHUB_ENV
-    - run: echo ${{env.SLUG}}
+      run: echo "SLUG=`slugify ${{ github.event.pull_request.title }}`" >> $GITHUB_ENV
+    - name: Print slug
+      run: echo ${{env.SLUG}}
     # - name: Check if changed files fit our filters
     #   id: pythonfilter
     #   if: ${{ steps.filter.outputs.changed == 'true' }}
