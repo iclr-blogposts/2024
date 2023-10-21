@@ -93,18 +93,11 @@ jobs:
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
-                    --slug ${{env.SLUG}}                    
+                    --slug ${{env.SLUG}}
+    - name: Save PR number
+      run: echo $PR_NUMBER > ./pr/pr_number.txt
     - uses: actions/upload-artifact@v2
       with: 
         name: website_out
         path: site_out
-    - uses: actions/github-script@v6
-      if: steps.pythonfilter.outcome == 'success'
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the following URL! TODO'
-          })
+
