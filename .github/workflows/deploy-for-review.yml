@@ -33,13 +33,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - run: aws s3 sync --region eu-west-1 --acl public-read _site s3://iclr-blogposts-2024/${{env.SLUG}}
-    - uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          github.rest.issues.createComment({
-            issue_number: ${{ env.ISSUE_NUMBER }},
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://iclr-blogposts-2024.s3.us-west-1.amazonaws.com/${{env.SLUG}}!'
-          })
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ env.ISSUE_NUMBER }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://iclr-blogposts-2024.s3.us-west-1.amazonaws.com/${{env.SLUG}}!'
+            })
