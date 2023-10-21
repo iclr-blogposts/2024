@@ -45,6 +45,7 @@ jobs:
     - name: Save title slug
       env:
         SLUG = slugify ${{ github.event.pull_request.title }}
+      run: echo $SLUG
     # - name: Check if changed files fit our filters
     #   id: pythonfilter
     #   if: ${{ steps.filter.outputs.changed == 'true' }}
