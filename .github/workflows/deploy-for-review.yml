@@ -20,7 +20,7 @@ jobs:
           # name: website_out
           # path: site_out
           search_artifacts: true
-      - run: unzip website_out.zip
+      - run: unzip website_out/site.zip
       - name: Setup AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
