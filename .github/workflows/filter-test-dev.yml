@@ -21,7 +21,10 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
+    - run: pip install python-slugify
     - uses: dorny/paths-filter@v2
       id: filter
       with:
@@ -39,15 +42,18 @@ jobs:
             - '**'
     - name: Check label
       run: echo ${{ github.event.label.name }}
+    - name: Save title slug
+      env:
+        SLUG = slugify ${{ github.event.pull_request.title }}
     # - name: Check if changed files fit our filters
     #   id: pythonfilter
     #   if: ${{ steps.filter.outputs.changed == 'true' }}
     #   # todo read from step below
     #   run: |
-    #     FILTEROUT=$(python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }} | tail -1)
+    #     FILTEROUT=$(python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }} | tail -1)
     #     echo $FILTEROUT
     #     echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
-    #     python3 bin/filterpaths.py ${{ github.event.pull_request.title }} ${{ steps.filter.outputs.changed_files }}
+    #     python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }}
     - uses: actions/github-script@v6
       if: always() && steps.pythonfilter.outcome == 'failure'
       with:
@@ -86,7 +92,7 @@ jobs:
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
-                    --slug ${{ github.event.pull_request.title }}                    
+                    --slug $SLUG                    
     - uses: actions/upload-artifact@v2
       with: 
         name: website_out
