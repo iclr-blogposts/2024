@@ -41,5 +41,5 @@ jobs:
               issue_number: ${{ env.ISSUE_NUMBER }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://iclr-blogposts-2024.s3.us-west-1.amazonaws.com/${{env.SLUG}}!'
+              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://iclr-blogposts-2024.s3.us-west-1.amazonaws.com/${{env.SLUG}}/ !'
             })
