@@ -42,9 +42,6 @@ if len(failed_paths) > 0:
 
     print("PATHFILTERFAILED")
     SUCCESS = False
-else:
-    print("PATHFILTERSUCCESS")
-    SUCCESS = True
 
 if len(failed_paths) > 0:
     if OUTPUT_MSG != "":
