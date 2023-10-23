@@ -93,7 +93,7 @@ jobs:
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
-                    --slug ${{env.SLUG}}
+                    --slug ${{env.SLUG}}-${{ github.event.number }}
     - name: Save PR number
       env:
         PR_NUMBER: ${{ github.event.number }}
