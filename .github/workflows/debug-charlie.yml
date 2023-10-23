@@ -63,7 +63,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "👋 Thanks for your submission! \n\n${{ steps.pythonfilter.outputs.offendingfiles }}\n\nPlease make the aforementioned changes and re-submit :)"
+            body: "⚠️ **We have detected a problem with your submission!** ⚠️\n\n${{ steps.pythonfilter.outputs.offendingfiles }}\n\nPlease make the aforementioned changes and re-submit :)"
           })
     - name: Setup Ruby
       # if: steps.pythonfilter.outcome == 'success'
