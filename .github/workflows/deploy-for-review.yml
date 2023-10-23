@@ -2,7 +2,7 @@ name: Deploy post for review
 
 on:
   workflow_run:
-    workflows: ["filter-test-dev"]
+    workflows: ["filter-files"]
     types:
       - completed
 
