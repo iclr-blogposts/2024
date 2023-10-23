@@ -94,6 +94,8 @@ jobs:
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
                     --slug ${{env.SLUG}}-${{ github.event.number }}
+    - name: Save slug
+      run: echo ${{env.SLUG}} > site_out/slug.txt
     - name: Save PR number
       env:
         PR_NUMBER: ${{ github.event.number }}
