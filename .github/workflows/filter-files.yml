@@ -2,7 +2,8 @@ name: filter-files
 
 on:
   pull_request:
-    types: [labeled]
+    branches:
+      - master
 
 # hack for https://github.com/actions/cache/issues/810#issuecomment-1222550359
 #env:
