@@ -28,7 +28,7 @@ jobs:
         run: echo ${{env.SLUG}}
         # the post name is the slug minus the first 11 characters
       - name: Get post name
-        run: echo "POST_NAME=${{env.SLUG:11}}" >> $GITHUB_ENV
+        run: echo "POST_NAME=${SLUG:11}" >> $GITHUB_ENV
       - name: Print POST_NAME
         run: echo ${{env.POST_NAME}}
       - name: Get ISSUE_NUMBER
