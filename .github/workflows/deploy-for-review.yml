@@ -24,8 +24,12 @@ jobs:
       # set the SLUG environment variable to the contests of website_out/slug.txt
       - name: Get SLUG
         run: echo "SLUG=$(cat website_out/slug.txt)" >> $GITHUB_ENV
+      - name: Print SLUG
+        run: echo ${{env.SLUG}}
       - name: Get ISSUE_NUMBER
         run: echo "ISSUE_NUMBER=$(cat website_out/pr_number.txt)" >> $GITHUB_ENV
+      - name: Print ISSUE_NUMBER
+        run: echo ${{env.ISSUE_NUMBER}}
       - name: Setup AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
