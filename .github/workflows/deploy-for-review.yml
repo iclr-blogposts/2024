@@ -50,5 +50,5 @@ jobs:
               issue_number: ${{ env.ISSUE_NUMBER }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://d2jud02ci9yv69.cloudfront.net/${{env.SLUG}}-${{env.ISSUE_NUMBER}/blog/${{env.POST_NAME}}/ !'
+              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://d2jud02ci9yv69.cloudfront.net/${{env.SLUG}}-${{env.ISSUE_NUMBER}}/blog/${{env.POST_NAME}}/ !'
             })
