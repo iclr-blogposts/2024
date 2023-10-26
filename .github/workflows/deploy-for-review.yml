@@ -26,6 +26,11 @@ jobs:
         run: echo "SLUG=$(cat website_out/slug.txt)" >> $GITHUB_ENV
       - name: Print SLUG
         run: echo ${{env.SLUG}}
+        # the post name is the slug minus the "2024-05-07-" prefix
+      - name: Get post name
+        run: echo "POST_NAME=${{env.SLUG#2024-05-07-}}" >> $GITHUB_ENV
+      - name: Print POST_NAME
+        run: echo ${{env.POST_NAME}}
       - name: Get ISSUE_NUMBER
         run: echo "ISSUE_NUMBER=$(cat website_out/pr_number.txt)" >> $GITHUB_ENV
       - name: Print ISSUE_NUMBER
@@ -45,5 +50,5 @@ jobs:
               issue_number: ${{ env.ISSUE_NUMBER }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://d2jud02ci9yv69.cloudfront.net/${{env.SLUG}}/blog/${{env.SLUG}}/ !'
+              body: '👋 Thanks for your submission! We have successfully built your website and we will push it shortly to the URL https://d2jud02ci9yv69.cloudfront.net/${{env.SLUG}}/blog/${{env.POST_NAME}}/ !'
             })
