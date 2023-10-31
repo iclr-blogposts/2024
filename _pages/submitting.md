@@ -308,12 +308,12 @@ Configuration file: /home/$USER/blog_post_repo/_config.yml
 
                     done in 0.426 seconds.
  Auto-regeneration: enabled for '/home/$USER/blog_post_repo'
-    Server address: http://127.0.0.1:4000/2024/
+    Server address: http://0.0.0.0:8080/2024/
   Server running... press ctrl-c to stop.
 ```
 
 If you see this, you've successfully served your web page locally!
-You can access it at server address specified, in this case `http://127.0.0.1:4000/2024` (and the blog posts should once again be viewable at the `blog/` endpoint).
+You can access it at server address specified, in this case `http://0.0.0.0:8080/2024/` (and the blog posts should once again be viewable at the `blog/` endpoint).
 
 
 ### Submitting your Blog Post
