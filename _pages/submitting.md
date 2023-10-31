@@ -69,7 +69,7 @@ For more details about any of these steps, please refer to the appropriate secti
     **Make sure to omit any identifying information for the review process.**
 
 3. To render your website locally, you can build a docker container via `$ ./bin/docker_run.sh` to serve your website locally. 
-    Alternatively, you can setup your loval environment to render the website via conventional `$ bundle exec jekyll serve` commands. 
+    Alternatively, you can setup your local environment to render the website via conventional `$ bundle exec jekyll serve --future` commands. 
     More information for both of these configuratoins can be found in the [Local Serving](#local-serving) section.
 
 4. To submit your website, create a pull request to the main repository. Make sure that this PR's title is `_posts/2024-05-07-[SUBMISSION NAME]`. Make sure to tag your PR with the `submission` label. This will trigger a GitHub Action that will build your blogpost and write the host's URL in a comment to your PR.
@@ -241,7 +241,7 @@ Don't use `dockerhub_run.sh`; this may result in issues with missing jekyll depe
 
 For users wishing to not use a Docker container, you can install Jekyll directly to your computer and build the site using Jekyll directly.
 This is done at your own risk, as there are many potential points of error!
-Follow the instructions for rendering the website via the conventional method of `$ bundle exec jekyll serve`
+Follow the instructions for rendering the website via the conventional method of `$ bundle exec jekyll serve --future`
 
 ##### Installation
 
@@ -290,7 +290,7 @@ This will install any plugins required by the project.
 To serve the webpage locally, from your terminal, in the directory containing the Jekyll project run:
 
 ```bash
-bundle exec jekyll serve
+bundle exec jekyll serve --future --port=8080 --host=0.0.0.0
 ```
 
 You should see something along the lines of:

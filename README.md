@@ -101,7 +101,7 @@ Assuming you have [Ruby](https://www.ruby-lang.org/en/downloads/) and [Bundler](
 git clone git@github.com:<your-username>/<your-repo-name>.git
 cd <your-repo-name>
 bundle install
-bundle exec jekyll serve
+bundle exec jekyll serve --future
 ```
 
 Now, feel free to customize the theme however you like (don't forget to change the name!).
