@@ -74,6 +74,12 @@ Our goal is to avoid heavily engineered, professionally-made blog posts ---Such 
 Please check our [submission instructions]({{ '/submitting' | relative_url }}) for more details.
 We accept submissions in both Markdown and HTML. We believe this is a good trade-off between complexity and flexibility. 
 
+## Contact
+
+For any technical issues with the blog post repository (for example, blog posts not displaying correctly or issues while following the [submission instructions](https://iclr-blogposts.github.io/2024/submitting/#creating-a-blog-post)), please open an [issue in our github repository](https://github.com/iclr-blogposts/2024/issues).
+
+For other inquiries, reach us via email at: [blog.track.chairs@gmail.com](mailto:blog.track.chairs@gmail.com)
+
 ## Organizers
 
 <div class="row row-cols-2 projects pt-3 pb-3">
