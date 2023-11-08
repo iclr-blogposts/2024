@@ -337,15 +337,13 @@ To submit your blog post:
   Fill in the checklist provided in the PR template. The title of your pull request should be 
   exactly the name of your markdown/html file.
     - i.e. `_posts/2024-05-07-[SUBMISSION NAME].md` would require a PR name `2024-05-07-[SUBMISSION NAME]` 
-4. (TBD) Your post will be tagged with the `submission` pull request tag (either by you OR by an admin, **TBD**), 
-  which will automatically run two pipelines: one to verify that you have not modified any other 
-  file in the repo, and another that pushes a built version of your site/blog post to an Amazon S3 
-  web hosting service.
-    - Upon success, a bot will post a link to your deployed site. Verify that everything looks correct.
+4. (TBD) Your post will automatically run two pipelines: one to verify that you have not modified any other 
+  file in the repo, and another that will create a unique URL for your contributed blog post.
+    - Verify that everything looks correct in the given URL.
     - If the pipelines failed, check if it was because of improper formatting (i.e. you modified 
-      restricted files). If this is the case, fix the issues (you might need to do a git rebase!)
-      and open a new pull request. If you are facing other issues, please ping an admin.
-5. Submit the name of your blog post and its URL to our OpenReview; **a link to our venue will be provided soon**.
+      restricted files). If this is the case, fix the issues. If the issue persist, please ping one of the repo admins.
+      
+5. Submit the name of your blog post and its URL to our OpenReview through [this link](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F)).
 
 > **Note:** If you wish to make updates to your submission, you should update the content in the 
 > PR that you already opened. 
