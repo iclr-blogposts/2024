@@ -347,9 +347,6 @@ To submit your blog post:
 
 > **Note:** If you wish to make updates to your submission, you should update the content in the 
 > PR that you already opened. 
-> - We still have to test if our github action workflows will run upon new commits made by a user. 
->   This will be tested and updated soon; if you have any issues before we formalize this step, please
->   contact one of the organizers.
 
 ### Reviewing Process
 
