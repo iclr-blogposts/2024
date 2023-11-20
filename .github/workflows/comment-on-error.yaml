@@ -25,7 +25,6 @@ jobs:
       - name: Get filterout
         run: echo "MSG=$(cat website_out/filterout.txt)" >> $GITHUB_ENV
       - uses: actions/github-script@v6
-        if: always() && steps.pythonfilter.outcome == 'failure'
         with:    
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
