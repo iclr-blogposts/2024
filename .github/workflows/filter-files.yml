@@ -53,15 +53,8 @@ jobs:
       # todo read from step below
       run: |
         FILTEROUT=$(python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }} | tail -1)
-        python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }} > filterout.txt
-        echo $FILTEROUT
         echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
         python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }}
-    - name: Upload error message
-      uses: actions/upload-artifact@v2
-      with: 
-        name: filterout
-        path: filterout.txt
     #- uses: actions/github-script@v6
     #  if: always() && steps.pythonfilter.outcome == 'failure'
     #  with:
