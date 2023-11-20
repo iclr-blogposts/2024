@@ -102,7 +102,7 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: echo $PR_NUMBER > site_out/pr_number.txt
     - name: Save filterout
-      run: eche ${{ steps.pythonfilter.outputs.offendingfiles }} > site_out/filterout.txt
+      run: echo ${{ steps.pythonfilter.outputs.offendingfiles }} > site_out/filterout.txt
     - uses: actions/upload-artifact@v2
       with: 
         name: website_out
