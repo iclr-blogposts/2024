@@ -1,23 +1,26 @@
-<!-- Please make sure you are opening a pull request against the `accepted` branch (not master!) of the STAGING repo (not 2023!) -->
+<!-- Please make sure you are opening a pull request against the `main` branch of the 2024 repo -->
+<!-- Ensure that your title is the raw filename of your blog post markdown/html file -->
 
 ## OpenReview Submission Thread
 
 <!-- link to your OpenReview submission -->
 
-## Checklist before requesting a review
+## Checklist before opening a PR
 
-- [ ] I am opening a pull request against the `accepted` branch of the `staging` repo.
-- [ ] I have de-anonymized my post, added author lists, etc.
-- [ ] My post matches the formatting requirements
-    - [ ] I have a short 2-3 sentence abstract in the `description` field of my front-matter ([example](https://github.com/iclr-blogposts/staging/blob/aa15aa3797b572e7b7bb7c8881fd350d5f76fcbd/_posts/2022-12-01-distill-example.md?plain=1#L4-L5))
-    - [ ] I have a table of contents, formatted using the `toc` field of my front-matter ([example](https://github.com/iclr-blogposts/staging/blob/aa15aa3797b572e7b7bb7c8881fd350d5f76fcbd/_posts/2022-12-01-distill-example.md?plain=1#L33-L42))
+- [ ] I am opening a pull request against the `main` branch of the `2024` repo.
+- [ ] The title of my PR is exactly the name of my markdown file
+    - i.e. `_posts/2024-05-07-[SUBMISSION NAME].md` would require a PR name `2024-05-07-[SUBMISSION NAME]` 
+- [ ] I have **anonymized** my post: my author's list is `Anonymous`, and there is no potential
+    content which can reveal my/my collaborators identities.
+- [ ] My post matches the formatting requirements, including (but not limited to):
+    - [ ] I have **ONLY MODIFIED** files in the following locations (failure to do so will result in 
+        your PR automatically being closed!):
+        - a Markdown (or HTML) file in `_posts/` with the format `_posts/2024-05-07-[SUBMISSION NAME].md` (or `.html`)
+        - static image assets added to `assets/img/2024-05-07-[SUBMISSION NAME]/`
+        - interactive HTML figures added  to `assets/html/2024-05-07-[SUBMISSION NAME]/`
+        - citations in a bibtex file in `assets/bibliography/2024-05-07-[SUBMISSION NAME].bib`
+    - [ ] I have a short 2-3 sentence abstract in the `description` field of my front-matter ([example](https://github.com/iclr-blogposts/2024/blob/295ab5b4c31f2c7d421a4caf41e5481cbb4ad42c/_posts/2024-05-07-distill-example.md?plain=1#L4-L6))
+    - [ ] I have a table of contents, formatted using the `toc` field of my front-matter ([example](https://github.com/iclr-blogposts/2024/blob/295ab5b4c31f2c7d421a4caf41e5481cbb4ad42c/_posts/2024-05-07-distill-example.md?plain=1#L36-L47))
     - [ ] My bibliography is correctly formatted, using a `.bibtex` file as per the sample post
-
-## Changes implemented in response to reviewer feedback
-
-- [ ] Tick this box if you received a conditional accept
-- [ ] I have implemented the necessary changes in response to reviewer feedback (if any)
-
-<!-- briefly add your changes in response to reviewer feedback -->
 
 ## Any other comments

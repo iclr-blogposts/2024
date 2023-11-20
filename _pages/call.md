@@ -1,7 +1,7 @@
 ---
 layout: page
 title: call for blogposts
-permalink: /call
+permalink: /call/
 description:
 nav: true
 nav_order: 2
@@ -9,8 +9,8 @@ nav_order: 2
 
 **Announcements**: 
 - Instructions on getting started with building your blog posts have now been posted [here]({{ '/submitting' | relative_url }})!
-- More details on the process of opening a PR and submitting your post to OpenReview will be given closer to the submission deadline.
 
+**Submit** your blogpost on [Openreview](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F))
 
 # Call for blog posts
 ​

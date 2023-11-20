@@ -1,7 +1,7 @@
 ---
 layout: page
 title: submitting
-permalink: /submitting
+permalink: /submitting/
 description:
 nav: true
 nav_order: 3
@@ -43,7 +43,7 @@ Small mistakes here can have very hard-to-debug consequences.**
    - [Method 2: Using Jekyll Manually](#method-2-using-jekyll-manually)
       - [Installation](#installation)
       - [Manual Serving](#manual-serving)
-- [Submitting Your Blog Post (TBD)](#submitting-your-blog-post)
+- [Submitting Your Blog Post](#submitting-your-blog-post)
 - [Reviewing Process](#reviewing-process)
 - [Camera Ready (TBD)](#camera-ready)
 
@@ -69,7 +69,7 @@ For more details about any of these steps, please refer to the appropriate secti
     **Make sure to omit any identifying information for the review process.**
 
 3. To render your website locally, you can build a docker container via `$ ./bin/docker_run.sh` to serve your website locally. 
-    Alternatively, you can setup your loval environment to render the website via conventional `$ bundle exec jekyll serve` commands. 
+    Alternatively, you can setup your local environment to render the website via conventional `$ bundle exec jekyll serve --future` commands. 
     More information for both of these configuratoins can be found in the [Local Serving](#local-serving) section.
 
 4. To submit your website, create a pull request to the main repository. Make sure that this PR's title is `_posts/2024-05-07-[SUBMISSION NAME]`. Make sure to tag your PR with the `submission` label. This will trigger a GitHub Action that will build your blogpost and write the host's URL in a comment to your PR.
@@ -77,6 +77,8 @@ For more details about any of these steps, please refer to the appropriate secti
 5. If accepted, we will merge the accepted posts to our main repository. See the [camera ready](#camera-ready) section for more details on merging in an accepted blog post.
 
 **Should you edit ANY files other your new post inside the `_posts` directory, and your new folder inside the `assets` directory, your pull requests will automatically be rejected.**
+
+You can view an example of a successful PR [here](https://github.com/iclr-blogposts/2024/pull/48). You can view an example of a PR with erroneous files [here](https://github.com/iclr-blogposts/2024/pull/51).
 
 ### Download the Blog Repository
 
@@ -241,7 +243,7 @@ Don't use `dockerhub_run.sh`; this may result in issues with missing jekyll depe
 
 For users wishing to not use a Docker container, you can install Jekyll directly to your computer and build the site using Jekyll directly.
 This is done at your own risk, as there are many potential points of error!
-Follow the instructions for rendering the website via the conventional method of `$ bundle exec jekyll serve`
+Follow the instructions for rendering the website via the conventional method of `$ bundle exec jekyll serve --future`
 
 ##### Installation
 
@@ -290,7 +292,7 @@ This will install any plugins required by the project.
 To serve the webpage locally, from your terminal, in the directory containing the Jekyll project run:
 
 ```bash
-bundle exec jekyll serve
+bundle exec jekyll serve --future --port=8080 --host=0.0.0.0
 ```
 
 You should see something along the lines of:
@@ -308,23 +310,45 @@ Configuration file: /home/$USER/blog_post_repo/_config.yml
 
                     done in 0.426 seconds.
  Auto-regeneration: enabled for '/home/$USER/blog_post_repo'
-    Server address: http://127.0.0.1:4000/2024/
+    Server address: http://0.0.0.0:8080/2024/
   Server running... press ctrl-c to stop.
 ```
 
 If you see this, you've successfully served your web page locally!
-You can access it at server address specified, in this case `http://127.0.0.1:4000/2024` (and the blog posts should once again be viewable at the `blog/` endpoint).
+You can access it at server address specified, in this case `http://0.0.0.0:8080/2024/` (and the blog posts should once again be viewable at the `blog/` endpoint).
 
 
 ### Submitting your Blog Post
 
-The high-level overview is as follows:
+To submit your blog post:
 
-1. Strip all identifying information from your blog post. 
-2. Make a new Pull Request to the 2024 blog track repo.
-    - **We will provide specific instructions on how this process will work closer to the submission deadline.**
-    - Make sure that you follow the instructions of what files you can and cannot modify carefuly - failue to do so will result in the automated pipeline in rejecting your PR! If this happens, a helpful message will be posted to your PR to help you debug it.
-3. Submit the name of your blog post and its URL to our OpenReview; **a link to our venue will be provided soon**.
+1. **Anonymize your blog post.** Strip all identifying information from your post, including the 
+  author's list (replace with `Anonymous`).
+2. Double check that your post matches the formatting requirements, including (but not limited to):
+    - **Only modify** files in the following locations (failure to do so will result in your PR 
+      automatically being closed!):
+        - a Markdown (or HTML) file in `_posts/` with the format `_posts/2024-05-07-[SUBMISSION NAME].md` 
+          (or `.html`)
+        - static image assets added to `assets/img/2024-05-07-[SUBMISSION NAME]/`
+        - interactive HTML figures added  to `assets/html/2024-05-07-[SUBMISSION NAME]/`
+        - citations in a bibtex file in `assets/bibliography/2024-05-07-[SUBMISSION NAME].bib`
+    - Have a short 2-3 sentence abstract in the `description` field of your front-matter ([example](https://github.com/iclr-blogposts/2024/blob/295ab5b4c31f2c7d421a4caf41e5481cbb4ad42c/_posts/2024-05-07-distill-example.md?plain=1#L4-L6))
+    - Have a table of contents, formatted using the `toc` field of your front-matter ([example](https://github.com/iclr-blogposts/2024/blob/295ab5b4c31f2c7d421a4caf41e5481cbb4ad42c/_posts/2024-05-07-distill-example.md?plain=1#L36-L47))
+    - Your bibliography uses a `.bibtex` file as per the sample post
+3. Open a pull request against the `main` branch of the [2024 repo](https://github.com/iclr-blogposts/2024). 
+  Fill in the checklist provided in the PR template. The title of your pull request should be 
+  exactly the name of your markdown/html file.
+    - i.e. `_posts/2024-05-07-[SUBMISSION NAME].md` would require a PR name `2024-05-07-[SUBMISSION NAME]` 
+4. (TBD) Your post will automatically run two pipelines: one to verify that you have not modified any other 
+  file in the repo, and another that will create a unique URL for your contributed blog post.
+    - Verify that everything looks correct in the given URL.
+    - If the pipelines failed, check if it was because of improper formatting (i.e. you modified 
+      restricted files). If this is the case, fix the issues. If the issue persist, please ping one of the repo admins.
+      
+5. Submit the name of your blog post and its URL to our OpenReview through [this link](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F)).
+
+> **Note:** If you wish to make updates to your submission, you should update the content in the 
+> PR that you already opened. 
 
 ### Reviewing Process
 

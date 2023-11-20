@@ -42,9 +42,6 @@ if len(failed_paths) > 0:
 
     print("PATHFILTERFAILED")
     SUCCESS = False
-else:
-    print("PATHFILTERSUCCESS")
-    SUCCESS = True
 
 if len(failed_paths) > 0:
     if OUTPUT_MSG != "":
@@ -52,9 +49,9 @@ if len(failed_paths) > 0:
     else:
         OUTPUT_MSG = "Y"
     
-    OUTPUT_MSG += f"ou can only add/change/remove files related to your post, i.e. files that match one of these patterns: <_posts/SLUG.md, assets/img/SLUG/..., assets/html/SLUG/..., assets/bibliography/SLUG.bib>. But we found that you changed the following: <{' & '.join(failed_paths)}>"
+    OUTPUT_MSG += f"ou can only add/change/remove files related to your post, i.e. files that match one of these patterns: <_posts/SLUG.md, assets/img/SLUG/..., assets/html/SLUG/..., assets/bibliography/SLUG.bib>. But we found that you changed the following: <{' & '.join(failed_paths)}>."
 if not SUCCESS:
-    OUTPUT_MSG += " Also, make sure your PR's title matches your post's slug!"
+    OUTPUT_MSG += f" Also, make sure your PR's title ({SLUG}) matches your post's slug!"
     print(OUTPUT_MSG)
 
 # example usage of this script:  python3 filter_file.py 2024-0a1-01-whateve _posts/2024-01-01-whateve.md assets/img/2024-01-01-whateve/bla.pic assets/html/2024-01-01-whateve/plot1.j assets/bibliography/2024-01-01-whateve.bib assets/img/2024-01-02-whateve/bla.pic
