@@ -105,7 +105,7 @@ jobs:
       run: echo $PR_NUMBER > site_out/pr_number.txt
     - name: Save filterout
       if: always()
-      run: echo ${{ steps.pythonfilter.outputs.offendingfiles }} > site_out/filterout.txt
+      run: echo "${{ steps.pythonfilter.outputs.offendingfiles }}" > site_out/filterout.txt
     - uses: actions/upload-artifact@v2
       if: always()
       with: 
