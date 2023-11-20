@@ -53,7 +53,8 @@ jobs:
       # todo read from step below
       run: |
         FILTEROUT=$(python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }} | tail -1)
-        echo $FILTEROUT >> filterout.txt
+        python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }} > filterout.txt
+        echo $FILTEROUT
         echo "offendingfiles=$FILTEROUT" >> $GITHUB_OUTPUT
         python3 bin/filterpaths.py $SLUG ${{ steps.filter.outputs.changed_files }}
     - name: Upload error message
