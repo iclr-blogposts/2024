@@ -67,17 +67,17 @@ jobs:
     #        body: "⚠️ **We have detected a problem with your submission!** ⚠️\n\n${{ steps.pythonfilter.outputs.offendingfiles }}\n\nPlease make the aforementioned changes and re-submit :)"
     #      })
     - name: Setup Ruby
-      if: steps.pythonfilter.outcome == 'success'
+      if: always() && steps.pythonfilter.outcome == 'success'
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.0.2'
         bundler-cache: true
     - name: Install deps
-      if: steps.pythonfilter.outcome == 'success'
+      if: always() && steps.pythonfilter.outcome == 'success'
       run: |
         npm install -g mermaid.cli
     - name: Setup deploy options
-      if: steps.pythonfilter.outcome == 'success'
+      if: always() && steps.pythonfilter.outcome == 'success'
       id: setup
       run: |
         git config --global user.name "GitHub Action"
@@ -90,20 +90,24 @@ jobs:
         fi
         echo "DEPLOY_BRANCH=gh-pages" >> $GITHUB_OUTPUT
     - name: Build website 
-      if: steps.pythonfilter.outcome == 'success'
+      if: always() && steps.pythonfilter.outcome == 'success'
       run:  yes | bash bin/build --verbose ${{ steps.setup.outputs.NO_PUSH }}
                     --src ${{ steps.setup.outputs.SRC_BRANCH }} 
                     --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }} 
                     --slug ${{env.SLUG}}-${{ github.event.number }}
     - name: Save slug
+      if: always()
       run: echo ${{env.SLUG}} > site_out/slug.txt
     - name: Save PR number
+      if: always()
       env:
         PR_NUMBER: ${{ github.event.number }}
       run: echo $PR_NUMBER > site_out/pr_number.txt
     - name: Save filterout
+      if: always()
       run: echo ${{ steps.pythonfilter.outputs.offendingfiles }} > site_out/filterout.txt
     - uses: actions/upload-artifact@v2
+      if: always()
       with: 
         name: website_out
         path: site_out
