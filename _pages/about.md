@@ -23,7 +23,7 @@ The Machine Learning community is currently experiencing a [reproducibility cris
 
 Blog posts are becoming an increasingly popular and useful way to talk about science [[Brown and Woolston, 2018]](#Brow). They offer substantial value to the scientific community by providing a flexible platform to foster open, human, and transparent discussions about new insights or limitations of a scientific publication. However, because they are not as recognized as standard scientific publications, only a minority of researchers manage to maintain an active blog and get visibility for their efforts. Many are well-established researchers ([Francis Bach](https://francisbach.com/), [Ben Recht](https://www.argmin.net/), [Ferenc Huszár](https://www.inference.vc/), [Lilian Weng](https://lilianweng.github.io/lil-log/)) or big corporations that leverage entire teams of graphic designers designer and writers to polish their blogs ([Facebook AI](https://ai.facebook.com/blog/?page=1), [Google AI](https://ai.googleblog.com/), [DeepMind](https://deepmind.com/blog), [OpenAI](https://openai.com/blog/)). As a result, the incentives for writing scientific blog posts are largely personal; it is unreasonable to expect a significant portion of the machine learning community to contribute to such an initiative when everyone is trying to establish themselves through publications.
 
-**Submit** your blogpost on [Openreview]{https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F)}
+**Submit** your blogpost on [Openreview](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F))
 
 ## A Blog Post Conference Track
 
@@ -76,7 +76,7 @@ Our goal is to avoid heavily engineered, professionally-made blog posts ---Such 
 Please check our [submission instructions]({{ '/submitting' | relative_url }}) for more details.
 We accept submissions in both Markdown and HTML. We believe this is a good trade-off between complexity and flexibility. 
 
-**Submit** your blogpost on [Openreview]{https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F)}
+**Submit** your blogpost on [Openreview](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F))
 
 ## Contact
 
