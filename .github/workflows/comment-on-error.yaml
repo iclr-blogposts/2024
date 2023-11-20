@@ -20,7 +20,8 @@ jobs:
           # name: website_out
           # path: site_out
           search_artifacts: true
-      - run: unzip website_out/site.zip
+      - name: Get ISSUE_NUMBER
+        run: echo "ISSUE_NUMBER=$(cat website_out/pr_number.txt)" >> $GITHUB_ENV
       - name: Get filterout
         run: echo "MSG=$(cat website_out/filterout.txt)" >> $GITHUB_ENV
       - uses: actions/github-script@v6
