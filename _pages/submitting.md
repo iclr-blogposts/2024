@@ -78,6 +78,8 @@ For more details about any of these steps, please refer to the appropriate secti
 
 **Should you edit ANY files other your new post inside the `_posts` directory, and your new folder inside the `assets` directory, your pull requests will automatically be rejected.**
 
+You can view an example of a successful PR [here](https://github.com/iclr-blogposts/2024/pull/48). You can view an example of a PR with erroneous files [here](https://github.com/iclr-blogposts/2024/pull/51).
+
 ### Download the Blog Repository
 
 Download or fork our [repository](https://github.com/iclr-blogposts/2024). 
