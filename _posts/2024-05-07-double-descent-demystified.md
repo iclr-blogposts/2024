@@ -1,10 +1,7 @@
 ---
 layout: distill
 title: Double Descent Demystified
-description:     Machine learning models misbehave, often in unexpected ways. One prominent misbehavior is when the test loss diverges at the interpolation threshold, perhaps best known from its distinctive appearance in double descent. While considerable theoretical effort has gone into understanding generalization of overparameterized models, less effort has been made at understanding why the test loss misbehaves at the interpolation threshold.
-   Moreover, analytically solvable models in this area employ a range of assumptions and use complex techniques from random matrix theory, statistical mechanics, and kernel methods, making it difficult to assess when and why test error might diverge.
-   In this work, we analytically study the simplest supervised model - ordinary linear regression - and show intuitively and rigorously when and why a divergence occurs at the interpolation threshold using basic linear algebra. We identify three interpretable factors that, when all present, cause the divergence. We demonstrate on real data that linear models' test losses diverge at the interpolation threshold and that the divergence disappears when we ablate any one of the three identified factors. We then leverage one of the three factors to construct \textit{adversarial training data} that increases the test error by 1-3 orders of magnitude without affecting the training error.
-   We conclude with contributing fresh insights to recent discoveries regarding superposition and double descent in nonlinear models.
+description:  TODO
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -42,16 +39,13 @@ toc:
     - name: Empirical Evidence
     - name: Mathematical Analysis
     - name: Three Factors that Cause Divergence
-  - name: Images and Figures
+    - name: Divergence at the Interpolation Threshold
+  - name: Adversarial Data
     subsections:
-    - name: Interactive Figures
-  - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
+    - name: Adversarial Test Examples
+    - name: Adversarial Training Data
+  - name: Generalization in Overparameterized Linear Regression
+  - name: Intuition for Nonlinear Models
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -73,14 +67,37 @@ _styles: >
   }
 ---
 
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/unablated.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/unablated.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/unablated.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/unablated.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Double descent in ordinary linear regression. 
+   Three real datasets (California Housing, Diabetes, and WHO Life Expectancy) and one synthetic dataset (Student-Teacher) all exhibit double descent, with test loss spike at the interpolation threshold.
+</div>
+
+
 ## Introduction
 
 Machine learning models, while incredibly powerful, can sometimes act unpredictably. One of the most intriguing
-behaviors is when the test loss suddenly diverges at the interpolation threshold, a point where the model perfectly
-fits the training data, leading to zero training error. This phenomenon is distinctly observed in the double descent
-curve <d-cite key="vallet1989hebb"></d-cite> <d-cite key="krogh1991simple"></d-cite> <d-cite key="geman1992neural"></d-cite> <d-cite key="krogh1992generalization"></d-cite> <d-cite key="opper1995statistical"></d-cite> <d-cite key="duin2000classifiers"></d-cite> <d-cite key="spigler2018jamming"></d-cite> <d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite> <d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite> <d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite> <d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite> <d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite> <d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite> <d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite>,
-and while significant theoretical work has been done to comprehend why double descent occurs, it can be difficult
-for a newcomer to gain a general understanding of why the test loss behaves erratically at this threshold. 
+behaviors is when the test loss suddenly diverges at the interpolation threshold, a phenomenon is
+distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite> <d-cite key="krogh1991simple"></d-cite> <d-cite key="geman1992neural"></d-cite> <d-cite key="krogh1992generalization"></d-cite> <d-cite key="opper1995statistical"></d-cite> <d-cite key="duin2000classifiers"></d-cite> <d-cite key="spigler2018jamming"></d-cite> <d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite> <d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite> <d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite> <d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite> <d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite> <d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite> <d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite>.
+While significant theoretical work has been done to comprehend why double descent occurs, it can be difficult
+for a newcomer to gain a general understanding of why the test loss behaves in this manner, and under what conditions
+one should expect similar misbehavior.
+
 
 [//]: # (Many analytically-solvable models rely on a plethora of assumptions &#40;e.g., i.i.d additive)
 
@@ -111,6 +128,7 @@ models concerning superposition.
 
 ## Double Descent in Ordinary Linear Regression
 
+
 ### Notation and Terminology
 
 Consider a regression dataset of $N$ training data with features $\vec{x}_n \in \mathbb{R}^D$ and targets $y_n \in \mathbb{R}$.
@@ -135,25 +153,6 @@ the number of data points $N$.
 
 ### Empirical Evidence of Double Descent in Ordinary Linear Regression
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/unablated.png" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/unablated.png" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/unablated.png" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/unablated.png" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all.
-</div>
 
 
 Before studying ordinary linear regression mathematically, does our claim that it exhibits double descent 
@@ -170,7 +169,12 @@ If the regression is _underparameterized_, we estimate the linear relationship b
 and target $y_n$ by solving the least-squares minimization problem:
 
 
-$$\hat{\vec{\beta}}_{under} \, := \,  \arg \min_{\vec{\beta}} \frac{1}{N} \sum_n ||\vec{x}_n \cdot \vec{\beta} - y_n||_2^2 \, = \, \arg \min_{\vec{\beta}} ||X \vec{\beta} - Y ||_2^2.$$
+$$
+\begin{align*}
+\hat{\vec{\beta}}_{under} \, &:= \,  \arg \min_{\vec{\beta}} \frac{1}{N} \sum_n ||\vec{x}_n \cdot \vec{\beta} - y_n||_2^2\\
+\, &:= \, \arg \min_{\vec{\beta}} ||X \vec{\beta} - Y ||_2^2.
+\end{align*}
+$$
 
 The solution is the ordinary least squares estimator based on the second moment matrix $X^T X$:
 
@@ -179,7 +183,12 @@ $$\hat{\vec{\beta}}_{under} = (X^T X)^{-1} X^T Y.$$
 If the model is overparameterized, the optimization problem is ill-posed since we have fewer constraints than parameters. Consequently, we choose a different (constrained) optimization problem:
 
 
-$$\hat{\vec{\beta}}_{over} \, := \, \arg \min_{\vec{\beta}} ||\vec{\beta}||_2^2 \quad \quad \text{s.t.} \quad \quad \forall \, n \in \{1, ..., N\} \quad \vec{x}_n \cdot \vec{\beta} = y_n.$$
+$$
+\begin{align*}
+\hat{\vec{\beta}}_{over} \, &:= \, \arg \min_{\vec{\beta}} ||\vec{\beta}||_2^2\\
+\text{s.t.} \quad \quad \forall \, n \in &\{1, ..., N\}, \quad \vec{x}_n \cdot \vec{\beta} = y_n.
+\end{align*}
+$$
 
 We choose this optimization problem because it is the one gradient descent implicitly minimizes (App. \ref{app:why_sgd_regularizes}).
 The solution to this optimization problem uses the Gram matrix $X X^T \in \mathbb{R}^{N \times N}$:
@@ -271,12 +280,13 @@ $$
 $$
 
 The shared term between the two predictions causes the divergence:
-%
+
+$$
 \begin{equation}
 \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E).
 \label{eq:variance}
 \end{equation}
-
+$$
 
 \textit{Eqn. \ref{eq:variance} is critical}. It reveals that our test prediction error (and thus, our test squared error!) will depend on an interaction between 3 quantities:
 
@@ -296,7 +306,48 @@ More formally: how the residuals $E$ of the best possible model in the model cla
     $$\vec{u}_r \cdot E$$
 
 
-When (1) and (3) co-occur, the model's parameters along this singular mode are likely incorrect. When (2) is added to the mix by a test datum $\vec{x}_{test}$ with a large projection along this mode, the model is forced to extrapolate significantly beyond what it saw in the training data, in a direction where the training data had an error-prone relationship between its predictions and the training targets, using parameters that are likely wrong. As a consequence, the test squared error explodes!
+<blockquote>
+When (1) and (3) co-occur, the model's parameters along this singular mode are likely incorrect. 
+When (2) is added to the mix by a test datum $\vec{x}_{test}$ with a large projection along this mode, 
+the model is forced to extrapolate significantly beyond what it saw in the training data, in a direction where
+the training data had an error-prone relationship between its predictions and the training targets, using
+parameters that are likely wrong. As a consequence, the test squared error explodes!
+</blockquote>
+
+For completeness, recall the overparameterized prediction error $\hat{y}_{test,over} y_{test}^*$ has another term:
+
+$$
+\begin{equation}
+\vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^*.
+\label{eq:bias}
+\end{equation}
+$$
+
+To understand why this bias exists, recall that our goal is to correlate fluctuations in the covariates
+$\vec{x}$ with fluctuations in the targets $y$. In the overparameterized regime, there are more parameters
+than data; consequently, for $N$ data points in $D=P$ dimensions, the model can "see" fluctuations in at 
+most $N$ dimensions, but has no ``visibility" into the remaining $P-N$ dimensions. This causes information
+about the optimal linear relationship $\vec{\beta}^*$ to be lost, thereby increasing the overparameterized 
+prediction error $\hat{y}_{test, over} - y_{test}^*$.
+
+### Divergence at the Interpolation Threshold
+
+Why does this divergence happen near the interpolation threshold? The answer is that the first factor
+(small non-zero singular values in the training features $X$) is likely to occur at the interpolation
+threshold (Fig. \ref{fig:least_informative_singular_value}), but why? Suppose we're given a single
+training datum $\vec{x}_1$. So long as this datum isn't exactly zero, that datum varies in a single
+direction, meaning we gain information about the variance in that direction, but the variance in all 
+orthogonal directions is exactly 0. With the second training datum $\vec{x}_2$, so long as this datum
+isn't exactly zero, that datum varies, but now, some fraction of $\vec{x}_2$ might have a positive 
+projection along $\vec{x}_1$; if this happens (and it likely will, since the two vectors are unlikely
+to be exactly orthogonal), the shared direction gives us \textit{more} information about the variance
+in this shared direction, but \textit{less} information about the second orthogonal direction of variation.
+Ergo, the training data's smallest non-zero singular value after 2 samples is probabilistically smaller than
+after 1 sample. As we approach the interpolation threshold, the probability that each additional datum 
+has large variance in a new direction orthogonal to all previous directions grows unlikely
+(Fig. \ref{fig:geometric_viewpoint}), but as we move beyond the interpolation threshold, the variance
+in each covariate dimension becomes increasingly clear.
+
 
 ## Images and Figures
 
@@ -351,69 +402,16 @@ Some more complex ways to load images (note the different styles of the shapes/s
     </div>
 </div>
 
-### Interactive Figures
 
-Here's how you could embed interactive figures that have been exported as HTML files.
-Note that we will be using plotly for this demo, but anything built off of HTML should work
-(**no extra javascript is allowed!**).
-All that's required is for you to export your figure into HTML format, and make sure that the file
-exists in the `assets/html/[SUBMISSION NAME]/` directory in this repository's root directory.
-To embed it into any page, simply insert the following code anywhere into your page.
+[//]: # (## Footnotes)
 
-```markdown
-{% raw %}{% include [FIGURE_NAME].html %}{% endraw %} 
-```
+[//]: # ()
+[//]: # (Just wrap the text you would like to show up in a footnote in a `<d-footnote>` tag.)
 
-For example, the following code can be used to generate the figure underneath it.
+[//]: # (The number of the footnote will be automatically generated.<d-footnote>This will become a hoverable footnote.</d-footnote>)
 
-```python
-import pandas as pd
-import plotly.express as px
-
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/earthquakes-23k.csv')
-
-fig = px.density_mapbox(
-    df, lat='Latitude', lon='Longitude', z='Magnitude', radius=10,
-    center=dict(lat=0, lon=180), zoom=0, mapbox_style="stamen-terrain")
-fig.show()
-
-fig.write_html('./assets/html/2024-05-07-distill-example/plotly_demo_1.html')
-```
-
-And then include it with the following:
-
-```html
-{% raw %}<div class="l-page">
-  <iframe src="{{ 'assets/html/2024-05-07-distill-example/plotly_demo_1.html' | relative_url }}" frameborder='0' scrolling='no' height="600px" width="100%"></iframe>
-</div>{% endraw %}
-```
-
-Voila!
-
-<div class="l-page">
-  <iframe src="{{ 'assets/html/2024-05-07-distill-example/plotly_demo_1.html' | relative_url }}" frameborder='0' scrolling='no' height="600px" width="100%"></iframe>
-</div>
-
-## Citations
-
-Citations are then used in the article body with the `<d-cite>` tag.
-The key attribute is a reference to the id provided in the bibliography.
-The key attribute can take multiple ids, separated by commas.
-
-The citation is presented inline like this: <d-cite key="gregor2015draw"></d-cite> (a number that displays more information on hover).
-If you have an appendix, a bibliography is automatically created and populated in it.
-
-Distill chose a numerical inline citation style to improve readability of citation dense articles and because many of the benefits of longer citations are obviated by displaying more information on hover.
-However, we consider it good style to mention author last names if you discuss something at length and it fits into the flow well — the authors are human and it’s nice for them to have the community associate them with their work.
-
-***
-
-## Footnotes
-
-Just wrap the text you would like to show up in a footnote in a `<d-footnote>` tag.
-The number of the footnote will be automatically generated.<d-footnote>This will become a hoverable footnote.</d-footnote>
-
-***
+[//]: # ()
+[//]: # (***)
 
 ## Code Blocks
 
@@ -485,180 +483,4 @@ Alice->>John: Hello John, how are you?
 John-->>Alice: Great!
 {% endmermaid %}
 
-***
 
-## Tweets
-
-An example of displaying a tweet:
-{% twitter https://twitter.com/rubygems/status/518821243320287232 %}
-
-An example of pulling from a timeline:
-{% twitter https://twitter.com/jekyllrb maxwidth=500 limit=3 %}
-
-For more details on using the plugin visit: [jekyll-twitter-plugin](https://github.com/rob-murray/jekyll-twitter-plugin)
-
-***
-
-## Blockquotes
-
-<blockquote>
-    We do not grow absolutely, chronologically. We grow sometimes in one dimension, and not in another, unevenly. We grow partially. We are relative. We are mature in one realm, childish in another.
-    —Anais Nin
-</blockquote>
-
-***
-
-
-## Layouts
-
-The main text column is referred to as the body.
-It is the assumed layout of any direct descendants of the `d-article` element.
-
-<div class="fake-img l-body">
-  <p>.l-body</p>
-</div>
-
-For images you want to display a little larger, try `.l-page`:
-
-<div class="fake-img l-page">
-  <p>.l-page</p>
-</div>
-
-All of these have an outset variant if you want to poke out from the body text a little bit.
-For instance:
-
-<div class="fake-img l-body-outset">
-  <p>.l-body-outset</p>
-</div>
-
-<div class="fake-img l-page-outset">
-  <p>.l-page-outset</p>
-</div>
-
-Occasionally you’ll want to use the full browser width.
-For this, use `.l-screen`.
-You can also inset the element a little from the edge of the browser by using the inset variant.
-
-<div class="fake-img l-screen">
-  <p>.l-screen</p>
-</div>
-<div class="fake-img l-screen-inset">
-  <p>.l-screen-inset</p>
-</div>
-
-The final layout is for marginalia, asides, and footnotes.
-It does not interrupt the normal flow of `.l-body`-sized text except on mobile screen sizes.
-
-<div class="fake-img l-gutter">
-  <p>.l-gutter</p>
-</div>
-
-***
-
-## Other Typography?
-
-Emphasis, aka italics, with *asterisks* (`*asterisks*`) or _underscores_ (`_underscores_`).
-
-Strong emphasis, aka bold, with **asterisks** or __underscores__.
-
-Combined emphasis with **asterisks and _underscores_**.
-
-Strikethrough uses two tildes. ~~Scratch this.~~
-
-1. First ordered list item
-2. Another item
-   ⋅⋅* Unordered sub-list.
-1. Actual numbers don't matter, just that it's a number
-   ⋅⋅1. Ordered sub-list
-4. And another item.
-
-⋅⋅⋅You can have properly indented paragraphs within list items. Notice the blank line above, and the leading spaces (at least one, but we'll use three here to also align the raw Markdown).
-
-⋅⋅⋅To have a line break without a paragraph, you will need to use two trailing spaces.⋅⋅
-⋅⋅⋅Note that this line is separate, but within the same paragraph.⋅⋅
-⋅⋅⋅(This is contrary to the typical GFM line break behavior, where trailing spaces are not required.)
-
-* Unordered lists can use asterisks
-- Or minuses
-+ Or pluses
-
-[I'm an inline-style link](https://www.google.com)
-
-[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
-
-[I'm a reference-style link][Arbitrary case-insensitive reference text]
-
-[I'm a relative reference to a repository file](../blob/master/LICENSE)
-
-[You can use numbers for reference-style link definitions][1]
-
-Or leave it empty and use the [link text itself].
-
-URLs and URLs in angle brackets will automatically get turned into links.
-http://www.example.com or <http://www.example.com> and sometimes
-example.com (but not on Github, for example).
-
-Some text to show that the reference links can follow later.
-
-[arbitrary case-insensitive reference text]: https://www.mozilla.org
-[1]: http://slashdot.org
-[link text itself]: http://www.reddit.com
-
-Here's our logo (hover to see the title text):
-
-Inline-style:
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-Reference-style:
-![alt text][logo]
-
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
-
-Inline `code` has `back-ticks around` it.
-
-```javascript
-var s = "JavaScript syntax highlighting";
-alert(s);
-```
-
-```python
-s = "Python syntax highlighting"
-print(s)
-```
-
-```
-No language indicated, so no syntax highlighting. 
-But let's throw in a <b>tag</b>.
-```
-
-Colons can be used to align columns.
-
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-There must be at least 3 dashes separating each header cell.
-The outer pipes (|) are optional, and you don't need to make the
-raw Markdown line up prettily. You can also use inline Markdown.
-
-Markdown | Less | Pretty
---- | --- | ---
-*Still* | `renders` | **nicely**
-1 | 2 | 3
-
-> Blockquotes are very handy in email to emulate reply text.
-> This line is part of the same quote.
-
-Quote break.
-
-> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.
-
-
-Here's a line for us to start with.
-
-This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
-
-This line is also a separate paragraph, but...
-This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
