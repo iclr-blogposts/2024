@@ -598,8 +598,9 @@ $$
 \end{equation*}
 $$
 
-Adversarial test examples correspond to $$\vec{x}_{test} \cdot \vec{v}_r$$ being large, where one can drastically increase
-the test squared error by moving the test example in the direction of the right singular vectors with the smallest non-zero
+Adversarial test examples are a well-known phenomenon in machine learning <d-cite key="szegedy2013intriguing"></d-cite> <d-cite key="goodfellow2014explaining"></d-cite> <d-cite key="kurakin2018adversarial"></d-cite> <d-cite key="athalye2018synthesizing"></d-cite> <d-cite key="xie2022word"></d-cite> that we can see in this equation.
+The adversarial test features correspond to $$\vec{x}_{test} \cdot \vec{v}_r$$ being large, where one can drastically increase
+the test squared error by moving the test example in the direction of the right singular vector(s) with the smallest non-zero
 singular values ([Fig 9](#fig_adversarial_train_data)).
 
 <div id="fig_test_bias_squared">
@@ -627,8 +628,10 @@ singular values ([Fig 9](#fig_adversarial_train_data)).
 </div>
 
 
+Less well-known are adversarial training data, akin to dataset poisoning <d-cite key="biggio2012poisoning"></d-cite> <d-cite key="steinhardt2017certified"></d-cite> <d-cite key="wallace2020concealed"></d-cite> <d-cite key="carlini2021contrastive"></d-cite> <d-cite key="carlini2021poisoning"></d-cite> <d-cite key="schuster2021you"></d-cite> 
+or backdoor attacks  <d-cite key="chen2017targeted"></d-cite> <d-cite key="gu2017badnets"></d-cite> <d-cite key="carlini2021contrastive"></d-cite>.
 Adversarial training examples correspond to $$\vec{u}_r \cdot E$$ being large, where one can drastically
-increase the test squared error by moving the training errors $E$ in the direction of the left singular vectors with the smallest
+increase the test squared error by moving the training errors $E$ in the direction of the left singular vector(s) with the smallest
 non-zero singular value. This gives a practical way to construct _adversarial training data_: training features and targets
 whose training loss is unchanged from unaltered training data, but causes the test loss to be 1-3 orders of magnitude 
 larger ([Fig 10](#fig_adversarial_train_data)).
@@ -667,7 +670,7 @@ For a concrete example about how our intuition can shed
 light on the behavior of nonlinear models, Henighan et al. 2023 <d-cite key="henighan2023superposition"></d-cite>
 recently discovered interesting properties of shallow nonlinear autoencoders: depending on the number of training data,
 (1) autoencoders either store data points or features, and (2) the test loss increases sharply between these two
-regimes (Fig. \ref{fig:anthropic}). Our work sheds light on the results in two ways:
+regimes ([Fig. 11](#fig_henighan)). Our work sheds light on the results in two ways:
 
 
 1. Henighan et al. 2023 write, "It’s interesting to note that we’re observing double descent in the absence of label noise." Our work clarifies that noise, in the sense of a random quantity, is _not_ necessary to produce double descent. Rather, what is necessary is _residual errors from the perspective of the model class_ ($E$, in our notation). Those errors could be entirely deterministic, such as a nonlinear model attempting to fit a noiseless linear relationship, or other model misspecifications.
