@@ -240,7 +240,7 @@ $$
 
 This equation is important, but opaque. To extract the intuition,
 replace $X$ with its singular value decomposition $X = U \Sigma V^T$. 
-Let $R \, \defeq \, \text{rank}(X)$ and let $\sigma_1 > \sigma_2 > ... > \sigma_R > 0$ be
+Let $R \, := \, \text{rank}(X)$ and let $\sigma_1 > \sigma_2 > ... > \sigma_R > 0$ be
 $X$'s (non-zero) singular values. We can decompose the underparameterized prediction error 
 along the orthogonal singular modes:
 
