@@ -686,3 +686,9 @@ regimes (Fig. \ref{fig:anthropic}). Our work sheds light on the results in two w
         Figure from Henighan et al. 2023 <d-cite key="henighan2023superposition"></d-cite>.
     </div>
 </div>
+
+## Conclusion
+
+In this work, we intuitively and quantitatively explained why the test loss misbehaves based on three interpretable
+factors, tested our understanding via ablations, connected our understanding to adversarial test examples and 
+adversarial training datasets, and added conceptual clarity of recent discoveries in nonlinear models. 
