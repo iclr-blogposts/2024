@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Double Descent Demystified
-description:  TODO
+description: Identifying, Interpreting & Ablating the Sources of a Deep Learning Puzzle
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -35,16 +35,18 @@ toc:
   - name: Introduction
   - name: Double Descent in Ordinary Linear Regression
     subsections:
-    - name: Notation and Terminology
     - name: Empirical Evidence
+    - name: Notation and Terminology
     - name: Mathematical Analysis
-    - name: Three Factors that Cause Divergence
+    - name: Factor 1 - Low Variance in Training Features
+    - name: Factor 2 - Test Features in Training Feature Subspace
+    - name: Factor 3 - Errors from Best Possible Model
     - name: Divergence at the Interpolation Threshold
+    - name: Generalization in Overparameterized Linear Regression  
   - name: Adversarial Data
     subsections:
     - name: Adversarial Test Examples
     - name: Adversarial Training Data
-  - name: Generalization in Overparameterized Linear Regression
   - name: Intuition for Nonlinear Models
 
 # Below is an example of injecting additional post-specific styles.
@@ -67,25 +69,28 @@ _styles: >
   }
 ---
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/unablated.png" class="img-fluid rounded z-depth-1" %}
+<div id="fig_unablated_all">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/unablated.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/unablated.png" class="img-fluid rounded z-depth-1" %}
+        </div>
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/unablated.png" class="img-fluid rounded z-depth-1" %}
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/unablated.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/unablated.png" class="img-fluid rounded z-depth-1" %}
+        </div>
     </div>
-</div>
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/unablated.png" class="img-fluid rounded z-depth-1" %}
+    <div class="caption">
+       Figure 1. <b>Double descent in ordinary linear regression.</b> 
+       Three real datasets (California Housing, Diabetes, and WHO Life Expectancy) and one synthetic dataset (Student-Teacher) all exhibit double descent, 
+        with test loss spiking at the interpolation threshold.
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/unablated.png" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Double descent in ordinary linear regression. 
-   Three real datasets (California Housing, Diabetes, and WHO Life Expectancy) and one synthetic dataset (Student-Teacher) all exhibit double descent, with test loss spike at the interpolation threshold.
 </div>
 
 
@@ -93,29 +98,15 @@ _styles: >
 
 Machine learning models, while incredibly powerful, can sometimes act unpredictably. One of the most intriguing
 behaviors is when the test loss suddenly diverges at the interpolation threshold, a phenomenon is
-distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite> <d-cite key="krogh1991simple"></d-cite> <d-cite key="geman1992neural"></d-cite> <d-cite key="krogh1992generalization"></d-cite> <d-cite key="opper1995statistical"></d-cite> <d-cite key="duin2000classifiers"></d-cite> <d-cite key="spigler2018jamming"></d-cite> <d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite> <d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite> <d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite> <d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite> <d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite> <d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite> <d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite>.
+distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite><d-cite key="krogh1991simple"></d-cite><d-cite key="geman1992neural"></d-cite><d-cite key="krogh1992generalization"></d-cite><d-cite key="opper1995statistical"></d-cite><d-cite key="duin2000classifiers"></d-cite><d-cite key="spigler2018jamming"></d-cite><d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite><d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite><d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite><d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite><d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite><d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite><d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite>.
 While significant theoretical work has been done to comprehend why double descent occurs, it can be difficult
 for a newcomer to gain a general understanding of why the test loss behaves in this manner, and under what conditions
 one should expect similar misbehavior.
 
 
-[//]: # (Many analytically-solvable models rely on a plethora of assumptions &#40;e.g., i.i.d additive)
 
-[//]: # (Gaussian noise, sub-Gaussian covariates, $&#40;8+m&#41;$-moments&#41; and use advanced proof techniques from random matrix)
-
-[//]: # (theory, statistical mechanics, and kernel methods. This complexity muddies the waters, making it challenging)
-
-[//]: # (to pinpoint the general conditions leading to test error misbehavior. For instance, a recent study on)
-
-[//]: # (toy nonlinear autoencoders by Anthropic unveiled a divergence even in the absence of noise)
-
-[//]: # (<d-cite key="henighan2023superposition">, an assumption that many previous papers relied upon.)
-
-[//]: # (This unexpected outcome prompts the question: with all this theory, should we have expected the result?)
-
-[//]: # ()
 In this work, we intuitively and quantitatively explain why the test loss diverges at the interpolation threshold,
-without assumptions and with as simple mathematical machinery as possible but also without sacrificing rigor.
+with as much generality as possible and with as simple of mathematical machinery as possible, but also without sacrificing rigor.
 To accomplish this, we focus on the simplest supervised model - ordinary linear regression - using the most
 basic linear algebra primitive: the singular value decomposition. We identify three distinct interpretable
 factors which, when collectively present, trigger the divergence. 
@@ -127,6 +118,17 @@ models concerning superposition.
 
 
 ## Double Descent in Ordinary Linear Regression
+
+### Empirical Evidence of Double Descent in Ordinary Linear Regression
+
+
+
+Before studying ordinary linear regression mathematically, does our claim that it exhibits double descent
+hold empirically? We show that it indeed does, using one synthetic and three real datasets:
+World Health Organization Life Expectancy <d-cite key="gochiashvili_2023_who"></d-cite>, California Housing <d-cite key="pace1997sparse"></d-cite>, Diabetes <d-cite key="efron2004least"></d-cite>;
+these three real datasets were selected on the basis of being easily accessible through sklearn <d-cite key="scikit-learn"></d-cite> or Kaggle.
+As shown in [Fig 1](#fig_unablated_all), all display a spike in test mean squared error at the interpolation threshold. Our simple Python code is [publicly available]().
+
 
 
 ### Notation and Terminology
@@ -141,9 +143,9 @@ In ordinary linear regression, we want to learn parameters $\hat{\vec{\beta}} \i
 $$\vec{x}_n \cdot \hat{\vec{\beta}} \approx y_n.$$
 
 We will study three key parameters: 
-1. Number of model parameters $P$
-2. Number of training data $N$
-3. Dimensionality of the data $D$
+1. The number of model parameters $P$
+2. The number of training data $N$
+3. The dimensionality of the data $D$
 
 We say that a model is _overparameterized_ if $N < P$ and _underparameterized_ if $N > P$.
 The _interpolation threshold_ refers to $N=P$, because when $N\leq P$, the model can perfectly interpolate the training points.
@@ -151,15 +153,6 @@ Recall that in ordinary linear regression, the number of parameters $P$ equals t
 Consequently, rather than thinking about changing the number of parameters $P$, we'll instead think about changing 
 the number of data points $N$.
 
-### Empirical Evidence of Double Descent in Ordinary Linear Regression
-
-
-
-Before studying ordinary linear regression mathematically, does our claim that it exhibits double descent 
-hold empirically? We show that it indeed does, using one synthetic and three real datasets: 
-World Health Organization Life Expectancy <d-cite key="gochiashvili_2023_who"></d-cite>, California Housing <d-cite key="pace1997sparse"></d-cite>, Diabetes <d-cite key="efron2004least"></d-cite>;
-these three real datasets were selected on the basis of being easily accessible through sklearn <d-cite key="scikit-learn"></d-cite> or Kaggle. All display a spike in test mean squared error at the 
-interpolation threshold (Fig. \ref{fig:unablated}). Our code will be publicly available.
 
 ### Mathematical Analysis of Ordinary Linear Regression
 
@@ -190,7 +183,7 @@ $$
 \end{align*}
 $$
 
-We choose this optimization problem because it is the one gradient descent implicitly minimizes (App. \ref{app:why_sgd_regularizes}).
+We choose this optimization problem because it is the one gradient descent implicitly minimizes.
 The solution to this optimization problem uses the Gram matrix $X X^T \in \mathbb{R}^{N \times N}$:
 
 $$\hat{\vec{\beta}}_{over} = X^T (X X^T)^{-1} Y.$$
@@ -210,7 +203,9 @@ $$\hat{y}_{test, over} = \vec{x}_{test} \cdot \hat{\vec{\beta}}_{over} = \vec{x}
 
 
 Hidden in the above equations is an interaction between three quantities that can, when all grow extreme, create a 
-divergence in the test loss! To reveal the three quantities, we'll rewrite the regression targets by introducing
+divergence in the test loss!
+
+To reveal the three quantities, we'll rewrite the regression targets by introducing
 a slightly more detailed notation. Unknown to us, there are some ideal linear parameters
 $\vec{\beta}^* \in \mathbb{R}^P = \mathbb{R}^D$ that truly minimize the test mean squared error. 
 We can write any regression target as the inner product of the data $\vec{x}_n$ and the ideal parameters $\vec{\beta}^*$,
@@ -260,26 +255,30 @@ This equation will be critical! The same term will appear in the overparameteriz
 
 $$
 \begin{align*}
-% \hat{y}_{test,over} &= \vec{x}_{test} \cdot X^T (X X^T)^{-1}  Y\\
-% &= \vec{x}_{test} \cdot X^T (X X^T)^{-1} (X \beta^* + E)\\
-% &= \vec{x}_{test} \cdot X^T (X X^T)^{-1} X \beta^* + \vec{x}_{test} \cdot X^T (X X^T)^{-1} E\\
-% \hat{y}_{test,over} - \underbrace{\vec{x}_{test} \cdot \beta^*}_{\defeq y_{test}^*} &= \vec{x}_{test} \cdot X^T (X X^T)^{-1} X \beta^*  - \vec{x}_{test} \cdot I_{D} \beta^* + \vec{x}_{test} \cdot (X^T X)^{-1} X^T E\\
-\hat{y}_{test,over} - y_{test}^* &= \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^*  + \vec{x}_{test} \cdot (X^T X)^{-1} X^T E.
+\hat{y}_{test,over} &= \vec{x}_{test} \cdot \hat{\vec{\beta}}_{over}\\
+&= \vec{x}_{test} \cdot X^T (X X^T)^{-1}  Y\\
+&= \vec{x}_{test} \cdot X^T (X X^T)^{-1} (X \beta^* + E)\\
+\hat{y}_{test,over} - y_{test}^* &= \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^* \\
+&\quad\quad  + \quad \vec{x}_{test} \cdot (X^T X)^{-1} X^T E\\
+ &= \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^* \\
+&\quad\quad  + \quad  \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E),
 \end{align*}
 $$
 
-If we again replace $X$ with its SVD $U S V^T$, we can again simplify $\vec{x}_{test} \cdot (X^T X)^{-1} X^T E$. This yields our final equations for the prediction errors.
+where the last step again replaced $X$ with its SVD $X = U S V^T$. Thus, the prediction errors
+in the overparameterized and underparameterized regimes will be:
 
 $$
 \begin{align*}
-\hat{y}_{test,over} - y_{test}^* &= \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E) + \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^*\\
+\hat{y}_{test,over} - y_{test}^* &= \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E)\\
+&\quad \quad + \quad \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^*\\
 % \label{eq:overparameterized_error}\\
 \hat{y}_{test,under} - y_{test}^* &= \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E).
 % \label{eq:underparameterized_error}
 \end{align*}
 $$
 
-The shared term between the two predictions causes the divergence:
+The shared term in the two prediction errors causes the divergence:
 
 $$
 \begin{equation}
@@ -288,33 +287,221 @@ $$
 \end{equation}
 $$
 
-\textit{Eqn. \ref{eq:variance} is critical}. It reveals that our test prediction error (and thus, our test squared error!) will depend on an interaction between 3 quantities:
+Eqn. \ref{eq:variance} is critical. It reveals that our test prediction error (and thus, our
+test squared error!) will depend on an interaction between 3 quantities:
 
-1. How much the training features vary in each direction (Fig. \ref{fig:no_small_singular_values}).
-More formally, the inverse (non-zero) singular values of the \textit{training features} $X$:
+1. How much the training features vary in each direction.
+More formally, the inverse (non-zero) singular values of the _training features_ $X$:
 
    $$\frac{1}{\sigma_r}$$
 
-2. How much, and in which directions, the test features vary relative to the training features (Fig. \ref{fig:test_feat_in_train_feat_subspace}).
+2. How much, and in which directions, the test features vary relative to the training features.
 More formally: how $\vec{x}_{test}$ projects onto $X$'s right singular vectors $V$:
 
     $$\vec{x}_{test} \cdot \vec{v}_r$$
     
-3. How well the best possible model in the model class can correlate the variance in the training features with the training regression targets (Fig. \ref{fig:no_residuals_in_ideal}). 
+3. How well the best possible model in the model class can correlate the variance in the training features with the training regression targets. 
 More formally: how the residuals $E$ of the best possible model in the model class (i.e. insurmountable "errors" from the "perspective" of the model class) project onto $X$'s left singular vectors $U$:
     
     $$\vec{u}_r \cdot E$$
 
 
-<blockquote>
 When (1) and (3) co-occur, the model's parameters along this singular mode are likely incorrect. 
 When (2) is added to the mix by a test datum $\vec{x}_{test}$ with a large projection along this mode, 
 the model is forced to extrapolate significantly beyond what it saw in the training data, in a direction where
 the training data had an error-prone relationship between its predictions and the training targets, using
 parameters that are likely wrong. As a consequence, the test squared error explodes!
-</blockquote>
 
-For completeness, recall the overparameterized prediction error $\hat{y}_{test,over} y_{test}^*$ has another term:
+### Factor 1 - Low Variance in Training Features
+
+
+<div id="fig_factor_1_small_singular_values">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/no_small_singular_values.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/no_small_singular_values.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/no_small_singular_values.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/no_small_singular_values.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 2. <b>Required Factor #1: How much training features vary in each direction.</b> 
+        The test loss diverges at the interpolation threshold only if training features $X$ contain small (non-zero)
+        singular values. Ablation: By removing all singular values below a cutoff, the divergence at the interpolation threshold is diminished or disappears entirely.
+        <span style="color:blue;">Blue is training error.</span> <span style="color:orangered;">Orange is test error.</span>
+    </div>
+</div>
+
+The test loss will not diverge if any of the three required factors are absent. What could cause that?
+One way is if small-but-nonzero singular values do not appear in the training data features. One way to
+accomplish this is by setting all singular values below a selected threshold to exactly 0. To test our understanding, 
+we independently ablate all small singular values in the training features. Sepcifically, as we run the
+ordinary linear regression fitting process, and as we sweep the number of training data, we also sweep different
+singular value cutoffs and remove all singular values of the training features $X$ below the cutoff ([Fig 2](#fig_factor_1_small_singular_values)).
+
+### Factor 2 - Test Features in Training Feature Subspace
+
+
+<div id="fig_test_feat_in_train_feat_subspace">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/test_feat_in_train_feat_subspace.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/test_feat_in_train_feat_subspace.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/test_feat_in_train_feat_subspace.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/test_feat_in_train_feat_subspace.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 3. <b>Required Factor #2: How much, and in which directions, test features vary relative to training features.</b>
+        The test loss diverges only if the test features $\vec{x}_{test}$ have a large projection onto the training 
+        features $X$'s right singular vectors $V$. Ablation: By projecting the test features into the subspace of the
+        leading singular modes, the divergence at the interpolation threshold is diminished or disappears entirely.
+        <span style="color:blue;">Blue is training error.</span> <span style="color:orangered;">Orange is test error.</span>
+    </div>
+</div>
+
+Double descent should not occur if the test datum does not vary in different directions than the training features. 
+Specifically, if the test datum lies entirely in the subspace of just a few of the leading singular directions, then the divergence is unlikely to occur.
+To test our understanding, we force the test data features to lie in the training features subspace: as we run the
+ordinary linear regression fitting process, and as we sweep the number of training data, we project the test features
+$\vec{x}_{test}$ onto the subspace spanned by the training features $X$ singular modes ([Fig 3](#fig_test_feat_in_train_feat_subspace)).
+
+
+### Factor 3 - Errors from Best Possible Model
+
+
+<div id="fig_no_residuals_in_ideal">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/no_residuals_in_ideal.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/no_residuals_in_ideal.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/no_residuals_in_ideal.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/no_residuals_in_ideal.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 4. <b>Required Factor #3: How well the best possible model in the model class can correlate variance in training 
+        features with training targets.</b> The test loss diverges only if the residuals $E$ from the best possible model
+        in the model class on the training data have a large projection onto the training features $X$'s left singular
+        vectors $U$. Ablation: By ensuring the true relationship between features and targets is within the model class
+        i.e. linear, the divergence at the interpolation threshold disappears. 
+        <span style="color:blue;">Blue is training error.</span> <span style="color:orangered;">Orange is test error.</span>
+    </div>
+</div>
+
+Double descent should not occur if the best possible model in the model class makes no errors on the training data.
+For example, if we use a linear model class on data where the true relationship is a noiseless linear relationship, 
+then at the interpolation threshold, we will have $D=P$ data, $P=D$ parameters, our line of best fit will exactly match 
+the true relationship, and no divergence will occur. To test our understanding, we ensure no residual errors exist in 
+the best possible model: we first use the entire dataset to fit a linear model, then replace all target values
+with the predictions made by the ideal linear model. We then rerun our typical fitting process using these
+new labels, sweeping the number of training data ([Fig 4](#fig_no_residuals_in_ideal)).
+
+### Divergence at the Interpolation Threshold
+
+<div id="fig_least_informative_singular_value">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/least_informative_singular_value.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/least_informative_singular_value.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/least_informative_singular_value.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/least_informative_singular_value.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 5. <b>The training features are most likely to obtain their smallest non-zero singular value when approaching the interpolation threshold.</b>
+    </div>
+</div>
+
+Why does this divergence happen near the interpolation threshold? The answer is that the first factor
+(small non-zero singular values in the training features $X$) is likely to occur at the interpolation
+threshold ([Fig 5](#fig_least_informative_singular_value)), but why?
+
+Suppose we're given a single
+training datum $$\vec{x}_1$$. So long as this datum isn't exactly zero, that datum varies in a single
+direction, meaning we gain information about the variance in that direction, but the variance in all
+orthogonal directions is exactly 0. With the second training datum $$\vec{x}_2$$, so long as this datum
+isn't exactly zero, that datum varies, but now, some fraction of $$\vec{x}_2$$ might have a positive
+projection along $$\vec{x}_1$$; if this happens (and it likely will, since the two vectors are unlikely
+to be exactly orthogonal), the shared direction gives us _more_ information about the variance
+in this shared direction, but _less_ information about the second orthogonal direction of variation.
+Ergo, the training data's smallest non-zero singular value after 2 samples is probabilistically smaller than
+after 1 sample. As we approach the interpolation threshold, the probability that each additional datum
+has large variance in a new direction orthogonal to all previous directions grows unlikely
+([Fig 5](#fig_geometric_smallest_nonzero_singular_value)), but as we move beyond the interpolation threshold, the variance
+in each covariate dimension becomes increasingly clear.
+
+<div id="fig_geometric_smallest_nonzero_singular_value">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/smallest_nonzero_singular_value/data_distribution.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/smallest_nonzero_singular_value/data_distribution_num_data=1.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/smallest_nonzero_singular_value/data_distribution_num_data=2.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/smallest_nonzero_singular_value/data_distribution_num_data=3.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/smallest_nonzero_singular_value/data_distribution_num_data=8.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/smallest_nonzero_singular_value/data_distribution_num_data=100.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 6. <b>Geometric intuition for why the smallest non-zero singular value reaches its lowest value near the interpolation threshold.</b>
+        If $1$ datum is observed, variance exists in only 1 direction. If $2$ data are observed, a second axis of 
+        variation appears, but because the two data are likely to share some component, the second axis is likely to have
+        less variance than the first. At the interpolation threshold (here, $D=P=N=3$), because the three data are 
+        likely to share components along the first two axes, the third axis is likely to have even less variance. 
+        Beyond the interpolation threshold, additional data contribute additional variance to these three axes.
+    </div>
+</div>
+
+
+### Generalization in Overparameterized Linear Regression
+
+You might be wondering why three of the datasets have low test squared error in the overparameterized regime (California 
+Housing, Diabetes, Student-Teacher) but one (WHO Life Expectancy) does not. Recall that the overparameterized regime's prediction
+error has another term $$\hat{y}_{test,over} - y_{test}^*$$ not present in the underparameterized regime:
 
 $$
 \begin{equation}
@@ -328,159 +515,174 @@ $\vec{x}$ with fluctuations in the targets $y$. In the overparameterized regime,
 than data; consequently, for $N$ data points in $D=P$ dimensions, the model can "see" fluctuations in at 
 most $N$ dimensions, but has no ``visibility" into the remaining $P-N$ dimensions. This causes information
 about the optimal linear relationship $\vec{\beta}^*$ to be lost, thereby increasing the overparameterized 
-prediction error $\hat{y}_{test, over} - y_{test}^*$.
+prediction error.
 
-### Divergence at the Interpolation Threshold
-
-Why does this divergence happen near the interpolation threshold? The answer is that the first factor
-(small non-zero singular values in the training features $X$) is likely to occur at the interpolation
-threshold (Fig. \ref{fig:least_informative_singular_value}), but why? Suppose we're given a single
-training datum $\vec{x}_1$. So long as this datum isn't exactly zero, that datum varies in a single
-direction, meaning we gain information about the variance in that direction, but the variance in all 
-orthogonal directions is exactly 0. With the second training datum $\vec{x}_2$, so long as this datum
-isn't exactly zero, that datum varies, but now, some fraction of $\vec{x}_2$ might have a positive 
-projection along $\vec{x}_1$; if this happens (and it likely will, since the two vectors are unlikely
-to be exactly orthogonal), the shared direction gives us \textit{more} information about the variance
-in this shared direction, but \textit{less} information about the second orthogonal direction of variation.
-Ergo, the training data's smallest non-zero singular value after 2 samples is probabilistically smaller than
-after 1 sample. As we approach the interpolation threshold, the probability that each additional datum 
-has large variance in a new direction orthogonal to all previous directions grows unlikely
-(Fig. \ref{fig:geometric_viewpoint}), but as we move beyond the interpolation threshold, the variance
-in each covariate dimension becomes increasingly clear.
-
-
-## Images and Figures
-
-Its generally a better idea to avoid linking to images hosted elsewhere - links can break and you
-might face losing important information in your blog post.
-To include images in your submission in this way, you must do something like the following:
-
-```markdown
-{% raw %}{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}{% endraw %}
-```
-
-which results in the following image:
-
-{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}
-
-To ensure that there are no namespace conflicts, you must save your asset to your unique directory
-`/assets/img/2024-05-07-[SUBMISSION NAME]` within your submission.
-
-Please avoid using the direct markdown method of embedding images; they may not be properly resized.
-Some more complex ways to load images (note the different styles of the shapes/shadows):
-
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/9.jpg" class="img-fluid rounded z-depth-1" %}
+<div id="fig_overparameterized_generalization">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/overparameterized_generalization.jpg" class="img-fluid rounded z-depth-1"%}
+        </div>
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all.
-</div>
-
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/8.jpg" class="img-fluid z-depth-2" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/10.jpg" class="img-fluid z-depth-2" %}
+    <div class="caption">
+        Figure 7. <b>Geometry of Generalization in Overparameterized Ordinary Linear Regression.</b>
+        The rowspace of the training features $X$ forms a subspace (here, $\mathbb{R}^1$) of the ambient space
+        (here, $\mathbb{R}^2$). For test datum $\vec{x}_{test}$, the linear model forms an internal representation
+        of the test datum $\hat{\vec{x}}_{test}$ by orthogonally projecting the test datum onto the rowspace via
+        projection matrix $X^T (X X^T)^{-1} X$. The generalization error will then increase commensurate with the
+        inner product between $\hat{\vec{x}}_{test} - \vec{x}_{test}$ and the best possible parameters for the 
+        function class $\vec{\beta}^*$. Three different possible $\vec{\beta}^*$ are shown with
+        <span style="color:blue;">low (blue)</span>, <span style="color:green;">medium (green)</span>
+         and <span style="color:red;">high (red)</span> generalization errors.
     </div>
 </div>
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/11.jpg" class="img-fluid"  %}
+We previously saw that away from the interpolation threshold, the variance is unlikely to affect the
+discrepancy between the overparameterized model's predictions and the ideal model's predictions, 
+meaning most of the discrepancy must therefore emerge from the bias (Eqn. \ref{eq:bias}). 
+This bias term yields an intuitive geometric picture ([Fig 7](#fig_overparameterized_generalization)) that 
+also reveals a surprising fact: _overparameterized linear regression does representation learning!_ 
+Specifically, for test datum $$\vec{x}_{test}$$, a linear model creates a representation of the test datum
+$$\hat{\vec{x}}_{test}$$ by orthogonally projecting the test datum onto the row space of the training
+covariates $$X$$ via the projection matrix $$X^T (X X^T)^{-1} X$$:
+
+$$
+\begin{equation*}
+\hat{\vec{x}}_{test} := X^T (X X^T)^{-1} X \; \vec{x}_{test}.
+\end{equation*}
+$$
+
+Seen this way, the bias can be rewritten as the inner product between (1) the difference between its representation of the test datum and the test datum and (2) the ideal linear model's fit parameters:
+
+$$
+\begin{equation}\label{eq:overparam_gen_bias}
+(\hat{\vec{x}}_{test} - \vec{x}_{test}) \cdot \vec{\beta}^*.
+\end{equation}
+$$
+
+<div id="fig_test_bias_squared">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/california_housing/test_bias_squared.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/diabetes/test_bias_squared.png" class="img-fluid rounded z-depth-1" %}
+        </div>
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/12.jpg" class="img-fluid" %}
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/student_teacher/test_bias_squared.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_ablations/who_life_expectancy/test_bias_squared.png" class="img-fluid rounded z-depth-1" %}
+        </div>
     </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid" %}
+    <div class="caption">
+        Figure 8. <b>Test Error of Overparameterized Models.</b> Large inner product between the ideal model's parameters and
+        the difference between the fit model's internal representations of the test data and the test data creates
+        large test squared error for overparameterized models.
     </div>
 </div>
 
 
-[//]: # (## Footnotes)
+Intuitively, an overparameterized model will generalize well if the model's representations capture the essential
+information necessary for the best model in the model class to perform well ([Fig. 8](#fig_test_bias_squared)).
 
-[//]: # ()
-[//]: # (Just wrap the text you would like to show up in a footnote in a `<d-footnote>` tag.)
+## Adversarial Test Data and Adversarial Training Data
 
-[//]: # (The number of the footnote will be automatically generated.<d-footnote>This will become a hoverable footnote.</d-footnote>)
+Our key equation (Eqn. \ref{eq:variance}) also reveals _why_ adversarial test data and adversarial training data exist
+and _how_ mechanistically they function. For convenience, we repeat the equation:
 
-[//]: # ()
-[//]: # (***)
+$$
+\begin{equation*}
+\sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E).
+\end{equation*}
+$$
 
-## Code Blocks
+Adversarial test examples correspond to $$\vec{x}_{test} \cdot \vec{v}_r$$ being large, where one can drastically increase
+the test squared error by moving the test example in the direction of the right singular vectors with the smallest non-zero
+singular values ([Fig 9](#fig_adversarial_train_data)).
 
-This theme implements a built-in Jekyll feature, the use of Rouge, for syntax highlighting.
-It supports more than 100 languages.
-This example is in C++.
-All you have to do is wrap your code in a liquid tag:
-
-{% raw  %}
-{% highlight c++ linenos %}  <br/> code code code <br/> {% endhighlight %}
-{% endraw %}
-
-The keyword `linenos` triggers display of line numbers. You can try toggling it on or off yourself below:
-
-{% highlight c++ %}
-
-int main(int argc, char const \*argv[])
-{
-string myString;
-
-    cout << "input a string: ";
-    getline(cin, myString);
-    int length = myString.length();
-
-    char charArray = new char * [length];
-
-    charArray = myString;
-    for(int i = 0; i < length; ++i){
-        cout << charArray[i] << " ";
-    }
-
-    return 0;
-}
-
-{% endhighlight %}
-
-***
-
-## Diagrams
-
-This theme supports generating various diagrams from a text description using [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} plugin.
-Below, we generate a few examples of such diagrams using languages such as [mermaid](https://mermaid-js.github.io/mermaid/){:target="\_blank"}, [plantuml](https://plantuml.com/){:target="\_blank"}, [vega-lite](https://vega.github.io/vega-lite/){:target="\_blank"}, etc.
-
-**Note:** different diagram-generation packages require external dependencies to be installed on your machine.
-Also, be mindful of that because of diagram generation the first time you build your Jekyll website after adding new diagrams will be SLOW.
-For any other details, please refer to [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} README.
-
-**Note:** This is not supported for local rendering!
-
-The diagram below was generated by the following code:
-
-{% raw %}
-```
-{% mermaid %}
-sequenceDiagram
-    participant John
-    participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-{% endmermaid %}
-```
-{% endraw %}
-
-{% mermaid %}
-sequenceDiagram
-participant John
-participant Alice
-Alice->>John: Hello John, how are you?
-John-->>Alice: Great!
-{% endmermaid %}
+<div id="fig_test_bias_squared">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/california_housing/adversarial_test_datum.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/diabetes/adversarial_test_datum.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/student_teacher/adversarial_test_datum.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/who_life_expectancy/adversarial_test_datum.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 9. <b>Adversarial Test Examples in Linear Regression.</b> Adversarial examples arise by pushing 
+        $\vec{x}_{test}$ far along the trailing singular modes in the training features $X$.
+        <span style="color:blue;">Blue is training error.</span> <span style="color:orangered;">Orange is test error.</span>
+    </div>
+</div>
 
 
+Adversarial training examples correspond to $$\vec{u}_r \cdot E$$ being large, where one can drastically
+increase the test squared error by moving the training errors $E$ in the direction of the left singular vectors with the smallest
+non-zero singular value. This gives a practical way to construct _adversarial training data_: training features and targets
+whose training loss is unchanged from unaltered training data, but causes the test loss to be 1-3 orders of magnitude 
+larger ([Fig 10](#fig_adversarial_train_data)).
+
+<div id="fig_adversarial_train_data">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/california_housing/adversarial_train_data.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/diabetes/adversarial_train_data.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/student_teacher/adversarial_train_data.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/real_data_adversarial/who_life_expectancy/adversarial_train_data.png" class="img-fluid rounded z-depth-1" %}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 10. <b>Adversarial Training Dataset in Linear Regression.</b> By manipulating the residual errors $E$ 
+        that the best possible model in the model class achieves on the training data, we construct training datasets
+        that increase the test error of the learned model by 1-3 orders of magnitude without affecting its training
+        error. <span style="color:blue;">Blue is training error.</span> <span style="color:orangered;">Orange is test error.</span> 
+    </div>
+</div>
+
+## Intuition for Nonlinear Models
+
+
+Although we mathematically studied ordinary linear regression, the intuition for why the test loss diverges extends
+to nonlinear models, such as polynomial regression and including certain classes of deep neural networks <d-cite key="jacot2018neural"></d-cite> <d-cite key="lee2017deep"></d-cite> <d-cite key="bordelon2020spectrum"></d-cite>. 
+For a concrete example about how our intuition can shed
+light on the behavior of nonlinear models, Henighan et al. 2023 <d-cite key="henighan2023superposition"></d-cite>
+recently discovered interesting properties of shallow nonlinear autoencoders: depending on the number of training data,
+(1) autoencoders either store data points or features, and (2) the test loss increases sharply between these two
+regimes (Fig. \ref{fig:anthropic}). Our work sheds light on the results in two ways:
+
+
+1. Henighan et al. 2023 write, "It’s interesting to note that we’re observing double descent in the absence of label noise." Our work clarifies that noise, in the sense of a random quantity, is _not_ necessary to produce double descent. Rather, what is necessary is _residual errors from the perspective of the model class_ ($E$, in our notation). Those errors could be entirely deterministic, such as a nonlinear model attempting to fit a noiseless linear relationship, or other model misspecifications.
+
+2. Henighan et al. 2023 write, "[Our work] suggests a naive mechanistic theory of overfitting and memorization: memorization and overfitting occur when models operate on 'data point features' instead of 'generalizing features'." Our work hopefully clarifies that this dichotomy is incorrect: when overparameterized, data point features are akin to the Gram matrix $X X^T$ and when underparameterized, generalizing features are akin to the second moment matrix $X^T X$. Our work hopefully clarifies that data point features can and very often do generalize, and that there is a deep connection between the two, i.e., their shared spectra.
+
+
+<div id="fig_henighan">
+    <div class="row mt-3">
+        <div class="col-sm mt-3 mt-md-0">
+            {% include figure.html path="assets/img/2024-05-07-double-descent-demystified/henighan2023superposition.png" class="img-fluid rounded z-depth-1"%}
+        </div>
+    </div>
+    <div class="caption">
+        Figure 11. <b>Superposition, Memorization and Double Descent in Nonlinear Shallow Autoencoders.</b>
+        Figure from Henighan et al. 2023 <d-cite key="henighan2023superposition"></d-cite>.
+    </div>
+</div>
