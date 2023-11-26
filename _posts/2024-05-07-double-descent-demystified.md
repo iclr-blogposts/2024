@@ -670,13 +670,7 @@ For a concrete example about how our intuition can shed
 light on the behavior of nonlinear models, Henighan et al. 2023 <d-cite key="henighan2023superposition"></d-cite>
 recently discovered interesting properties of shallow nonlinear autoencoders: depending on the number of training data,
 (1) autoencoders either store data points or features, and (2) the test loss increases sharply between these two
-regimes ([Fig. 11](#fig_henighan)). Our work sheds light on the results in two ways:
-
-
-1. Henighan et al. 2023 write, "It’s interesting to note that we’re observing double descent in the absence of label noise." Our work clarifies that noise, in the sense of a random quantity, is _not_ necessary to produce double descent. Rather, what is necessary is _residual errors from the perspective of the model class_ ($E$, in our notation). Those errors could be entirely deterministic, such as a nonlinear model attempting to fit a noiseless linear relationship, or other model misspecifications.
-
-2. Henighan et al. 2023 write, "[Our work] suggests a naive mechanistic theory of overfitting and memorization: memorization and overfitting occur when models operate on 'data point features' instead of 'generalizing features'." Our work hopefully clarifies that this dichotomy is incorrect: when overparameterized, data point features are akin to the Gram matrix $X X^T$ and when underparameterized, generalizing features are akin to the second moment matrix $X^T X$. Our work hopefully clarifies that data point features can and very often do generalize, and that there is a deep connection between the two, i.e., their shared spectra.
-
+regimes ([Fig. 11](#fig_henighan)). 
 
 <div id="fig_henighan">
     <div class="row mt-3">
@@ -689,6 +683,14 @@ regimes ([Fig. 11](#fig_henighan)). Our work sheds light on the results in two w
         Figure from Henighan et al. 2023 <d-cite key="henighan2023superposition"></d-cite>.
     </div>
 </div>
+
+Our work sheds light on the results in two ways:
+
+
+1. Henighan et al. 2023 write, "It’s interesting to note that we’re observing double descent in the absence of label noise." Our work clarifies that noise, in the sense of a random quantity, is _not_ necessary to produce double descent. Rather, what is necessary is _residual errors from the perspective of the model class_ ($E$, in our notation). Those errors could be entirely deterministic, such as a nonlinear model attempting to fit a noiseless linear relationship, or other model misspecifications.
+
+2. Henighan et al. 2023 write, "[Our work] suggests a naive mechanistic theory of overfitting and memorization: memorization and overfitting occur when models operate on 'data point features' instead of 'generalizing features'." Our work hopefully clarifies that this dichotomy is incorrect: when overparameterized, data point features are akin to the Gram matrix $X X^T$ and when underparameterized, generalizing features are akin to the second moment matrix $X^T X$. Our work hopefully clarifies that data point features can and very often do generalize, and that there is a deep connection between the two, i.e., their shared spectra.
+
 
 ## Conclusion
 
