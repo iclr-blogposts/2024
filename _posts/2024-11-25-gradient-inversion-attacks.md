@@ -14,7 +14,7 @@ htmlwidgets: true
 
 authors:
   - name: Albert Einstein
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
+    url: ""
     affiliations:
       name: IAS, Princeton
   - name: Boris Podolsky
