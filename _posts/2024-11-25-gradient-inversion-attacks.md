@@ -39,7 +39,7 @@ toc:
     subsections:
     - name: Gradient matching functions
     - name: Label recovery
-  - name: Citations
+  - name: what really matters？
   - name: Footnotes
   - name: Code Blocks
   - name: Diagrams
@@ -68,28 +68,14 @@ _styles: >
 ---
 
 ## Basic workflow of gradient inversion attacks (GIAs)
-Gradient inversion attacks (GIAs) aim at reconstructing clients' private input data from the gradients in deep neural network training phases. It is a threat to federated learning framework, especially the horizontal one where a curious-but-honest central server collects gradients from multiple clients, analyzing the optimal parameter updating direction, and send back the updated model in one step. Getting rid of complicated mathematical formulas, GIA is actually a matching process: the attacker (which is the central server in the most common settings) expects that the data they randomly initialized could finally generate the identical gradients as the ground-truth, therefore they measure the difference (or distance) to optimize input data pixel-wisely. The smaller the distence between gradients, the better the private data are reconstructed.    
+Gradient inversion attacks (GIAs) aim at reconstructing clients' private input data from the gradients in deep neural network training phases. It is a threat to federated learning framework, especially the horizontal one where a curious-but-honest central server collects gradients from multiple clients, analyzing the optimal parameter updating direction, and send back the updated model in one step. Getting rid of complicated mathematical formulas, GIA is actually a matching process: the attacker (which is the central server in the most common settings) expects that the data they randomly initialized could finally generate the identical gradients as the ground-truth, therefore they measure the difference (or distance) to optimize input data pixel-wisely. The smaller the distence between gradients, the better the private data are reconstructed.
 
 This is actually a white-box attack, for its requirement of full model parameters for back propagation. In such process, with fixed model parameters, the distance between gradients is a function of the attacker's data.  
-## Images and Figures
+## Advances
+### Gradient matching functions
+As stated in the previous setcion, GIA utilizes the gradient matching distence to supervize the optimization of pseudo input data of the attacker. Previous researchers tried different functions to represent the distance, such as pixel-wise loss $$l_2$$ or Cosine Similarity as the mainstream. Gaussian kernel loss is also considered as a choice. 
 
-Its generally a better idea to avoid linking to images hosted elsewhere - links can break and you
-might face losing important information in your blog post.
-To include images in your submission in this way, you must do something like the following:
-
-```markdown
-{% raw %}{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}{% endraw %}
-```
-
-which results in the following image:
-
-{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}
-
-To ensure that there are no namespace conflicts, you must save your asset to your unique directory
-`/assets/img/2024-05-07-[SUBMISSION NAME]` within your submission.
-
-Please avoid using the direct markdown method of embedding images; they may not be properly resized.
-Some more complex ways to load images (note the different styles of the shapes/shadows):
+Aside from distence matching, regularization term is also a research point. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
