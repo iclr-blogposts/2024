@@ -1,10 +1,10 @@
 ---
 layout: distill
-title: Sample Blog Post
-description: Your blog post's abstract.
+title: What really matters in gradient inversion attack?
+description: Your log post's abstract.
   Please add your abstract or summary here and not in the main body of your text. 
   Do not include math/latex or hyperlinks.
-date: 2024-05-07
+date: 2024-11-27
 future: true
 htmlwidgets: true
 
@@ -13,31 +13,32 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: Albert Einstein
+  - name: Yanbo Wang
     url: ""
     affiliations:
-      name: IAS, Princeton
-  - name: Boris Podolsky
+      name: School of Artifitial Intellegence, University of Chinese Acedemy of Sciences
+  - name: Jian Liang
     url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
     affiliations:
-      name: IAS, Princeton
-  - name: Nathan Rosen
+      name: Institute of Automation, Chinese acedemy of Sciences
+  - name: Ran He
     url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
     affiliations:
-      name: IAS, Princeton
+      name: Institute of Automation, Chinese acedemy of Sciences
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-distill-example.bib  
+bibliography: 2024-11-27-gradient-inversion-attack.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Equations
-  - name: Images and Figures
+  - name: Basic workflow of gradient inversion attacks (GIAs)
+  - name: Advances
     subsections:
-    - name: Interactive Figures
+    - name: Gradient matching functions
+    - name: Label recovery
   - name: Citations
   - name: Footnotes
   - name: Code Blocks
@@ -66,26 +67,10 @@ _styles: >
   }
 ---
 
-Note: please use the table of contents as defined in the front matter rather than the traditional markdown styling.
+## Basic workflow of gradient inversion attacks (GIAs)
+Gradient inversion attacks (GIAs) aim at reconstructing clients' private input data from the gradients in deep neural network training phases. It is a threat to federated learning framework, especially the horizontal one where a curious-but-honest central server collects gradients from multiple clients, analyzing the optimal parameter updating direction, and send back the updated model in one step. Getting rid of complicated mathematical formulas, GIA is actually a matching process: the attacker (which is the central server in the most common settings) expects that the data they randomly initialized could finally generate the identical gradients as the ground-truth, therefore they measure the difference (or distance) to optimize input data pixel-wisely. The smaller the distence between gradients, the better the private data are reconstructed.    
 
-## Equations
-
-This theme supports rendering beautiful math in inline and display modes using [MathJax 3](https://www.mathjax.org/) engine.
-You just need to surround your math expression with `$$`, like `$$ E = mc^2 $$`.
-If you leave it inside a paragraph, it will produce an inline expression, just like $$ E = mc^2 $$.
-
-To use display mode, again surround your expression with `$$` and place it as a separate paragraph.
-Here is an example:
-
-$$
-\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
-$$
-
-Note that MathJax 3 is [a major re-write of MathJax](https://docs.mathjax.org/en/latest/upgrading/whats-new-3.0.html) 
-that brought a significant improvement to the loading and rendering speed, which is now 
-[on par with KaTeX](http://www.intmath.com/cg5/katex-mathjax-comparison.php).
-
-
+This is actually a white-box attack, for its requirement of full model parameters for back propagation. In such process, with fixed model parameters, the distance between gradients is a function of the attacker's data.  
 ## Images and Figures
 
 Its generally a better idea to avoid linking to images hosted elsewhere - links can break and you
