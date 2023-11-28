@@ -34,12 +34,13 @@ bibliography: 2024-11-27-gradient-inversion-attack.bib
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Basic workflow of gradient inversion attacks (GIAs)
+  - name: Fundemental pipeline of GIAs
   - name: Advances
     subsections:
-    - name: Gradient matching functions
     - name: Label recovery
-  - name: what really matters？
+    - name: gradient matching
+  
+  - name: Citations
   - name: Footnotes
   - name: Code Blocks
   - name: Diagrams
