@@ -27,7 +27,7 @@ authors:
       name: Institute of Automation, Chinese acedemy of Sciences
 
 # must be the exact same name as your blogpost
-bibliography: 2024-11-27-gradient-inversion-attack.bib  
+bibliography: 2024-05-07-gradient-inversion-attack.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
