@@ -29,11 +29,24 @@ toc:
   - name: Model Checkpoints
 ---
 
-Adapted and expanded from [EIFY/fairseq](https://github.com/EIFY/fairseq).
+*Adapted and expanded from [EIFY/fairseq](https://github.com/EIFY/fairseq).*
+
+Unmodified and unmasked, attention mechanism is permutation-invariant and positional encoding is therefore employed by transformer-based language models to break the symmetry and enable sequence modeling. In their ICLR 2022 paper, Press et al. <d-cite key="DBLP:conf/iclr/PressSL22"></d-cite> introduced Attention with Linear Biases (ALiBi) as a new approach to positional encoding, where the positional info of the tokens are encoded by applying an attention weight bias proportional to the distance between tokens:
+
+{% include figure.html path="assets/img/2024-05-07-distill-ALiBi-MLM/ALiBi.jpeg" class="img-fluid" %}
+
+where $$m$$ is a head-specific slope chosen to follow geometric sequence $$\frac{1}{2^{0.5}}, \frac{1}{2^1}, \frac{1}{2^{1.5}}, \dots, \frac{1}{2^\frac{n}{2}}$$ for a model with $$n$$ attention heads. This approach is shown to enable input length extrapolation in the sense that perplexity of the model remains stable as the inference context length exceeds training context length. The paper, however, focuses on autoregressive decoder-only models and relies on model perplexity as the metric, therefore leaves the question open whether ALiBi is applicable to masked language models like BERT <d-cite key="DBLP:conf/naacl/DevlinCLT19"></d-cite> and RoBERTa <d-cite key="liu2019roberta"></d-cite>. To help answer this question, we tested the two following changes to the RoBERTa baseline models, based on the first-party Fairseq toolkit <d-cite key="ott2019fairseq"></d-cite>:
+
 
 ## Attention with Linear Biases (ALiBi)
 
-Proposed by Press et al. <d-cite key="DBLP:conf/iclr/PressSL22"></d-cite>, ALiBi uses linear biases to the attention weights instead of positional encoding to represent positions of the tokens. Since masked LMs like RoBERTa both look ahead and back to determine the masked tokens, considerations must be made regarding how to distinguish them (https://github.com/ofirpress/attention_with_linear_biases/issues/5). Unless otherwise noted, our implementation achieves this by [shifting the linear biases ahead by `0.5 * slope`](https://github.com/ofirpress/attention_with_linear_biases/issues/5#issuecomment-1213410982), i.e. the constant bias (right) of Figure 3 in <d-cite key="DBLP:conf/iclr/PressSL22"></d-cite> becomes
+Since masked LMs are based on encoders that attend to tokens both before and after the given position, considerations must be made regarding how to distinguish them. Press himself [suggested the 3 following options for encoder-attention ALiBi](https://github.com/ofirpress/attention_with_linear_biases/issues/5):
+
+1. Symmetric: Keep attention weight bias proportional to the distance between tokens and rely on the context to distinguish between tokens at +N and -N position.
+2. Nonsymmetric, one-sided: Make half of the heads only attend to the tokens before and half of the heads only attend to the tokens after. Weight bias is still proportional to the distance.
+3. Nonsymmetric with different slopes: Make the slopes $$m$$ different forward and backward, with either learned or fixed values.
+
+With the observation that option 2 spends about half of the attention compute on no-op and option 3 can still result in bias value collision (e.g. $$m_{bwd} = 2 m_{fwd}$$ and -1 vs. +2 positions), we implemented both option 1 and what we call "nonsymmetric with offset": [Shift the linear biases ahead by `0.5 * slope`](https://github.com/ofirpress/attention_with_linear_biases/issues/5#issuecomment-1213410982), i.e. the constant bias (right matrix of the figure above) becomes
 
 ```
  0 -.5 -1.5 -2.5 -3.5
@@ -42,6 +55,8 @@ Proposed by Press et al. <d-cite key="DBLP:conf/iclr/PressSL22"></d-cite>, ALiBi
 -3  -2   -1    0  -.5
 -4  -3   -2   -1    0
 ```
+
+Unless otherwise noted, ALiBi for the following experiments means this nonsymmetric-with-offset encoder-attention ALiBi.
 
 ## Contrastive Language Pretraining (CLAP) Head
 Inspired by CLIP <d-cite key="DBLP:conf/icml/RadfordKHRGASAM21"></d-cite> but actually goes back all the way to the origin of weight tying <d-cite key="press2017using"></d-cite>, CLAP head is the [simplest possible prediction head](https://github.com/EIFY/fairseq/blob/8143446dfa88d9f8e246b366bd335f6c9b018db0/fairseq/models/roberta/model.py#L527-L543) for the missing token except the thermodynamic beta (inverse temperature):
@@ -79,7 +94,7 @@ At first we tested the changes with the [WikiText-103 dataset](https://www.sales
 where solid lines are what's considered "canonical" setup and dotted lines are experiments with the following variations in setup. These variations turned out to be irrelevant:
 
 1. Whether we use attention dropout or not
-2. Whether we use [symmetrical ALiBi (option 1)](https://github.com/ofirpress/attention_with_linear_biases/issues/5) or asymmetrical ALiBi above
+2. Whether we use [symmetric ALiBi (option 1)](https://github.com/ofirpress/attention_with_linear_biases/issues/5) or nonsymmetric-with-offset ALiBi above
 3. Whether we use zero vector or a separate learnable embedding for the mask embedding
 4. Whether we L2-normalize the embeddings for the CLAP head or not
 5. Whether we scale the L2-normalized embeddings by `sqrt(embed_dim)` (`no_scale_embedding=False`) or not
