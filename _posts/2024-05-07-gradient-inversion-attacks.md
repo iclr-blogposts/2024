@@ -8,23 +8,23 @@ date: 2024-11-27
 future: true
 htmlwidgets: true
 
-# Anonymize when submitting
-# authors:
-#   - name: Anonymous
-
+#Anonymize when submitting
 authors:
-  - name: Yanbo Wang
-    url: ""
-    affiliations:
-      name: School of Artifitial Intellegence, University of Chinese Acedemy of Sciences
-  - name: Jian Liang
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-    affiliations:
-      name: Institute of Automation, Chinese acedemy of Sciences
-  - name: Ran He
-    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-    affiliations:
-      name: Institute of Automation, Chinese acedemy of Sciences
+  - name: Anonymous
+
+# authors:
+#   - name: Yanbo Wang
+#     url: ""
+#     affiliations:
+#       name: School of Artifitial Intellegence, University of Chinese Acedemy of Sciences
+#   - name: Jian Liang
+#     url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
+#     affiliations:
+#       name: Institute of Automation, Chinese acedemy of Sciences
+#   - name: Ran He
+#     url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
+#     affiliations:
+#       name: Institute of Automation, Chinese acedemy of Sciences
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-gradient-inversion-attack.bib  
