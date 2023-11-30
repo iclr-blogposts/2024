@@ -2,7 +2,7 @@
 layout: distill
 title: "Building Diffusion Model's theory from ground up"
 description: "Diffusion Model, a new generative model family, has taken the world by storm after the seminal paper from Ho et al. [2020], followed by a theoretical unification by Song et al. [2021]. Often, Diffusion Models are described from a variational inference or score-based SDE formulation. In this article, we'll go back in history and revisit the 'fundamental ingredients' behind these formulations and show how the idea can be 'shaped' to get to the modern forms of Diffusion Model. We'll start from the definition of 'score', how it was used in the context of generative modeling, how we achieved the necessary theoretical guarantees and arrived at the more 'principled' framework of Score-SDE and the special case of DDPM."
-date: 2023-09-09
+date: 2024-05-07
 htmlwidgets: true
 
 # Anonymize when submitting
@@ -18,7 +18,7 @@ authors:
 #       name: "University of Surrey UK, MediaTek Research UK"
 
 # must be the exact same name as your blogpost
-bibliography: 2023-09-09-diffusion-theory-from-scratch.bib  
+bibliography: 2024-05-07-diffusion-theory-from-scratch.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
@@ -116,7 +116,7 @@ The term 'Score' is simply defined as the _gradient of the log-density of a dist
 The quantity in Eq.\eqref{eq:data_score_defn} is unknown, just like the true data density $$q_{data}(x)$$. It does have a meaning though: the "_true score_" refers to the _direction of steepest increase_ in log-likelihood at any given point in the data space.
 
 <center>
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/score_def.png" class="col-8" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/score_def.png" class="col-8" %}
 </center>
 
 Simply, at a point $$x$$, it tell us the best direction to step into (with little step-size $$\delta$$) if we would like to see data $$x'$$ with higher likelihood
@@ -151,7 +151,7 @@ dx = \nabla_x \log q_{data}(x) dt
 BUT, please note that this is only an intutive attempt and is entirely based on the definition of score. It possesses **absolutely no guarantee** that this process can converge to samples from the true data distribution. In fact, this process is **greedy**, i.e. it only seeks to go uphill, converging exactly at the _modes_<d-footnote>Local maxiams of probability density</d-footnote>. You can see the below figure that shows the samples $$x$$ subjected to the process in Eq.\eqref{eq:ode_with_score} and its density $$p_t(x)$$ evolving over time. The density in red is the target density whose score is being used.
 
 <center>
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/greedy_wo_noise.gif" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/greedy_wo_noise.gif" class="img-fluid" %}
 </center>
 
 In this case, at $$t=\infty$$, all samples will converge to the state with _the highest_ likelihood. This isn't really desirable as it doesn't "explore" at all. Just like any other sampling algorithm, we need noise injection !
@@ -184,7 +184,7 @@ $$
 
 With that, we can simulate our new langevin equation _with noise_ (i.e. Eq.\eqref{eq:langevin_dyn}) just like the noiseless case. You can see now that the noise is keeping the process from entirely converging into the mode. If you notice carefully, we have added a little "tail" to each point to help visualize their movement.
 
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/langevin_dyn_basic.gif" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/langevin_dyn_basic.gif" class="img-fluid" %}
 
 ### Fokker-Planck Equation
 
@@ -221,7 +221,7 @@ More than just a proof, the Fokker-Planck ODE provides us a key insight -- i.e. 
 
 Speaking of ODEs, there is something we haven't talked about yet -- the initial distribution at $$t=0$$, i.e. $$p_0$$. In the simulation, I quietly used a standard normal $$\mathcal{N}(0, I)$$ as starting distribution<d-footnote>You can notice this if you carefully see the first few frames of the animation.</d-footnote> without ever disucssing it. Turns out that our Fokker-Planck ODE does not have any specific requirement for $$p_0$$, i.e. it always converges to $$p_{\infty} = q_{data}$$ no matter where you start. Here's an illustration that shows two different starting distributions $$p_0$$ and both of their "paths" over time, i.e. $$p_t$$ in probability space ultimately converges to $$q_{data}$$.
 
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/fokker-plank-multiple.gif" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/fokker-plank-multiple.gif" class="img-fluid" %}
 
 So theoretically, given the score function $$\nabla_x \log q_{data}(x)$$ of a target distribution $$q_{data}(x)$$, one can "travel to" it from _any_ distribution. However, keeping in mind the need for _sampling_, it's best to choose an initial distribution that is easy to sample from. Strictly speaking, there are couple of reasonable choices, but the diffusion model literature ended up with the _Isotropic Gaussian_ (i.e. $$\mathcal{N}(0, I)$$). This is not only due to its goodwill across machine learning and statistics, but also the fact that in the context of SDEs with Brownian motions<d-footnote>Remember, they are infintesimal gaussian noises.</d-footnote>, gaussians arise quite naturally.
 
@@ -258,7 +258,7 @@ x_{t+dt} &=& x_t - x_t \cdot dt + \sqrt{2 dt}\ z \\
 Do you see similarity with DDPM's<d-cite key="diffusionmodel_ho"></d-cite> forward process?<d-footnote>Hint: compare $dt$ with DDPM's $\beta_t$.</d-footnote> We can simulate the above equation to get samples at any $$t$$ as $$x_t \sim p_t$$ in order to train the score estimator neural network. We can then use the score estimate to run langevin in the reverse direction as we learned before.
 
 <center>
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/forward_process_2.gif" class="col-10" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/forward_process_2.gif" class="col-10" %}
 </center>
 
 A little subtlety here that we only fixed the _end point_ of the forward process, but not the _exact path_. It seems that running the langevin in the forward direction chose one path on its own. Turns out, this is the "isotropic path" where all dimensions of the variable $$x$$ evolves in time the exact same way. Some works<d-cite key="das2023spdiffusion"></d-cite><d-cite key="hoogeboom2023blurring"></d-cite> recently uncovered _non-isotropic_ diffusion, where it is indeed possible to travel on other paths. But this is outside the scope of this article.
@@ -276,7 +276,7 @@ $$
 This suggests that in the world where time runs from $$t' = 0 \rightarrow 1$$, we need to _escalate_ the forward process by replacing $$dt \approx \delta$$ with $$e^t dt' \approx e^t \cdot \delta$$. The quantity $$\mathcal{T}'(t)^{-1} dt' = e^t dt'$$ is analogous to what diffusion models <d-cite key="diffusionmodel_ho"></d-cite><d-cite key="pmlr-v37-sohl-dickstein15"></d-cite> call a "schedule". Recall that DDPM  uses a small but increasing<d-footnote>$e^t dt'$ is small because of $dt'$, while increasing because of $e^t$.</d-footnote> "schedule" $$\beta_t$$.
 
 <center>
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/ddpm_forward_kernel.png"  class="col-6 z-depth-1"%}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/ddpm_forward_kernel.png"  class="col-6 z-depth-1"%}
 </center>
 
 Of couse, our choise of the exact value of end time (i.e. $$t' = 1$$) and the re-parameterization $$\mathcal{T}$$ are somewhat arbitrary. Different choices of $$\mathcal{T}$$, and consequently $$\mathcal{T}'(t)^{-1} dt'$$ lead to different schedules (e.g. linear, cosine etc.). Note that choosing different schedules does not mean the process takes a different path on the probability space, it simply changes its _speed_ of movement towards the end state.
@@ -329,7 +329,7 @@ J_{\mathrm{D}}(\theta) = \mathbb{E}_{x\sim q\_{data}(x), \epsilon\sim\mathcal{N}
 
 We deliberately wrote it in a way that exposed its interpretation. Denoising score matching simply adds some _known_ noise $$\sigma\epsilon$$ to the datapoints $$x$$ and learns (in mean squeared sense), from the "noisy" point $$\tilde{x}$$, the direction of comeback, i.e. $$(-\epsilon)$$, scaled by $$\frac{1}{\sigma}$$. In a way, it acts like a "denoiser", hence the name. It is theoretically guaranteed <d-cite key="vincent2011connection"></d-cite> that $$J_{\mathrm{D}}$$ leads to an unbiased estimate of the true score. Below we show a visualization of the score estimate as it learns from data.
 <center>
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/deno_score_learning.gif"  class="col-10" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/deno_score_learning.gif"  class="col-10" %}
 </center>
 
 A little algebraic manipulation of Eq.\eqref{eq:deno_score_match}, demonstrated by Ho et al. <d-cite key="diffusionmodel_ho"></d-cite>, leads to an equivalent form which turned out to be training friendly.
@@ -362,7 +362,7 @@ In the last step, the expectation $$\mathbb{E}_{q(x\vert\tilde{x})}\left[ \cdot 
 Below we visualize this process with a toy example.
 
 <center>
-{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/probing_deno_estimation.gif"  class="col-10" %}
+{% include figure.html path="assets/img/2024-05-07-diffusion-theory-from-scratch/probing_deno_estimation.gif"  class="col-10" %}
 </center>
 
 We have 10 data points $$x\sim q_{data}(x)$$ in our dataset (big red dots) and we run the learning process by generating noisy samples $$\tilde{x}\sim q(\tilde{x})$$ (small red dots). Instead of learning a neural mapping over the entire space, we learn a tabular map with only three chosen input points $$\tilde{x}_1, \tilde{x}_2, \tilde{x}_3$$ (blue, magenta and green cross). Every time we sample one of those<d-footnote>Practically it's impossible to randomly generate a specific point. So we assume a little ball around each point.</d-footnote> three chosen input points, we note which input data point it came from (shown as a dotted line of the same color) and maintain a running average (bold cross of same color) of them. This is precisely the quantity $$\mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]$$. We also show the average noise direction at each $$\tilde{x}$$, i.e. $$\frac{\tilde{x} - \mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]}{\sigma}$$, with gray arrows. The gray arrows, as the training progresses, start to resemble the score estimate of the data.
