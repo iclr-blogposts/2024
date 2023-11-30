@@ -1,9 +1,7 @@
 ---
 layout: distill
-title: What really matters in gradient inversion attack?
-description: Your log post's abstract.
-  Please add your abstract or summary here and not in the main body of your text. 
-  Do not include math/latex or hyperlinks.
+title: Do we really achieve satisfying results in gradient inversion attack?
+description: In this blogpost, we mention multiple works in gradient inversion attacks, point out the final question we need to solve in GIAs and provide an inspective from prior knowledge to emphasize the logic behind recent papers.
 date: 2024-11-27
 future: true
 htmlwidgets: true
@@ -35,18 +33,17 @@ bibliography: 2024-05-07-gradient-inversion-attack.bib
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
   - name: Fundemental pipeline of GIAs
-  - name: Advances
     subsections:
-    - name: Label recovery
-    - name: gradient matching
-  
-  - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
+    - name: Label recovery methods
+    - name: Gradient matching functions
+  - name: Final question
+  - name: Understanding GIA from the Prior Knowledge perspective
+    subsections:
+    - name: Unparameterized terms
+    - name: Generative models
+    - name: End-to-end networks 
+  - name: Future directions 
+
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -71,8 +68,7 @@ _styles: >
 ## Basic workflow of gradient inversion attacks (GIAs)
 Gradient inversion attacks (GIAs) aim at reconstructing clients' private input data from the gradients in deep neural network training phases. It is a threat to federated learning framework, especially the horizontal one where a curious-but-honest central server collects gradients from multiple clients, analyzing the optimal parameter updating direction, and send back the updated model in one step. Getting rid of complicated mathematical formulas, GIA is actually a matching process: the attacker (which is the central server in the most common settings) expects that the data they randomly initialized could finally generate the identical gradients as the ground-truth, therefore they measure the difference (or distance) to optimize input data pixel-wisely. The smaller the distence between gradients, the better the private data are reconstructed.
 
-This is actually a white-box attack, for its requirement of full model parameters for back propagation. In such process, with fixed model parameters, the distance between gradients is a function of the attacker's data.  
-## Advances
+This is actually a white-box attack, for its requirement of full model parameters for back propagation. In such process, with fixed model parameters, the distance between gradients is a function of the attacker's data.  （画个图）
 ### Gradient matching functions
 As stated in the previous setcion, GIA utilizes the gradient matching distence to supervize the optimization of pseudo input data of the attacker. Previous researchers tried different functions to represent the distance, such as pixel-wise loss $$l_2$$ or Cosine Similarity as the mainstream. Gaussian kernel loss is also considered as a choice. 
 
