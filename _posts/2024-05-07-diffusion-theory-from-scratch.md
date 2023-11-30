@@ -366,3 +366,6 @@ Below we visualize this process with a toy example.
 </center>
 
 We have 10 data points $$x\sim q_{data}(x)$$ in our dataset (big red dots) and we run the learning process by generating noisy samples $$\tilde{x}\sim q(\tilde{x})$$ (small red dots). Instead of learning a neural mapping over the entire space, we learn a tabular map with only three chosen input points $$\tilde{x}_1, \tilde{x}_2, \tilde{x}_3$$ (blue, magenta and green cross). Every time we sample one of those<d-footnote>Practically it's impossible to randomly generate a specific point. So we assume a little ball around each point.</d-footnote> three chosen input points, we note which input data point it came from (shown as a dotted line of the same color) and maintain a running average (bold cross of same color) of them. This is precisely the quantity $$\mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]$$. We also show the average noise direction at each $$\tilde{x}$$, i.e. $$\frac{\tilde{x} - \mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]}{\sigma}$$, with gray arrows. The gray arrows, as the training progresses, start to resemble the score estimate of the data.
+
+---
+
