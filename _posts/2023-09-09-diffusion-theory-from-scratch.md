@@ -43,6 +43,7 @@ toc:
     subsections:
     - name: Implicit Score Matching
     - name: Denoising Score Matching
+    - name: Probing the learning objective
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -323,10 +324,45 @@ For the sake of completeness, I would like to mention the work <d-cite key="song
 The most valuable contribution came from Vincent Pascal in 2011, when he showed <d-cite key="vincent2011connection"></d-cite> that the score matching problem has yet another equivalent objective, which was called "Denoising" score matching
 
 \begin{equation} \label{eq:deno_score_match}
-J_{\mathrm{D}}(\theta) = \mathbb{E}_{x\sim q\_{data}(x), \epsilon\sim\mathcal{N}(0, I)}\left[ \frac{1}{2} \left|\left| s\_{\theta}(x + \sigma\epsilon) - (- \frac{\epsilon}{\sigma}) \right|\right|^2 \right]
+J_{\mathrm{D}}(\theta) = \mathbb{E}_{x\sim q\_{data}(x), \epsilon\sim\mathcal{N}(0, I)}\left[ \frac{1}{2} \left|\left| s\_{\theta}(\ \underbrace{x + \sigma\epsilon}\_{\tilde{x}}\ ) - (- \frac{\epsilon}{\sigma}) \right|\right|^2 \right]
 \end{equation}
 
-We deliberately wrote it in a way that exposed its interpretation. Denoising score matching simply adds some _known_ noise $$\sigma\epsilon$$ to the datapoints $$x$$ and learns (in mean squeared sense) the direction of comeback, i.e. $$(-\epsilon)$$, scaled by $$\frac{1}{\sigma}$$. In a way, it acts like a "denoiser", hence the name. It is theoretically guaranteed <d-cite key="vincent2011connection"></d-cite> that $$J_{\mathrm{D}}$$ leads to an unbiased estimate of the true score.
+We deliberately wrote it in a way that exposed its interpretation. Denoising score matching simply adds some _known_ noise $$\sigma\epsilon$$ to the datapoints $$x$$ and learns (in mean squeared sense), from the "noisy" point $$\tilde{x}$$, the direction of comeback, i.e. $$(-\epsilon)$$, scaled by $$\frac{1}{\sigma}$$. In a way, it acts like a "denoiser", hence the name. It is theoretically guaranteed <d-cite key="vincent2011connection"></d-cite> that $$J_{\mathrm{D}}$$ leads to an unbiased estimate of the true score. Below we show a visualization of the score estimate as it learns from data.
 <center>
 {% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/deno_score_learning.gif"  class="col-10" %}
 </center>
+
+A little algebraic manipulation of Eq.\eqref{eq:deno_score_match}, demonstrated by Ho et al. <d-cite key="diffusionmodel_ho"></d-cite>, leads to an equivalent form which turned out to be training friendly.
+
+$$\begin{eqnarray}
+J_{\mathrm{D}}(\theta) &=& \mathbb{E}_{x\sim q_{data}(x), \epsilon\sim\mathcal{N}(0, I)}\left[ \frac{1}{2\sigma^2} \left|\left| {\color{blue} - \sigma s_{\theta}}(\tilde{x}) - \epsilon \right|\right|^2 \right] \\
+&=& \mathbb{E}_{x\sim q_{data}(x), \epsilon\sim\mathcal{N}(0, I)}\left[ \frac{1}{2\sigma^2} \left|\left| {\color{blue} \epsilon}_{\theta}(\tilde{x}) - \epsilon \right|\right|^2 \right]\label{eq:deno_eps_match}
+\end{eqnarray}$$
+
+We simply change the _interpretation_ of what the network learns. In this form, the "noise estimator" network learns _just_ the original pure gaussian noise vector $$\epsilon$$ that was added while crafting the noisy sample. So, from a noisy sample, the network $$\epsilon_{\theta}$$ learns roughly an unit direction that points towards the clean sample.
+
+### Probing the learning objective
+
+If you are still puzzled about how Eq.\eqref{eq:deno_eps_match} is related to learning the score, there is a way to probe exactly what the network is learning at an arbitrary input point $$\tilde{x}$$. We note that the clean sample $$x$$ and the noisy sample $$\tilde{x}$$ come from a joint distribution
+
+$$
+q(x, \tilde{x}) = q(\tilde{x} \vert x) q_{data}(x) = \mathcal{N}(\tilde{x}; x, \sigma I) q_{data}(x).
+$$
+
+We then factorize this joint in a slightly different way, i.e. $$q(x, \tilde{x}) = q(x \vert \tilde{x}) q(\tilde{x})$$, where $$q(x \vert \tilde{x})$$ can be thought of as a distribution of all clean samples which could've led to a given $$\tilde{x}$$. Eq.\eqref{eq:deno_eps_match} can therefore be written as
+
+$$\begin{eqnarray*}
+J_{\mathrm{D}}(\theta) &=& \mathbb{E}_{(x, \tilde{x}) \sim q(x,\tilde{x})}\left[ \frac{1}{2\sigma^2} \left|\left| \epsilon_{\theta}(\tilde{x}) - \epsilon \right|\right|^2 \right] \\
+&=& \mathbb{E}_{\tilde{x} \sim q(\tilde{x}), x \sim q(x\vert \tilde{x})}\left[ \frac{1}{2\sigma^2} \left|\left| \epsilon_{\theta}(\tilde{x}) - \frac{\tilde{x} - x}{\sigma} \right|\right|^2 \right] \\
+&=& \mathbb{E}_{\tilde{x} \sim q(\tilde{x})}\left[ \frac{1}{2\sigma^2} \left|\left| \epsilon_{\theta}(\tilde{x}) - \frac{\tilde{x} - \mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]}{\sigma} \right|\right|^2 \right] \\
+\end{eqnarray*}$$
+
+In the last step, the expectation $$\mathbb{E}_{q(x\vert\tilde{x})}\left[ \cdot \right]$$ was pushed inside, up untill the only quantity that involves $$x$$. Looking at it, you may realize that the network $$\epsilon_{\theta}$$, given an input $$\tilde{x}$$, learns the _average noise direction_ that leads to the given input point $$\tilde{x}$$.
+
+Below we visualize this process with a toy example.
+
+<center>
+{% include figure.html path="assets/img/2023-09-09-diffusion-theory-from-scratch/probing_deno_estimation.gif"  class="col-10" %}
+</center>
+
+We have 10 data points $$x\sim q_{data}(x)$$ in our dataset (big red dots) and we run the learning process by generating noisy samples $$\tilde{x}\sim q(\tilde{x})$$ (small red dots). Instead of learning a neural mapping over the entire space, we learn a tabular map with only three chosen input points $$\tilde{x}_1, \tilde{x}_2, \tilde{x}_3$$ (blue, magenta and green cross). Every time we sample one of those<d-footnote>Practically it's impossible to randomly generate a specific point. So we assume a little ball around each point.</d-footnote> three chosen input points, we note which input data point it came from (shown as a dotted line of the same color) and maintain a running average (bold cross of same color) of them. This is precisely the quantity $$\mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]$$. We also show the average noise direction at each $$\tilde{x}$$, i.e. $$\frac{\tilde{x} - \mathbb{E}_{x \sim q(x\vert \tilde{x})}[x]}{\sigma}$$, with gray arrows. The gray arrows, as the training progresses, start to resemble the score estimate of the data.
