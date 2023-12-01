@@ -55,6 +55,20 @@
   year = {2019},
 }
 
+@inproceedings{DBLP:conf/iclr/BaevskiA19,
+  author       = {Alexei Baevski and
+                  Michael Auli},
+  title        = {Adaptive Input Representations for Neural Language Modeling},
+  booktitle    = {7th International Conference on Learning Representations, ICLR 2019,
+                  New Orleans, LA, USA, May 6-9, 2019},
+  publisher    = {OpenReview.net},
+  year         = {2019},
+  url          = {https://openreview.net/forum?id=ByxZX20qFQ},
+  timestamp    = {Thu, 25 Jul 2019 14:26:00 +0200},
+  biburl       = {https://dblp.org/rec/conf/iclr/BaevskiA19.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
 @inproceedings{DBLP:conf/icml/RadfordKHRGASAM21,
   author       = {Alec Radford and
                   Jong Wook Kim and
@@ -72,11 +86,11 @@
                   Tong Zhang},
   title        = {Learning Transferable Visual Models From Natural Language Supervision},
   booktitle    = {Proceedings of the 38th International Conference on Machine Learning,
-                  {ICML} 2021, 18-24 July 2021, Virtual Event},
+                  ICML 2021, 18-24 July 2021, Virtual Event},
   series       = {Proceedings of Machine Learning Research},
   volume       = {139},
   pages        = {8748--8763},
-  publisher    = {{PMLR}},
+  publisher    = {PMLR},
   year         = {2021},
   url          = {http://proceedings.mlr.press/v139/radford21a.html},
   timestamp    = {Wed, 25 Aug 2021 17:11:17 +0200},
@@ -84,14 +98,21 @@
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
-@misc{press2017using,
-      title={Using the Output Embedding to Improve Language Models},
-      author={Ofir Press and Lior Wolf},
-      year={2017},
-      url={https://arxiv.org/abs/1608.05859},
-      eprint={1608.05859},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+@inproceedings{press-wolf-2017-using,
+    title = "Using the Output Embedding to Improve Language Models",
+    author = "Press, Ofir  and
+      Wolf, Lior",
+    editor = "Lapata, Mirella  and
+      Blunsom, Phil  and
+      Koller, Alexander",
+    booktitle = "Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 2, Short Papers",
+    month = apr,
+    year = "2017",
+    address = "Valencia, Spain",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/E17-2025",
+    pages = "157--163",
+    abstract = "We study the topmost weight matrix of neural network language models. We show that this matrix constitutes a valid word embedding. When training language models, we recommend tying the input embedding and this output embedding. We analyze the resulting update rules and show that the tied embedding evolves in a more similar way to the output embedding than to the input embedding in the untied model. We also offer a new method of regularizing the output embedding. Our methods lead to a significant reduction in perplexity, as we are able to show on a variety of neural network language models. Finally, we show that weight tying can reduce the size of neural translation models to less than half of their original size without harming their performance.",
 }
 
 @misc{hoffmann2022training,

@@ -59,30 +59,60 @@ With the observation that option 2 spends about half of the attention compute on
 Unless otherwise noted, ALiBi for the following experiments means this nonsymmetric-with-offset encoder-attention ALiBi.
 
 ## Contrastive Language Pretraining (CLAP) Head
-Inspired by CLIP <d-cite key="DBLP:conf/icml/RadfordKHRGASAM21"></d-cite> but actually goes back all the way to the origin of weight tying <d-cite key="press2017using"></d-cite>, CLAP head is the [simplest possible prediction head](https://github.com/EIFY/fairseq/blob/8143446dfa88d9f8e246b366bd335f6c9b018db0/fairseq/models/roberta/model.py#L527-L543) for the missing token except the thermodynamic beta (inverse temperature):
+The prediction head is one part of the LMs that has received less attention that happens to differ between the ALiBi autoregressive decoder-only models and RoBERTa. Based on the configs and [training logs](https://github.com/ofirpress/attention_with_linear_biases#saved-checkpoints), the ALiBi models use the adaptive word embedding and softmax of Baevski & Auli <d-cite key="DBLP:conf/iclr/BaevskiA19"></d-cite> with weight tying <d-cite key="press-wolf-2017-using"></d-cite>, whereas the RoBERTa prediction head has an additional fully-connected layer and nonlinearity on top of weight-tying. Inspired by CLIP <d-cite key="DBLP:conf/icml/RadfordKHRGASAM21"></d-cite>, we decided to test what we called Contrastive Language Pretraining (CLAP) head below, as the [simplest possible prediction head with weight tying](https://github.com/EIFY/fairseq/blob/8143446dfa88d9f8e246b366bd335f6c9b018db0/fairseq/models/roberta/model.py#L527-L543) for the masked tokens plus the thermodynamic beta (inverse temperature):
 
 {% highlight python %}
- class ClapHead(nn.Module):
-     """Head for masked language modeling."""
+class ClapHead(nn.Module):
+    """Head for masked language modeling."""
 
-     def __init__(self, initial_beta, weight):
-         super().__init__()
-         self.beta = nn.Parameter(torch.tensor(initial_beta))
-         self.weight = weight
+    def __init__(self, initial_beta, weight):
+        super().__init__()
+        self.beta = nn.Parameter(torch.tensor(initial_beta))
+        self.weight = weight
 
-     def forward(self, features, masked_tokens=None, normalize=True):
-         # Only project the masked tokens while training,
-         # saves both memory and computation
-         if masked_tokens is not None:
-             features = features[masked_tokens, :]
-         w = self.weight
-         if normalize:
-             w = F.normalize(w, dim=-1)
-         return self.beta * F.linear(features, w)
+    def forward(self, features, masked_tokens=None, normalize=True):
+        # Only project the masked tokens while training,
+        # saves both memory and computation
+        if masked_tokens is not None:
+            features = features[masked_tokens, :]
+        w = self.weight
+        if normalize:
+            w = F.normalize(w, dim=-1)
+        return self.beta * F.linear(features, w)
 {% endhighlight %}
 
+Compared to the baseline RoBERTa prediction head
 
-Compared to the baseline prediction head, we removed the `embed_dim x embed_dim` fully-connected layer, activation function (GELU), layer norm, and the `output_dim` trainable bias. On the other hand, we added the trainable thermodynamic beta and L2-normalize the embeddings before feeding them to the transformer and computing the inner products between them and the transformer output, scaled by beta.
+{% highlight python %}
+class RobertaLMHead(nn.Module):
+    """Head for masked language modeling."""
+
+    def __init__(self, embed_dim, output_dim, activation_fn, weight=None):
+        super().__init__()
+        self.dense = nn.Linear(embed_dim, embed_dim)
+        self.activation_fn = utils.get_activation_fn(activation_fn)
+        self.layer_norm = LayerNorm(embed_dim)
+
+        if weight is None:
+            weight = nn.Linear(embed_dim, output_dim, bias=False).weight
+        self.weight = weight
+        self.bias = nn.Parameter(torch.zeros(output_dim))
+
+    def forward(self, features, masked_tokens=None, **kwargs):
+        # Only project the masked tokens while training,
+        # saves both memory and computation
+        if masked_tokens is not None:
+            features = features[masked_tokens, :]
+
+        x = self.dense(features)
+        x = self.activation_fn(x)
+        x = self.layer_norm(x)
+        # project back to size of vocabulary with bias
+        x = F.linear(x, self.weight) + self.bias
+        return x
+{% endhighlight %}
+
+We removed the `embed_dim x embed_dim` fully-connected layer, activation function (GELU), layer norm, and the `output_dim` trainable bias. Just like CLIP, we added the trainable thermodynamic beta and L2-normalize the token embeddings before feeding them to the transformer and computing the inner products between them and the transformer output as the softmax logits, scaled by beta.
 
 ## Experiments
 
