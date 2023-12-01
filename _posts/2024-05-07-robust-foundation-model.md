@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: 'Towards Robust Foundation Models: Adversarial Contrastive Learning'
-description: Foundation models pre-trained on large-scale unlabelled datasets using self-supervision can be generalizable to a wide range of downstream tasks. The existence of adversarial attacks necessitates the development of robust foundation models which can yield both standard generalization and adversarial robustness in safety-critical tasks. Currently, adversarial contrastive learning (ACL) is one of the most effective methods for building robust foundation models. ACL incorporates contrastive learning with adversarial data to effectively learn robust representations without requiring costly annotations. In this blog, based on two NeurIPS 2023 publications, we will introduce two techniques for enhancing ACL's effectiveness and efficiency, respectively. (1) This blog introduces Adversarial Invariant Regularization (AIR) which is the state-of-the-art ACL algorithm. A causal theoretical framework is built to interpret ACL and the AIR algorithm is derived from the causal framework to regulate and improve ACL. (2) This blog introduces a Robustness-aware Coreset Selection (RCS) method to speed up ACL. RCS does not require label information and searches for an informative training subset that helps maintain the adversarial robustness of the representation. RCS for the first time applies the ACL on the large-scale ImageNet-1K dataset. 
+description: Foundation models pre-trained on large-scale unlabelled datasets using self-supervision can be generalizable to a wide range of downstream tasks. Existing work has shown that there exist adversarial attacks that can effectively fool any downstream model obtained by fine-tuning foundation models. The existence of such adversarial attacks necessitates the development of robust foundation models which can yield both standard generalization and adversarial robustness in safety-critical downstream tasks. Currently, adversarial contrastive learning (ACL) is one of the most effective methods for building robust foundation models. ACL incorporates contrastive learning with adversarial data to effectively learn robust representations without requiring costly annotations. In this blog, based on two NeurIPS 2023 publications, we will introduce two techniques for enhancing ACL's effectiveness and efficiency, respectively. (1) This blog introduces Adversarial Invariant Regularization (AIR) which is the state-of-the-art ACL algorithm. A causal theoretical framework is built to interpret ACL and the AIR algorithm is derived from the causal framework to regulate and improve ACL. (2) This blog introduces a Robustness-aware Coreset Selection (RCS) method to speed up ACL. RCS does not require label information and searches for an informative training subset that helps maintain the adversarial robustness of the representation. RCS for the first time applies the ACL on the large-scale ImageNet-1K dataset. 
 # Your blog post's abstract. 
   # Please add your abstract or summary here and not in the main body of your text. 
   # Do not include math/latex or hyperlinks.
@@ -73,7 +73,7 @@ _styles: >
 ## Foundation Models
 <!-- In this section, we introduct foundation models and robust foundation models. -->
 
-Foundation models <d-cite key='bommasani2021opportunities'></d-cite> are pre-trained on large-scale unlabelled datasets vis self-supervised learning, which is generalizable to a wide range of downstream tasks via fine-tuning. For example, GPT-3 <d-cite key='GPT-3'></d-cite> has been successfully commercialized as a powerful text generation tool. Vision transformer <d-cite key="ViT"></d-cite> has been widely used in computer vision tasks such as object detection <d-cite key="ViT-object-detection"></d-cite> and medical analysis <d-cite key="ViT-medical-analysis"></d-cite>. BLIP <d-cite key="BLIP"></d-cite> is a vision-language pre-trained model that can perform many vision-language tasks such as the visual question answering task <d-cite key="VQA"></d-cite>. CLAP <d-cite key="CLAP"></d-cite> is a language-audio pre-trained model that can be used for understanding the pair of texts and audio. 
+Foundation models <d-cite key='bommasani2021opportunities'></d-cite> are pre-trained on large-scale unlabelled datasets using self-supervised learning methods, which is generalizable to a wide range of downstream tasks via fine-tuning. For example, GPT-3 <d-cite key='GPT-3'></d-cite> has been successfully commercialized as a powerful text generation application. Vision transformer <d-cite key="ViT"></d-cite> has been widely used in computer vision tasks such as object detection <d-cite key="ViT-object-detection"></d-cite> and medical analysis <d-cite key="ViT-medical-analysis"></d-cite>. BLIP <d-cite key="BLIP"></d-cite> is a vision-language pre-trained model that can perform many vision-language tasks such as the visual question answering task <d-cite key="VQA"></d-cite>. CLAP <d-cite key="CLAP"></d-cite> is a language-audio pre-trained model that can be used for understanding the pair of texts and audio. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -86,13 +86,13 @@ Foundation models <d-cite key='bommasani2021opportunities'></d-cite> are pre-tra
 
 ### Contrastive Learning (CL)
 
-To build foundation models, contrastive learning (CL) <d-cite key="SimCLR"></d-cite> is one of the popular self-supervised learning methods. CL aims to maximize the agreement between natural data.
+To build foundation models, contrastive learning (CL) <d-cite key="SimCLR"></d-cite> is one of the popular self-supervised learning methods. CL aims to maximize the agreement between different natural views of the original data.
 
-Let $$f_\theta: \mathcal{X} \rightarrow \mathcal{Z}$$ be a feature extractor parameterized by $$\theta$$, $$g:\mathcal{Z} \rightarrow \mathcal{V}$$ be a projection head that maps representations to the space where the contrastive loss is applied, and $$\tau_i, \tau_j: \mathcal{X} \rightarrow \mathcal{X}$$ be two transformation operations randomly sampled from a pre-defined transformation set $$\mathcal{T}$$. Given a minibatch $$B \sim \mathcal{X}^\beta$$ consisting of $$\beta$$ samples, we denote the augmented minibatch $$B^\prime = \\{ \tau_i(x_k),  \tau_j(x_k) \mid \forall x_k \in B \\}$$ consisting of $$2\beta$$ samples. We take $$h_\theta(\cdot) = g \circ f_\theta(\cdot)$$ and $$x_k^u = \tau_u(x_k)$$ for any $$x_k \sim \mathcal{X}$$ and $$u \in \\{i,j\\}$$. The contrastive loss between natural data (i.e., $$x_k^i$$ and $$x_k^j$$) is as follows:
+Let $$f_\theta: \mathcal{X} \rightarrow \mathcal{Z}$$ be a feature extractor parameterized by $$\theta$$, $$g:\mathcal{Z} \rightarrow \mathcal{V}$$ be a projection head that maps representations to the space where the contrastive loss is applied, and $$\tau_i, \tau_j: \mathcal{X} \rightarrow \mathcal{X}$$ be two transformation operations randomly sampled from a pre-defined transformation set $$\mathcal{T}$$. Given a minibatch $$B \sim \mathcal{X}^\beta$$ consisting of $$\beta$$ samples, we denote the augmented minibatch $$B^\prime = \{ \tau_i(x_k),  \tau_j(x_k) \mid \forall x_k \in B \}$$ consisting of $$2\beta$$ samples. We take $$h_\theta(\cdot) = g \circ f_\theta(\cdot)$$ and $$x_k^u = \tau_u(x_k)$$ for any $$x_k \sim \mathcal{X}$$ and $$u \in \{i,j\}$$. The contrastive loss between different natural views (i.e., $$x_k^i$$ and $$x_k^j$$) is formulated as follows:
 
 $$ \ell_\mathrm{CL}(x_k^i,x_k^j; \theta)\!=\!-\! \sum\limits_{u \in \{i,j\}} \! \log \frac{e^{\mathrm{sim} \left(h_\theta(x_k^i), h_\theta(x_k^j) \right)/t}}{\sum\limits_{x \in B^\prime \setminus \{x_k^u\}} e^{\mathrm{sim} \left( h_\theta(x_k^u), h_\theta(x) \right)/t}}, $$
 
-where $$\mathrm{sim}(\cdot,\cdot)$$ is the cosine similarity.
+where $$\mathrm{sim}(\cdot,\cdot)$$ is the cosine similarity function.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -100,7 +100,7 @@ where $$\mathrm{sim}(\cdot,\cdot)$$ is the cosine similarity.
     </div>
 </div>
 <div class="caption">
-    Intuitively, CL aims to maximize the agreement between natural data.
+    Intuitively, CL aims to maximize the agreement between different natural views.
 </div>
 
 **How to implement CL at the pre-training stage in practice?**
@@ -120,8 +120,8 @@ class CL(nn.Module):
         self.temperature = temperature
 
     def forward(self, zi, zj):
-        # zi: the representation of natural data x^i.
-        # zj: the representation of natural data x^j.
+        # zi: the representation of natural view x^i.
+        # zj: the representation of natural view x^j.
 
         bs = zi.shape[0]
         labels = torch.zeros((2*bs,)).long().to(zi.device)
@@ -167,9 +167,8 @@ python pretraining.py $PRE_TRAIN_DIR --dataset cifar10 \
 
 
 ## Robust Foundation Models
-
-The existence of adversarial attacks <d-cite key="FGSM"></d-cite> necessitates the development of robust foundation models. 
-Adversarial attacks can fool the foundation representations to output incorrect predictions by adding imperceptible adversarial perturbations to the original inputs.
+Existing work <d-cite key="pre"></d-cite> has shown that there exist adversarial attacks that can fool the foundation representations to output incorrect predictions by adding imperceptible adversarial perturbations to the original inputs in downstream tasks.
+The existence of adversarial attacks <d-cite key="FGSM"></d-cite> necessitates the development of robust foundation models in safety-critical downstream tasks. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -192,11 +191,11 @@ Robust foundation models are pre-trained on large-scale datasets via robust self
 
 ### Adversarial Contrastive Learning (ACL)
 
-To learn robust foundation representations, adversarial contrastive learning (ACL) <d-cite key="ACL"></d-cite> is the most popular and effective robust self-supervised learning method. ACL incorporates CL with adversarial data to build a robust foundation model without requiring costly annotations. ACL aims to maximize the agreement between natural data as well as the agreement between adversarial data. The adversarial contrastive loss given a data point $$x_k \in \mathcal{X}$$ is formulated as follows:
+To learn robust foundation representations, adversarial contrastive learning (ACL) <d-cite key="ACL"></d-cite> is one of the most popular and effective robust self-supervised learning methods. ACL incorporates CL with adversarial data to build a robust foundation model without requiring costly annotations. ACL aims to maximize the agreement between different natural views as well as the agreement between different adversarial views. The adversarial contrastive loss given a data point $$x_k \in \mathcal{X}$$ is formulated as follows:
 
 $$  \ell_\mathrm{ACL}(x_k;\theta) = (1 + \omega) \cdot \ell_\mathrm{CL}(\tilde{x}_{k}^i, \tilde{x}_{k}^j; \theta) + (1 - \omega) \cdot \ell_\mathrm{CL}(x_k^i, x_k^j; \theta), $$
 
-where adversarial data are formulated as follows:
+where adversarial views are formulated as follows:
 
 $$ \tilde{x}_{k}^i, \tilde{x}_{k}^j = \mathop{\arg\max}_{
         {\Large \tilde{x}_{k}^i \in \mathcal{B}_\epsilon[x_k^i]}
@@ -212,10 +211,10 @@ Note that $$\omega \in [0,1]$$ is a scalar and $$\mathcal{B}_\epsilon[x]$$ is a 
     </div>
 </div>
 <div class="caption">
-    Intuitively, ACL aims to maximize the agreement between natural data and the agreement between adversarial data. 
+    Intuitively, ACL aims to maximize the agreement between different natural view and the agreement between different adversarial views. 
 </div>
 
-Here is the generation procedure of adversarial data via Projected Gradient Descent (PGD)<d-cite key="PGD"></d-cite>. Given an initial positive pair $$(x_k^{i,(0)}, x_k^{j,(0)})$$, PGD step $$T \in \mathbb{N}$$, step size $$\rho > 0$$, and adversarial budget $$\epsilon \geq 0$$, PGD iteratively updates the pair of data from $$t=0$$ to $$T-1$$ as follows:
+Here is the generation procedure of adversarial data via Projected Gradient Descent (PGD) <d-cite key="PGD"></d-cite>. Given an initial positive pair $$(x_k^{i,(0)}, x_k^{j,(0)})$$, PGD step $$T \in \mathbb{N}$$, step size $$\rho > 0$$, and adversarial budget $$\epsilon \geq 0$$, PGD iteratively updates the pair of data from $$t=0$$ to $$T-1$$ as follows:
 
 $$ x_k^{i,(t+1)} \! = \! \Pi_{\mathcal{B}_\epsilon[x_k^{i,(0)}]} \big( x_k^{i,(t)} +\rho \cdot \mathrm{sign} (\nabla_{x_k^{i,(t)}} \ell_\mathrm{CL}(x_k^{i,(t)}, x_k^{j,(t)})  \big ), $$
 
@@ -225,7 +224,7 @@ where $$\Pi_{\mathcal{B}_\epsilon[x]}$$ projects the data into the $$\epsilon$$-
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-robust-foundation-model/PGD_step.png" class="img-fluid" %}
+        {% include figure.html path="assets/img/2024-05-07-robust-foundation-model/pgd_step.gif" class="img-fluid" %}
     </div>
 </div>
 <div class="caption">
@@ -255,10 +254,10 @@ class ACL(nn.Module):
         self.temperature = temperature
 
     def forward(self, zi, zj, zi_adv, zj_adv, weight=0.5):
-        # zi: the representation of natural data x^i.
-        # zj: the representation of natural data x^j.
-        # zi_adv: the representation of adversarial data \tilde{x}^i.
-        # zj_adv: the representation of adversarial data \tilde{x}^j.
+        # zi: the representation of natural view x^i.
+        # zj: the representation of natural view x^j.
+        # zi_adv: the representation of adversarial view \tilde{x}^i.
+        # zj_adv: the representation of adversarial view \tilde{x}^j.
 
         bs = zi.shape[0]
         labels = torch.zeros((2*bs,)).long().to(zi.device)
@@ -386,7 +385,7 @@ During **the data generation procedure**:
 
 During **the learning procedure**, ACL optimizes the parameters $$\theta$$ by maximizing the conditional probabilities both $$p(y^R \mid x)$$ and $$p(y^R \mid \tilde{x})$$.
 
-### the Methodology of AIR<d-cite key="AIR"></d-cite>
+### the Methodology of AIR <d-cite key="AIR"></d-cite>
 
 **Style-invariant criterion.**
 
@@ -441,7 +440,7 @@ $$
 in which $$\epsilon \geq 0$$ is the adversarial budget, $$B$$ is a mini-batch, and
 $$\mathrm{KL}(p(x) \| q(x); B) = \sum_{x \in B} p(x) \log \frac{p(x)}{q(x)}$$ denotes the KL divergence.
 
-We provide an illustration of AIR for ACL. The ACL aims to maximize the agreements between two natural data (<span style="color:blue">the dash blue lines</span>) and the agreements between two adversarial data (<span style="color:red">the dash red lines</span>). The AIR aims to maximize the agreements between the original data and the adversarial data (<span style="color:orange">the dash yellow lines</span>) and the agreements between the natural data and the adversarial data (<span style="color:pink">the dash pink lines</span>).
+We provide an illustration of AIR for ACL. The ACL aims to maximize the agreements between two natural data (<span style="color:blue">the dash blue lines</span>) and the agreements between two adversarial data (<span style="color:red">the dash red lines</span>). The AIR aims to maximize the agreements between the original data and different views of adversarial data (<span style="color:orange">the dash yellow lines</span>) and the agreements between different views of natural data and different views of adversarial data (<span style="color:pink">the dash pink lines</span>).
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -449,7 +448,7 @@ We provide an illustration of AIR for ACL. The ACL aims to maximize the agreemen
     </div>
 </div>
 <div class="caption">
-  Intuitively, AIR aims to maximize the agreement among natural data, adversarial data, and original data.  
+  Intuitively, AIR aims to maximize the agreements among different natural views, different adversarial views, and original data.  
 </div>
 
 **Learning objective of AIR.**
@@ -652,7 +651,7 @@ Due to the inefficiency of ACL, ACL has not yet been applied to ImageNet-1K data
     ACL is inefficient because $T$ PGD steps requires expensive computational overheads.
 </div>
 
-### the Methodology of RCS<d-cite key="RCS"></d-cite>
+### the Methodology of RCS <d-cite key="RCS"></d-cite>
 
 **Intuition of RCS.**
 
@@ -700,12 +699,12 @@ where $$G:2^\mathcal{X} \rightarrow \mathbb{R}$$ is a set function, $$\theta(S)$
 **RCS via Greedy Search.**  
 
 The vanilla solution of traversing all subsets and selecting the subset that has the largest $$G_\theta(S)$$ is intractable. 
-Xu et al. <d-cite key='RCS'></d-cite> show that the set function $$G_\theta(S)$$ satisfies the following two properties, which motivates a greedy search to efficiently search for the coreset.
+Xu et al. (2023) <d-cite key='RCS'></d-cite> show that the set function $$G_\theta(S)$$ satisfies the following two critical properties, which motivates a greedy search to efficiently search for the coreset.
 
-The set function $$G_\theta(S)$$ is proved as $$\gamma$$-submodular which satisfies the following two properties<d-footnote>In the paper of RCS<d-cite key='RCS'></d-cite>, the authors introduced a proxy set function to prove that the greedy search algorithm can provide a guaranteed lower bound for the set function maximization problem. </d-footnote>:
+The set function $$G_\theta(S)$$ is proved as submodular<d-footnote>In reality, the authors of RCS <d-cite key='RCS'></d-cite> rigorously proved a proxy set function as weakly submodular. Further, the authors of RCS proved that the greedy search algorithm provides a guaranteed lower bound for the proposed set function maximization problem based on a weakly submodular proxy set function. For more details, please refer to the paper of RCS.</d-footnote> which satisfies the following two properties:
 
 - Monotonicity: As more data is added to the set, the representation becomes better.<br> $$G(x\mid X)=G(S \cup \{x\}) - G(S) \geq 0$$ for any $$ S \subseteq X$$ and $$x \in X \setminus S$$.
-- Diminishing returns: As the set has more data, the marginal gain of extra data for learning representations gradually diminishes. <br> $$\mathop{\forall}\limits_{A,B \mid A \subseteq B} G_\theta(x \mid A) \geq (1 - \gamma) G_\theta(x \mid B)$$ where $$\gamma \in (0,1)$$ and$$A \subseteq B \subseteq X$$.
+- Diminishing returns: As the set has more data, the marginal gain of extra data for learning representations gradually diminishes. <br> $$\mathop{\forall}\limits_{A,B \mid A \subseteq B} G_\theta(x \mid A) \geq G_\theta(x \mid B)$$ where $$A \subseteq B \subseteq X$$.
 
 Therefore, RCS greedily searches for the data that has the largest marginal gain and then adds them into the coreset, where the marginal gain of data $$x$$ is calculated as follows:
 
@@ -736,7 +735,7 @@ We demonstrate the pseudo-code of efficient ACL via RCS as follows:
 - **Step 2.4 (RCS)**: $$S \gets S \cup \{x_k\}$$, $$X \gets X \setminus \{ x_k \}$$, $$\theta' \gets \theta' - \eta' q_k$$.
 - **Step 2.5 (RCS)**: Repeat Steps 2.2-2.4 until $$\mid S\mid/\mid X\mid = k$$.
 - Step 3 (ACL training): Update parameters $$\theta \gets \theta - \eta \nabla_\theta \mathcal{L}_\mathrm{ACL}(S; \theta)$$.
-- Step 4: Every $$I$$ epochs, go to Step 2.1 to generate a new coreset; otherwise go to Step 3 to update model parameters. The algorithm stops when reaches the final training epoch.
+- Step 4: Every $$I$$ epochs, go to Step 2.1 to generate a new coreset; otherwise go to Step 3 to update model parameters. The algorithm stops when reaching the final training epoch.
 
 
 <div class="row mt-3">
@@ -745,7 +744,7 @@ We demonstrate the pseudo-code of efficient ACL via RCS as follows:
     </div>
 </div>
 <div class="caption">
-    A pipeline of efficient ACL via RCS. After the warm up periods, the model is trained on the coreset. Thus, RCS makes the training procedure much more efficient by decreasing the number of training data. 
+    A pipeline of efficient ACL via RCS. After the warm-up periods, the model is trained on the coreset. Thus, RCS makes the training procedure much more efficient by decreasing the number of training data. 
 </div>
 
 The official code of RCS is available at [https://github.com/GodXuxilie/Efficient_ACL_via_RCS](https://github.com/GodXuxilie/Efficient_ACL_via_RCS).
@@ -834,7 +833,7 @@ python adv_tune.py --out_dir $FINETUNE_DIR/AFF \
                    --lr 0.1
 {% endhighlight %}
 
-**RCS can speed up Standard Adversarial Training (SAT)<d-cite key='PGD'></d-cite> on ImageNet-1K.** The results show that RCS is applicable to robust pre-training in the supervised setting.
+**RCS can speed up Standard Adversarial Training (SAT) <d-cite key='PGD'></d-cite> on ImageNet-1K.** The results show that RCS is applicable to robust pre-training in the supervised setting.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
