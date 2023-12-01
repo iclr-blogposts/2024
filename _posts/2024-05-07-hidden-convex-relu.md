@@ -324,8 +324,7 @@ We omitted $$\pmb{D}_4$$ as it is the null matrix. We simplify further:
 \end{equation}
 </p>
 
-
-This is a convex group lasso model, that is trying to use as few as possible features to explain the data (because of the _sparsifying_ effect of the regularization). 
+This is a convex group lasso model, that is trying to use as few as possible features to explain the data (because of the _group sparsifying_ effect of the regularization). The model might have many neurons (close to $$2^n$$), but the optimal solution will have many neurons set to zero.
 
 The convex set $$\cal{K}$$ adds constraints to each neurons so that we can map each convex neuron to a non-convex neuron in the original problem. $$\pmb{u}_1$$ has to activate $$\pmb{x}_2$$ and de-activate $$\pmb{x}_1$$. This gives us the following constraints:
 
@@ -348,23 +347,49 @@ Let $$\pmb{u}^*_i, \pmb{v}^*_i$$ the optimal solution to the above convex proble
 
 <p>
 \begin{align}
-(\pmb{w}_1, \alpha_1) &= \left(\frac{\pmb{u}^*_1}{\sqrt{\vert \pmb{u}^*_1 \vert_2}}, \sqrt{\vert \pmb{u}^*_1 \vert_2}\right) \\
-(\pmb{w}_2, \alpha_2) &= \left(\frac{\pmb{v}^*_1}{\sqrt{\vert \pmb{v}^*_1 \vert_2}}, - \sqrt{\vert \pmb{v}^*_1 \vert_2}\right) 
+(\pmb{w}_1, \alpha_1) &= \left(\pmb{u}^*_1, 1\right) \\
+(\pmb{w}_2, \alpha_2) &= \left(\pmb{v}^*_1,-1\right) 
 \end{align}
 </p>
 
+By plugging those neurons in the non-convex setting, we see that the network's output directly match for all neurons $$\pmb{D}_i \pmb{X} \pmb{w}_i = \max(0, \pmb{X}\pmb{w}_i)$$ because $$\pmb{w}_i$$ respect the constraints. Thus the output is equal. If the non-convex could be improved from there, then we could have improved the convex problem as well since it has the same expressivity.
 
-
-The simplest proof of the equivalence can be found in the paper <a href="https://arxiv.org/pdf/2202.01331.pdf">Fast Convex Optimization for Two-Layer ReLU Networks</a><d-cite key="mishkinFastConvexOptimization2022a"></d-cite>.
+A more formal proof of the equivalence can be found in the paper <a href="https://arxiv.org/pdf/2202.01331.pdf">Fast Convex Optimization for Two-Layer ReLU Networks</a> Theorem 2.1 and Theorem 2.2<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>. To get back to the non-convex problem with two layers, the mapping is a simple scaling by $$\sqrt{\| \pmb{w}_1 \|_2}$$ (sharing the norm between the two layers). 
 
 ### Specifics about equivalence
 
-- If we consider all possible activation pattern, the convex problem's unique solution correspond to the global optima of the non-convex network with at least as many neurons as the convex one.
-- If we only consider a subset, the convex problem correspond to a local optima of the non-convex network.
+If we consider all possible activation pattern, so in general a total of $$2^{n+1}$$ convex neurons, the convex problem's unique solution correspond to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss.
 
-Consider the example in the first section. We had one non-convex neuron with a second layer fixed to __+1__. Since the data is one dimensional, only two activations are possible $$\pmb{D}_1=\left(\begin{smallmatrix} 1 & 0 \\ 0 & 0 \end{smallmatrix}\right)$$ and $$\pmb{D}_2=\left(\begin{smallmatrix} 0 & 0 \\ 0 & 1 \end{smallmatrix}\right)$$. So we know the optimal solution has at most two non zero neurons.
+If we only consider a subset of all patterns, the convex problem correspond to a local optima of the non-convex network. Indeed, it is not as expressive as before. This would either correspond to a non-convex network with not enough neurons, or with too many neurons concentrated in the same regions.
 
-... todo
+#### 1-D EXAMPLE, ONE NEURON
+
+Consider the example in the first section. We had one non-convex neuron with a second layer fixed to __+1__. Since the data is one dimensional, only two activations are possible $$\pmb{D}_1=\left(\begin{smallmatrix} 1 & 0 \\ 0 & 0 \end{smallmatrix}\right)$$ and $$\pmb{D}_2=\left(\begin{smallmatrix} 0 & 0 \\ 0 & 1 \end{smallmatrix}\right)$$.
+
+Here are the two local minima for one ReLU neuron:
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra8.png" class="img-fluid" %}
+
+They can be found exactly by solving the convex problem with a subset of all activation possible, that is $$\pmb{D}_2$$ on the left and $$\pmb{D}_1$$ on the right.
+
+Here we cannot say that the convex problem(that consider only one pattern) is equivalent to the non-convex one. However, once we reach a local minima in the non-convex gradient descent and only then, it is described by a convex problem, by considering one pattern or the other.
+
+#### 1-D EXAMPLE, TWO NEURONS
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra9.png" class="img-fluid" %}
+
+The non-convex problem initialised at random will have three local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima(__left__), or two of them will end up in the same pattern (__right__).
+
+The convex problem with two patterns is equivalent to the non-convex, in that they share the same global optima and have the same expressivity. Solving the convex problem will yield the two optimal neurons.
+
+
+#### 1-D EXAMPLE, MANY NEURONS
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra10.png" class="img-fluid" %}
+
+This would be the usual minima found by GD. Here we have much more neurons than there are existing patterns (while this is unlikely, many neurons do end up in the same pattern in practice). However we can merge (simply adding neuron together to get a new one) neurons in the same pattern without changing the output nor the loss (regularization might change). This generalize and is at the core of the proof.
+
+TODO: precise statements with regul, cite hidden convex, maybe numeric? maybe actual GD? Precise that the loss is 0 in the graphs
 
 ### Extensions
 
@@ -380,9 +405,16 @@ Our non-convex problem is equivalent to a well specified and convex optimisation
 
 ### A word on performance
 
-In complexity terms, the convex formulation allows algorithm in polynomial time for all parameters but the rank of the data matrix<d-cite key="pilanciNeuralNetworksAre2020"></d-cite>. 
+In complexity terms, the convex formulation with all activations allows algorithm in polynomial time for all parameters but the rank of the data matrix<d-cite key="pilanciNeuralNetworksAre2020"></d-cite>. In practice, there is quickly too many patterns to consider them all.
 
 There has been some work on solving the convex problem quickly<d-cite key="mishkinFastConvexOptimization2022a"></d-cite> by only taking a random subset of activation patterns and by considering the unconstrained version of the problem. Current convex solvers(ECOS, ...)  are not tailored to problem with many constraints. Except in some scenarios, it is hard to beat in speed a simple gradient descent running on GPUs. todo cite https://arxiv.org/pdf/2201.01965.pdf
+
+| Dataset  | Convex | Adam | SGD  | Adagrad |
+|----------|--------|------|------|---------|
+| MNIST    | 97.6   | 98.0 | 97.2 | 97.5    |
+| CIFAR-10 | 56.4   | 50.1 | 54.3 | 54.2    |
+
+_Performance on popular dataset for a single layer network<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>._
 
 Convex equivalent of deeper networks exists but exacerbate existing problems. To counter that, it is possible to optimise layer by layer but needs further improvements to beat usual methods in accuracy and speed.
 
@@ -430,6 +462,8 @@ The convex approach can make this clear:
 ## Conclusion
 
 The main takeaway is ...
+
+open problems: gap with practice: forced early stopping
 
 ## todo
 
