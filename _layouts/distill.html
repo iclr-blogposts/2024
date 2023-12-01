@@ -27,7 +27,7 @@
     {
       let authorsBibtex = authors.map(e => `${e[0]}, ${e[1]}`).join(" and ");
       let bibtexTitleShorthand = (firstAuthorLName +
-              "2023" +
+              "2024" +
               title.split(" ").slice(0, 3).join("")
       ).replace(" ", "").replace(/[\p{P}$+<=>^`|~]/gu, '').toLowerCase().trim();
       let bibtexTemplate = `
@@ -35,8 +35,8 @@
   author = {${authorsBibtex}},
   title = {${title}},
   abstract = {${description}},
-  booktitle = {ICLR Blogposts 2023},
-  year = {2023},
+  booktitle = {ICLR Blogposts 2024},
+  year = {2024},
   date = {${publishedWhen}},
   note = {${window.location.href}},
   url  = {${window.location.href}}
@@ -53,7 +53,7 @@
         else academicLFI = academicLFI[0];
       }
       let academicTemplate = `
-${academicLFI}, "${title}", ICLR Blogposts, 2023.
+${academicLFI}, "${title}", ICLR Blogposts, 2024.
 `.trim();
       document.getElementById("bibtex-academic-attribution").innerText = academicTemplate;
     }
@@ -182,7 +182,7 @@ ${academicLFI}, "${title}", ICLR Blogposts, 2023.
 
 
     <script src="https://utteranc.es/client.js"
-        repo="iclr-blogposts/2023"
+        repo="iclr-blogposts/2024"
         issue-term="pathname"
         theme="github-light"
         crossorigin="anonymous"
