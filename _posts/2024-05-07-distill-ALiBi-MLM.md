@@ -95,7 +95,7 @@ where solid lines are what's considered "canonical" setup and dotted lines are e
 
 1. Whether we use attention dropout or not
 2. Whether we use [symmetric ALiBi (option 1)](https://github.com/ofirpress/attention_with_linear_biases/issues/5) or nonsymmetric-with-offset ALiBi above
-3. Whether we use zero vector or a separate learnable embedding for the mask embedding
+3. ~~Whether we use zero vector or a separate learnable embedding for the mask embedding~~<d-footnote>The intention was to test using zero vector instead of a separate learnable embedding for the mask embedding, which in combination with ALiBi results in no non-semantic information in the input embeddings. However, a bug prevented this variation from working correctly and the end effect was merely deleting the last two words (madeupword0001 and madeupword0002) from the dictionary instead, which we don't expect to be consequential.</d-footnote>
 4. Whether we L2-normalize the embeddings for the CLAP head or not
 5. Whether we scale the L2-normalized embeddings by `sqrt(embed_dim)` (`no_scale_embedding=False`) or not
 
@@ -163,7 +163,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 [('The capital of China is Beijing.', 0.7009016871452332, ' Beijing'), ('The capital of China is Shanghai.', 0.23566904664039612, ' Shanghai'), ('The capital of China is Moscow.', 0.010170688852667809, ' Moscow')]
 >>>
 ```
-The `zero-clap` ones were trained without the last two `madeupword`'s, so you need to delete them from `dict.txt` before loading, i.e.:
+The `zero-clap` ones were trained without the last two `madeupword`'s<d-footnote>This is due to the same bug that affected the WikiText-103 variation above and its only visible effect.</d-footnote>, so you need to delete them from `dict.txt` before loading, i.e.:
 
 <pre>
 (...)
