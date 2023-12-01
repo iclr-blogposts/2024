@@ -88,7 +88,7 @@ Foundation models <d-cite key='bommasani2021opportunities'></d-cite> are pre-tra
 
 To build foundation models, contrastive learning (CL) <d-cite key="SimCLR"></d-cite> is one of the popular self-supervised learning methods. CL aims to maximize the agreement between different natural views of the original data.
 
-Let $$f_\theta: \mathcal{X} \rightarrow \mathcal{Z}$$ be a feature extractor parameterized by $$\theta$$, $$g:\mathcal{Z} \rightarrow \mathcal{V}$$ be a projection head that maps representations to the space where the contrastive loss is applied, and $$\tau_i, \tau_j: \mathcal{X} \rightarrow \mathcal{X}$$ be two transformation operations randomly sampled from a pre-defined transformation set $$\mathcal{T}$$. Given a minibatch $$B \sim \mathcal{X}^\beta$$ consisting of $$\beta$$ samples, we denote the augmented minibatch $$B^\prime = \{ \tau_i(x_k),  \tau_j(x_k) \mid \forall x_k \in B \}$$ consisting of $$2\beta$$ samples. We take $$h_\theta(\cdot) = g \circ f_\theta(\cdot)$$ and $$x_k^u = \tau_u(x_k)$$ for any $$x_k \sim \mathcal{X}$$ and $$u \in \{i,j\}$$. The contrastive loss between different natural views (i.e., $$x_k^i$$ and $$x_k^j$$) is formulated as follows:
+Let $$f_\theta: \mathcal{X} \rightarrow \mathcal{Z}$$ be a feature extractor parameterized by $$\theta$$, $$g:\mathcal{Z} \rightarrow \mathcal{V}$$ be a projection head that maps representations to the space where the contrastive loss is applied, and $$\tau_i, \tau_j: \mathcal{X} \rightarrow \mathcal{X}$$ be two transformation operations randomly sampled from a pre-defined transformation set $$\mathcal{T}$$. Given a mini-batch $$B \sim \mathcal{X}^\beta$$ consisting of $$\beta$$ samples, we denote the augmented minibatch $$B^\prime = \{ \tau_i(x_k),  \tau_j(x_k) \mid \forall x_k \in B \}$$ consisting of $$2\beta$$ samples. We take $$h_\theta(\cdot) = g \circ f_\theta(\cdot)$$ and $$x_k^u = \tau_u(x_k)$$ for any $$x_k \sim \mathcal{X}$$ and $$u \in \{i,j\}$$. The contrastive loss between different natural views (i.e., $$x_k^i$$ and $$x_k^j$$) is formulated as follows:
 
 $$ \ell_\mathrm{CL}(x_k^i,x_k^j; \theta)\!=\!-\! \sum\limits_{u \in \{i,j\}} \! \log \frac{e^{\mathrm{sim} \left(h_\theta(x_k^i), h_\theta(x_k^j) \right)/t}}{\sum\limits_{x \in B^\prime \setminus \{x_k^u\}} e^{\mathrm{sim} \left( h_\theta(x_k^u), h_\theta(x) \right)/t}}, $$
 
@@ -100,7 +100,7 @@ where $$\mathrm{sim}(\cdot,\cdot)$$ is the cosine similarity function.
     </div>
 </div>
 <div class="caption">
-    Intuitively, CL aims to maximize the agreement between different natural views.
+    Intuitively, CL aims to maximize the agreement between different natural views (<span style="color:blue">the dash blue lines</span>).
 </div>
 
 **How to implement CL at the pre-training stage in practice?**
@@ -211,7 +211,7 @@ Note that $$\omega \in [0,1]$$ is a scalar and $$\mathcal{B}_\epsilon[x]$$ is a 
     </div>
 </div>
 <div class="caption">
-    Intuitively, ACL aims to maximize the agreement between different natural view and the agreement between different adversarial views. 
+    Intuitively, ACL aims to maximize the agreement between different natural view (<span style="color:blue">the dash blue lines</span>) and the agreement between different adversarial views (<span style="color:red">the dash red lines</span>). 
 </div>
 
 Here is the generation procedure of adversarial data via Projected Gradient Descent (PGD) <d-cite key="PGD"></d-cite>. Given an initial positive pair $$(x_k^{i,(0)}, x_k^{j,(0)})$$, PGD step $$T \in \mathbb{N}$$, step size $$\rho > 0$$, and adversarial budget $$\epsilon \geq 0$$, PGD iteratively updates the pair of data from $$t=0$$ to $$T-1$$ as follows:
@@ -337,7 +337,7 @@ You can use the following script to transferring an adversarially pre-trained Re
 {% highlight bash %}
 # Fine-tuning stage
 cd Enhancing_ACL_via_AIR
-PRE_TRAIN_DIR=ACL_cifar10_ResNet18
+PRE_TRAIN_DIR=ACL_ResNet18_cifar10
 FINETUNE_DIR=ACL_ResNet18_cifar10_cifar100
 MODE=SLF/ALF/AFF/ALL
 python finetuning.py --mode $MODE \
@@ -438,9 +438,9 @@ $$
 $$
 
 in which $$\epsilon \geq 0$$ is the adversarial budget, $$B$$ is a mini-batch, and
-$$\mathrm{KL}(p(x) \| q(x); B) = \sum_{x \in B} p(x) \log \frac{p(x)}{q(x)}$$ denotes the KL divergence.
+$$\mathrm{KL}(p(x) \| q(x); B) = \sum_{x \in B} p(x) \log \frac{p(x)}{q(x)}$$ denotes the Kullback–Leibler (KL) divergence.
 
-We provide an illustration of AIR for ACL. The ACL aims to maximize the agreements between two natural data (<span style="color:blue">the dash blue lines</span>) and the agreements between two adversarial data (<span style="color:red">the dash red lines</span>). The AIR aims to maximize the agreements between the original data and different views of adversarial data (<span style="color:orange">the dash yellow lines</span>) and the agreements between different views of natural data and different views of adversarial data (<span style="color:pink">the dash pink lines</span>).
+We provide an illustration of AIR for ACL. The AIR aims to maximize the agreements between the original data and the adversarial view (<span style="color:orange">the dash yellow lines</span>) and the agreements between the natural view and the adversarial view (<span style="color:pink">the dash pink lines</span>).
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -673,7 +673,7 @@ RD of a data point $$\ell_\mathrm{RD}(x;\theta)$$ is quantified by the represent
 $$\ell_{\mathrm{RD}}(x; \theta) = d(g \circ f_\theta(\tilde{x}), g \circ f_\theta(x)) \quad \mathrm{s.t.} \quad \tilde{x} = \mathop{\arg\max}_{x^{\prime} \in \mathcal{B}_\epsilon[x]} \quad d(g \circ f_\theta(x^{\prime}), g \circ f_\theta(x)),$$
 
 in which the PGD method is used to generate adversarial data $$\tilde{x}$$ within the $$\epsilon$$-ball centered at $$x$$ and
-$$d(\cdot, \cdot): \mathcal{V} \times \mathcal{V} \rightarrow \mathbb{R}$$ is a distance function, such as the Kullback–Leibler (KL) divergence. 
+$$d(\cdot, \cdot): \mathcal{V} \times \mathcal{V} \rightarrow \mathbb{R}$$ is a distance function, such as the KL divergence. 
 The smaller the RD is, the representations are of less sensitivity to adversarial perturbations, thus being more adversarially robust.
 
 **Objective function of RCS.** 
