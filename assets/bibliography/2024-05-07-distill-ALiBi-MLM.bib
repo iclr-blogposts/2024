@@ -115,6 +115,47 @@
     abstract = "We study the topmost weight matrix of neural network language models. We show that this matrix constitutes a valid word embedding. When training language models, we recommend tying the input embedding and this output embedding. We analyze the resulting update rules and show that the tied embedding evolves in a more similar way to the output embedding than to the input embedding in the untied model. We also offer a new method of regularizing the output embedding. Our methods lead to a significant reduction in perplexity, as we are able to show on a variety of neural network language models. Finally, we show that weight tying can reduce the size of neural translation models to less than half of their original size without harming their performance.",
 }
 
+@inproceedings{DBLP:conf/iclr/MerityX0S17,
+  author       = {Stephen Merity and
+                  Caiming Xiong and
+                  James Bradbury and
+                  Richard Socher},
+  title        = {Pointer Sentinel Mixture Models},
+  booktitle    = {5th International Conference on Learning Representations, ICLR 2017,
+                  Toulon, France, April 24-26, 2017, Conference Track Proceedings},
+  publisher    = {OpenReview.net},
+  year         = {2017},
+  url          = {https://openreview.net/forum?id=Byj72udxe},
+  timestamp    = {Thu, 25 Jul 2019 14:25:57 +0200},
+  biburl       = {https://dblp.org/rec/conf/iclr/MerityX0S17.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/corr/abs-2101-00027,
+  author       = {Leo Gao and
+                  Stella Biderman and
+                  Sid Black and
+                  Laurence Golding and
+                  Travis Hoppe and
+                  Charles Foster and
+                  Jason Phang and
+                  Horace He and
+                  Anish Thite and
+                  Noa Nabeshima and
+                  Shawn Presser and
+                  Connor Leahy},
+  title        = {The Pile: An 800GB Dataset of Diverse Text for Language Modeling},
+  journal      = {CoRR},
+  volume       = {abs/2101.00027},
+  year         = {2021},
+  url          = {https://arxiv.org/abs/2101.00027},
+  eprinttype    = {arXiv},
+  eprint       = {2101.00027},
+  timestamp    = {Thu, 14 Oct 2021 09:16:12 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2101-00027.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
 @misc{hoffmann2022training,
       title={Training Compute-Optimal Large Language Models},
       author={Jordan Hoffmann and Sebastian Borgeaud and Arthur Mensch and Elena Buchatskaya and Trevor Cai and Eliza Rutherford and Diego de Las Casas and Lisa Anne Hendricks and Johannes Welbl and Aidan Clark and Tom Hennigan and Eric Noland and Katie Millican and George van den Driessche and Bogdan Damoc and Aurelia Guy and Simon Osindero and Karen Simonyan and Erich Elsen and Jack W. Rae and Oriol Vinyals and Laurent Sifre},
@@ -123,6 +164,28 @@
       eprint={2203.15556},
       archivePrefix={arXiv},
       primaryClass={cs.CL}
+}
+
+@inproceedings{wang-etal-2018-glue,
+    title = "GLUE: A Multi-Task Benchmark and Analysis Platform for Natural Language Understanding",
+    author = "Wang, Alex  and
+      Singh, Amanpreet  and
+      Michael, Julian  and
+      Hill, Felix  and
+      Levy, Omer  and
+      Bowman, Samuel",
+    editor = "Linzen, Tal  and
+      Chrupa{\l}a, Grzegorz  and
+      Alishahi, Afra",
+    booktitle = "Proceedings of the 2018 {EMNLP} Workshop {B}lackbox{NLP}: Analyzing and Interpreting Neural Networks for {NLP}",
+    month = nov,
+    year = "2018",
+    address = "Brussels, Belgium",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W18-5446",
+    doi = "10.18653/v1/W18-5446",
+    pages = "353--355",
+    abstract = "Human ability to understand language is \textit{general, flexible, and robust}. In contrast, most NLU models above the word level are designed for a specific task and struggle with out-of-domain data. If we aspire to develop models with understanding beyond the detection of superficial correspondences between inputs and outputs, then it is critical to develop a unified model that can execute a range of linguistic tasks across different domains. To facilitate research in this direction, we present the General Language Understanding Evaluation (GLUE, gluebenchmark.com): a benchmark of nine diverse NLU tasks, an auxiliary dataset for probing models for understanding of specific linguistic phenomena, and an online platform for evaluating and comparing models. For some benchmark tasks, training data is plentiful, but for others it is limited or does not match the genre of the test set. GLUE thus favors models that can represent linguistic knowledge in a way that facilitates sample-efficient learning and effective knowledge-transfer across tasks. While none of the datasets in GLUE were created from scratch for the benchmark, four of them feature privately-held test data, which is used to ensure that the benchmark is used fairly. We evaluate baselines that use ELMo (Peters et al., 2018), a powerful transfer learning technique, as well as state-of-the-art sentence representation models. The best models still achieve fairly low absolute scores. Analysis with our diagnostic dataset yields similarly weak performance over all phenomena tested, with some exceptions.",
 }
 
 @misc{chowdhery2022palm,
@@ -143,4 +206,31 @@
       eprint={2207.10551},
       archivePrefix={arXiv},
       primaryClass={cs.LG}
+}
+
+@inproceedings{portes2023mosaicbert,
+      title={MosaicBERT: How to Train BERT with a Lunch Money Budget},
+      author={Jacob Portes and Alexander R Trott and Sam Havens and DANIEL KING and Abhinav Venigalla and Moin Nadeem and Nikhil Sardana and Daya Khudia and Jonathan Frankle},
+      booktitle={Workshop on Efficient Systems for Foundation Models @ ICML2023},
+      year={2023},
+      url={https://openreview.net/forum?id=WH1S0gonzR}
+}
+
+@inproceedings{lee-etal-2022-littlebird,
+    title = "LittleBird: Efficient Faster & Longer Transformer for Question Answering",
+    author = "Lee, Minchul  and
+      Han, Kijong  and
+      Shin, Myeong Cheol",
+    editor = "Goldberg, Yoav  and
+      Kozareva, Zornitsa  and
+      Zhang, Yue",
+    booktitle = "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.emnlp-main.352",
+    doi = "10.18653/v1/2022.emnlp-main.352",
+    pages = "5261--5277",
+    abstract = "BERT has shown a lot of sucess in a wide variety of NLP tasks. But it has a limitation dealing with long inputs due to its attention mechanism. Longformer, ETC and BigBird addressed this issue and effectively solved the quadratic dependency problem. However we find that these models are not sufficient, and propose LittleBird, a novel model based on BigBird with improved speed and memory footprint while maintaining accuracy. In particular, we devise a more flexible and efficient position representation method based on Attention with Linear Biases(ALiBi). We also show that replacing the method of global information represented in the BigBird with pack and unpack attention is more effective. The proposed model can work on long inputs even after being pre-trained on short inputs, and can be trained efficiently reusing existing pre-trained language model for short inputs. This is a significant benefit for low-resource languages where large amounts of long text data are difficult to obtain. As a result, our experiments show that LittleBird works very well in a variety of languages, achieving high performance in question answering tasks, particularly in KorQuAD2.0, Korean Question Answering Dataset for long paragraphs.",
 }
