@@ -333,7 +333,7 @@ There are three types of fine-tuning modes:
 2. Adversarial linear fine-tuning (ALF): only adversarially fine-tuning the classifier while freezing the feature extractor.
 3. Adversarial full fine-tuning (AFF): adversarially fine-tuning both the feature extractor and the classifier.
 
-You can use the following script to transferring an adversarially pre-trained ResNet-18 on CIFAR-10 to a downtream task CIFAR-100 via fine-tuning:
+You can use the following script to transfer an adversarially pre-trained ResNet-18 on CIFAR-10 to a downstream task CIFAR-100 via fine-tuning:
 {% highlight bash %}
 # Fine-tuning stage
 cd Enhancing_ACL_via_AIR
@@ -648,7 +648,7 @@ Due to the inefficiency of ACL, ACL has not yet been applied to ImageNet-1K data
     </div>
 </div>
 <div class="caption">
-    ACL is inefficient because $T$ PGD steps requires expensive computational overheads.
+    ACL is inefficient because $T$ PGD steps require expensive computational overheads.
 </div>
 
 ### the Methodology of RCS <d-cite key="RCS"></d-cite>
@@ -694,7 +694,7 @@ $$S^* = \mathop{\arg\max}_{S \subseteq X, |S|/|X| = k} G_\theta(S),$$
 
 $$G_\theta(S \subseteq X) \triangleq - \mathcal{L}_\mathrm{RD}(U; \theta(S)) = - \mathcal{L}_\mathrm{RD}(U; \theta - \eta \nabla_\theta \mathcal{L}_\mathrm{ACL}(S; \theta)),$$
 
-where $$G:2^\mathcal{X} \rightarrow \mathbb{R}$$ is a set function, $$\theta(S)$$ is estimatied using one-step approximation and $$\eta \in \mathbb{R}^+$$ is the learning rate.
+where $$G:2^\mathcal{X} \rightarrow \mathbb{R}$$ is a set function, $$\theta(S)$$ is estimated using the one-step approximation and $$\eta \in \mathbb{R}^+$$ is the learning rate.
 
 **RCS via Greedy Search.**  
 
@@ -704,7 +704,7 @@ Xu et al. (2023) <d-cite key='RCS'></d-cite> show that the set function $$G_\the
 The set function $$G_\theta(S)$$ is proved as submodular<d-footnote>In reality, the authors of RCS <d-cite key='RCS'></d-cite> rigorously proved a proxy set function as weakly submodular. Further, the authors of RCS proved that the greedy search algorithm provides a guaranteed lower bound for the proposed set function maximization problem based on a weakly submodular proxy set function. For more details, please refer to the paper of RCS.</d-footnote> which satisfies the following two properties:
 
 - Monotonicity: As more data is added to the set, the representation becomes better.<br> $$G(x\mid X)=G(S \cup \{x\}) - G(S) \geq 0$$ for any $$ S \subseteq X$$ and $$x \in X \setminus S$$.
-- Diminishing returns: As the set has more data, the marginal gain of extra data for learning representations gradually diminishes. <br> $$\mathop{\forall}\limits_{A,B \mid A \subseteq B} G_\theta(x \mid A) \geq G_\theta(x \mid B)$$ where $$A \subseteq B \subseteq X$$.
+- Diminishing returns: As the set has more data, the marginal gain of extra data for learning representations gradually diminishes. <br> $$\mathop{\forall}\limits_{A,B \mid A \subseteq B} G_\theta(x \mid A) \geq G_\theta(x \mid B)$$.
 
 Therefore, RCS greedily searches for the data that has the largest marginal gain and then adds them into the coreset, where the marginal gain of data $$x$$ is calculated as follows:
 
