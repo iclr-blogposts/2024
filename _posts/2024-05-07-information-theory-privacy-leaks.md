@@ -62,12 +62,14 @@ We will review the paper titled [Differentially Private Maximal Information Coef
 # Introduction
 Maximal Information Coefficient (MIC) <d-cite key="Lazarsfeld2022"></d-cite> provides an effective metric for detecting correlations in data as a proxy for measuring privacy leaks. MIC can identify rare and novel relationships in data. MIC is the maximum mutual information over a constellation of grids over data extents. As a result, MIC is computationally expensive to estimate. Hence, MIC is approximated using a computationally efficient dynamic programming procedure (OPTIMIZEAXIS) to restrict the grids for patterns and provide MICe statistics, which results in a simplified formulation. The paper <d-cite key="Lazarsfeld2022"></d-cite> introduced MICe and MICr as computationally efficient approximations of MIC.
 
-Differentially-private MIC is possible due to slight perturbation of the data and has negligible effect on the metric. There are two differentially-private (MICr-Lap as defined in Mechanism 2 <d-cite key="Lazarsfeld2022"></d-cite>, MICr-Geom as defined in Mechanism 3 <d-cite key="Lazarsfeld2022"></d-cite>). MICr-Lap uses the Laplacian mechanism to compute MICr, while MICr-Geom uses geometric distributions to estimate MICr.
+Differentially-private MIC is possible due to slight perturbation of the data having negligible effect on correlations. There are two differentially-private (MICr-Lap as defined in Mechanism 2 <d-cite key="Lazarsfeld2022"></d-cite>, MICr-Geom as defined in Mechanism 3 <d-cite key="Lazarsfeld2022"></d-cite>). MICr-Lap uses the Laplacian mechanism to compute MICr, while MICr-Geom uses geometric distributions to sample additive noise for estimating MICr.
 
 ## Mathematical Foundations
 
-Let use partitions a data across its dimensions and obtain the counts in each grid. Matrix, $\mathbf{A}$ of dim ($k \times \ell$) with $(i, j) \in [k] \times[\ell]$ has count entries, $$\mathbf{A}[i][j]$$, per cell on the grid.
+Let us partition a given data across its dimensions and obtain the counts in each grid. Consider the case where matrix, $\mathbf{A}$ of dim ($k \times \ell$) with $(i, j) \in [k] \times[\ell]$ has count entries, $$\mathbf{A}[i][j]$$, per cell on the grid.
+
 When each row-sum or column-sum of matrix $\mathbf{A}$ is equal, then we have mass-equipartition. Otherwise, we have range-equipartition.
+
 Given matrices, $\mathbf{A}, \mathbf{P}$ $\in \mathbb{R}^{k \times \ell}$ with normalized count $\mathbf{P}[i][j]$, where
 
 $$
@@ -89,7 +91,7 @@ $$
 Let us demonstrate the calculation of normalized mutual information as a procedure for estimating MIC for the grid configuration shown in Figure 1.
 {% include figure.html path="assets/img/2024-05-07-information-theory-privacy-leaks/mic-example.png" class="img-fluid" %}
 
-Figure 1: A partitioning of grid <d-cite key="Lazarsfeld2022"></d-cite>
+Figure 1: A partitioning of grids across 2D data in a cartesian plane <d-cite key="Lazarsfeld2022"></d-cite>
 Let $k = 2, \ell = 4$ for the example in Figure 1, we can estimate $I^{\star}\left(\left.D\right|_G\right) = 0.46688$ and $I^{\star}\left(\left.D\right|_G\right) = 0.46688$.
 
 **Definition 1** (MIC statistic following Definition 2.1 <d-cite key="Lazarsfeld2022"></d-cite>). $\operatorname{MIC}(D, B)=\max {k, \ell: k \ell \leq B(n)}\left(\mathbf{M}D^G\right)_{k, \ell}$ where $B:=B(n)$.
