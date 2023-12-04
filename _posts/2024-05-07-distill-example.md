@@ -1,9 +1,7 @@
 ---
 layout: distill
-title: Sample Blog Post
-description: Your blog post's abstract.
-  Please add your abstract or summary here and not in the main body of your text. 
-  Do not include math/latex or hyperlinks.
+title: Unraveling The Impact of Training Samples
+description: How can we measure the impact of datasets? How does the measurement help us refining the datasets or understanding the learning algorithms? Recent works on Data Attribution Methods give us an interesting answer to these problems.
 date: 2024-05-07
 future: true
 htmlwidgets: true
