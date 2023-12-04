@@ -20,6 +20,7 @@ bibliography: 2024-05-07-information-theory-privacy-leaks.bib
 toc:
   - name: Introduction
     subsections:
+    - name: Mathematical Foundations
     - name: Core Contributions
   - name: Extensions
     subsections:
@@ -62,7 +63,10 @@ We will review the paper titled [Differentially Private Maximal Information Coef
 Maximal Information Coefficient (MIC) <d-cite key="Lazarsfeld2022"></d-cite> provides an effective metric for detecting correlations in data as a proxy for measuring privacy leaks. MIC can identify rare and novel relationships in data. MIC is the maximum mutual information over a constellation of grids over data extents. As a result, MIC is computationally expensive to estimate. Hence, MIC is approximated using a computationally efficient dynamic programming procedure (OPTIMIZEAXIS) to restrict the grids for patterns and provide MICe statistics, which results in a simplified formulation. The paper <d-cite key="Lazarsfeld2022"></d-cite> introduced MICe and MICr as computationally efficient approximations of MIC.
 
 Differentially-private MIC is possible due to slight perturbation of the data and has negligible effect on the metric. There are two differentially-private (MICr-Lap as defined in Mechanism 2 <d-cite key="Lazarsfeld2022"></d-cite>, MICr-Geom as defined in Mechanism 3 <d-cite key="Lazarsfeld2022"></d-cite>). MICr-Lap uses the Laplacian mechanism to compute MICr, while MICr-Geom uses geometric distributions to estimate MICr.
-Matrix, $\mathbf{A}$ of dim ($k \times \ell$) with $(i, j) \in [k] \times[\ell]$ has count entries, $$\mathbf{A}[i][j]$$, per cell on the grid.
+
+## Mathematical Foundations
+
+Let use partitions a data across its dimensions and obtain the counts in each grid. Matrix, $\mathbf{A}$ of dim ($k \times \ell$) with $(i, j) \in [k] \times[\ell]$ has count entries, $$\mathbf{A}[i][j]$$, per cell on the grid.
 When each row-sum or column-sum of matrix $\mathbf{A}$ is equal, then we have mass-equipartition. Otherwise, we have range-equipartition.
 Given matrices, $\mathbf{A}, \mathbf{P}$ $\in \mathbb{R}^{k \times \ell}$ with normalized count $\mathbf{P}[i][j]$, where
 
