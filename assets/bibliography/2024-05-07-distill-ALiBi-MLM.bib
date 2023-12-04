@@ -234,3 +234,51 @@
     pages = "5261--5277",
     abstract = "BERT has shown a lot of sucess in a wide variety of NLP tasks. But it has a limitation dealing with long inputs due to its attention mechanism. Longformer, ETC and BigBird addressed this issue and effectively solved the quadratic dependency problem. However we find that these models are not sufficient, and propose LittleBird, a novel model based on BigBird with improved speed and memory footprint while maintaining accuracy. In particular, we devise a more flexible and efficient position representation method based on Attention with Linear Biases(ALiBi). We also show that replacing the method of global information represented in the BigBird with pack and unpack attention is more effective. The proposed model can work on long inputs even after being pre-trained on short inputs, and can be trained efficiently reusing existing pre-trained language model for short inputs. This is a significant benefit for low-resource languages where large amounts of long text data are difficult to obtain. As a result, our experiments show that LittleBird works very well in a variety of languages, achieving high performance in question answering tasks, particularly in KorQuAD2.0, Korean Question Answering Dataset for long paragraphs.",
 }
+
+@inproceedings{scao2022what,
+    title={What Language Model to Train if You Have One Million GPU Hours?},
+    author={Teven Le Scao and Thomas Wang and Daniel Hesslow and Lucile Saulnier and Stas Bekman and M Saiful Bari and Stella Biderman and Hady Elsahar and Jason Phang and Ofir Press and Colin Raffel and Victor Sanh and Sheng Shen and Lintang Sutawika and Jaesung Tae and Zheng Xin Yong and Julien Launay and Iz Beltagy},
+    booktitle={Challenges & Perspectives in Creating Large Language Models},
+    year={2022},
+    url={https://openreview.net/forum?id=rI7BL3fHIZq}
+}
+
+@article{DBLP:journals/corr/abs-2305-19466,
+  author       = {Amirhossein Kazemnejad and
+                  Inkit Padhi and
+                  Karthikeyan Natesan Ramamurthy and
+                  Payel Das and
+                  Siva Reddy},
+  title        = {The Impact of Positional Encoding on Length Generalization in Transformers},
+  journal      = {CoRR},
+  volume       = {abs/2305.19466},
+  year         = {2023},
+  url          = {https://doi.org/10.48550/arXiv.2305.19466},
+  doi          = {10.48550/ARXIV.2305.19466},
+  eprinttype    = {arXiv},
+  eprint       = {2305.19466},
+  timestamp    = {Wed, 07 Jun 2023 15:37:30 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2305-19466.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{haviv-etal-2022-transformer,
+    title = "Transformer Language Models without Positional Encodings Still Learn Positional Information",
+    author = "Haviv, Adi  and
+      Ram, Ori  and
+      Press, Ofir  and
+      Izsak, Peter  and
+      Levy, Omer",
+    editor = "Goldberg, Yoav  and
+      Kozareva, Zornitsa  and
+      Zhang, Yue",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2022",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.findings-emnlp.99",
+    doi = "10.18653/v1/2022.findings-emnlp.99",
+    pages = "1382--1390",
+    abstract = "Causal transformer language models (LMs), such as GPT-3, typically require some form of positional encoding, such as positional embeddings. However, we show that LMs without any explicit positional encoding are still competitive with standard models and that this phenomenon is robust across different datasets, model sizes, and sequence lengths. Probing experiments reveal that such models acquire an implicit notion of absolute positions throughout the network, effectively compensating for the missing information. We conjecture that causal attention enables the model to infer the number of predecessors that each token can attend to, thereby approximating its absolute position. Our findings indicate that causal LMs might derive positional awareness not only from the explicit positioning mechanism but also from the effects of the causal mask.",
+}
