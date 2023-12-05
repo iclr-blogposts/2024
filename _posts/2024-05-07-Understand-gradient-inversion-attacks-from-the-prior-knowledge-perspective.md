@@ -1,7 +1,7 @@
 ---
 layout: distill
-title: Understand gradient inversion attacks from the prior knowledge perspective
-description: In this blogpost, we mention multiple works in gradient inversion attacks, point out the final question we need to solve in GIAs and provide an inspective from prior knowledge to understand the logic behind recent papers.
+title: Understanding gradient inversion attacks from the prior knowledge perspective
+description: In this blogpost, we mention multiple works in gradient inversion attacks, point out the core question we need to solve in GIAs and provide an perspective from prior knowledge to understand the logic behind recent papers.
 date: 2024-11-27
 future: true
 htmlwidgets: true
@@ -25,7 +25,7 @@ authors:
 #       name: Institute of Automation, Chinese Academy of Sciences
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-gradient-inversion-attack.bib  
+bibliography: 2024-05-07-Understand-gradient-inversion-attacks-from-the-prior-knowledge-perspective.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
@@ -34,7 +34,7 @@ bibliography: 2024-05-07-gradient-inversion-attack.bib
 toc:
   - name: Fundamental pipeline of GIAs 
   - name: Core question in GIAs
-  - name: Understand GIAs from the prior knowledge perspective
+  - name: Understanding GIAs from the prior knowledge perspective
   - subsections:
     - name: Unparameterized regularization terms
     - name: Generative models
@@ -71,6 +71,14 @@ This is a **white-box** attack, for its requirement for full model parameters to
 In GIA, the core question, which has not been solved yet, is the reconstruction of batched input data, where **multiple samples share the same labels**. Previous works headed towards such a goal by a few steps: they first recovered single input data, then extended them to batches with known labels, and added a new algorithm to recover batched one-hot labels before recovering input images. However, to the best of my knowledge, it is still limited to the situation where **for every class there could be at most one sample in a batch**. Batched data recovery with repeated labels is still a failure for all current algorithms. The key reason for this failure lies in the information discard of averaged gradients.
 ### A simple example of information discards in MLPs
 Here we conduct a simple experiment to illustrate the existence of information discard in GIAs. We pick a 4-layer MLP as the target neural network and randomly select a few images from the Flowers-17 dataset as the private input data for recovery. Without any assistance from prior knowledge, $l_2$ and Cosine similarity loss are considered as the gradient matching functions.
+<div class="row mt-3">
+    <div class="bs1_l2">
+        {% include figure.html path="assets/img/2024-05-07-Understand-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_l2.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="bs1_cos">
+        {% include figure.html path="assets/img/2024-05-07-Understand-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
 ## Understanding GIA from the prior Knowledge perspective
 Realizing the information discards, reviewing the recent paper through the prior knowledge perspective may help understand the logic better. To achieve better image reconstruction quality, it is natural to consider the prior knowledge of images as the complement. Here, the prior knowledge could be explained in three aspects.
 
