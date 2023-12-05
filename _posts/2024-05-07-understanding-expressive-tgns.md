@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Understanding Expressive Temporal Graph Neural Networks
-description: In this article, we explore the theory behind the expressiveness of Temporal Graph Neural Network presented by the paper \"Provably expressive temporal graph networks\" published in NeurIPS \'22. We present the extended version of the Weisfeller-Lehmann Test for temporal graphs. Besides that, this article comprises a contextualization of the core concepts as the models ellucidated in the paper, and the proofs are also discussed concisely. Then our goal with this article is introduce this new paper alongside with the observations and proofs dictatically.
+description: In this article, we explore the theory behind the expressiveness of Temporal Graph Neural Network presented by the paper Provably expressive temporal graph networks published in NeurIPS 2022. We present the extended version of the Weisfeller-Lehmann Test for temporal graphs. Besides that, this article comprises a contextualization of the core concepts as the models ellucidated in the paper, and the proofs are also discussed concisely. Then our goal with this article is introduce this new paper alongside with the observations and proofs dictatically.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -72,7 +72,7 @@ To introduce this blog post it is required to know the discussion about the expr
 Consider the two different multisets derived from nodes (or graph) $\{u,v\} \in V$ features of a graph $G=(V,E)$ will be the same. Let $\vec{u}=[u_1, u_2, \ldots, u_n]$ be the multiset representing the node features of $u$ and $\vec{v}={v_1, v_2, \ldots, v_n}$ be the multiset of node $v$.
 
 ### MP-GNNs
-Taking that into consideration, <d-cite key="xu2018powerful"></d-cite> study this property in the context of Message Passing GNN (MP-GNN). The MP-GNN uses the graph structure and the node features $\vec{v}$ to learn the representation vector of the node. The learning built by the aggregation and combination of the messages sent by the $k$-neighbors of node $v$. Then, mathematically $msg_v^{(k)} = AGG^{(k)}(h_u^{(k-1)},\; u \in \mathcal{N}(v))$ and $h_v^{(k)} = h_v^{(k-1)} \bigoplus msg_v^{(k)}$, where the $\bigoplus$ represent the operation of combination of the representation of node embedding $v$ and the message aggregation $msg_v^{(k)}$. This agreggation-combine theory applies for all MP-GNNs. Therefore, if $\vec{u} \ne \vec{v}$ and $h_u^{(k)} = h_v^{(k)}$, that is, the node features are different and the vector representation are equal, implies that GNN model is not maximally powerful.
+Taking that into consideration, <d-cite key="xu2018powerful"></d-cite> study this property in the context of Message Passing GNN (MP-GNN). The MP-GNN uses the graph structure and the node features $\vec{v}$ to learn the representation vector of the node. The learning built by the aggregation and combination of the messages sent by the $k$-neighbors of node $v$. Then, mathematically $msg_v^{(k)} = AGG^{(k)}(h_u^{(k-1)},\; u \in \mathcal{N}(v))$ and $h_v^{(k)} = h_v^{(k-1)} \bigoplus msg_v^{(k)}$, where the $\bigoplus$ represent the operation of combination of the representation of node embedding $v$ and the message aggregation $msg_v^{(k)}$. This agreggation-combine theory applies for all MP-GNNs. Therefore, if $\vec{u} \ne \vec{v}$ and $h_u^{(k)} = h_v^{(k)}$, that is, the node features are different and the vector representation are equal, implies that GNN model is not maximally powerful. 
 
 In other words, the most expressive GNN have to represent different graph structures in dissimilar embedding space. This problem can be formulated in graph isomorphism, an NP-Hard problem, meaning that there is no polynomial that can solve this problem, but Weisfeller-Lehman (WL) heuristic can test the graph isomoprhism in a polynomial time. However, why it is important? <d-cite key="xu2018powerful"></d-cite> states that assuming two graphs non-isomorphic $G_1$ and $G_2$ and a GNN maps the two graphs in different embeddings, then the WL test decides that $G_1$ and $G_2$ are not isomorphic. Besides that, a GNN maps any two graphs $G_1$ and $G_2$ to different embeddings if the Weisfeller-Lehman Test decides they are non-isomorphic and if the functions of aggregation and combination are injective. But what is WL Test?
 
@@ -83,10 +83,8 @@ The HASH function is a bijective function that maps a vertex to a color $c \in \
 
 Then, take two graphs $G_1$ and $G_2$ to evaluate the isomorphism, after each iteration, the nodes $V_{G_1}$ colored with set $$C_{G_1} = \{c(v_{G_1})^{(t)}, c(\{v_{G_1}\})^{(t)}, \ldots, c(\{v_{G_1}\})^{(t)}\}$$, and similarly the nodes $V_{G_2}$ colored with set $$C_{G_2} = \{c(v_{G_2})^{(t)}, c({v_{G_2}})^{(t)}, \ldots, c({v_{G_2}})^{(t)}\}$$. If the $$\|C_{G_1}\| \ne \|C_{G_2}\| $$, the graphs $G_1$ and the graph $G_2$ are not isomorphic. And in some step $c(v)^{(t-1)}$ and $c(v)^{(t)}$ the test terminates.
 
-(example)
-
 ### Graph Isomorphism Network (GIN)
-Thereafter, they proposed a new GNN model named GIN backed by injective functions in multisets, the extension of Deep Sets [[2]](https://arxiv.org/abs/1703.06114), since the node features $\vec{u}, \vec{v}$ can have repeated elements,  One of notable difference between the multisets and sets functions is that mean aggregator is not injective in the multiet domain whereas it does in set domain. Moreover, <d-cite key="xu2018powerful"></d-cite> model the aggregation and combination function by MLPs using the universal approximation theorem <d-cite key="zaheer2017deep"></d-cite>.
+Thereafter, they proposed a new GNN model named GIN backed by injective functions in multisets, the extension of Deep Sets <d-cite key="zaheer2017deep"></d-cite>, since the node features $\vec{u}, \vec{v}$ can have repeated elements,  One of notable difference between the multisets and sets functions is that mean aggregator is not injective in the multiet domain whereas it does in set domain. Moreover, <d-cite key="xu2018powerful"></d-cite> model the aggregation and combination function by MLPs using the universal approximation theorem .
 
 ### Note
 
@@ -104,7 +102,7 @@ Let $G(V, E, \mathcal{X}, \mathcal{E})$ a static graph, where $V$ is the set of 
     </div>
 </div>
 <div class="caption">
-    Static Graph from <d-cite></d-cite>
+    Static Graph from <d-cite key="dynamicgraphstwitter"></d-cite>
 </div>
 
 Firstly, the DTDG can be formally described as a temporal ordered sequence of static graphs $(G_1, G_2, \ldots, G_t)$, where each graph os this sequence is a snapshot of a static graph in time $t$, that is, $$ G_t = (V_t, E_t, \mathcal{X}_t, \mathcal{E}_t) $$. 
@@ -115,9 +113,8 @@ Firstly, the DTDG can be formally described as a temporal ordered sequence of st
     </div>
 </div>
 <div class="caption">
-    Discrete Dynamic Graph from <d-cite></d-cite>
+    Discrete Dynamic Graph from <d-cite key="dynamicgraphstwitter"></d-cite>
 </div>
-
 
 The CTDG is characterized by node or edge events, such as addition or deletion, and can be described mathemetically as a sequence ordered temporal of graphs $G(t_0), G(t_1), \ldots, G(t_k)$, where $G(t_{k+1})$ represents the graph after the node/edge event on graph $G{t_k}$. Hence we assume there are no other events between $t_k$ and $t_{k+1}$. Besides that, the edge event between  nodes $u$ and $v$ are represented by a tuple $(u, v, t)$.
 
@@ -127,7 +124,7 @@ The CTDG is characterized by node or edge events, such as addition or deletion, 
     </div>
 </div>
 <div class="caption">
-    Continuous Dynamic Graph from <d-cite></d-cite>
+    Continuous Dynamic Graph from <d-cite key="dynamicgraphstwitter"></d-cite>
 </div>
 
 <d-cite key="souza2022provably"></d-cite> creates that there is a relationship between DTDG and CTDG where the CTDG can be built by a DTDG containing the same information and the other direction is also true if the CTDG timestamps form a subset of some uniformly spaced countable set. Firstly, it is trivial to see that if we set a fixed time interval $\delta$ between the consecutive graphs $G(t_i),\;G(t_{i+1})$ we can get the node/edge events of the transition between graphs.
@@ -151,9 +148,8 @@ In Temporal Graph Network (TGN) <d-cite key="rossi2020temporal"></d-cite> it was
     </div>
 </div>
 <div class="caption">
-    Temporal Graph Network from <d-cite></d-cite>
+    Temporal Graph Network from <d-cite key="rossi2020temporal"></d-cite>
 </div>
-
 
 To aggregate the memory state of $u$ and $v$ for an event $(u, v, t)$ we have: $$ m_{u}(t) = MemMSG_e(s_u(t^-), s_v(t^-), t-t_i, e_{uv}(t))$$ and $$ m_{v}(t) = MemMSG_e(s_v(t^-), s_u(t^-), t-t_i, e_{vu}(t)) $$, where $MemMSG_e$ is a function learned from MLP to send the message of the state of time $s(t)$. Then to aggregate the messages of the events that comprise the node $v$ we have a function defined as: $m_v(t) = agg(m_v(t_1), \ldots, m_v(t_{max}))$, where the $t_{max}$ is equal to the last event that involves $v$. Then to update the memory, it is sent to the state the new aggregation $m_v(t)$: $s_v(t) = mem(m_v(t), s_v(t^-))$. To calculate the embedding of $v$, the model uses the an aggregation of all neighbors states of $v$ stored in memory, mathematically: $$ h_v^{(t)} = \sum_{j \in \mathcal{N}(v)} AGG(s_v(t), s_j(t), \vec{e}_{vj}, \vec{v}_{(v)}(t), \vec{v}_{(j)}(t)) $$. The AGG function can be described as a temporal graph attention function, or a temporal graph sum, that uses at the final layer a MLP with the $h_v^{(t)}$ previously calculated concatenated with time encodings presented in <d-cite key="xu2020inductive"></d-cite>.
 This memory module and other augmentations of MP-GNNs is denominated as Augmented MP-GNN <d-cite key="velivckovic2022message"></d-cite>.
@@ -176,7 +172,7 @@ The proposition of TCTs showed by <d-cite key="jegelka2022theory"></d-cite> repr
     </div>
 </div>
 <div class="caption">
-    Temporal Computation Tree from <d-cite></d-cite>
+    Temporal Computation Tree from <d-cite key="jegelka2022theory"></d-cite>
 </div>
 
 ### Distinguishing nodes in MP-TGNs
@@ -197,7 +193,7 @@ The proof is trivial for the first assumption if we cannot aggregate all the tem
     </div>
 </div>
 <div class="caption">
-    Role of Memory from <d-cite></d-cite>
+    Role of Memory from <d-cite key="souza2022provably"></d-cite>
 </div>
 
 For the second assumption the proof is quite long and then is an abstract of it. Showing this proposition is the same to show that $T_{u,L+\Delta}(t^+) \approx T_{v, L+\Delta}(t^+) \rightarrow T_{u,L}^M(t^+) \approx T_{v,L}^M(t^+)$. It is easy to note that the memory is dependent on initial states and events in the dynamic graph since we are aggregating all the features and storing in the memory. Besides that the event $(z, w, t_{zw})$ is in set of events of node $u$ iff it is present on the monotone TCT of $u$ after processing events with timestamp $\leq t_n$. Moreover, for any node $u$, there is a bijection that maps the set of nodes of the events and the set of events to the monotone TCT of $u$. Then if $T_{u,L+\Delta}(t) \approx T_{v, L+\Delta}(t)$ then $T_{u,L}^M(t^+) \approx T_{v,L}^M(t^+)$. The proof of this last step is the argument that we can build the one tree $T_1$ from another tree $T_2$, because the memory store all events states that exceed the depth of $L$.
@@ -216,7 +212,7 @@ The Figure shows the example of one dynamic graph (left graph) and 2 TCT (middle
     </div>
 </div>
 <div class="caption">
-    From left to right: Temporal Graph, TCT from $u$, TCT from $v%, TCT from $z$ and TCT from $w$ <d-cite></d-cite>
+    From left to right: Temporal Graph, TCT from $u$, TCT from $v%, TCT from $z$ and TCT from $w$ <d-cite key="souza2022provably"></d-cite>
 </div>
 
 TGAT cannot distinguish the nodes $u$ and $v$. By the injective message passing TGNs, if the $L$-layer TCTs of two nodes $z$ and $w$ are isomorphic, then no $L$-layer MP-TGN can distinguish them. Thus, they conclude that $h_w^{(l)}(t) = h_z^{(l)}(t)$ for any TGAT with arbitrary number of layers $L$. For the first TCT, theres is no TGAT such that $h_v^{(l)} \ne h_u^{(l)}(t)$. Note that the initial embedding of nodes $u$ and $v$ are are the same on the first layer as they have the same color. Moreover, the aggreagted messages at each layer are also identical, since the color of the nodes are the same and the combination of embeddings does not break this property, thus $h_u^{(l)}(t) = h_v^{(l)}(t)$
@@ -279,7 +275,7 @@ $$
 $$.
 
 ## Expressiveness of Temporal Graph Network
-Recall the WL-Test that is used in GNN. Now to study the power of MP-TGNs it was necessary to extend the version of the 1-WL test but no one Long et al. [12] until <d-cite key="souza2022provably"></d-cite> did. The Temporal WL test proposed by <d-cite key="souza2022provably"></d-cite> is simple and effective. The temporal 1-WL assigns colors for all nodes of $G(t)$ following the following procedure:
+Recall the WL-Test that is used in GNN. Now to study the power of MP-TGNs it was necessary to extend the version of the 1-WL test but nobody <d-cite key="longa2023graph"></d-cite> until <d-cite key="souza2022provably"></d-cite> did. The Temporal WL test proposed by <d-cite key="souza2022provably"></d-cite> is simple and effective. The temporal 1-WL assigns colors for all nodes of $G(t)$ following the following procedure:
 1. Initialization: The colors of all node in $G(t)$ are initialized using the initial node features: $\forall v \in V, c^{0}(v)=x_v$. If node features are not available, all nodes receive identical colors;
 2. Refinement: At step $l$, the colors of all nodes are refined using a hash (injective) function: $\forall v \in V$, it is applied $c^{l+1}(v) = HASH(c^l(v), \{(c^{l}(u)), e_{uv}(t'), t': (u,v,t') \in G(t)\})$
 3. Termination: The test stops when the colors diverge, returning non-ismorphic. If the test runs until the number of different colors stops increasing, the test is deemes inconclusive.
