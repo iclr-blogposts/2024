@@ -9,6 +9,7 @@ nav_order: 2
 
 **Announcements**: 
 - Instructions on getting started with building your blog posts have now been posted [here]({{ '/submitting' | relative_url }})!
+- The deadline for submitting an abstract and your final blog post have been updated to December 11th and 17th (00:00 GMT) respectively!
 
 **Submit** your blogpost on [Openreview](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F))
 
@@ -52,10 +53,10 @@ The review is dual-anonymous assuming good faith from both submitters and review
 ​
 
 ## Key Dates
-- **Abstract  deadline**: December 4th UTC, 2023 (submit to OpenReview - link to be announced soon).
+- **Abstract  deadline**: December 11th 00:00GMT, 2023 (submit to OpenReview - link to be announced soon).
 &nbsp;
 
-- **Submission  deadline**: December 8th UTC, 2023 (any modifications to your blog post, via a pull request on github).
+- **Submission  deadline**: December 17th 00:00GMT, 2023 (any modifications to your blog post, via a pull request on github).
 &nbsp;
 
 - **Notification of acceptance**: January 30th, 2023
