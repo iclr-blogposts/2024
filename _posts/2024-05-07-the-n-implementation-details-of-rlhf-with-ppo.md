@@ -62,7 +62,7 @@ _styles: >
 ---
 
 
-**Reinforcement Learning from Human Feedback** (RLHF) has been an impactful technique for training modern language models such as ChatGPT. In our quest to research more on RLHF, this blog post closely examine OpenAI’s inaugural RLHF paper <d-cite key="Ziegler2019fine"></d-cite> published in 2019 together with its open-source codebase at available at [*openai/lm-human-preferences*](https://github.com/openai/lm-human-preferences). Despite being based on TensorFlow-1, the code base released by OpenAI is very well-evaluated and benchmarked, making it a good place to study RLHF implementation engineering details. 
+**Reinforcement Learning from Human Feedback** (RLHF) has been an impactful technique for training modern language models such as ChatGPT. In our quest to research more on RLHF, this blog post closely examines OpenAI’s inaugural RLHF paper <d-cite key="Ziegler2019fine"></d-cite> published in 2019 together with its open-source codebase at available at [*openai/lm-human-preferences*](https://github.com/openai/lm-human-preferences). Despite being based on TensorFlow-1, the code base released by OpenAI is very well-evaluated and benchmarked, making it a good place to study RLHF implementation engineering details. 
 
 We aim to:
 
@@ -79,13 +79,8 @@ This work is just for educational / learning purposes. For advanced users requir
 - Finally, we conclude our work with limitations and discussions.
 
 
-<span style="color:red">TODO: appropriately anonymize the links below.</span>.
+Our (anonymized) reproduction codebase is available at [*https://anonymous.4open.science/r/lm-human-preference-details-F9C9/*](https://anonymous.4open.science/r/lm-human-preference-details-F9C9/)
 
-**Here are the important links:**
-
-- 💾 Our reproduction codebase [*https://github.com/vwxyzjn/lm-human-preference-details*](https://github.com/vwxyzjn/lm-human-preference-details)
-- 🤗 Demo of RLHF model comparison: [*https://huggingface.co/spaces/lm-human-preference-details/rlhf-demo*](https://huggingface.co/spaces/lm-human-preference-details/rlhf-demo)
-- 🐝 All w&b training logs [*https://wandb.ai/openrlbenchmark/lm_human_preference_details*](https://wandb.ai/openrlbenchmark/lm_human_preference_details)
 
 # Matching Learning Curves
 
