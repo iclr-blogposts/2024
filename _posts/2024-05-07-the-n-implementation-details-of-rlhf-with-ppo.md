@@ -533,7 +533,7 @@ $$\begin{aligned}\text{tensorflow adam:}\quad \theta_t & =\theta_{t-1}-\alpha_t 
 {% include figure.html path="assets/img/2024-05-07-the-n-implementation-details-of-rlhf-with-ppo/norma_const_comparison.png" class="img-fluid" %}
     
 - The above figure shows that, if we set the same `eps` in pytorch adam and tensorflow adam, then pytorch-adam uses a much smaller normalization term than tensorflow-adam in the early phase of training. In other words, pytorch adam goes for **more aggressive gradient updates early in the training**. Our experiments support this finding, as we will demonstrate below.
-- How does this impact reproducibility and performance? To align settings, we record the original query, response, and rewards from [https://github.com/openai/lm-human-preferences](https://github.com/openai/lm-human-preferences) and save them in [https://huggingface.co/datasets/vwxyzjn/lm-human-preferences-debug/tree/main](https://huggingface.co/datasets/vwxyzjn/lm-human-preferences-debug/tree/main). We also record the metrics of the first two epochs of training with TF1’s `AdamOptimizer` optimizer as the ground truth.  Below are some key metrics:
+- How does this impact reproducibility and performance? To align settings, we record the original query, response, and rewards from [https://github.com/openai/lm-human-preferences](https://github.com/openai/lm-human-preferences) and save them. We also record the metrics of the first two epochs of training with TF1’s `AdamOptimizer` optimizer as the ground truth.  Below are some key metrics:
     
     
     |  | OpenAI’s TF1 Adam | PyTorch’s Adam | Our custom Tensorflow-style Adam |
