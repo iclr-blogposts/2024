@@ -405,9 +405,11 @@ Our non-convex problem is equivalent to a well specified and convex optimisation
 
 ### A word on performance
 
-In complexity terms, the convex formulation with all activations allows algorithm in polynomial time for all parameters but the rank of the data matrix<d-cite key="pilanciNeuralNetworksAre2020"></d-cite>. In practice, there is quickly too many patterns to consider them all.
+Backpropagation for deep ReLU Networks is so simple and fits dedicated hardware that it is hard to beat even with wiser and more complex tools. However, a lot of time is lost in rollbacks whenever a model reachs a bad minima or get stuck in training. Convex problems gives some hope into directly solving the problem without any luck involved.
 
-There has been some work on solving the convex problem quickly<d-cite key="mishkinFastConvexOptimization2022a"></d-cite> by only taking a random subset of activation patterns and by considering the unconstrained version of the problem. Current convex solvers(ECOS, ...)  are not tailored to problem with many constraints. Except in some scenarios, it is hard to beat in speed a simple gradient descent running on GPUs. todo cite https://arxiv.org/pdf/2201.01965.pdf
+In complexity terms, the convex formulation with all activations allows algorithm in polynomial time for all parameters but the rank of the data matrix<d-cite key="pilanciNeuralNetworksAre2020"></d-cite>. In practice and with usual datasets, the rank is high and there will be too many patterns to consider them all.
+
+There has been some work focused on solving the convex problem quickly<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>. The first attempt is to take a random subset of activation patterns and using standard convex solvers. Current convex solvers(ECOS, ...) are not tailored to problem with many constraints. There is some hope in considering the unconstrained version of the problem to build an approximation. In most deep learning scenarios, it is hard to beat in speed a simple gradient descent running on GPUs. todo cite https://arxiv.org/pdf/2201.01965.pdf 
 
 | Dataset  | Convex | Adam | SGD  | Adagrad |
 |----------|--------|------|------|---------|
@@ -416,11 +418,17 @@ There has been some work on solving the convex problem quickly<d-cite key="mishk
 
 _Performance on popular dataset for a single layer network<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>._
 
-Convex equivalent of deeper networks exists but exacerbate existing problems. To counter that, it is possible to optimise layer by layer but needs further improvements to beat usual methods in accuracy and speed.
+A convex equivalent of deeper networks exists but exacerbate existing problems. The only way to make it possible is to optimise layer by layer. This is still a work in progress and needs further improvements to beat usual methods in accuracy and speed.
 
 ### Gradient Descent in the non-convex problem
 
-Despite an equivalent convex problem existing, GD will never reach the convex's problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
+- Not theory, we're doing experiment here.
+
+- So let's start with testing if the convex problem indeed give the optimal, and how many regions there are.
+
+The goal here is to better understand the gradient descent dynamic of the non convex problem. We'd like to know where we should start for best results, what kind of minima do we stop at.
+
+However, despite an equivalent convex problem existing, gradient descent will usually never reach the convex's problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
 
 [gif of neurons that moves through activation lines and align themselves to something]
 
@@ -471,6 +479,7 @@ open problems: gap with practice: forced early stopping
 - replace () by footnotes
 - check all references
 - table of content
+- optima/optimum confusion everywhere
 
 ## deleted 
 
