@@ -72,7 +72,7 @@ For more details about any of these steps, please refer to the appropriate secti
     Alternatively, you can setup your local environment to render the website via conventional `$ bundle exec jekyll serve --future` commands. 
     More information for both of these configuratoins can be found in the [Local Serving](#local-serving) section.
 
-4. To submit your website, create a pull request to the main repository. Make sure that this PR's title is `_posts/2024-05-07-[SUBMISSION NAME]`. Make sure to tag your PR with the `submission` label. This will trigger a GitHub Action that will build your blogpost and write the host's URL in a comment to your PR.
+4. To submit your website, create a pull request to the main repository. Make sure that this PR's title is `_posts/2024-05-07-[SUBMISSION NAME]`. This will trigger a GitHub Action that will build your blogpost and write the host's URL in a comment to your PR.
 
 5. If accepted, we will merge the accepted posts to our main repository. See the [camera ready](#camera-ready) section for more details on merging in an accepted blog post.
 

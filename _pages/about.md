@@ -17,6 +17,9 @@ subtitle:
 # social: false  # includes social icons at the bottom of the page
 ---
 
+**Announcements**: 
+- The deadline for submitting an abstract and your final blog post have been updated to December 11th and 17th (00:00 GMT) respectively!
+
 # ICLR 2024 Blogposts Track
 
 The Machine Learning community is currently experiencing a [reproducibility crisis](https://neuripsconf.medium.com/designing-the-reproducibility-program-for-neurips-2020-7fcccaa5c6ad) and a reviewing crisis [[Littman, 2021]](#Litt). Because of the highly competitive and noisy reviewing process of ML conferences [[Tran et al., 2020]](#Tran), researchers have an incentive to oversell their results, slowing down the progress and diminishing the integrity of the scientific community. Moreover with the growing number of papers published and submitted at the main ML conferences [[Lin et al., 2020]](#Lin), it has become more challenging to keep track of the latest advances in the field.
@@ -37,9 +40,9 @@ Due to the large diversity of topics that can be discussed in a blog post, we de
 
 ## Key Dates
 
-**Abstract deadline**: December 4th UTC, 2023 (submit to OpenReview - to be announced soon).
+**Abstract deadline**: December 11th 00:00GMT, 2023 (submit to OpenReview - to be announced soon).
 
-**Submission deadline**: December 8th UTC, 2023(any modifications to your blog post, via a pull request on GitHub).
+**Submission deadline**: December 17th 00:00GMT, 2023 (any modifications to your blog post, via a pull request on GitHub).
 
 **Decision Notification**: January 30th, 2024
 

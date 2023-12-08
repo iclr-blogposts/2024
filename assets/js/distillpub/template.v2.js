@@ -2582,7 +2582,9 @@ d-citation-list .references .title {
   	plugins: {},
 
   	highlightAll: function(async, callback) {
-  		_.highlightAllUnder(document, async, callback);
+      // this highlighter doesn't play well with Jejkyll's one, so we comment it out
+      // see https://github.com/iclr-blogposts/2024/issues/53
+  		// _.highlightAllUnder(document, async, callback);
   	},
 
   	highlightAllUnder: function(container, async, callback) {
