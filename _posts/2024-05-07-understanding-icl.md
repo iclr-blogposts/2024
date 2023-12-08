@@ -358,6 +358,13 @@ $$
 - <https://arxiv.org/abs/2211.15661>
 - <https://arxiv.org/pdf/2311.00871.pdf> -->
 
+
+<span style="color: red">
+  Note for reviewers: we have seen that the blog post might take a while to load with this deployment. Please, allow a few seconds for the page to load (and eventually refresh the page if it doesn't load at all). Sorry for the inconvenience.
+  <br><br>
+  The Authors
+</span>
+
 ## What is in-context learning?
 
 <!-- The common conception of ICL is "let's give an LLM examples in input of what we want to achieve, and it will give use some similar output". -->
