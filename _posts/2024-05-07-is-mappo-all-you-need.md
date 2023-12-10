@@ -6,7 +6,7 @@ date: 2024-05-07
 future: true
 htmlwidgets: true
 
-Anonymize when submitting
+# Anonymize when submitting
 authors:
   - name: Anonymous
 
@@ -32,17 +32,11 @@ bibliography: 2024-05-07-is-mappo-all-you-need.bib
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Equations
-  - name: Images and Figures
-    subsections:
-    - name: Interactive Figures
-  - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
+  - name: Background
+  - name: From PPO to Multi-agent PPO
+  - name: Code-level analysis
+  - name: IPPO with global information is all you need
+  - name: Conclusion
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -66,11 +60,25 @@ _styles: >
 
 ## Background
 
+Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents are trained using reinforcement learning algorithms within the same environment. This technique is particularly useful in complex systems such as robot swarm control, autonomous vehicle coordination, and sensor networks, where the agents interact to collectively achieve a common goal.
+
+The figure provided showcases various multi-agent cooperative scenarios, including chasing in the Multi-Agent Particle Environment (Predator-Prey), the MAgent Environment, Hide & Seek, and the StarCraft Multi-Agent Challenge.
+
+In these scenarios, agents typically have a limited field of view to observe their surroundings. As depicted in the figure, the cyan border represents the sight and shooting range of an agent, limiting the agent’s ability to gather information about the terrain or other agents beyond this range. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP).
+
+Despite the successful adaptation of numerous reinforcement learning algorithms and their variants to cooperative scenarios in the MARL setting, their performance often leaves room for improvement. A significant challenge is the issue of non-stationarity. Specifically, the changing policies of other agents during training can render the observation non-stationary from the perspective of any individual agent, significantly hindering the policy optimization of MARL. This has led researchers to explore methods that can utilize global information during training without compromising the agents’ ability to rely solely on their respective observations during execution. The simplicity and effectiveness of the Centralized Training with Decentralized Execution (CTDE) paradigm have garnered considerable attention, leading to the proposal of numerous MARL algorithms based on CTDE, thereby making significant strides in the field of MARL.
+
+In this blog, we delve into the intricacies of Multi-agent Proximal Policy Optimization (MAPPO), a classic multi-agent reinforcement learning algorithm. MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics.
+
+We explore the history and origins of MAPPO and uncover a surprising fact: MAPPO does not outperform IPPO. In fact, IPPO demonstrates superior performance in complex scenarios such as The StarCraft Multi-Agent Challenge (SMAC).
+
+Moreover, our findings reveal that global information can also enhance the training of IPPO. This discovery opens up new avenues for improving the performance of reinforcement learning algorithms in multi-agent settings. Our work contributes to the ongoing discourse in the field of MARL, shedding light on the potential and limitations of different reinforcement learning algorithms.
+
 ## From PPO to Multi-agent PPO
 
 ## Code-level analysis
 
-## IPPO with global information is what you need
+## IPPO with global information is all you need
 
 ## Conclusion
 
