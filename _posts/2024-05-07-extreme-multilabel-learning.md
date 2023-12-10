@@ -170,3 +170,6 @@ Extreme multi-label learning is a problem that has been approached by several re
 
 In XML, the performance of a model depends on its ability to capture the instance and/or label representations. In XML, the label matrix is highly sparse, and applying deep learning methods suffers from a misfit of learnable parameters. In such scenarios, it is of utmost necessity to explore the direction of feature embedding to get more compressed representations that are equally tractable and approachable. Furthermore, XC results in a significant processing overhead, even for shallow models. Some methods such as DisMEC use extensive CPU parallelization to address this. In contrast, traditional (non-XC)  deep learning methods, in essence, are data and resource-hungry and hence, suffer from high computational complexity; that is, need a lot of computational (GPU) power. The challenge of creating effective architectures and computational infrastructures to train deep XC models arises when XC and deep learning are combined. Moreover, the applicability of extreme classification in diverse areas motivates towards the improvement of existing algorithms along with the theoretical foundations as they are used by industry.
 
+
+
+
