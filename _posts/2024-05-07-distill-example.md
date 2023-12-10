@@ -1,7 +1,9 @@
 ---
 layout: distill
-title: It's Time to Move On\:\ Primacy Bias and Why It Helps to Forget
-description: \"The Primacy Bias in Deep Reinforcement Learning\" (Nikishin et al. 2022) demonstrates how the first experiences of a deep learning agent can unduly influence its future behaviours and how this can be mitigated. In this post we summarise the authors' key findings, present simple examples to build intuition, and discuss directions for future research.
+title: Sample Blog Post
+description: Your blog post's abstract.
+  Please add your abstract or summary here and not in the main body of your text. 
+  Do not include math/latex or hyperlinks.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -11,14 +13,18 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: Matthew Kielo
-    url: ""
+  - name: Albert Einstein
+    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
     affiliations:
-      name: Georgia Institute of Technology
-  - name: Vladimir Lukin
-    url: ""
+      name: IAS, Princeton
+  - name: Boris Podolsky
+    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
     affiliations:
-      name: Georgia Institute of Technology
+      name: IAS, Princeton
+  - name: Nathan Rosen
+    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
+    affiliations:
+      name: IAS, Princeton
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-distill-example.bib  
