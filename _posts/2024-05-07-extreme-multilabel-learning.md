@@ -68,6 +68,20 @@ _styles: >
 
 Note: please use the table of contents as defined in the front matter rather than the traditional markdown styling.
 
+## Introduction
+Humans are wired to ``label'' everything in the most natural way. These labels help to separate one object from another. Moreover, in many cases, a single object can be associated with more than one label. This basic human tendency makes multi-label learning applicable in a wide range of domains. Also, in the current scenario, data is an indispensable resource that plays a pivotal role in the digital space. Several tasks such as automatically annotating images, recommending hashtags in social media, annotating web articles, and advertisement ranking in digital marketing or product search require the model to pick a subset of relevant labels from a large set of labels (order of $10^{6}$, or more).
+
+In recent years, the complexity of a learner has grown from binary classification, where the goal is to learn to choose a single label out of only two choices available, to multi-class classification, where the goal of a learner is to choose a label from amongst $L$ choices with $L\ge 2$ to multi-label classification where learner chooses the most relevant subset of these labels. The complexity of the learning task has not only increased in terms of choices available, but it has also multiplied in terms of the number of labels under consideration. Earlier, the label space was limited to a few thousand, which have now been shot up to millions. The data having high dimensional input and label space require special attention as the tasks associated with data are not limited to capturing and storing efficiently. 
+
+Extreme Classification (XC) has intensified the research challenges and forced the community to look beyond the limits of conventional machine learning. It created a paradigm shift and put emphasis on algorithms with logarithmic time complexities in terms of the number of labels. Many of them require well-grounded theoretical proof. This blog focuses on recent progress in the field of extreme classification and also casts light on some of the thrust areas and research gaps.
+
+## Formal Definition of XML
+This section introduces a formal definition of XML, which is used throughout the blog. Let $X = \mathbb{R}^d$ denotes the $d$-dimensional real-valued input space, and $Y={(y_1, y_2 \dots y_q)}$ denotes the label space with $q$ potential discrete labels. The task of multi-label learning is to learn a mapping $f:X \rightarrow 2^Y$ from the multi-label training set $D={\{(x_i, Y_i) | 1 \leq i \leq m\}}$. For each sample $(x_i, y_i), x_i \in X$ is a $d$-dimensional feature vector $(x_{i1}, x_{i2}, \dots, x_{id})^T$ and $y_i \subseteq Y$ is label associated with $x_i$. 
+
+## Facets of Extreme Multi-label Learning
+
+Extreme multi-label learning involves a high-dimensional label space. Therefore, it requires careful and exhaustive attention to each facet of the multi-label classification problem **(illustrated in Figure \ref{fig:facets_of_xml}).** Each of them is described below:
+
 ## Equations
 
 This theme supports rendering beautiful math in inline and display modes using [MathJax 3](https://www.mathjax.org/) engine.
