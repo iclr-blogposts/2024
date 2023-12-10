@@ -1,50 +1,43 @@
 ---
 layout: distill
-title: Sample Blog Post
-description: Your blog post's abstract.
-  Please add your abstract or summary here and not in the main body of your text. 
-  Do not include math/latex or hyperlinks.
+title: Diffusion Model for Fashion Design
+description: Designing a fashion garment is a creative process where designers transform initial fashion elements – including sketches, fabric textures, and color combinations – into tangible garments. Recently, diffusion models have gained prominence for their advanced generative abilities in various fields, including the domain of fashion design. In this post, we introduce recent tasks in garment generation using diffusion-based models, conditioned on multiple attributes (i.e., fashion elements). Additionally, we discuss how the control methods are leveraged to enhance the composability between multiple conditions, allowing for more refined and intricate designs.
 date: 2024-05-07
 future: true
 htmlwidgets: true
 
 # Anonymize when submitting
-# authors:
-#   - name: Anonymous
-
 authors:
-  - name: Albert Einstein
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
-    affiliations:
-      name: IAS, Princeton
-  - name: Boris Podolsky
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-    affiliations:
-      name: IAS, Princeton
-  - name: Nathan Rosen
-    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-    affiliations:
-      name: IAS, Princeton
+  - name: Anonymous
+
+# authors:
+#   - name: Albert Einstein
+#     url: "https://en.wikipedia.org/wiki/Albert_Einstein"
+#     affiliations:
+#       name: IAS, Princeton
+#   - name: Boris Podolsky
+#     url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
+#     affiliations:
+#       name: IAS, Princeton
+#   - name: Nathan Rosen
+#     url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
+#     affiliations:
+#       name: IAS, Princeton
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-distill-example.bib  
+bibliography: 2024-05-07-diffusion-model-for-fashion-design.bib
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Equations
-  - name: Images and Figures
+  - name: Fashion Design and Diffusion Model
     subsections:
-    - name: Interactive Figures
+    - name: Image to Image Translation
+    - name: Inpainting 
+  - name: Control Methods 
   - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
