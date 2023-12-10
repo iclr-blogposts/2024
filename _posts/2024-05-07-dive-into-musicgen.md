@@ -20,7 +20,12 @@ bibliography: 2024-05-07-dive-into-musicgen.bib
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Abstract
-  - name: Introduction
+  - name: History of text-to-music models
     subsections:
     - name: Interactive Figures
+
+---
+
+# History of text-to-music models
+
+We begin here.
