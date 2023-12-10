@@ -95,7 +95,35 @@ Annotating the voluminous data with a complete set of relevant labels, is a cost
 
 ## Recent Trends in the Field
 
+There are a plethora of techniques in the literature that address the challenges associated with extreme multi-label problems. These methods can broadly be divided into the following categories, viz., one-vs-all methods, embedding-based methods, tree-based methods, and deep learning-based methods. Given the resource constraints, this section sketches the exemplary XML methods under each research direction and the taxonomy of XML is depicted in Figure \ref{fig:taxonomy_of_xml}.
+
+### 1. One-vs-All Methods
+This strategy is the most straightforward approach among all other approaches to address the multi-label classification problems. One-vs-All (OVA) strategy is also known as the One-vs-Rest (OVR) strategy. These methods employ simple linear classification models with a manifestation for multi-label settings. These methods work well with a naive assumption that each label occurrence is independent and hence, trains a separate binary classifier per label. 
+
+One-vs-all approaches are less complicated approaches to deal with XMC. However, these methods suffer from two major limitations, viz.,
+1. The training phase in OVA methods usually employs off-the-shelf solvers, which can lead to computation intractable.
+ Since XML deals with large dataset size in terms of both samples, labels, and dimensions, training independent classifiers per label may lead to slow training and prediction time.
+Another issue with OVA methods is associated with the non-explicit inclusion of label correlation. Some of the techniques, although have tried to exploit label correlation to some extent, such as classifier chains \cite{jesse2009Machine}, but, fail to prove worthy in extreme classification settings with large datasets. However, techniques such as ProXML \cite{} suggest that graph-based label correlation can be promising in alleviating the issues discussed above.
+
+### 2. Tree-based Methods
+
+Extreme classifiers usually face problems during prediction as a classifier may take an enormously long time to predict for the correct label set. Tree-based classifiers target the prediction time and try to learn a hierarchy where each child node contains nearly half of the items of its parents. This allows traversing a path from the root to the leaf in logarithmic time. The ranking problems can also be formulated in this manner and yield a sorted list of probabilities corresponding to the list of items. This idea assists tree-based methods to approach the problem by reducing the prediction time from linear to logarithmic scale (in terms of the number of labels). 
+
+The tree-based methods can broadly be divided into two categories, viz., instance tree and label tree. In principle, an instance tree forms a hierarchical subdivision depending upon the instance, as the number of active labels is small for each portion of feature space. On the other hand, the label tree assumes that there exists an underlying hierarchical structure in label space as well and hence, training data should be partitioned based on labels. Some methods such as \cite{prabhu2018swiftxml} form two separate trees - one for instance feature space and another for label feature space.
+
+Learning hierarchies, however, can be hard, and in such a scenario, learning a single tree may be sub-optimal. FastXML \cite{prabhu2014fastxml} learns an ensemble of trees and aggregates the discrete predictions to generate a ranked list of items. FastXML is quite similar to the MLRF; however, the node split decision is made based on normalized Discounted Cumulative Gain (nDCG) (discussed in section \ref{sec_eval_metrics}), which is sensitive to both ranking as well as relevance. Splitting a node plays a vital role in any tree-based classifier, as once this is fixed, the procedure can be applied recursively to learn the entire ensemble of fully-grown trees. nDCG supports learning a hyperplane in the feature space such that all the items that lie on the left side of the hyperplane, that is, $w^Tx < 0$, are kept in the left node and vice-versa. This strategy implicitly learns a balanced partition.
+
+Tree-based methods enjoy a significant improvement in prediction time over linear methods and, to some extent, over embedding methods as they approach the problem on a logarithmic scale in terms of the number of labels. However, training these methods relatively take more time as many ranking-based methods, such as FastXML, PFastreXML, and SwiftXML, try to optimize complex functions at the node level. Moreover, an increase in depth makes them hard to learn. In many cases, the methods also suffer from low prediction accuracy due to the cascading effect, where an error made at the parent node is propagated to its children and cannot be rectified
+
+### 3. Embedding-based Methods
+
+Since an extreme multi-label learning problem deals with data having high dimensional input space as well as label space. Therefore, embedding-based methods impose low-rank assumptions on the feature and/or label matrix and are based on the intuition that a suitable vector representation exists in low-dimensional space for high-dimensional label vectors, and learning a model on compressed label space could be relatively manageable. Compared to one-vs all methods, the number of parameters is reduced. The methods falling in this category usually differ in compression and decompression strategies employed. Broadly, there are two ways to leverage the label correlations, viz., linear projection and non-linear projections.
+Linear projection methods work well with small-scale data but fail to perform well with complex data due to a lack of expressiveness.
+
+
 Although, an attempt is made to categorize the existing works in the literature into different categories. However, there is no crisp boundary as techniques borrow the concepts and overlap with each other.
+
+
 
 ## Challenges
 Apart from computational complexity, the extreme multi-label classification being a three-faceted problem raises several concerns. These concerns need to be appropriately addressed while designing an algorithm. Failure of conventional multi-label techniques has inherently given rise to the extreme classification problem.
