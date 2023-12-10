@@ -27,7 +27,7 @@ authors:
       name: IAS, Princeton
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-distill-example.bib  
+bibliography: 2024-05-07-extreme-multilabel-learning.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
