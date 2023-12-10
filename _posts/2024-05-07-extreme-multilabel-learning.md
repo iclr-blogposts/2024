@@ -118,8 +118,15 @@ Tree-based methods enjoy a significant improvement in prediction time over linea
 ### 3. Embedding-based Methods
 
 Since an extreme multi-label learning problem deals with data having high dimensional input space as well as label space. Therefore, embedding-based methods impose low-rank assumptions on the feature and/or label matrix and are based on the intuition that a suitable vector representation exists in low-dimensional space for high-dimensional label vectors, and learning a model on compressed label space could be relatively manageable. Compared to one-vs all methods, the number of parameters is reduced. The methods falling in this category usually differ in compression and decompression strategies employed. Broadly, there are two ways to leverage the label correlations, viz., linear projection and non-linear projections.
-Linear projection methods work well with small-scale data but fail to perform well with complex data due to a lack of expressiveness.
+Linear projection methods work well with small-scale data but fail to perform well with complex data due to a lack of expressiveness. One way of doing this is to capture label correlations in a non-linear fashion that preserves the local distance. This inherently makes a learner robust against the tail labels.
 
+The embedding-based methods have gained a significant amount of popularity due to their ability to handle label correlations and interpretable theoretical foundations. However, embedding-based methods may lose critical information due to compression; hence, accuracy may degrade during prediction. Another limitation of embedding-based methods is that they usually lack in capturing the correlation between the input features and the label space leading to poor performance during prediction. Also, these methods suffer from higher time complexities.
+
+## 4. 
+
+In the recent past, deep learning has gained popularity because neural networks are powerful to approximate any function reasonably, no matter how complex it is in nature. Moreover, it is a widely used technique in several application domains. Another reason for its popularity is due to minimal human intervention. The applicability of deep learning in extreme multi-label settings has received attention and has been explored lately. Deep learning-based methods can also be perceived as an extension of embedding-based methods, whereby the algorithms learn the meaningful latent representations for features and labels and capture high-order label dependency.
+
+Deep neural architectures have powerful approximation capabilities and have been applied to solve several problems successfully. Hence, it is intuitive to apply deep architectures in extreme multi-label settings. However, a major drawback of deep architectures is that the number of parameters to be trained is relatively high. Moreover, they are resource-hungry and hence, suffer from high computational complexity, making them infeasible to deploy in the industry.
 
 Although, an attempt is made to categorize the existing works in the literature into different categories. However, there is no crisp boundary as techniques borrow the concepts and overlap with each other.
 
