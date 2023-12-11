@@ -1,9 +1,7 @@
 ---
 layout: distill
-title: Sample Blog Post
-description: Your blog post's abstract.
-  Please add your abstract or summary here and not in the main body of your text. 
-  Do not include math/latex or hyperlinks.
+title: What Are You Trying To Say? A Deep Dive Into LLM Generation and Decoding
+description: In the context of open-ended generation with large language models (LLMs), decoding methods are the algorithms responsible for turning a model's output logits into text that a human can read. Typically, the final layer of an LLM induces a probability distribution over the model's vocabulary, and the decoding method dictates how to generate a sequence of tokens from that distribution, choosing one token after another until the EOS token is produced or a maximum length is satisfied. While the decoding method may at first glance seem like a minor implementation detail, it is actually a complex and indispensible component of any system that needs to generate fluent, relevant, and meaningful text. Unfortunately, current SoTA decoding methods are still limited to trading off a subset of those desired qualities against others. In this blog post, we survey a broad body of literature on generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their relative strengths and weaknesses, we provide a thorough round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy, distill the most critical remaining open problems, and suggest promising directions for additional investigation.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -13,21 +11,14 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: Albert Einstein
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
-    affiliations:
-      name: IAS, Princeton
-  - name: Boris Podolsky
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-    affiliations:
-      name: IAS, Princeton
-  - name: Nathan Rosen
-    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-    affiliations:
-      name: IAS, Princeton
+  # - name: Albert Einstein
+  #   url: "https://en.wikipedia.org/wiki/Albert_Einstein"
+  #   affiliations:
+  #     name: IAS, Princeton
+  - name: Anonymous
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-distill-example.bib  
+bibliography: 2024-05-07-decoding-methods.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
@@ -65,6 +56,13 @@ _styles: >
     font-size: 16px;
   }
 ---
+
+
+## TODO
+This blog post needs to be filled in. Below, we retain the example blog post, which will be replaced later.
+
+---
+
 
 Note: please use the table of contents as defined in the front matter rather than the traditional markdown styling.
 
