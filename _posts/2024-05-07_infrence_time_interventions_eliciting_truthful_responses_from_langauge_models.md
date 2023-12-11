@@ -10,15 +10,13 @@ htmlwidgets: true
 
 # Anonymize when submitting
 # authors:
-#   - name: Ashutosh Dwivedi
+#   - name: Anonymous
 
 authors:
-  - name: Ashutosh Dwivedi
-    url: "https://www.linkedin.com/in/adwivedi11/"
+  - name: Anonymous
+    url: "Anonymous"
     affiliations:
-      name: IAS, Princeton
-  - name: Ekansh Verma
-    url: "https://openreview.net/profile?id=~Ekansh_Verma1"
+      name: Anonymous
 
 # must be the exact same name as your blogpost
 2023-12-11_infrence_time_interventions_eliciting_truthful_responses_from_langauge_models.bib  
