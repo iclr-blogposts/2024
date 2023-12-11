@@ -82,7 +82,7 @@ Here, we conduct a simple experiment to illustrate the existence of information 
 
 It is not surprising that $l_2$ gradient matching functions could recover the input data well. Such a good performance is mainly because MLP's gradients contain enough information of intermediate features for single inputs. With proper labels, we could conclude that GIA works well on MLP when batchsize=1.
 
-However, when it comes to CNNs, such inversion gets harder. For convolution layers, the gradients of convolution kernels are aggregated through the whole feature map, therefore even if we set batchsize=1, gradients may still experience information discards, affecting the attack performance. This problem is also mentioned in R-GAP, which executes the GIA from an equation-solving perspective. If equations are "rank-deficient", then we cannot get an unique solution, indicating obvious information discards.
+However, when it comes to CNNs, such inversion gets harder. For convolution layers, the gradients of convolution kernels are aggregated through the whole feature map, therefore even if we set batchsize=1, gradients may still experience information discards, affecting the attack performance. This problem is also mentioned in R-GAP, which executes the GIA from an equation-solving perspective. If equations are "rank-deficient", then we cannot get a unique solution, indicating obvious information discards.
 <div class="row">
     <div class="col-sm-4 offset-md-0">
         {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_l2.gif" class="img-fluid rounded z-depth-1" %}
@@ -94,11 +94,31 @@ However, when it comes to CNNs, such inversion gets harder. For convolution laye
         {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos.gif" class="img-fluid rounded z-depth-1" %}
     </div>
 <div class="caption">
-      Image reconstruction on LeNet with CIFAR-10 dataset. In the middle, we show the ground-truth image, while attaching the reconstruction process on two sides ($l_2$ loss on the left and cosine similarity loss on the right).
+      Image reconstruction on LeNet with CIFAR-10 dataset when batchsize=1. we show the ground-truth image in the middle and attach the reconstruction process on two sides ($l_2$ loss on the left and cosine similarity loss on the right).
     </div>
 </div>
 
-## Understanding GIA from the prior Knowledge perspective
+
+
+<div class="row">
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos_gt.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos_gt_2.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos1.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+      Image reconstruction with $l_2$ loss on MLP. no regularization terms are adopted.
+</div>
+
+## Understanding GIA from the prior knowledge perspective
 Realizing the information discards, reviewing the recent paper through the prior knowledge perspective may help understand the logic better. To achieve better image reconstruction quality, it is natural to consider the prior knowledge of images as the complement. Here, the prior knowledge could be explained in three aspects.
 
 ### Unparameterized regularization terms
@@ -110,5 +130,5 @@ Keep following the logic that recent works require some other conditions as prio
 Actually, the most intuitive way to conduct a GIA is to design a function that takes gradients as input and then outputs recovered images. For a target network, image-gradient tuples are easy to collect, therefore the prior knowledge could be encoded in such an end-to-end neural network through model training.  
 {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/Picture3.jpg" class="img-fluid" %}
 
-Here, the neural network resembles a GAN generator which takes in representation vectors and outputs a synthesized image. However, instead of abstract latent codes, such a network receives gradient vectors to generate images. In implementations, Wu et.al<d-cite key="wu2023learning"></d-cite> utilizes *feature hashing* to reduce the dimension of gradient vectors. For network picking, they use a simple 3-layer MLP to generate flattened images, which is different from widely-used GAN sturctures.
+Here, the neural network resembles a GAN generator which takes in representation vectors and outputs a synthesized image. However, instead of abstract latent codes, such a network receives gradient vectors to generate images. In implementations, Wu et.al<d-cite key="wu2023learning"></d-cite> utilizes *feature hashing* to reduce the dimension of gradient vectors. For network picking, they use a simple 3-layer MLP to generate flattened images, which is different from widely-used GAN structures.
 However, such a method faces multiple difficulties, such as large input sizes and limited structural flexibility.
