@@ -1,9 +1,8 @@
 ---
 layout: distill
-title: Sample Blog Post
-description: Your blog post's abstract.
-  Please add your abstract or summary here and not in the main body of your text. 
-  Do not include math/latex or hyperlinks.
+title: Cognitive Digital Twins
+description: Cognitive Systems, Cognitive Reasoning and Cognitive Digital Twins.
+  This blog post explores the emerging paradigm of cognitive digital twins, which expands on the basic ideas of cognitive systems and reasoning. We explore the field of cognitive systems where artificial intelligence (AI) meets the complex processes of the human mind. These advanced systems represent the pinnacle of technological advancement, beyond conventional limits in computer science, psychology, and sociology to not only mimic but also improve human reasoning and decision-making. Through the lens of cognitive theory, we gain deeper insights into the mechanisms of human behavior, informing the creation of machines that can think, learn, and perhaps even possess consciousness. Expanding on these concepts, this blog post intends to dissect the intricacies of digital twins endowed with cognitive abilities, a synthesis of AI and human-like reasoning designed to reimagine and refine decision-making in complex systems.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -27,7 +26,7 @@ authors:
       name: IAS, Princeton
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-distill-example.bib  
+bibliography: 2024-05-07-cognitive-digital-twins.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
