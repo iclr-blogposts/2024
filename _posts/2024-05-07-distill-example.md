@@ -119,10 +119,10 @@ Some more complex ways to load images (note the different styles of the shapes/s
 </div>
 
 <div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
+    <div class="col-lg mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-distill-example/8.jpg" class="img-fluid z-depth-2" %}
     </div>
-    <div class="col-sm mt-3 mt-md-0">
+    <div class="col-lg mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-distill-example/10.jpg" class="img-fluid z-depth-2" %}
     </div>
 </div>
