@@ -73,7 +73,7 @@ _styles: >
 
 <!-- Note: please use the table of contents as defined in the front matter rather than the traditional markdown styling. -->
 
-This blog post revisits several proposed **Data Attribution Methods** which aim to quantitatively measure the importance of each training sample with respect to the model's output. The blog post also demonstrates the utility of the data attribution methods by providing some usage examples, e.g. understanding the difference of learning algorithms [(section 3.1)](#Learning-Algorithm-Comparison), checking data leakage [(section 3.2)](#Data-Leakage-Detection), and analyzing the model robustness [(section 3.3)](#Prediction-Brittleness-Examination).
+This blog post revisits several proposed **Data Attribution Methods** which aim to quantitatively measure the importance of each training sample with respect to the model's output. The blog post also demonstrates the utility of the data attribution methods by providing some usage examples, e.g. understanding the difference of learning algorithms [(section 3.1)](#learning-algorithm-comparison), checking data leakage [(section 3.2)](#data-leakage-detection), and analyzing the model robustness [(section 3.3)](#prediction-brittleness-examination).
 
 
 ## Data Attribution Methods
@@ -122,7 +122,7 @@ $$f_{\mathcal{A}}(z; S_{i}):= (\text{logit for correct class}) - (\text{highest 
 
 One Datamodel is specifically optimized to learn the data attribution of a fixed training dataset to a fixed but arbitrary example $z$. For a fixed sample of interest, we use $g_{w}$ to assign a learnable weight to each example in $S$. The sum of weights of all training example that's included in $S_{i}$ is trained to predict the model outputs on $z$. This is formulated as the dot product between a weight vector $w$ and an indicator vector where entry $k$ indicates the existence of the $k^{th}$ training datapoint in $S$. Therefore, for a set of target examples, we can train a datamodel for each of them and construct a collection of datamodels.  
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/2.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/2.png" class="img-fluid"  %}
 
 In experiments, the authors explicitly held out $m_{test}$ $S_{test} \sim D_{S}$ subset-output paris for evaluation from CIFAR-10. 
 $\alpha$ is the subsampling fraction respect to the size of the training set $S$. For example, if the training dataset has $|S| = 100$ data points, setting $\alpha = 0.2$ means that each $S_{i} \sim D_{S}$ has fixed size $|S_{i}| = 20$. They show that Datamodels can accurately predict the outcome of training models on these unseen in-distribution test subsets $S_{test}$. On the above plots, the bottom-right panel shows data for three color-coded random target examples. The spearson correlation between predicted and ground-truth outputs is $r > 0.99$. 
