@@ -2,8 +2,7 @@
 layout: distill
 title: Sample Blog Post
 description: Your blog post's abstract.
-  Please add ss abstract or summary here and not in the main body of your text. 
-  Do not include math/latex or hyperlinks.
+  The rapid advancements in large language models (LLMs) have given rise to numerous technical terms, which can be overwhelming for researchers. Therefore, there is an urgent need to sort and summarize these terms for the LLM technology research community. To cater to this need, we proposed a blog named "Dictionary LLM", which organizes and explains the existing terminologies of LLMs, providing a convenient reference for researchers. This dictionary helps them quickly understand the basic concepts of LLMs and delve deeper into the technology related to large models. The 'Dictionary LLM' is essential for keeping up with the rapid developments in this dynamic field, ensuring that researchers and practitioners have access to the latest terminology and concepts.
 date: 2024-05-07
 future: true
 htmlwidgets: true
