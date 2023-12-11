@@ -1,9 +1,9 @@
- ---
+---
 layout: distill
 title: A New Alchemy: Language Model Development as a Subfield?
 description: This blog post makes the case that the body of research on language models become sufficiently large and mature that we can start thinking about “language model development” as a new subfield.
   To support this claim, we sketch out the focuses and methodologies of this new subfield.
-  In addition, we provide some personal reflections on what to do when your field of study gives birth to a new one.]
+  In addition, we provide some personal reflections on what to do when your field of study gives birth to a new one.
 date: 2024-05-07
 future: true
 htmlwidgets: true
