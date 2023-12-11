@@ -33,12 +33,8 @@ bibliography: 2024-05-07-distill-example.bib
 #   - make sure that TOC names match the actual section names
 #     for hyperlinks within the post to work correctly.
 toc:
-  - name: [Section 1]
-  - name: [Section 2]
-  # you can additionally add subentries like so
-    subsections:
-    - name: [Subsection 2.1]
-  - name: [Section 3]
+  - name: Code Generation
+  - name: LSPs
 ---
 
 # ... your blog post's content ...
