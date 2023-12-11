@@ -10,41 +10,23 @@ htmlwidgets: true
 
 # Anonymize when submitting
 # authors:
-#   - name: Anonymous
+#   - name: Ashutosh Dwivedi
 
 authors:
-  - name: Albert Einstein
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
+  - name: Ashutosh Dwivedi
+    url: "https://www.linkedin.com/in/adwivedi11/"
     affiliations:
       name: IAS, Princeton
-  - name: Boris Podolsky
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-    affiliations:
-      name: IAS, Princeton
-  - name: Nathan Rosen
-    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-    affiliations:
-      name: IAS, Princeton
+  - name: Ekansh Verma
+    url: "https://openreview.net/profile?id=~Ekansh_Verma1"
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-distill-example.bib  
+2023-12-11_infrence_time_interventions_eliciting_truthful_responses_from_langauge_models.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
-toc:
-  - name: Equations
-  - name: Images and Figures
-    subsections:
-    - name: Interactive Figures
-  - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
