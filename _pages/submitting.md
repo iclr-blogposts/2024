@@ -87,7 +87,7 @@ You will be submitting a pull request this repository.
 
 ### Creating a Blog Post
 
-To create a blog post in Markdown format, you can modify the [example]({% post_url 2024-05-07-Unraveling-The-Impact-of-Training-Samples %}) Markdown post `_posts/2024-05-07-distill-example.md` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].md`, where `[SUBMISSION NAME]` is the name of your submission. You can see the result of the sample post .
+To create a blog post in Markdown format, you can modify the [example]({% post_url 2024-05-07-distill-example %}) Markdown post `_posts/2024-05-07-distill-example.md` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].md`, where `[SUBMISSION NAME]` is the name of your submission. You can see the result of the sample post .
 
 While most users will want to create a post in the Markdown format, it is also possible to create a post in HTML format. For this, modify instead the example  `_posts/2024-05-08-distill-example2.html` and rename it to `_posts/2024-05-07-[SUBMISSION NAME].html`. (NOTE: HTML is not officially supported, use at your own risk).
 
@@ -146,7 +146,7 @@ You must change the `title`, `discription`, `toc`, and eventually the `authors` 
 submission is anonymous for the review process**).
 
 <!-- Add any tags that are relevant to your post, such as the areas your work is relevant to. -->
-Read our [sample blog post]({% post_url 2024-05-07-Unraveling-The-Impact-of-Training-Samples %}) carefully to see how you can add image assets, and how to write using $$\LaTeX$$!
+Read our [sample blog post]({% post_url 2024-05-07-distill-example %}) carefully to see how you can add image assets, and how to write using $$\LaTeX$$!
 Read about rendering your post locally [below](#serving).
 
 **Important: make sure your post is completely anonymized before you export and submit it!**
