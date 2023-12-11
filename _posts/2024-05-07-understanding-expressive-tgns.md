@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Understanding Expressive Temporal Graph Neural Networks
-description: In this article, we explore the theory behind the expressiveness of Temporal Graph Neural Network presented by the paper Provably expressive temporal graph networks published in NeurIPS 2022. We present the extended version of the Weisfeller-Lehmann Test for temporal graphs. Besides that, this article comprises a contextualization of the core concepts as the models ellucidated in the paper, and the proofs are also discussed concisely. Then our goal with this article is introduce this new paper alongside with the observations and proofs dictatically.
+description: In this blog, we explore the theory behind the expressiveness of Temporal Graph Neural Network presented by the paper <em>Provably expressive temporal graph networks<em> published in <em>NeurIPS 2022<em>. We present the extended version of the Weisfeller-Lehmann Test for temporal graphs. Besides that, it comprises a contextualization of the core concepts of the models elucidated in the paper, and the proofs are also discussed concisely. Then our goal is to introduce this new paper alongside the observations and proofs didactically.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -41,27 +41,7 @@ toc:
       - name: PINT
       - name: Injective temporal aggregation
       - name: Position-encoding relative to the features
-  - name: Limitations of Temporal WL-Test 
-  - name: Concluding Remarks
 
-# Below is an example of injecting additional post-specific styles.
-# This is used in the 'Layouts' section of this post.
-# If you use this post as a template, delete this _styles block.
-_styles: >
-  .fake-img {
-    background: #bbb;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 12px;
-  }
-  .fake-img p {
-    font-family: monospace;
-    color: white;
-    text-align: left;
-    margin: 12px 0;
-    text-align: center;
-    font-size: 16px;
-  }
 ---
 
 
@@ -127,14 +107,14 @@ The CTDG is characterized by node or edge events, such as addition or deletion, 
     Continuous Dynamic Graph from <d-cite key="dynamicgraphstwitter"></d-cite>
 </div>
 
-<d-cite key="souza2022provably"></d-cite> creates that there is a relationship between DTDG and CTDG where the CTDG can be built by a DTDG containing the same information and the other direction is also true if the CTDG timestamps form a subset of some uniformly spaced countable set. Firstly, it is trivial to see that if we set a fixed time interval $\delta$ between the consecutive graphs $G(t_i),\;G(t_{i+1})$ we can get the node/edge events of the transition between graphs.
+The authors in  <d-cite key="souza2022provably"></d-cite> creates that there is a relationship between DTDG and CTDG where the CTDG can be built by a DTDG containing the same information and the other direction is also true if the CTDG timestamps form a subset of some uniformly spaced countable set. Firstly, it is trivial to see that if we set a fixed time interval $\delta$ between the consecutive graphs $G(t_i),\;G(t_{i+1})$ we can get the node/edge events of the transition between graphs.
 The other direction (CTDG -> DTDG) requires more formalism. A subset is a uniformly spaced countable set if there is a $\delta$ valid for all interval between the events, that is, $a_{i+1}-a_i = \delta$. Then we can construct the DTDG creating the snapshots based on the time interval between the events $e_{uv}$.
 
 Presenting the difference between DTDGs and CTDGs is important to present all the models that are discussed in <d-cite key="souza2022provably"></d-cite> , the MP-TGNs (TGAT, TGN) and the WA-TGNs (CAW).
 
 ### TGAT
 
-<d-cite key="xu2020inductive"></d-cite> propose the TGAT (Temporal Graph Attention Network), an application of attention mechanism from <d-cite key="vaswani2017attention"></d-cite>  for the temporal dynamic graph. On the self attention mechanism, the positional enconding is done by the cosine and sine functions, thus the vector representation of the encoder architecture is $R_e = [r_{e_1} + p_1, \ldots, r_{e_1}+p_l]$, where the $r_e$ is the embedding of an entity and the $p_l$ is the position encoding derived from sinusoidal functions. Considering thhis representation vector, they apply three learnable matrices to it what is called the self-attention mechanism $R_e: Q = R_eQ$, $R_e: K = R_eK$, $R_e: V = R_eV$,  and the hidden representation of the embedding is the function $h_e = softmax(\dfrac{QK^t}{\sqrt{d}}V)$.
+<d-cite key="xu2020inductive"></d-cite> proposes the TGAT (Temporal Graph Attention Network), an application of attention mechanism from <d-cite key="vaswani2017attention"></d-cite>  for the temporal dynamic graph. On the self attention mechanism, the positional enconding is done by the cosine and sine functions, thus the vector representation of the encoder architecture is $R_e = [r_{e_1} + p_1, \ldots, r_{e_1}+p_l]$, where the $r_e$ is the embedding of an entity and the $p_l$ is the position encoding derived from sinusoidal functions. Considering thhis representation vector, they apply three learnable matrices to it what is called the self-attention mechanism $R_e: Q = R_eQ$, $R_e: K = R_eK$, $R_e: V = R_eV$,  and the hidden representation of the embedding is the function $h_e = softmax(\dfrac{QK^t}{\sqrt{d}}V)$.
 However, the sinusoidal functions have to be modelled different to capture the temporal dimension, then they apply the Bochner's Theorem (out of scope of this article) to create the time encoding considering the time interval between the events. This is formulated as $\phi(t-t') = [cos(w_1(t-t') + b_1), \ldots, cos(w_d(t-t') + b_d)]$, where $w_i$ and $b_i$ are learnable scalar parameters and the $t-t'$ is the the time interval between consecutive events. After that, the encoding is $$ R(t) = [\tilde{h}_0^{(l-1)}(t) \| \Phi_{d_T}(0), \ldots, \tilde{h}_N^{(l-1)}(t) \| \Phi_{d_T}(t-t_N)]^T $$, where the $\tilde{h}_0^{(l-1)}(t)$ is the neighborhood aggregate information extracted from GAT model. Besides that, it applies the self-attention mechanism to $R$. Hence, TGAT combine the GAT layer with time encoding to consider the temporal dimension of dynamic graph.
 
 ### TGN
@@ -292,17 +272,36 @@ To account all of these failures <d-cite key="souza2022provably"></d-cite> desig
 
 ### Injective temporal aggregation
 It is introduced an injective aggregation scheme that captures the prioritization based on recency using linearly exponential time decay $\alpha^{-\beta t_i}$.
-Then the message passing reside in:
-$$h_v^{(l)}$$.
-- Todo
+
+Considering the proposition given by <d-cite key="souza2022provably"></d-cite>: Let $\chi$ and $\mathcal{E}$ be countable, and $\mathcal{T}$ countable and bounded. There exists a function $f$ and scalars $\alpha$ and $\beta$ such that $\sum_i f(x_i, e_i) \alpha^{-\beta t_i}$ is unique on any multiset $M=\{(x_i, e_i, t_i)\} \subseteq \chi \times \mathcal{E} \times \mathcal{T}$ with $M < N$, where $N$ is a constant.
+
+The proof for this proposition uses the principle of pigeonhole, that is, if the multiset cardinality is less then $N$ it is possible to calculate the time decay foreach element of multiset differently. The $\chi$ is the node set, $\mathcal{E}$ the edges and $\mathcal{T}$ the unique timestamps. The scalars $\alpha$ and $\beta$ are scalars to guaranteee the different results by shifting the function.
+
+Then the message passing can be defined as:
+$$\tilde(h)_v^{(l)}(t) = \sum_{(u,e,t') \in \mathcal{N}(v,t)} MLP_{agg}^{(l)}(h_u^{l-1} || e) \alpha^{-\beta t_i}$$.
+The combination is defined as:
+$$h_v^{(l)}(t) = MLP^{(l)}_{upd}(h_v^{(l-1)}(t) || \tilde(h)_v^{(l)}(t))$$
+
 
 ### Position-encoding relative to the features
-- Todo
+Besides the memory states <d-cite key="rossi2020temporal"></d-cite> of MP-TGNs, <d-cite key="souza2022provably"></d-cite> proposes an augmentation for that, adding the counting of a node appear at different levels of TCTs. Denote $r^{(t)}_{j \rightarrow u} \in \mathbb{N}^d$ as the positional vector of node $j$ relative to $u$' TCT at time $t$. This novel concept can be defined as a view of monotone TCTs as below:
 
-## Limitations of Temporal WL-Test
-- Does not consider delete events. An event Temporal WL-test, just a static graph with temporal link.
-- Todo
+The monotone TCT of a node $u$ at time $t$, denoted by $\tilde{T}_u(t)$, is the maximal subtree of the TCT of $u$ such that for any path $p=(u, t_1, u_1, t_2, u_2, \ldots)$ from the root $u$ to leaf nodes of $\Tilde{T}_u(t)$ time monotonically decreases, i.e., we have that $t_1 > t_2 > \ldots$.
 
-## Concluding Remarks
-- The article ignores to delete node event and new WL-Test has to be created to demonstrate the universality aproximation for TGNs.
-- Todo
+This is trivial to show. The subtree $u$ of TCT represent the possible paths from $u$ to a node $v$. If the $v$ is a leaf of TCT, then we have the maximal subtree since we have covered all possibilities of paths in a monotonically decreases time that reach on a leaf.
+
+### Expressiveness of PINT
+1. PINT is at least as powerful as MP-TGNs
+As the PINT is the generalization of MP-TGNs then it is at least as powerufl as MP-TGNs. It is clear to see that if we set the positional features to zero it is obtained the MP-TGNs.
+
+2. PINT is at least as powerful as CAW
+This proof goes in the direction of showing that for a pair of events that PINT cannot distinguish, CAW also cannot distinsguish. Formally, we want to prove $\{T_u(t), T_v(t)\} = \{T_u'(t), T_v'(t)\}$, where the events are $(u,v,t)$ and $(u', v', t)$ of a temporal graph. The TCTs is given by the augmentation with positional features obtained from PINT. Assuming the isomorphism between the TCTs we can create another TCT grouping the $T_u(t)$ and $T_v(t)$ by adding a virtual node $uv$, the same can be done with $T_u'(t)$ and $T_v'(t)$. Is the original TCTs are isomorphic, the new TCTs $T_{uv}(t)$ and $T_{u'v'}(t)$ are also isomorphic.
+
+Note that there is an equivalence between deanonymized root-lead paths in $T_{uv}$ and walks in $S_u \cup S_v$ (disregarding the virtual root node). By deanonymization, they mean where node identities by applying the function $d$ that maps nodes in the TCT to nodes in the dynamic graph.
+
+$$g(d(i), S_u) = g(d(f(i)); S_u') \textrm{ and } g(d(i); S_v) = g(d(f(i)); S_v'),\; \forall i \in V(T_{uv}) \ {uv}$$
+
+So, suppose there is an $i \in V(T_{uv}) \ {uv}$ such that $g(d(i); S_u) \ne g(d(f(i)); S_u')$. Then we can reach at the contradiction as follows:
+Computing $g(d(i); S_u)[l]$ is the same as summing up the amount of leaves of each subtree of $\tilde{T_u}(t)$ rooted at $\varphi in \Varphi$. Since we assume $g(d(i); S_u)[l] \ne g(d(f(i)); S_u')$ the summing of the leaves are different.
+
+However, if the subtree $\tilde{T}_u$ rooted at $\varphi$ should be isomorphic to the subtree of $\tilde{T}_u'$ rooted at $f(\varphi)$, and therefore have the same number of leaves and then reaches at contradiction. The same argument can applied to $v$ and $v'$ to prove that $g(d(i); S_v) = g(d(f(i)); S_v')$.
