@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Unraveling The Impact of Training Samples
-description: How do we quantify the true influence of datasets? What role does the influence score play in refining datasets and unraveling the intricacies of learning algorithms? Recent works on Data Attribution Methods give us an interesting answer to these problems.
+description: How do we quantify the influence of datasets? Recent works on Data Attribution Methods shed lights on this problems. In this blog post, we introduce Data Attribution Methods which leverage robust statistics and surrogate functions, and present their applications like distinguishing the feature selection difference of learning algorithms, detecting data leakage, and assessing model robustness.
 date: 2024-05-07
 future: true
 htmlwidgets: true
