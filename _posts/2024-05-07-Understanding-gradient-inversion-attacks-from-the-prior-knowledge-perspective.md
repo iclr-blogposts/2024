@@ -10,19 +10,6 @@ htmlwidgets: true
 authors:
   - name: Anonymous
 
-# authors:
-#   - name: Yanbo Wang
-#     url: ""
-#     affiliations:
-#       name: School of Artificial Intelligence, University of Chinese Academy of Sciences
-#   - name: Jian Liang
-#     url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-#     affiliations:
-#       name: Institute of Automation, Chinese Academy of Sciences
-#   - name: Ran He
-#     url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-#     affiliations:
-#       name: Institute of Automation, Chinese Academy of Sciences
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-Understand-gradient-inversion-attacks-from-the-prior-knowledge-perspective.bib  
