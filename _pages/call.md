@@ -53,7 +53,7 @@ The review is dual-anonymous assuming good faith from both submitters and review
 ​
 
 ## Key Dates
-- **Abstract  deadline**: December 11th 00:00GMT, 2023 (submit to OpenReview - link to be announced soon).
+- **Abstract  deadline**: December 11th 00:00GMT, 2023 ([submit to OpenReview](https://openreview.net/group?id=ICLR.cc/2024/BlogPosts&referrer=%5BHomepage%5D(%2F))).
 &nbsp;
 
 - **Submission  deadline**: December 17th 00:00GMT, 2023 (any modifications to your blog post, via a pull request on github).
