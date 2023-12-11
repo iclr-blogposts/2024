@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Understanding Expressive Temporal Graph Neural Networks
-description: In this blog, we explore the theory behind the expressiveness of Temporal Graph Neural Network presented by the paper <em>Provably expressive temporal graph networks<em> published in <em>NeurIPS 2022<em>. We present the extended version of the Weisfeller-Lehmann Test for temporal graphs. Besides that, it comprises a contextualization of the core concepts of the models elucidated in the paper, and the proofs are also discussed concisely. Then our goal is to introduce this new paper alongside the observations and proofs didactically.
+description: In this blog, we explore the theory behind the expressiveness of Temporal Graph Neural Network presented by the paper <em>Provably expressive temporal graph networks</em> published in <em>NeurIPS 2022</em>. We present the extended version of the Weisfeller-Lehmann Test for temporal graphs. Besides that, it comprises a contextualization of the core concepts of the models elucidated in the paper, and the proofs are also discussed concisely. Then our goal is to introduce this new paper alongside the observations and proofs didactically.
 date: 2024-05-07
 future: true
 htmlwidgets: true
