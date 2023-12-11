@@ -75,22 +75,9 @@ _styles: >
 
 This blog post revisits several proposed **Data Attribution Methods** which aim to quantitatively measure the importance of each training sample with respect to the model's output. The blog post also demonstrates the utility of the data attribution methods by providing some usage examples, e.g. understanding the difference of learning algorithms [(section 3.1)](#Learning-Algorithm-Comparison), checking data leakage [(section 3.2)](#Data-Leakage-Detection), and analyzing the model robustness [(section 3.3)](#Prediction-Brittleness-Examination).
 
+
 ## Data Attribution Methods
 
-<!-- This theme supports rendering beautiful math in inline and display modes using [MathJax 3](https://www.mathjax.org/) engine.
-You just need to surround your math expression with `$$`, like `$$ E = mc^2 $$`.
-If you leave it inside a paragraph, it will produce an inline expression, just like $$ E = mc^2 $$.
-
-To use display mode, again surround your expression with `$$` and place it as a separate paragraph.
-Here is an example:
-
-$$
-\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
-$$
-
-Note that MathJax 3 is [a major re-write of MathJax](https://docs.mathjax.org/en/latest/upgrading/whats-new-3.0.html) 
-that brought a significant improvement to the loading and rendering speed, which is now 
-[on par with KaTeX](http://www.intmath.com/cg5/katex-mathjax-comparison.php). -->
 
 ### Influence Functions <d-cite key="koh2020understanding"></d-cite>
 In the paper ***Understanding Black-box Predictions via Influence Functions*** <d-cite key="koh2020understanding"></d-cite>, the authors scaled up influence functions (a classic technique from robust statistics <d-cite key="bd831960-ac2b-396a-8c8f-de3944255f11"></d-cite>) to Modern Deep Learning settings. Under the twice-differentiable and strictly convex assumption on ERM and global-minimum assumption on optimization algorithm, we can estimate the influence of training samples by only calculating the gradients and Hessian-vector products.
@@ -109,7 +96,7 @@ $H_{\hat\theta}^{-1}:=\frac{1}{n}\sum\nabla_\theta^2L(z_i,\hat\theta)$ is the He
 
 The figure below shows the alignment line of the actual test loss diff with leave-one-out retraining and the predicted test loss diff using influence functions. For the left two figures, the authors re-trained logistic regression models on leave-one-out MNIST dataset and use two different Hessian estimation methods (Conjugate gradients(Left fig) and stochastic estimation(speedup estimation, Mid fig)) to calculate the influence scores. They also examined the loss estimation accuracy on non-convex and non-convergent situation (CNN model with SGD algorithm, Right fig).
 
-<!-- <img src=https://hackmd.io/_uploads/HkUsX1SST.png style="zoom:60%;"/> -->
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/1.png" class="img-fluid" %}
 
 Based on their experiments, we can empirically say that the proposed influence function performs well on the tasks which satisfy their underlying assumptions (the twice-differentiable and strictly convex assumption): in Left/Mid fig, under convex and convergent situations (Logistic Regression+L-BGFS), the predicted loss diff and actual loss diff align well with each other. However, in Right fig, under non-convex and non-convergent-guarantee situations(CNN+SGD, as Right fig), the influence function could not make satisfying approximation.
 
@@ -117,7 +104,6 @@ In use cases, we need to distinguish a few abnormal training samples from large 
 
 <!-- In order to solve these potential issues, some IF-variants have been proposed, like IF-Arnoldi [ref] and IF-LISSA[ref]. These IF-variants follow the same mathematical idea, i.e. approximate the derivative of test loss with respect to training sample perturbation.  -->
 
-ilyas2022datamodels
 ### Data Models <d-cite key="ilyas2022datamodels"></d-cite>
 Another branch of methods for data attribution are sampling-based methods, such as the Datamodels work of Ilyas et al <d-cite key="ilyas2022datamodels"></d-cite>. Given a learning algorithm $\mathcal{A}$, a fixed training dataset $S$ of $m$ data points, and a model function trained on $S$ with $\mathcal{A}$, is a function that maps an input data $z$ to $f_{\mathcal{A}}(z; S)$. This function $f$ can be complex in practice and hence, it's hard to learn a model to understand how the training examples in $S$ contributes to the prediction of a specific target point. Therefore, the authors use a linear function $g_{w}$ as a simple surrogate model to learn the contribution of each training examples to a target example.
 
@@ -134,11 +120,9 @@ $$\mathcal{L}(g_{w}(S_{i}),\; f_{\mathcal{A}}(z; S_{i})) = (\;g_{w}(S_{i}) -  f_
 $$f_{\mathcal{A}}(z; S_{i}):= (\text{logit for correct class}) - (\text{highest incorrect logit})$$  
 
 
-<!-- >$g_{w}(S_{i}) = <w, \mathbb{1}_{S_{i}}>$;
-$\mathcal{L}(g_{w}(S_{i}),\; f_{\mathcal{A}}(z; S_{i})) = (\;g_{w}(S_{i}) -  f_{\mathcal{A}}(z; S_{i})\;)^2$;
-$f_{\mathcal{A}}(z; S_{i}):= (\text{logit for correct class}) - (\text{highest incorrect logit})$ -->
-
 One Datamodel is specifically optimized to learn the data attribution of a fixed training dataset to a fixed but arbitrary example $z$. For a fixed sample of interest, we use $g_{w}$ to assign a learnable weight to each example in $S$. The sum of weights of all training example that's included in $S_{i}$ is trained to predict the model outputs on $z$. This is formulated as the dot product between a weight vector $w$ and an indicator vector where entry $k$ indicates the existence of the $k^{th}$ training datapoint in $S$. Therefore, for a set of target examples, we can train a datamodel for each of them and construct a collection of datamodels.  
+
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/2.png" class="img-fluid" %}
 
 In experiments, the authors explicitly held out $m_{test}$ $S_{test} \sim D_{S}$ subset-output paris for evaluation from CIFAR-10. 
 $\alpha$ is the subsampling fraction respect to the size of the training set $S$. For example, if the training dataset has $|S| = 100$ data points, setting $\alpha = 0.2$ means that each $S_{i} \sim D_{S}$ has fixed size $|S_{i}| = 20$. They show that Datamodels can accurately predict the outcome of training models on these unseen in-distribution test subsets $S_{test}$. On the above plots, the bottom-right panel shows data for three color-coded random target examples. The spearson correlation between predicted and ground-truth outputs is $r > 0.99$. 
@@ -196,7 +180,7 @@ $$\tau_{TRAK}(z, S) := \mathfrak{S}((\frac{1}{M} \sum_{m=1}^{M} \mathbf{Q}_{m}) 
 > $\mathfrak{S}(\cdot; \lambda)$ is the soft thresholding operator;  
 $\hat{\lambda}$ is selected via cross-validation
 
-<!-- ![Screenshot 2023-11-30 at 9.39.55 PM](https://hackmd.io/_uploads/BkAsk9DBa.png) -->
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/3.png" class="img-fluid" %}
 
 Ilyas et al. <d-cite key="park2023trak"></d-cite> conducted a study utilizing TRAK to attribute various classifiers on datasets such as CIFAR-2, CIFAR-10, QNLI, and ImageNet. Their findings demonstrated that TRAK achieves superior accuracy while utilizing significantly fewer models. Although the lower right scatterplot indicates that TRAK's accuracy is not as high as that achieved by using datamodel, it's worth noting that achieving such high accuracy with datamodel requires training 100 times more models than with TRAK.
 
@@ -221,12 +205,12 @@ The paper ***ModelDiff: A Framework for Comparing Learning Algorithms*** <d-cite
 Therefore, we could get the importance matrix $\Theta^{\|\text{train}\|\times \|\text{test}\|}$ for each learning algorithm applied on a specific task. We apply matrix projection and $PCA$ techniques on the importance matrix $\Theta$ to explore the distinguishing difference between how two algorithms use training samples. The detailed pipeline of comparing learning algorithm is depicted in the following figure.
 
 <!-- <img src=https://hackmd.io/_uploads/Bkx_dSLH6.png style="zoom:60%;"/> -->
-
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/4.png" class="img-fluid" %}
 
 In the figure above, we do PCA on the residual importance matrix (after projection, we remove the common importance allocation). The training samples corresponding to the TOP-K principal components (these principal component directions explain a significant amount of variance in one importance matrix but not the other) reflect the  distinguishing subpopulations that one learning algorithm prefers, but another learning algorithm pays little attention to. By visually checking these distinguishing subpolutations, we could speculate the semantic feature selection difference of two algorithms and then confirm it by applying the semantic feature transformations on test data and checking the model output difference. 
 
 
-<!-- ![WX20231130-191028@2x](https://hackmd.io/_uploads/BkCymhIrT.png) -->
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/5.png" class="img-fluid" %}
 For example, in the figure above, they compared two models trained on LIVING17 dataset. The only difference between these two models is whether they are trained with or without standard data augmentations. By exploring the training sample importance matrix using the method mentioned above, they speculated that the model trained with data augmentation prefers using "web" to predict the class "spider" and using "yellow polka dots" to predict the class "salamander". Therefore, they added "web" or "yellow polka dots" texture to test samples and found out that only the prediction of the model with data augmentation changes a lot. This experiment verified the previous work that the data augmentation will enhance the texture bias.
 
 The ModelDiff shows that the data attribution methods can be key tools for understanding model behaviors and distinguishing the subtle differences of algorithms.
@@ -237,8 +221,7 @@ The ModelDiff shows that the data attribution methods can be key tools for under
 Except for comparing learning algorithms, we can also leverage the importance score to find training samples which are most relevant to the model prediction. By empirically observing the training samples with different importance magnitude, Harshay et al. <d-cite key="shah2022modeldiff"></d-cite>  find that the training samples with large importance magnitude consistently look similar to the test sample which also follows the intuition: *training samples most similar to the test sample are most relevant to the prediction* (see the first line of the figure).
 
 
-<!-- <img src=https://hackmd.io/_uploads/BJXuZ-vr6.png style="zoom:80%;"/> -->
-
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/6.png" class="img-fluid" %}
 
 We can leverage such phenomenon to identify train-test leakage in different benchmark datasets. For example, in the second line of the figure, Harshay et al. identified significant data leakage on CIFAR10 dataset. Extending this data leakage detection technique to different datasets holds the potential to assist the ML community in curating datasets, thereby enhancing overall data quality.
 
@@ -248,7 +231,7 @@ We can also use the data attribution methods to identify brittle predictions (i.
 
 Specifically, we could leverage the sample importance scores to find the smallest training subset (defined as support set) such that removing them could flip the model prediction. By calculating the support set size for each test sample, we could know the brittleness of the model output with respect to the input. 
 
-<!-- ![image](https://hackmd.io/_uploads/BJGIc9wra.png) -->
+{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/7.png" class="img-fluid" %}
 
 Another application involves data counterfactual estimation. As illustrated in the figure above, after the training subset removal, the observed changes in actual model logits closely align with the predicted model logits changes estimated through data attribution methods. 
 
