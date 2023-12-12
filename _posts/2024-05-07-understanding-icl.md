@@ -370,7 +370,7 @@ $$
 <!-- The common conception of ICL is "let's give an LLM examples in input of what we want to achieve, and it will give use some similar output". -->
 <!-- The common knowledge is that ICL is a form of learning, where the supervision is given by the input examples. -->
 
-In-Context Learning (ICL) is the behavior first observed in Large Language Models (LLMs), whereby learning occurs from prompted data without modification of the weights of the model [ref]. It is a simple technique used daily and throughout the world by AI practitioners of all backgrounds, to improve generation quality and alignment of LLMs <d-cite key="Brown2020"></d-cite>.
+In-Context Learning (ICL) is the behavior first observed in Large Language Models (LLMs), whereby learning occurs from prompted data without modification of the weights of the model <d-cite key="dong2023survey"></d-cite>. It is a simple technique used daily and throughout the world by AI practitioners of all backgrounds, to improve generation quality and alignment of LLMs <d-cite key="Brown2020"></d-cite>.
 ICL is important because it addresses full-on the once widespread criticism that for all their impressive performance, modern deep learning models are rigid systems that lack the ability to adapt quickly to novel tasks in dynamic settings - a hallmark of biological intelligence.
 By this new form of "learning during inference", Large Language Models have shown that they can be, in some specific sense (once pretrained), surprisingly versatile and few-shot learners.
 
@@ -512,7 +512,7 @@ f(\mbw, P_C) = m\left(\mbw - \eta \nabla_{\mbw} \sum_{i=0}^{C-1}\ell\left(m(\mbw
 $$
 
 where $$\eta$$ is the learning rate of the meta-learning algorithm.
-Equation \eqref{eq:meta-learning-model} represents the inner optimization loop in a simplified version of the MAML algorithm (REF), where the model is updated with a single gradient step.
+Equation \eqref{eq:meta-learning-model} represents the inner optimization loop in a simplified version of the MAML algorithm <d-cite key="finn_model-agnostic_2017"><d-cite>, where the model is updated with a single gradient step.
 
 Putting all together, we can define the meta-learning loss as:
 
