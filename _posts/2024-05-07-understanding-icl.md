@@ -512,7 +512,7 @@ f(\mbw, P_C) = m\left(\mbw - \eta \nabla_{\mbw} \sum_{i=0}^{C-1}\ell\left(m(\mbw
 $$
 
 where $$\eta$$ is the learning rate of the meta-learning algorithm.
-Equation \eqref{eq:meta-learning-model} represents the inner optimization loop in a simplified version of the MAML algorithm <d-cite key="finn_model-agnostic_2017"><d-cite>, where the model is updated with a single gradient step.
+Equation \eqref{eq:meta-learning-model} represents the inner optimization loop in a simplified version of the MAML algorithm <d-cite key="finn_model-agnostic_2017"></d-cite>, where the model is updated with a single gradient step.
 
 Putting all together, we can define the meta-learning loss as:
 
