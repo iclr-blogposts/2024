@@ -39,8 +39,10 @@ toc:
 
 ## Introduction
 
-Dealing with environments with sparse rewards, i.e. the agent receives feedback at a low frequency, in reinforcement learning (RL) requires meaningful exploration.
-One way to encourage the RL agent to perform meaningful exploration is by instilling intrinsic motivation. This intrinsic motivation usually comes in the form of curiosity. As Schmidhuber pointed out in <d-cite key="Schmidhuber1991APF"></d-cite>: One becomes curious as soon as one believes there's something about the world that one does not know. It is because of this that curiosity or intrinsic rewards are usually predictive errors. For example, the RL agent has a world model where it is given the current state of the environment, $$s_t$$, and then it tries to predict the next state, $$s_{t+1}$$. The error in this prediction is the intrinsic reward. As the world model improves one should expect the intrinsic rewards to decrease as the agent is more familiar with its environment.
+Dealing with environments with sparse rewards, i.e. feedback at a low frequency, in reinforcement learning (RL) requires meaningful exploration.
+One way to encourage the RL agent to perform meaningful exploration is by instilling intrinsic motivation. This intrinsic motivation usually comes in the form of curiosity. As Schmidhuber <d-cite key="Schmidhuber1991APF"></d-cite> pointed out : One becomes curious as soon as one believes there's something about the world that one does not know. It is because of this that curiosity or intrinsic rewards are usually predictive errors. For example, the RL agent has a world model where it is given the current state of the environment, $$s_t$$, and then it tries to predict the next state, $$s_{t+1}$$. The error in this prediction is the intrinsic reward. As the world model improves one should expect the intrinsic rewards to decrease as the agent becomes more familiar with its environment.
+
+Now there has been success with curious agents solving environments with sparse rewards <d-cite key="burda2018exploration, guo2022byolexplore, jarrett2023curiosity, pathak2017curiositydriven,burda2018largescale">. Now these curiosity algorithms are hand-designed and are able to perform well across different environments. 
 
 ### Reinforcement Learning
 
