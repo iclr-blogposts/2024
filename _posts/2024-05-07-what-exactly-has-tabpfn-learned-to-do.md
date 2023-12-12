@@ -62,11 +62,11 @@ _styles: >
 
 ## Introduction
 
-TabPFN \citep{hollmann2023tabpfn} is a deep learning model pretrained to perform in-context learning for tabular classification. 
+TabPFN <d-cite key="hollmann2023tabpfn"></d-cite> (1) is a deep learning model pretrained to perform in-context learning for tabular classification. 
 Since then, it has attracted attention both for its high predictive performance on small dataset benchmarks and for its unique meta-learning approach.
-This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) \citep{muller2022transformers}, requires only synthetically-generating data: structural causal models (SCMs) are randomly generated, then training datasets are sampled from each SCM.
-On fresh classification tasks, no training (i.e. weight updating) is needed; instead, training data is given as context to TabPFN, a Transformer \citep{vaswani2017attention} model with self-attention among training samples and cross-attention from test samples to training samples.
-Subsequent works have reproduced its classification performance on other tabular benchmarks \citep{mcelfresh2023neural}, and analyzed its theoretical foundations \citep{nagler2023statistical}.
+This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) <d-cite key="muller2022transformers"></d-cite> (2), requires only synthetically-generating data: structural causal models (SCMs) are randomly generated, then training datasets are sampled from each SCM.
+On fresh classification tasks, no training (i.e. weight updating) is needed; instead, training data is given as context to TabPFN, a Transformer <d-cite key="vaswani2017attention"></d-cite> (3) model with self-attention among training samples and cross-attention from test samples to training samples.
+Subsequent works have reproduced its classification performance on other tabular benchmarks <d-cite key="mcelfresh2023neural"></d-cite>, and analyzed its theoretical foundations <d-cite key="nagler2023statistical"></d-cite> (5).
 
 At the same time, TabPFN has received criticism from within the applied ML community, around concerns that its ``one large neural network is all you need'' approach is fundamentally flawed and that its performance on public benchmarks may be due to overfitting.
 TODO - include tweets.
@@ -75,14 +75,13 @@ With this goal, we will take a different tack to analyzing TabPFN than previous 
 we will neither theoretically analyze its meta-learning pre-training approach, nor run it on yet another dataset-of-datasets, nor even mechanistically interpret the meaning of specific model weights or subnetworks. 
 
 Instead, we will first carefully explore its holistic behavior on two simple settings, in order to develop an intuition about TabPFN as a function approximation generator.
-This is motivated by the observation that TabPFN once fitted on training data (even though `fitting` is merely storing training data), is not mathematically different than any other fitted model: it is simply a function $f_{(X_{train}, y_{train}), \theta}: x \rightarrow y$ %(x)_test; X_train, y_train, \theta)$
-from test input $x$ to prediction $y$,
-where $(X_{train}, y_{train})$ is the training data and $\theta$ are the TabPFN model weights.
-By plotting $f$ for various case studies of $(X_{train}, y_{train})$, we aim to better understand what statistical knowledge has been represented in $\theta$.
+This is motivated by the observation that TabPFN once fitted on training data (even though `fitting` is merely storing training data), is not mathematically different than any other fitted model: it is simply a function $f_{\mathcal{D}, \theta}: x \rightarrow y$ from test input $x$ to prediction $y$,
+where $\mathcal{D} = (X_{train}, y_{train})$ is the training data and $\theta$ are the TabPFN model weights.
+By plotting $f$ for various case studies of $(X_{\textrm{train}}, y_{\textrm{train}})$, we aim to better understand what statistical knowledge has been represented in $\theta$.
 
 Next, we will evaluate TabPFN on two non-standard tabular ML classification tasks, comparing its performance with other methods.
 These atypical tasks can be thought of as out-of-distribution relative to the synthetic pretraining datasets upon which TabPFN was pretrained.
-This analysis will help indicate whether TabPFN was overfit to the statistical peculiarities of publicly-available small tabular datasets, or whether it has learned generalizable principles that lead to sensible behavior in out-of-domain settings.
+This analysis will help indicate whether TabPFN was overfit to the statistical peculiarities of publicly-available small tabular datasets, or whether it has learned generalizable principles that lead to sensible behavior even in out-of-domain settings.
 
 ## 1d binary classification
 
@@ -143,7 +142,7 @@ On the other hand, that this behavior relies upon ensembling suggests that the b
 
 ## Cancer status classification from high-dimensional gene expressions
 
-We now turn towards a comparison of TabPFN with logistic regression (LR), support vector classification (SVC), and XGBoost \citep{chen2016xgboost} on the BladderBatch \citep{leek2016bladderbatch} cancer status classification task. 
+We now turn towards a comparison of TabPFN with logistic regression (LR), support vector classification (SVC), and XGBoost <d-cite key="chen2016xgboost"></d-cite> on the BladderBatch <d-cite key="leek2016bladderbatch"></d-cite> cancer status classification task. 
 The bladderbatch dataset consists of 57 samples, 22,283 gene expression features, and 3 classes ("normal" vs "biopsy" vs "cancer"). 
 This is an extremely high-dimensional problem compared to TabPFN's intended use for $d \le 100$; also, linear models tend to be sufficient for predicting cancer status given gene expressions.
 Thus, this setting is far outside the domain on which we would expect TabPFN to perform well, particularly if it had been overfit to small tabular datasets.
@@ -205,4 +204,4 @@ In such a future, we believe our approach to evaluating TabPFN will become incre
 
 Furthermore, our results illuminate a key practical difference between TabPFN, which relies on in-context learning, and other neural network models for tabular ML. Skepticism around neural networks for tabular ML has been justified by problems stemming from the non-convexity of NN training. Note that the problem (in the small dataset context) with neural net training non-convexity is not fundamentally about the fact that one may have missed a global optimum with better performance. Rather, it is that deep learning requires babysitting and tuning of training hyperparameters that are unrelated to one's beliefs about the nature of a specific problem. Thus, a modified architecture, preprocessing method, or data selection method might be better matched for a particular dataset by accounting for that dataset's particular properties, but in the end perform worse due to problematic training dynamics. In the small dataset regime, the maximum performance (over all hyperparameter settings)  matters less than the performance on the default hyperparameter settings. Because the overall approach of TabPFN obviates this problem with pure in-context learning, the fundamental weaknesses of other neural network approaches do not apply. For example, our 1d experiments would not have been straightforwardly possible if we had retrained a neural network on each reconfiguration of the training data. If we had done so while keeping the training hyperparameters fixed, it would not represent what how people actually use such a neural network. On the other hand, if we had plotted results for carefully optimized hyperparameters, it is not clear whether the results would be illustrative of the general inductive biases of the neural network architecture, or merely of the behavior of an optimally-trained neural network. However, the flip side of this advantage of TabPFN is that our analysis applies not so much to TabPFN-the-method, as it does to [prior_diff_real_checkpoint_n_0_epoch_42.cpkt](https://github.com/automl/TabPFN/blob/d76f4ac7/tabpfn/models_diff/prior_diff_real_checkpoint_n_0_epoch_42.cpkt)-the-checkpoint.
 
-Finally, we believe our evaluation helps address some of the popular skepticism around TabPFN. While our results indicate that there remains substantial room for improvement, we found no evidence that would suggest that TabPFN's results were solely the result of overfitting a large neural network to public benchmarks. Rather, our results suggest that TabPFN learns a simple "world model" of the field of small tabular classification. This, in itself, makes TabPFN worthy of further theoretical and empirical study.
+Finally, we believe our evaluation helps address some of the popular skepticism around TabPFN. While our results indicate that there remains substantial room for improvement, we found no evidence that would suggest that TabPFN's results were solely the result of overfitting a large neural network to public benchmarks. Rather, our results suggest that TabPFN learns a simple "world model" of the field of small tabular classification. This, in itself, makes TabPFN worthy of further empirical study.
