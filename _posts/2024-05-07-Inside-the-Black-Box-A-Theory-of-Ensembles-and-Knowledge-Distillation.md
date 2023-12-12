@@ -1,6 +1,6 @@
 ---
 layout: distill
-title: 'Inside the Black Box: A Theory of Ensembles and Knowledge Distillation'
+title: Inside the Black Box: A Theory of Ensembles and Knowledge Distillation
 description: Recent work proves mathematically why model ensembling boosts performance, despite individual neural networks perfectly fitting training data. The key insight? Identifying "multi-view" structures hidden in data where multiple informative features exist. This theory expands our grasp of deep learning's secret sauce. The analysis spotlights concrete progress towards demystifying these black boxes and grounding them in rigorous principles. Its motivated assumptions also reflect properties of real-world computer vision datasets. This research marks an important step towards stronger theoretical foundations for deep neural networks.
 date: 2024-05-07
 future: true
