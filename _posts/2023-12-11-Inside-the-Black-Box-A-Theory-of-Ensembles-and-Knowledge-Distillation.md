@@ -108,14 +108,3 @@ As deep learning penetrates increasingly impactful real-world applications, the 
 This paper makes significant headway by providing the first learning theory justification for the effectiveness of ensembling and knowledge distillation in deep neural networks. By formalizing a multi-view structure that plausibly exists in vision data, the authors prove how combining models aggregates a richer feature representation - elucidating the mechanism of performance gains.
 
 The crisp analysis expands our conceptual grasp of modern machine learning and offers a path towards opening the black boxes of large neural networks through principled foundations. As models continue growing ever more inscrutable in scale and complexity, building an arsenal of grounded theories helps ensure they remain benefit rather than threat.
-
-
-# References
-
-[1] G. Hinton, O. Vinyals, and J. Dean, “Distilling the Knowledge in a Neural Network,” arXiv:1503.02531 [cs, stat], Mar. 2015. http://arxiv.org/abs/1503.02531 (accessed Dec. 09, 2023).
-
-[2] Z. Allen-Zhu and Y. Li, “What Can ResNet Learn Efficiently, Going Beyond Kernels?,” in NeurIPS, 2019. http://arxiv.org/abs/1905.10337 (accessed Dec. 11, 2023).
-
-[3] Z. Allen-Zhu, Y. Li, and Z. Song, “A Convergence Theory for Deep Learning via Over-Parameterization,” in ICML, 2019. http://arxiv.org/abs/1811.03962 (accessed Dec. 11, 2023).
-
-[4] Z. Allen-Zhu and Y. Li, "Towards Understanding Ensemble, Knowledge Distillation and Self-Distillation in Deep Learning," in ICLR, 2023. https://arxiv.org/abs/2012.09816 (accessed Dec. 11, 2023)
