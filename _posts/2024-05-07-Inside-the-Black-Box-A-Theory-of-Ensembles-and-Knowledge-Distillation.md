@@ -12,7 +12,7 @@ authors:
 
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-Inside-the-Black-Box-A-Theory-of-Ensembles-and-Knowledge-Distillation.bib
+bibliography: 2024-05-07-inside-the-black-box-a-theory-of-ensembles-and-knowledge-distillation.bib
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
