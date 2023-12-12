@@ -63,7 +63,7 @@ $$\frac{\partial \mathcal{L}}{\partial {\mathbf{W}}}=\frac{\partial \mathcal{L}}
 
 In the above equation, it is clear that for a single input, with full access to model weights and gradients, the gradients of the MLP contain full information to execute single-image recovery. 
 
-Here, we conduct a simple experiment to illustrate the existence of information discard. Firstly We pick a 4-layer MLP as the target neural network and randomly select a few images from the Flowers-17 dataset as the private input data for recovery. Without any assistance from prior knowledge, $l_2$ and Cosine similarity loss are considered as the gradient matching functions. firstly, we provide an example of input image recovery when **batchsize=1 with known labels**.
+Here, we conduct a simple experiment to illustrate the existence of information discard. Firstly We pick a 4-layer MLP as the target neural network and randomly select a few images from the Flowers-17 dataset as the private input data for recovery. We take $l_2$ loss<d-cite key="zhu2019deep"></d-cite> as the gradient matching function without any prior knowledge<d-cite key="geiping2020inverting"></d-cite> (regularization terms). Firstly, we provide an example of input image recovery when **batchsize=1 with known labels**.
 
 <div class="row">
     <div class="col-sm-4 offset-md-0">
@@ -82,7 +82,7 @@ Here, we conduct a simple experiment to illustrate the existence of information 
 
 It is not surprising that $l_2$ gradient matching functions could recover the input data well. Such a good performance is mainly because MLP's gradients contain enough information of intermediate features for single inputs. With proper labels, we could conclude that GIA works well on MLP when batchsize=1.
 
-However, when it comes to CNNs, such inversion gets harder. For convolution layers, the gradients of convolution kernels are aggregated through the whole feature map, therefore even if we set batchsize=1, gradients may still experience information discards, affecting the attack performance. This problem is also mentioned in R-GAP, which executes the GIA from an equation-solving perspective. If equations are "rank-deficient", then we cannot get a unique solution, indicating obvious information discards.
+However, when it comes to CNNs, such inversion gets harder. For convolution layers, the gradients of convolution kernels are aggregated through the whole feature map, therefore even if we set batchsize=1, gradients may still experience information discards, affecting the attack performance. This problem is also mentioned in R-GAP<d-cite key="zhu2021r"></d-cite>, which executes the GIA from an equation-solving perspective. If equations are "rank-deficient", then we cannot get a unique solution, indicating obvious information discards. Here, for better illustration, we first show CIFAR-10 image reconstructions on LeNet with `batchsize=1`. Ground-truth one-hot labels are provided.
 <div class="row">
     <div class="col-sm-4 offset-md-0">
         {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_l2.gif" class="img-fluid rounded z-depth-1" %}
@@ -98,7 +98,7 @@ However, when it comes to CNNs, such inversion gets harder. For convolution laye
     </div>
 </div>
 
-
+It is clear that even though both functions could recover the image, there are some pixels not perfectly optimized, indicating the existence of information discards. If we change the batchsize, even if we only slightly enlarge it as `batchsize=2`, such reconstruction ends up with failure.  
 
 <div class="row">
     <div class="col-sm-3 offset-md-0">
@@ -115,20 +115,28 @@ However, when it comes to CNNs, such inversion gets harder. For convolution laye
     </div>
 </div>
 <div class="caption">
-      Image reconstruction with $l_2$ loss on MLP. no regularization terms are adopted.
+      Image reconstruction with cosine similarity loss on LeNet and no regularization terms are adopted. In the middle, we show ground-truth images in the batch.
 </div>
 
+For a given network, the size of gradients is fixed. Therefore, with the increase in batchsize, GIA will experience more obvious information discards. This is easy to understand, and researchers designed a few ways to complement this loss.
 ## Understanding GIA from the prior knowledge perspective
 Realizing the information discards, reviewing the recent paper through the prior knowledge perspective may help understand the logic better. To achieve better image reconstruction quality, it is natural to consider the prior knowledge of images as the complement. Here, the prior knowledge could be explained in three aspects.
 
 ### Unparameterized regularization terms
 In IG<d-cite key="geiping2020inverting"></d-cite>, they utilize the total variance as a regularization because they believe a real image taken from nature should have a small total variance. That is the first prior knowledge term utilized in the gradient matching function, and it turns out to function well. After that, in GradInversion<d-cite key="yin2021see"></d-cite> this regularization term is extended to include batch normalization supervision, $$l_2$$ norms and group consistency. This is a stronger prior knowledge implying that a real input image, or batched real images, except for total variance, should also possess lower $$l_2$$ norms, proper intermediate mean and the variance for batch normalization layers. Apart from that, all reconstructions from different random initializations ought to reach a group consistency. These terms are unparameterized, and it is clearly demonstrated in their ablation experiments that these terms matter significantly in reconstructing high-quality images.
+
 ### Generative models
 Keep following the logic that recent works require some other conditions as prior knowledge to reinforce the information discards from gradients, generative models, especially GANs, could serve as a strong tool to encode what "real images" should be. The way to add GAN's generator in gradient matching processes is simple<d-cite key="jeon2021gradient"></d-cite>: instead of optimizing direct image pixels, with the generator we could keep the backpropagation way back to the latent space, then alter the latent code as well as the parameters of the generator to produce recovered images. Pre-trained generators naturally encode a likely distribution of the input data, which is a stronger prior knowledge compared with previous unparameterized regularization terms.
 {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/Picture2.jpg" class="img-fluid" %}
+
+Recent work GIFD<d-cite key="fang2023gifd"></d-cite> extends this method by optimizing GAN network layer-wisely. Instead of directly optimizing GAN weights and the latent vector in one step, GIFD optimizes the intermediate layers iteratively, making such a process more stable. In summary, gradients here serve more as an indicator for attackers to select the best image from distributions modeled by pre-trained GANs.
+
 ### End-to-end networks
 Actually, the most intuitive way to conduct a GIA is to design a function that takes gradients as input and then outputs recovered images. For a target network, image-gradient tuples are easy to collect, therefore the prior knowledge could be encoded in such an end-to-end neural network through model training.  
 {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/Picture3.jpg" class="img-fluid" %}
 
 Here, the neural network resembles a GAN generator which takes in representation vectors and outputs a synthesized image. However, instead of abstract latent codes, such a network receives gradient vectors to generate images. In implementations, Wu et.al<d-cite key="wu2023learning"></d-cite> utilizes *feature hashing* to reduce the dimension of gradient vectors. For network picking, they use a simple 3-layer MLP to generate flattened images, which is different from widely-used GAN structures.
-However, such a method faces multiple difficulties, such as large input sizes and limited structural flexibility.
+However, such a method faces multiple difficulties, such as large input sizes and limited structural flexibility. Even for one specific model, once the model weights are changed, such end-to-end network requires retraining to construct a new mapping from gradients to images. Besides, there is still space for network design. Will the network structure influence image reconstruction performance under identical datasets? How to construct a mapping function from gradients to images with varying batchsize? Could the network find an optimal batchsize after analyzing the gradients?  These questions are all worth further exploration.
+
+## Future directions
+
