@@ -1,1 +1,2 @@
-
+Revealing task learning from network activity data remains an open frontier for neuroscientists and machine learning researchers alike. 
+While tensor decomposition methods uncover the structure of latent representations, they miss the linki to latent dynamics. A recent work provides evidence for a low-tensor-rank structure of neural _learning dynamics_, and characterises how the structured network interactions evolve during task learning. In this blog we explore this framework's nuances, and examine its potential implications for understanding biological and artificial learning processes.
