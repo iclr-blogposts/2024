@@ -7,7 +7,7 @@ future: true
 htmlwidgets: true
 
 # Anonymize when submitting
- authors:
+authors:
    - name: Anonymous
 
 
