@@ -62,22 +62,27 @@ _styles: >
 
 ## Introduction
 
-TabPFN <d-cite key="hollmann2023tabpfn"></d-cite> (1) is a deep learning model pretrained to perform in-context learning for tabular classification. 
+TabPFN <d-cite key="hollmann2023tabpfn"></d-cite> is a deep learning model pretrained to perform in-context learning for tabular classification. 
 Since then, it has attracted attention both for its high predictive performance on small dataset benchmarks and for its unique meta-learning approach.
-This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) <d-cite key="muller2022transformers"></d-cite> (2), requires only synthetically-generating data: structural causal models (SCMs) are randomly generated, then training datasets are sampled from each SCM.
-On fresh classification tasks, no training (i.e. weight updating) is needed; instead, training data is given as context to TabPFN, a Transformer <d-cite key="vaswani2017attention"></d-cite> (3) model with self-attention among training samples and cross-attention from test samples to training samples.
-Subsequent works have reproduced its classification performance on other tabular benchmarks <d-cite key="mcelfresh2023neural"></d-cite>, and analyzed its theoretical foundations <d-cite key="nagler2023statistical"></d-cite> (5).
+This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) <d-cite key="muller2022transformers"></d-cite>, requires only synthetically-generating data: structural causal models (SCMs) are randomly generated, then training datasets are sampled from each SCM.
+On fresh classification tasks, no training (i.e. weight updating) is needed; instead, training data is given as context to TabPFN, a Transformer <d-cite key="vaswani2017attention"></d-cite> model with self-attention among training samples and cross-attention from test samples to training samples.
+Subsequent works have reproduced its classification performance on other tabular benchmarks <d-cite key="mcelfresh2023neural"></d-cite>, and analyzed its theoretical foundations <d-cite key="nagler2023statistical"></d-cite>.
 
-At the same time, TabPFN has received criticism from within the applied ML community, around concerns that its ``one large neural network is all you need'' approach is fundamentally flawed and that its performance on public benchmarks may be due to overfitting.
-TODO - include tweets.
+At the same time, TabPFN has received criticism from within the applied ML community, around concerns that its "one large neural network is all you need" approach is fundamentally flawed and that its performance on public benchmarks may be due to overfitting.
+
+{% twitter https://twitter.com/tunguz/status/1583417038965334017 %}
+
+{% twitter https://twitter.com/predict_addict/status/1726286748173385732 %}
+
+
 In this article, we will attempt to demystify TabPFN's behavior in order to move towards a resolution to these questions.
 With this goal, we will take a different tack to analyzing TabPFN than previous works: 
 we will neither theoretically analyze its meta-learning pre-training approach, nor run it on yet another dataset-of-datasets, nor even mechanistically interpret the meaning of specific model weights or subnetworks. 
 
-Instead, we will first carefully explore its holistic behavior on two simple settings, in order to develop an intuition about TabPFN as a function approximation generator.
-This is motivated by the observation that TabPFN once fitted on training data (even though `fitting` is merely storing training data), is not mathematically different than any other fitted model: it is simply a function $f_{\mathcal{D}, \theta}: x \rightarrow y$ from test input $x$ to prediction $y$,
-where $\mathcal{D} = (X_{train}, y_{train})$ is the training data and $\theta$ are the TabPFN model weights.
-By plotting $f$ for various case studies of $(X_{\textrm{train}}, y_{\textrm{train}})$, we aim to better understand what statistical knowledge has been represented in $\theta$.
+Instead, we will first explore its holistic behavior on two simple settings, in order to develop an intuition about TabPFN as a function approximation generator.
+This is motivated by the observation that TabPFN once fitted on training data (even though "fitting" is merely storing training data), is not mathematically different than any other fitted model: it is simply a function $$f_{\mathcal{D}, \theta}: x \rightarrow y$$ from test input $$x$$ to prediction $$y$$,
+where $$\mathcal{D} = (X_{\textrm{train}}, y_{\textrm{train}})$$ is the training data and $$\theta$$ are the TabPFN model weights.
+By plotting $$f$$ for various case studies of $$(X_{\textrm{train}}, y_{\textrm{train}})$$, we aim to better understand what statistical knowledge has been represented in model parameters $$\theta$$.
 
 Next, we will evaluate TabPFN on two non-standard tabular ML classification tasks, comparing its performance with other methods.
 These atypical tasks can be thought of as out-of-distribution relative to the synthetic pretraining datasets upon which TabPFN was pretrained.
@@ -87,21 +92,23 @@ This analysis will help indicate whether TabPFN was overfit to the statistical p
 
 We begin by examining the case of binary classification with 1d inputs. To better illustrate the inductive biases of the base TabPFN model, we do not use ensembling in this section unless otherwise indicated. 
 
-Below, we show the predictions for two training samples located at +1/-1, labeled green and red, respectively. We see that the probabilities are non-monotonic, as one would obtain from a sigmoid function; not only do we see that the model has higher uncertainty on the far sides of +/-, we see that between them there is a small wiggle. We also see that the decision boundary biased below 0.5; likely this is because TabPFN has learned that features are have right-skewed distributions.
+Below, we show the predictions for two training samples located at +1 and -1, labeled green and red, respectively. We see that the probabilities are non-monotonic, as one would obtain from a sigmoid function; not only do we see that the model has higher uncertainty on the far sides of the training points, we see that between them there is a small wiggle. We also see that the decision boundary biased below 0.5; likely this is because TabPFN has learned that features are have right-skewed distributions.
 
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/plusminus1-nonmonotone.png" class="img-fluid" %}
 
 These wiggles and asymmetry more-or-less disappear once we incorporate ensembling, shown below.
 However, the general shape of the predicted probability function is similar regardless of the number of ensembles.
-This raises the question of what parametric attention function might have been learned by TabPFN.
-No simple dot-product-based or Euclidean distance-based function (used within the softmax operation) exactly recapitulated the observed predicted probabilities.
-However, the general shape of inverse-square-root of Euclidean distance matched reasonably well, particularly between the two training points.
 
 <div class="row mt-3">
     {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/plusminus1-ensembles2.png" class="img-fluid" %}
 <div class="caption">
     TabPFN predicted probabilities for test data, in red and green, for varying number of ensembles. Also shown are the predicted probabilities from using inverse-square-root of Euclidean distance within softmax, in orange and lime-green.
 </div>
+
+The above results raise the question of what parametric attention function might have been learned by TabPFN.
+No simple dot-product-based or Euclidean distance-based function (used within the softmax operation) exactly recapitulated the observed predicted probabilities.
+However, the general shape of inverse-square-root of Euclidean distance matched reasonably well, particularly between the two training points.
+Still, it appears that TabPFN has meta-learned an attention function that outperforms previously-known attention functions on small datasets.
 
 Next, we look at the effect of duplicating features. We tried repeating the +1 and -1 inputs for a total of 1, 4, 16, and 64 copies, as shown below. The effect is to push the predicted probabilities away from 0.5, although we observe  diminishing marginal effects as the number of repeats increases.
 
@@ -113,13 +120,13 @@ Meanwhile, there is no discernible effect from replicating samples, when both re
 
 In contrast, there is an impact to repeating only the red sample.
 Below is shown the effect of repeating only the red sample.
-While this unsurprisingly increases the probability of red for $X < 0$, it bizarrely increases the probability of green for $X > 0$.
+While this unsurprisingly increases the probability of red for $$X < 0$$, it bizarrely increases the probability of green for $$X > 0$$.
 This is especially strange because repeating green samples in the previous setting did not have the same effect.
 This behavior of TabPFN seems suboptimal; it remains to be seen whether this behavior was optimal for its pretraining data, or whether this is some kind of artifact of TabPFN's architecture or training.
 
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/plusminus1-repeatred.png" class="img-fluid" %}
 
-Finally, we were unable to find evidence that TabPFN is able to detect periodic patterns in the training data, as exemplified for three different training patterns shown in Figure \ref{fig:plusminus1-periodic}. 
+Finally, we were unable to find evidence that TabPFN is able to detect periodic patterns in the training data, as exemplified for three different training patterns shown below. 
 This behavior of TabPFN suggests that it does not support either periodic interpolation or extrapolation.
 Furthermore, we observe that as the number of observed cycles in the data increases, the predicted probabilities trend toward 0.5, which also seems suboptimal.
 We also notice that there is marked left-right asymmetry in these settings.
@@ -127,6 +134,7 @@ We also notice that there is marked left-right asymmetry in these settings.
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/plusminus1-periodic-2pair.png" class="img-fluid" %}
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/plusminus1-periodic-3pair.png" class="img-fluid" %}
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/plusminus1-periodic-2skippair.png" class="img-fluid" %}
+
 
 ## 2d multiclass classification
 
@@ -140,18 +148,19 @@ On the other hand, that this behavior relies upon ensembling suggests that the b
 
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/voronois.png" class="img-fluid" %}
 
+
 ## Cancer status classification from high-dimensional gene expressions
 
 We now turn towards a comparison of TabPFN with logistic regression (LR), support vector classification (SVC), and XGBoost <d-cite key="chen2016xgboost"></d-cite> on the BladderBatch <d-cite key="leek2016bladderbatch"></d-cite> cancer status classification task. 
 The bladderbatch dataset consists of 57 samples, 22,283 gene expression features, and 3 classes ("normal" vs "biopsy" vs "cancer"). 
-This is an extremely high-dimensional problem compared to TabPFN's intended use for $d \le 100$; also, linear models tend to be sufficient for predicting cancer status given gene expressions.
+This is an extremely high-dimensional problem compared to TabPFN's intended use for $$d \le 100$$; also, linear models tend to be sufficient for predicting cancer status given gene expressions.
 Thus, this setting is far outside the domain on which we would expect TabPFN to perform well, particularly if it had been overfit to small tabular datasets.
 Furthermore, the 57 samples come from 5 different batches of gene microarray measurements. 
 This adds additional difficulty to the task, because there is confounded shift between the technical batch effect and the unequal proportions of cancer status in the different batches.
 
 For all methods, we do not perform hyperparameter search, in order to simulate the scenario where there are too few samples to perform cross-validation without the risk of overfitting.
 We use the scikit-learn implementations of LR and SVC with their default hyperparameters.
-For TabPFN, we use the default hyperparameter of 32 ensembles; we also enable feature subsampling as is required for $d > 100$ problems.
+For TabPFN, we use the default hyperparameter of 32 ensembles; we also enable feature subsampling as is required for $$d > 100$$ problems.
 
 Results are shown below, aggregated over 10 random 75-25 train-test splits, and evaluated via both accuracy and macro-averaged F1-score.
 TabPFN has a surprisingly strong showing, handily beating SVC and XGBoost, while almost matching logistic regression.
@@ -159,8 +168,8 @@ This pattern holds both when we use all features and also when we use only the f
 
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/bladderbatch-comparison.png" class="img-fluid" %}
 
-We also evaluate the different methods on a more realistic setting, where we train on 4 batches of data and apply to samples from the remaining unseen batch.
-Results are shown in Figure \ref{fig:bladderbatch-batch}. 
+We also evaluate the different methods on a more realistic setting, where we train on 4 out of 5 batches of data and evaluate on all samples from the remaining unseen batch.
+Results are shown below, with scatterplot labels used to indicate the identity of the test batch. 
 While all methods perform worse in this setting, TabPFN still almost matches LR while beating the other baselines.
 
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/bladderbatch-batch-scatterplot.png" class="img-fluid" %}
@@ -176,7 +185,7 @@ Even though cancer is the most common class in every training split, there does 
 
 Finally, we compare TabPFN with other methods on two computer vision (CV) tasks.
 As in the previous section, we use the default hyperparameter settings for all methods.
-We treat MNIST and CIFAR-10 as tabular ML problems with $28*28^2$ and $3*32^2$ features, respectively.
+We treat MNIST and CIFAR-10 as tabular ML problems with $$28*28^2$$ and $$3*32^2$$ features, respectively.
 We aggregate over 10 train-test splits, where the test set is the full MNIST / CIFAR-10 test set, and the training set is a random subsample of size 30, 100, 300, and 1000.
 In this experiment, TabPFN was competitive for smaller training set sizes, but lagged as we trained on more samples.
 Interestingly, while for cancer classification SVC performed poorly, it performed well for large sample sizes on the CV tasks. 
