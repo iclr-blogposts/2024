@@ -1,3 +1,4 @@
+---
 layout: distill
 title: Inside the Black Box: A Theory of Ensembles and Knowledge Distillation
 description: Recent work proves mathematically why model ensembling boosts performance, despite individual neural networks perfectly fitting training data. The key insight? Identifying "multi-view" structures hidden in data where multiple informative features exist. This theory expands our grasp of deep learning's secret sauce. The analysis spotlights concrete progress towards demystifying these black boxes and grounding them in rigorous principles. Its motivated assumptions also reflect properties of real-world computer vision datasets. This research marks an important step towards stronger theoretical foundations for deep neural networks.
@@ -10,7 +11,7 @@ htmlwidgets: true
 
 
 # must be the exact same name as your blogpost
-bibliography: 2023-12-11-Inside the Black Box: A Theory of Ensembles and Knowledge Distillation.bib 
+bibliography: 2023-12-11-Inside-the-Black-Box-A-Theory-of-Ensembles-and-Knowledge-Distillation.bib 
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
@@ -26,10 +27,25 @@ toc:
   - name: Connections to Real-World Datasets  
   - name: Future Research Directions
   - name: Conclusion
-  - name: References
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
 # If you use this post as a template, delete this _styles block.
+
+_styles: >
+  .fake-img {
+    background: #bbb;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 12px;
+  }
+  .fake-img p {
+    font-family: monospace;
+    color: white;
+    text-align: left;
+    margin: 12px 0;
+    text-align: center;
+    font-size: 16px;
+  }
 ---
 
 # Introduction
