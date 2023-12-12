@@ -26,7 +26,8 @@ toc:
     - name: Unparameterized regularization terms
     - name: Generative models
     - name: End-to-end networks 
-  - name: Future directions 
+  - name: Limitation and future directions 
+  - name: Key takeaways
 
 
 # Below is an example of injecting additional post-specific styles.
@@ -138,5 +139,11 @@ Actually, the most intuitive way to conduct a GIA is to design a function that t
 Here, the neural network resembles a GAN generator which takes in representation vectors and outputs a synthesized image. However, instead of abstract latent codes, such a network receives gradient vectors to generate images. In implementations, Wu et.al<d-cite key="wu2023learning"></d-cite> utilizes *feature hashing* to reduce the dimension of gradient vectors. For network picking, they use a simple 3-layer MLP to generate flattened images, which is different from widely-used GAN structures.
 However, such a method faces multiple difficulties, such as large input sizes and limited structural flexibility. Even for one specific model, once the model weights are changed, such end-to-end network requires retraining to construct a new mapping from gradients to images. Besides, there is still space for network design. Will the network structure influence image reconstruction performance under identical datasets? How to construct a mapping function from gradients to images with varying batchsize? Could the network find an optimal batchsize after analyzing the gradients?  These questions are all worth further exploration.
 
-## Future directions
+## Limitation and future directions
+For GIAs that require pre-trained models, the key limitation is the auxiliary dataset. It is kind of unrealistic to claim that the dataset used for pretraining generative models (or end-to-end models) shares the same distribution with the unknown private input data, and possibly, with distinct dataset distribution, the generative performance may experience an obvious drop, which is shown in the ablation study of previous works<d-cite key="wu2023learning"></d-cite>. Both GIAS and GIFD use GAN with in-distribution auxiliary data to compare with previous state-of-the-art works, and GIFD paper only shows the reconstruction result of distinct distribution data when `batchsize=1` with the same label space. For the most general situation where the attacker has limited knowledge of the potential distribution of the private data, it may be still hard to recover high-quality batched data with generative networks.
+Considering these limitations, it is of great value to explore algorithms to learn some general prior knowledge, especially those robust among different data distributions. 
 
+## Key takeaways
+1. We illustrate the existence of information discards in gradient aggregation, and point out it is the core question of GIAs.
+2. We interpret previous GIA works from the prior knowledge perspective, and summarize three ways to complement information discards.
+3. We claim that it may still be hard to recover batched data from gradients with limited knowledge of private data distribution.
