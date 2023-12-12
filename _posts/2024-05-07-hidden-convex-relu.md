@@ -330,6 +330,10 @@ Indeed, we have to constrain the two variable so that keep the same activation, 
 
 It's easy enough in one dimension: $$u_1 \leq 0$$ and $$u_2 \geq 0$$.
 
+todo: faire
+
+todo: trois données?
+
 ---
 
 todo delete following
@@ -506,7 +510,7 @@ However, despite an equivalent convex problem existing, gradient descent will us
 
 [gif of neurons that moves through activation lines and align themselves to something]
 
-Here we take two dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insights as it requires us to know the activation patterns. Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample.
+todo: + prove que les activations bougent quoi Here we take two dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insights as it requires us to know the activation patterns. Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample.
 
 - todo CITE spline interpo
 
