@@ -39,7 +39,7 @@ toc:
 
 ## Introduction
 
-This is the introduction. You can include some text here to introduce the topic.
+Dealing with environments with sparse rewards in reinforcement learning requires meaningful exploration
 
 ### Reinforcement Learning
 
