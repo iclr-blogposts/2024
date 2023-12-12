@@ -510,6 +510,10 @@ However, despite an equivalent convex problem existing, gradient descent will us
 
 [gif of neurons that moves through activation lines and align themselves to something]
 
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif1.gif" class="img-fluid" %}
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif2.gif" class="img-fluid" %}
+
 todo: + prove que les activations bougent quoi Here we take two dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insights as it requires us to know the activation patterns. Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample.
 
 - todo CITE spline interpo
