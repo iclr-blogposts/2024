@@ -64,7 +64,7 @@ _styles: >
 
 TabPFN <d-cite key="hollmann2023tabpfn"></d-cite> is a deep learning model pretrained to perform in-context learning for tabular classification. 
 Since then, it has attracted attention both for its high predictive performance on small dataset benchmarks and for its unique meta-learning approach.
-This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) <d-cite key="muller2022transformers"></d-cite>, requires only synthetically-generating data: structural causal models (SCMs) <d-cite key="pearl2009causality></d-cite> are randomly generated, then training datasets are sampled from each SCM.
+This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) <d-cite key="muller2022transformers"></d-cite>, requires only synthetically-generating data: structural causal models (SCMs) <d-cite key="pearl2009causality"></d-cite> are randomly generated, then training datasets are sampled from each SCM.
 On fresh classification tasks, no training (i.e. weight updating) is needed; instead, training data is given as context to TabPFN, a Transformer <d-cite key="vaswani2017attention"></d-cite> model with self-attention among training samples and cross-attention from test samples to training samples.
 Subsequent works have reproduced its classification performance on other tabular benchmarks <d-cite key="mcelfresh2023neural"></d-cite>, and analyzed its theoretical foundations <d-cite key="nagler2023statistical"></d-cite>.
 
