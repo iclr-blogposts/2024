@@ -94,10 +94,10 @@ $$L^{IPPO}(\theta_i)=\hat{\mathbb{E}}_t[\min(r_t^{\theta_i}\hat{A}_t^i, \textrm{
 
 Where for each agent $i$, at timestep $t$:
 
-$\theta^i$: parameters of the agent $i$
+$\theta_i$: parameters of the agent $i$
 
 $$r_t^{\theta_i}=\frac{\pi_\theta(a_t^i|o_t^i)}{\pi_{\theta_{\text{old}}}(a_t^i|o_t^i)}$$: 
-probability ratio between the new policies $\pi_\theta^i$ and old policies $\pi_{\theta_\text{old}}^i$, $a^i$ is action, $o^i$ is observation of the agent $i$
+probability ratio between the new policies $\pi_\theta_i$ and old policies $\pi_{\theta_\text{old}}^i$, $a^i$ is action, $o^i$ is observation of the agent $i$
 
 $$\hat{A}_t^i=r_t + \gamma V^{\theta_i}(o_{t+1}^i) - V^{\theta_i}(o_t^i)$$: estimator of the advantage function
 $$V^{\theta_i}(o_t^i) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|o_t^i]$$: value function
@@ -112,18 +112,18 @@ While simple, this approach means each agent views the environment and other age
 
 During value function training, MAPPO agents have access to global information about the environment. The shared value function can further improve training stability compared to Independent PPO learners and alleviate non-stationarity, i.e,
 
-$$\hat{A}_t=r_t + \gamma V^{\theta}(s_{t+1}^i) - V^{\theta}(s_t)$$: estimator of the shared advantage function
-$$V^{\theta_i}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|s_t]$$: the shared value function
+$$\hat{A}_t=r_t + \gamma V^{\phi}(s_{t+1}^i) - V^{\phi}(s_t)$$: estimator of the shared advantage function
+$$V^{\phi}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|s_t]$$: the shared value function
 
 But during execution, agents only use their own policy likewise IPPO.
 
 **MAPPO-FP** found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features into the value function can improve MAPPO's performance:
 
-$$V^i(s) = V^\phi(\text{concat}(s, o^i))$$
+$$V_i(s) = V^\phi(\text{concat}(s, o^i))$$
 
 **Noisy-MAPPO**: To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
 
-$$V^i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I)$$
+$$V_i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I)$$
 
 Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
@@ -278,8 +278,6 @@ The input of the policy function Noisy-MAPPO is the same as the IPPO.
 {% highlight python %}
 class R_Critic(nn.Module):
   ...
-  def __init__(self, args, cent_obs_space, device=torch.device("cpu")):
-  ...
   def forward(self, cent_obs, rnn_states, masks, noise_vector=None):
         ...
         cent_obs = check(cent_obs).to(**self.tpdv)
@@ -329,7 +327,7 @@ We also cite the experimental results from these papers themselves below,
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
 </div>
 <div class="caption">
-    (b) MAPPO-FP (i.e, FP) vs MAPPO (i.e, ) results for SMAC from the MAPPO paper.
+    (b) MAPPO-FP (i.e, FP) vs MAPPO (i.e, CL) results for SMAC from the MAPPO paper.
 </div>
 
 <div class="center"> 
