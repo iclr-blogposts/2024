@@ -119,6 +119,8 @@ $$V^i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I
 
 Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
+MAPPO is often regarded as the simplest yet most powerful algorithm due to its use of global information to boost the training efficiency of a centralized critic. While IPPO employs local information to train independent critics.
+
 ## Enviroments
 
 We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
@@ -306,9 +308,7 @@ From the experimental results, we can see that the centralized value function of
 
 ### Discussion
 
-In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need.** 
-
-MAPPO is often regarded as the simplest yet most powerful algorithm due to its use of global information to boost the training efficiency of a centralized critic. While IPPO employs local information to train independent critics. According to the principle of CTDE, the centralized value function should be easier to learn and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
+In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
 2. The independent value functions are similar to ensemble learning, making the PPO algorithm more robust in unstable multi-agent environments.
