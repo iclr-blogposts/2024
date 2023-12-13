@@ -40,7 +40,7 @@ toc:
     subsections:
     - name: Code-level analysis
     - name: Experiments
-  - name: Conclusion
+  - name: Conjectures
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -109,9 +109,13 @@ $$V^{\theta_i}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} +
 
 But during execution, agents only use their own policy likewise IPPO.
 
+**MAPPO-FP** found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features into the value function can improve MAPPO's performance:
+
+$$V^i(s) = V^\phi(\text{concat}(s, o^i))$$
+
 **Noisy-MAPPO**: To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
 
-$$V^i(s) = V^\phi(\text{concat}(s, \mathbf{x^i})), \quad \mathbf{x^i} \sim \mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$$
+$$V^i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I)$$
 
 Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
@@ -121,7 +125,7 @@ MAPPO is often regarded as the simplest yet most potent algorithm due to its use
 
 ### Enviroments
 
-SMAC (StarCraft Multi-Agent Challenge) is a benchmark for testing multi-agent reinforcement learning algorithms. It uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
+We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark: SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
 
 Some key aspects of SMAC:
 
@@ -133,20 +137,20 @@ Maps of different difficulties and complexities to evaluate performance.
 
 **Independent PPO (IPPO)**
 
-> https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144
+[Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144)
+
+IPPO uses the `get_obs_agent` function to obtain the environmental information of other agents that each agent can see. The core code here is
+`dist < sight_range`.
 
 {% highlight python %}
 def get_obs_agent(self, agent_id):
         ...
-
         move_feats = np.zeros(move_feats_dim, dtype=np.float32)
         enemy_feats = np.zeros(enemy_feats_dim, dtype=np.float32)
         ally_feats = np.zeros(ally_feats_dim, dtype=np.float32)
         own_feats = np.zeros(own_feats_dim, dtype=np.float32)
         agent_id_feats = np.zeros(self.n_agents, dtype=np.float32)
-
         ...
-
             # Enemy features
             for e_id, e_unit in self.enemies.items():
                 e_x = e_unit.pos.x
@@ -159,16 +163,7 @@ def get_obs_agent(self, agent_id):
                     enemy_feats[e_id, 1] = dist / sight_range  # distance
                     enemy_feats[e_id, 2] = (e_x - x) / sight_range  # relative X
                     enemy_feats[e_id, 3] = (e_y - y) / sight_range  # relative Y
-
         ...
-
-        agent_obs = np.concatenate((ally_feats.flatten(),
-                                      enemy_feats.flatten(),
-                                      move_feats.flatten(),
-                                      own_feats.flatten()))
-
-        # Agent id features
-        if self.obs_agent_id:
             agent_id_feats[agent_id] = 1.
             agent_obs = np.concatenate((ally_feats.flatten(),
                                           enemy_feats.flatten(),
@@ -176,23 +171,23 @@ def get_obs_agent(self, agent_id):
                                           own_feats.flatten(),
                                           agent_id_feats.flatten()))
         ...
-
         return agent_obs
 {% endhighlight %}
 
 **Multi-Agent PPO (MAPPO)**
 
-> https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327
+[Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1152)
 
+For the input of the value function, MAPPO removes `dist < sight_range` to retain global information of all agents.
 
 {% highlight python %}
     def get_state(self, agent_id=-1):
         ...
-
         ally_state = np.zeros((self.n_agents, nf_al), dtype=np.float32)
         enemy_state = np.zeros((self.n_enemies, nf_en), dtype=np.float32)
         move_state = np.zeros((1, nf_mv), dtype=np.float32)
 
+        # Enemy features
         for e_id, e_unit in self.enemies.items():
             if e_unit.health > 0:
                 e_x = e_unit.pos.x
@@ -201,24 +196,74 @@ def get_obs_agent(self, agent_id):
 
                 enemy_state[e_id, 0] = (e_unit.health / e_unit.health_max)  # health     
         ...
-
         state = np.append(ally_state.flatten(), enemy_state.flatten())
-      
         ...
-
         return state
         
 {% endhighlight %}
 
-**Noisy-MAPPO**
+**MAPPO-FP**
 
-> https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151
+[Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
+For the input of the value function, MAPPO-FP concatenate `own_feats` of current agent with global information from MAPPO.
 
 {% highlight python %}
+def get_state_agent(self, agent_id):
+        ...
+        move_feats = np.zeros(move_feats_dim, dtype=np.float32)
+        enemy_feats = np.zeros(enemy_feats_dim, dtype=np.float32)
+        ally_feats = np.zeros(ally_feats_dim, dtype=np.float32)
+        own_feats = np.zeros(own_feats_dim, dtype=np.float32)
+        agent_id_feats = np.zeros(self.n_agents, dtype=np.float32)
+        ...
+            # Enemy features
+            for e_id, e_unit in self.enemies.items():
+                e_x = e_unit.pos.x
+                e_y = e_unit.pos.y
+                dist = self.distance(x, y, e_x, e_y)
+
+                if e_unit.health > 0:  # visible and alive
+                    # Sight range > shoot range
+                    if unit.health > 0:
+                        enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
+                        enemy_feats[e_id, 1] = dist / sight_range  # distance
+                        enemy_feats[e_id, 2] = (e_x - x) / sight_range  # relative X
+                        enemy_feats[e_id, 3] = (e_y - y) / sight_range  # relative Y
+                        if dist < sight_range:
+                            enemy_feats[e_id, 4] = 1  # visible
+
+            # Own features
+            ind = 0
+            own_feats[0] = 1  # visible
+            own_feats[1] = 0  # distance
+            own_feats[2] = 0  # X
+            own_feats[3] = 0  # Y
+            ind = 4
+            ... 
+            if self.state_last_action:
+                own_feats[ind:] = self.last_action[agent_id]
+
+        state = np.concatenate((ally_feats.flatten(), 
+                                enemy_feats.flatten(),
+                                move_feats.flatten(),
+                                own_feats.flatten()))
+        return state
+{% endhighlight %}
+
+**Noisy-MAPPO**
+
+[Code permalink](https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151)
+
+For the input of the value function, Noisy-MAPPO concatenate a `random noise vector` with global information from MAPPO.
+
+{% highlight python %}
+class R_Critic(nn.Module):
+  ...
+  def __init__(self, args, cent_obs_space, device=torch.device("cpu")):
+  ...
   def forward(self, cent_obs, rnn_states, masks, noise_vector=None):
         ...
-
         cent_obs = check(cent_obs).to(**self.tpdv)
         rnn_states = check(rnn_states).to(**self.tpdv)
         masks = check(masks).to(**self.tpdv)
@@ -230,9 +275,7 @@ def get_obs_agent(self, agent_id):
             cent_obs = torch.cat((cent_obs, noise_vector), dim=-1)
 
         critic_features = self.base(cent_obs)
-
         ...
-
         values = self.v_out(critic_features)
         return values, rnn_states
         
@@ -254,7 +297,7 @@ We borrowed some of the original data from the IPPO, MAPPO, and Noisy-MAPPO pape
 From the code and experimental data, we can see that the centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
 
 
-### Conclusion
+### Conjectures
 
 Here we propose two conjectures:
 
