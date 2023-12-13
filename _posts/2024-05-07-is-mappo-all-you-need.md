@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Is MAPPO All You Need in Multi-Agent Reinforcement Learning?
-description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized critic, whereas Independent Proximal Policy Optimization (IPPO) only uses local information to train independent critics. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e., IPPO with global information is all you need.
+description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized value function, whereas Independent Proximal Policy Optimization (IPPO) only uses local information to train independent value functions. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e., IPPO with global information is all you need.
 
 date: 2024-05-07
 future: true
