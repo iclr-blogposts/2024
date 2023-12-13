@@ -280,12 +280,14 @@ class R_Critic(nn.Module):
   ...
   def forward(self, cent_obs, rnn_states, masks, noise_vector=None):
         ...
+        # global states
         cent_obs = check(cent_obs).to(**self.tpdv)
         rnn_states = check(rnn_states).to(**self.tpdv)
         masks = check(masks).to(**self.tpdv)
 
         if self.args.use_value_noise:
             N = self.args.num_agents
+            # fixed noise vector for each agent
             noise_vector = check(noise_vector).to(**self.tpdv)
             noise_vector = noise_vector.repeat(cent_obs.shape[0] // N, 1)
             cent_obs = torch.cat((cent_obs, noise_vector), dim=-1)
