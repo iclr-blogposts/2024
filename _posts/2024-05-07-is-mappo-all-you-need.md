@@ -37,7 +37,7 @@ toc:
     subsections:
     - name: Multi-agent RL
     - name: From PPO to Multi-agent PPO
-  - name: Enviroments
+  - name: Enviroment
   - name: Code-level analysis
   - name: Experiments
   - name: Discussion
@@ -129,7 +129,7 @@ Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i
 
 MAPPO is often regarded as the simplest yet most powerful algorithm due to its use of global information to boost the training efficiency of a centralized critic. While IPPO employs local information to train independent critics.
 
-## Enviroments
+## Enviroment
 
 We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
 
@@ -301,7 +301,7 @@ Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as i
 
 ## Experiments
 
-We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code,
+We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code ([IPPO,MAPPO,MAPPO-FP](https://github.com/zoeyuchao/mappo),[Noisy-MAPPO](https://github.com/hijkzzz/noisy-mappo)),
 
 | Algorithms        | 3s5z_vs_3s6z           | 5m_vs_6m  | corridor | 27m_vs_30m | MMM2 | 
 | ------------- |-------------:| -----:| | -------------: |-------------:| -----:|
@@ -339,11 +339,11 @@ We also cite the experimental results from these papers themselves below,
 
 From the experimental results, we can see that 
 1. The centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
-2. Introducing global information into the critic improves the learning efficiency of IPPO.
+2. Introducing global information into the value function improves the learning efficiency of IPPO.
 
 ### Discussion
 
-In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
+In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
 2. The independent value functions are ensemble learning, making the PPO algorithm more robust in unstable multi-agent environments.
