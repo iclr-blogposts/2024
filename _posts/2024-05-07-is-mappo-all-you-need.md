@@ -282,7 +282,7 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-Based on code-level analysis, both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the noise vector in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function.
+Based on code-level analysis, both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the `noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function, i.e, the IPPO with global information.
 
 ## Experiments
 
@@ -306,9 +306,13 @@ From the experimental results, we can see that the centralized value function of
 
 ### Discussion
 
-MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need**.
+In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need.** 
 
-Here we propose two conjectures:
+MAPPO is often regarded as the simplest yet most powerful algorithm due to its use of global information to boost the training efficiency of a centralized critic. While IPPO employs local information to train independent critics. According to the principle of CTDE, the centralized value function should be easier to learn and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
 
-1. Each agent having its own value function can be seen as an implicit credit assignment.
-2. The independent value functions increase policy diversity and improve exploration capabilities.
+1. The independent value functions increase policy diversity and improve exploration capabilities. 
+2. The independent value functions are similar to ensemble learning, making the PPO algorithm more robust in unstable multi-agent environments.
+3. Each agent having its own value function can be seen as an implicit credit assignment.
+
+Finally, we hope our blog post has helped you. We aim to let everyone know the true capabilities of IPPO, not just MAPPO.
+
