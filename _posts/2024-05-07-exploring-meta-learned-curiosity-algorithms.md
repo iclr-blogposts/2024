@@ -36,6 +36,11 @@ toc:
     - name: Method
     - name: FAST
     - name: ICCM
+  - name: Experiments
+    subsections:
+    - name: Empty grid-world
+    - name: Deep sea
+  - name: Discussion
   - name: Conclusion
 ---
 
@@ -44,11 +49,10 @@ toc:
 Dealing with environments with sparse rewards, i.e. feedback at a low frequency, in reinforcement learning (RL) requires meaningful exploration.
 One way to encourage the RL agent to perform meaningful exploration is by instilling intrinsic motivation into the agents. This intrinsic motivation usually comes in the form of curiosity. As Schmidhuber <d-cite key="Schmidhuber1991APF"></d-cite> highlighted : One becomes curious as soon as one believes there's something about the world that one does not know. It is because of this that curiosity or intrinsic rewards are usually predictive errors. For instance, an RL agent equipped with a world model is given the current state of the environment, $$s_t$$, and attempts to predict the next state, $$s_{t+1}$$. The error in this prediction is the intrinsic reward. As the world model improves one should expect the intrinsic rewards to decrease as the agent's knowledge about environment increases.
 
-Now there has been success with curious agents solving environments with sparse rewards <d-cite key="burda2018exploration, guo2022byolexplore, jarrett2023curiosity, pathak2017curiositydriven,burda2018largescale">. 
-Now curiosity algorithms such as Random Network Distillation (RND) <d-cite key="burda2018exploration"> and BYOL-Explore <d-cite key="guo2022byolexplore"> are hand-designed and are able to perform well across different environments. However in the 2020 paper
+Now there has been success with curious agents solving environments with sparse rewards <d-cite key="burda2018exploration, guo2022byolexplore, jarrett2023curiosity, pathak2017curiositydriven,burda2018largescale">. Now curiosity algorithms such as Random Network Distillation (RND) <d-cite key="burda2018exploration"> and BYOL-Explore <d-cite key="guo2022byolexplore"> are hand-designed and are able to perform well across different environments. However in the 2020 paper
 <dcite key="alet2020metalearning">, Meta-learning curiosity algorithms, Alet et al. took a different and unique approach to discovering new curisoity algorithms. They did this by meta-learning pieces of code. Similar to the code segments used by researchers when crafting curiosity algorithms such as neural networks with gradient descent mechanisms, trained objective functions, ensembles, buffers, and various regression models. Two new interpretable algorithms were learned by meta-learning these pieces of code: Fast Action Space Transition and Cycle-Consistency Intrinsic Motivation (CCIM). It is these two algorithms that we will explore and compare their behaviour to our baselines: RND and BYOL-Explore.
 
-The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite DeepSea environment and compare them to the baselines. Finally, we conclude our journey.
+The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite deep sea environment and compare them to the baselines. Finally, we conclude our journey.
 
 ## Background
 
@@ -56,29 +60,43 @@ The roadmap for exploring FAST and CCIM is organised as follows. We begin with a
 
 Briefly explain what reinforcement learning is and its significance.
 
-### Meta Reinforcement Learning
+### Meta-RL and Meta-learning
 
 Provide an overview of meta reinforcement learning and its relevance to the topic.
 
-### Curiosity
+### RND
 
 Introduce the concept of curiosity in the context of learning algorithms.
 
-## Meta-learning Curiosity Algorithms
+### BYOL-Explore
 
 This section delves into the meta-learning curiosity algorithms. You can explain the methods, including FAST and ICCM.
 
-### Method
+## Meta-learning curiosity algorithms
 
 Describe the overall method used in implementing the algorithms from the paper.
 
-### FAST
+### Method
 
 Provide details about the FAST algorithm and its role in meta-learning curiosity.
 
-### ICCM
+### FAST
 
 Explain the ICCM algorithm and how it contributes to the meta-learning approach.
+
+### CCIM
+
+here is CCIM
+
+## Experiments
+
+### Empty grid-world
+
+### Deep sea
+
+## Discussion
+
+more random info
 
 ## Conclusion
 
