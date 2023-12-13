@@ -33,9 +33,13 @@ bibliography: 2024-05-07-is-mappo-all-you-need.bib
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
   - name: Background
-  - name: From PPO to Multi-agent PPO
-  - name: Code-level analysis
+    subsections:
+    - name: Multi-agent RL
+    - name: From PPO to Multi-agent PPO
   - name: IPPO with global information is all you need
+    subsections:
+    - name: Code-level analysis
+    - name: Experiments
   - name: Conclusion
 
 # Below is an example of injecting additional post-specific styles.
@@ -60,6 +64,8 @@ _styles: >
 
 ## Background
 
+### Multi-agent RL
+
 Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents are trained using reinforcement learning algorithms within the same environment. This technique is particularly useful in complex systems such as robot swarm control, autonomous vehicle coordination, and sensor networks, where the agents interact to collectively achieve a common goal.
 
 The figure provided showcases various multi-agent cooperative scenarios, including chasing in the Multi-Agent Particle Environment (Predator-Prey), the MAgent Environment, Hide & Seek, and the StarCraft Multi-Agent Challenge. In these scenarios, agents typically have a limited field of view to observe their surroundings. As depicted in the figure, the cyan border represents the sight and shooting range of an agent, limiting the agent’s ability to gather information about the terrain or other agents beyond this range. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP).
@@ -68,11 +74,59 @@ Despite the successful adaptation of numerous reinforcement learning algorithms 
 
 One commonly adopted CTDE-based MARL algorithm is Multi-agent Proximal Policy Optimization (MAPPO). MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog, we delve into the intricacies of MAPPO. We explore the history and origins of MAPPO and further analyze whether MAPPO is actually better than IPPO from a code and experimental perspective.
 
-## From PPO to Multi-agent PPO
+###  From PPO to Multi-agent PPO
 
-## Code-level analysis
+**Proximal Policy Optimization (PPO)** is a single-agent policy gradient reinforcement learning algorithm. Its main idea is to constrain the divergence between the updated and old policies when conducting policy updates, in order to ensure not overly large update steps.
+
+Its objective function can be formulated as:
+
+$$ L^{CLIP}(θ) = \hat{\mathbb{E}}_t[\min(r_t(\theta)\hat{A}_t, \textrm{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$
+
+where:
+
+$t$: the timestep
+
+$\theta$: parameters of the policy
+
+$r_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$: 
+probability ratio between the new policies $\pi_\theta$ and old policies $\pi_{\theta_{old}}$ and $a$ is the action, $s$ is the state.
+
+$\hat{A}_t=r_t + \gamma V(s {t+1}) - V(s_t)$: estimator of the advantage function
+
+$V(s_t) = \mathbb{E}[r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + ...|s_t]$: the value function.
+
+$\epsilon$: clipping parameter to constrain the step size of policy updates
+
+This objective function considers both the policy improvement $r_t(\theta)\hat{A}_t$ and update magnitude $\textrm{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t$. It encourages the policy to move in the direction that improves rewards, while avoiding excessively large update steps. Therefore, by limiting the distance between the new and old policies, PPO enables stable and efficient policy updates.
+
+**Independent PPO (IPPO)** is a simple multi-agent extension of PPO where each agent independently learns using the single-agent PPO objective. Here is an overview:
+
+In IPPO, agents do not share any information or use any multi-agent training techniques. Each agent i:
+
+Interacts with the environment and collects its own set of trajectories τ_i
+Estimates the advantages Âˆt_i and value function V_i using only its own experiences
+Optimizes its parameterized policy π_θi by minimizing the PPO loss:
+
+$$L^{IPPO}(\theta_i)=\hat{\mathbb{E}}_t[\min(r_t^{\theta_i}\hat{A}_t^i, \textrm{clip}(r_t^{\theta_i},1−\epsilon,1+\epsilon)\hat{A}_t^i)]$$
+
+Repeats this process until convergence
+While simple, this approach means each agent views the environment and other agents as part of the dynamics. This can introduce non-stationarity that harms convergence.
+
+So while IPPO successfully extends PPO to multi-agent domains, algorithms like MAPPO tend to achieve better performance by accounting for multi-agent effects during training. Still, IPPO is an easy decentralized baseline for MARL experiments.
+
+**Multi-Agent PPO (MAPPO)** is an extension of the IPPO algorithm to multi-agent reinforcement learning (MARL) settings. In MARL, multiple learning agents interact with the same environment and face additional challenges such as non-stationarity and complex multi-agent credit assignment.
+
+The key ideas behind MAPPO include:
+
+1. Centralized training with decentralized execution: During value function approximator training, MAPPO agents have access to global information about the enviroment. The shared value function approximator can further improve training stability compared to Independent PPO learners and alleviate non-stationarity. But during execution, agents only use their own policy.
+2. PPO objective per agent: Each MAPPO agent has its own PPO loss with clipped probability ratio between the new and old policies. This limits each agent's individual policy update per batch.
+
+But stability improvements allow successful policy gradient updates despite the complex MARL training dynamics. This makes MAPPO suitable for a wide range of multi-agent tasks.
 
 ## IPPO with global information is all you need
 
-## Conclusion
+### Code-level analysis
 
+### Experiments
+
+## Conclusion
