@@ -59,7 +59,7 @@ The roadmap for exploring FAST and CCIM is organised as follows. We begin with a
 
 ## Background
 Here we dive into background.
-### RL
+### Reinforcement Learning
 
 RL is inspired by how biological systems learn as animals are to able learn through trail-and-error. In RL we have an agent that tries to maximise the sum of rewards by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
 
@@ -78,10 +78,11 @@ The Figure below shows an extended view of the agent-environment interactions.
     Figure 2. The extended agent-environment interaction. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
 
-Singh et al. highlight in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent.
+Singh et al. highlight in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent. And this motivational system should ideally remain consistent across a wide range of diverse environments.
+
 ### Meta-RL and Meta-learning
 
-Provide an overview of meta reinforcement learning and its relevance to the topic.
+The next stop on our journey takes us to meta-learning
 
 ### RND
 
