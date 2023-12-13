@@ -117,7 +117,7 @@ $$V^{\phi}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \do
 
 But during execution, agents only use their own policy likewise IPPO.
 
-**MAPPO-FP** found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features into the value function can improve MAPPO's performance:
+**MAPPO-FP** found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features $s$ into the value function can improve MAPPO's performance:
 
 $$V_i(s) = V^\phi(\text{concat}(s, o^i))$$
 
@@ -131,13 +131,13 @@ MAPPO is often regarded as the simplest yet most powerful algorithm due to its u
 
 ## Enviroments
 
-We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure:
+We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/smac.jpg" class="img-fluid width1" %}
 </div>
 <div class="caption">
-    The StarCraft Multi-Agent Challenge (SMAC).
+    (a) The StarCraft Multi-Agent Challenge (SMAC).
 </div>
 
 Some key aspects of SMAC:
@@ -311,7 +311,7 @@ We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO
 | Noisy-MAPPO |   87%  |   89% |  100% |  100% |  96%  |
 
 <div class="caption">
-    Experimental results for SMAC, the data in the table represents the win rate.
+    (b) Experimental results for SMAC, the data in the table represents the win rate.
 </div>
 
 We also cite the experimental results from these papers themselves below,
@@ -320,21 +320,21 @@ We also cite the experimental results from these papers themselves below,
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/ippo.jpg" class="img-fluid width1" %}
 </div>
 <div class="caption">
-    (a) IPPO vs MAPPO results for SMAC from the IPPO paper, the data in the table represents the win rate.
+    (c) IPPO vs MAPPO results for SMAC from the IPPO paper, the data in the table represents the win rate.
 </div>
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
 </div>
 <div class="caption">
-    (b) MAPPO-FP (i.e, FP) vs MAPPO (i.e, CL) results for SMAC from the MAPPO paper.
+    (d) MAPPO-FP (i.e, FP) vs MAPPO (i.e, CL) results for SMAC from the MAPPO paper.
 </div>
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid width1" %}
 </div>
 <div class="caption">
-    (c) Noisy-MAPPO (i.e, NV-MAPPO) vs MAPPO results for SMAC from the MAPPO paper.
+    (e) Noisy-MAPPO (i.e, NV-MAPPO) vs MAPPO results for SMAC from the MAPPO paper.
 </div>
 
 From the experimental results, we can see that 
