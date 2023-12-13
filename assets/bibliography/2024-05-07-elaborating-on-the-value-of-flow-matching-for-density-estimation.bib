@@ -1,0 +1,67 @@
+@misc{dax_flow_2023,
+  title = {Flow {{Matching}} for {{Scalable Simulation-Based Inference}}},
+  author = {Dax, Maximilian and Wildberger, Jonas and Buchholz, Simon and Green, Stephen R. and Macke, Jakob H. and Sch{\"o}lkopf, Bernhard},
+  year = {2023},
+  month = may,
+  number = {arXiv:2305.17161},
+  eprint = {2305.17161},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  urldate = {2023-07-03},
+  abstract = {Neural posterior estimation methods based on discrete normalizing flows have become established tools for simulation-based inference (SBI), but scaling them to high-dimensional problems can be challenging. Building on recent advances in generative modeling, we here present flow matching posterior estimation (FMPE), a technique for SBI using continuous normalizing flows. Like diffusion models, and in contrast to discrete flows, flow matching allows for unconstrained architectures, providing enhanced flexibility for complex data modalities. Flow matching, therefore, enables exact density evaluation, fast training, and seamless scalability to large architectures--making it ideal for SBI. We show that FMPE achieves competitive performance on an established SBI benchmark, and then demonstrate its improved scalability on a challenging scientific problem: for gravitational-wave inference, FMPE outperforms methods based on comparable discrete flows, reducing training time by 30\% with substantially improved accuracy. Our work underscores the potential of FMPE to enhance performance in challenging inference scenarios, thereby paving the way for more advanced applications to scientific problems.},
+  archiveprefix = {arxiv},
+  keywords = {density-estimation,in-progress,normalizing-flows,sbi}
+}
+
+@misc{lipman_flow_2023,
+  title = {Flow {{Matching}} for {{Generative Modeling}}},
+  author = {Lipman, Yaron and Chen, Ricky T. Q. and {Ben-Hamu}, Heli and Nickel, Maximilian and Le, Matt},
+  year = {2023},
+  month = feb,
+  number = {arXiv:2210.02747},
+  eprint = {2210.02747},
+  primaryclass = {cs, stat},
+  publisher = {{arXiv}},
+  urldate = {2023-10-19},
+  abstract = {We introduce a new paradigm for generative modeling built on Continuous Normalizing Flows (CNFs), allowing us to train CNFs at unprecedented scale. Specifically, we present the notion of Flow Matching (FM), a simulation-free approach for training CNFs based on regressing vector fields of fixed conditional probability paths. Flow Matching is compatible with a general family of Gaussian probability paths for transforming between noise and data samples -- which subsumes existing diffusion paths as specific instances. Interestingly, we find that employing FM with diffusion paths results in a more robust and stable alternative for training diffusion models. Furthermore, Flow Matching opens the door to training CNFs with other, non-diffusion probability paths. An instance of particular interest is using Optimal Transport (OT) displacement interpolation to define the conditional probability paths. These paths are more efficient than diffusion paths, provide faster training and sampling, and result in better generalization. Training CNFs using Flow Matching on ImageNet leads to consistently better performance than alternative diffusion-based methods in terms of both likelihood and sample quality, and allows fast and reliable sample generation using off-the-shelf numerical ODE solvers.},
+  archiveprefix = {arxiv},
+  keywords = {density-estimation,in-progress,normalizing-flows}
+}
+
+@misc{papamakarios_normalizing_2019,
+  title = {Normalizing {{Flows}} for {{Probabilistic Modeling}} and {{Inference}}},
+  author = {Papamakarios, George and Nalisnick, Eric and Jimenez Rezende, Danilo and Mohamed, Shakir and Lakshminarayanan, Balaji},
+  year = {2019},
+  month = dec,
+  journal = {arXiv e-prints},
+  urldate = {2022-12-16},
+  abstract = {Normalizing flows provide a general mechanism for defining expressive probability distributions, only requiring the specification of a (usually simple) base distribution and a series of bijective transformations. There has been much recent work on normalizing flows, ranging from improving their expressive power to expanding their application. We believe the field has now matured and is in need of a unified perspective. In this review, we attempt to provide such a perspective by describing flows through the lens of probabilistic modeling and inference. We place special emphasis on the fundamental principles of flow design, and discuss foundational topics such as expressive power and computational trade-offs. We also broaden the conceptual framing of flows by relating them to more general probability transformations. Lastly, we summarize the use of flows for tasks such as generative modeling, approximate inference, and supervised learning.},
+  keywords = {in-progress,normalizing-flows,sbi},
+  annotation = {ADS Bibcode: 2019arXiv191202762P}
+}
+
+@inproceedings{tong_improving_2023,
+  title = {Improving and {{Generalizing Flow-Based Generative Models}} with {{Minibatch Optimal Transport}}},
+  booktitle = {{{ICML}} 2023 {{Workshop}} on {{New Frontiers}} in {{Learning}}, {{Control}}, and {{Dynamical Systems}}},
+  author = {Tong, Alexander and Malkin, Nikolay and Huguet, Guillaume and Zhang, Yanlei and {Rector-Brooks}, Jarrid and Fatras, Kilian and Wolf, Guy and Bengio, Yoshua},
+  year = {2023},
+  month = jul,
+  urldate = {2023-11-07},
+  abstract = {Continuous normalizing flows (CNFs) are an attractive generative modeling technique, but they have been held back by limitations in their simulation-based maximum likelihood training. We introduce the generalized {\textbackslash}textit\{conditional flow matching\} (CFM) technique, a family of simulation-free training objectives for CNFs. CFM features a stable regression objective like that used to train the stochastic flow in diffusion models but enjoys the efficient inference of deterministic flow models. In contrast to both diffusion models and prior CNF training algorithms, CFM does not require the source distribution to be Gaussian or require evaluation of its density. A variant of our objective is optimal transport CFM (OT-CFM), which creates simpler flows that are more stable to train and lead to faster inference, as evaluated in our experiments. Furthermore, OT-CFM is the first method to compute dynamic OT in a simulation-free way. Training CNFs with CFM improves results on a variety of conditional and unconditional generation tasks, such as inferring single cell dynamics, unsupervised image translation, and Schr{\"o}dinger bridge inference.},
+  langid = {english},
+  keywords = {density-estimation,in-progress,normalizing-flows}
+}
+
+@inproceedings{chen_neural_2018,
+  title = {Neural {{Ordinary Differential Equations}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Chen, Ricky T. Q. and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David K},
+  year = {2018},
+  month = dec,
+  volume = {31},
+  eprint = {1806.07366},
+  publisher = {{Curran Associates, Inc.}},
+  urldate = {2023-11-14},
+  abstract = {We introduce a new family of deep neural network models. Instead of specifying a discrete sequence of hidden layers, we parameterize the derivative of the hidden state using a neural network. The output of the network is computed using a blackbox differential equation solver. These continuous-depth models have constant memory cost, adapt their evaluation strategy to each input, and can explicitly trade numerical precision for speed. We demonstrate these properties in continuous-depth residual networks and continuous-time latent variable models. We also construct continuous normalizing flows, a generative model that can train by maximum likelihood, without partitioning or ordering the data dimensions. For training, we show how to scalably backpropagate through any ODE solver, without access to its internal operations. This allows end-to-end training of ODEs within larger models.},
+  archiveprefix = {arxiv}
+}

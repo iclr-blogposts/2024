@@ -67,14 +67,14 @@ For most of the time, the flows achieving the notable results were constructed
 by chaining several differentiable and invertible transformations. However,
 these diffeomorphic transformations limit the flows in their complexity as such
 have to be simple. Furthermore, this leads to trade-off sampling speed and
-evaluation performance.
+evaluation performance <d-cite key="papamakarios_normalizing_2019"></d-cite>.
 
 # Continuous Normalizing Flows
 
 Continuous normalizing flows (CNFs) are among the first applications of neural
-ordinary differential equations (ODEs) {{<cite "chen_neural_2018">}}. Instead of
-the traditional layers of neural networks, the flow is defined by a vector field
-that is integrated over time. 
+ordinary differential equations (ODEs) <d-cite key="chen_neural_2018"></d-cite>.
+Instead of the traditional layers of neural networks, the flow is defined by a
+vector field that is integrated over time. 
 
 $$
 \frac{d}{dt} x(t) = f_{\theta}(x(t), t)
@@ -108,9 +108,9 @@ estimation of complex high-dimensional distributions.
 
 # Flow matching
 
-The authors of {{<cite "lipman_flow_2022">}} propose a new method for training
-CNFs, which avoids the need for simulation. The key idea is to regress the
-vector field directly from an implicit definition of a target vector field
+The authors of <d-cite key="lipman_flow_2023"></d-cite> propose a new method for
+training CNFs, which avoids the need for simulation. The key idea is to regress
+the vector field directly from an implicit definition of a target vector field
 that defines a probability path $p_t(x)$ with $p_0=p_{B}$ and $p_1=p_{D}$.
 Moreover, the authors propose a loss function that directly regresses the time
 dependent vector field against the conditional vector fields with respect to
