@@ -36,10 +36,9 @@ toc:
     subsections:
     - name: Multi-agent RL
     - name: From PPO to Multi-agent PPO
-  - name: IPPO with Global Information Is All You Need
-    subsections:
-    - name: Code-level analysis
-    - name: Experiments
+  - name: Enviroments
+  - name: Code-level analysis
+  - name: Experiments
   - name: Conjectures
 
 # Below is an example of injecting additional post-specific styles.
@@ -119,11 +118,9 @@ $$V^i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I
 
 Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
-## IPPO with Global Information Is All You Need
-
 MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need**.
 
-### Enviroments
+## Enviroments
 
 We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
 
@@ -133,7 +130,7 @@ Complex partially observable Markov game environment, with challenges like spars
 Designed specifically to test multi-agent collaboration and coordination.
 Maps of different difficulties and complexities to evaluate performance.
 
-### Code-level Analysis
+## Code-level Analysis
 
 **Independent PPO (IPPO)**
 
@@ -281,30 +278,30 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-### Experimental Analysis
+## Experimental Analysis
 
-We reproduced some of the experimental results from the original IPPO, MAPPO, and Noisy-MAPPO papers, and borrowed the corresponding figures to use in our work.
+We reproduced some of the experimental results from the original IPPO, MAPPO, and Noisy-MAPPO papers, and borrowed the corresponding settings to use in this blog.
 
-**Independent PPO (IPPO)**
+**IPPO vs MAPPO**
 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/ippo.jpg" class="img-fluid" %}
 
-**Multi-Agent PPO (MAPPO)**
+**MAPPO vs MAPPO-FP**
 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
 
 
-**Noisy-MAPPO**
+**Noisy-MAPPO vs MAPPO**
 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid" %}
 
 
 From the experimental results, we can see that the centralized value function of MAPPO did not provide effective performance improvements. Both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the noise vector in Noisy-MAPPO is equivalent to a Gaussian distributed agent_id, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. The independent value functions for each agent made the multi-agent learning more robust. 
 
-
 ### Conjectures
+
 
 Here we propose two conjectures:
 
-Each agent having its own value function can be seen as an implicit credit assignment.
-The independent value functions increase policy diversity and improve exploration capabilities.
+1. Each agent having its own value function can be seen as an implicit credit assignment.
+2. The independent value functions increase policy diversity and improve exploration capabilities.
