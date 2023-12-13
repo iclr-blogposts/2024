@@ -133,16 +133,110 @@ Maps of different difficulties and complexities to evaluate performance.
 
 **Independent PPO (IPPO)**
 
-https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L978
+> https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144
+
+{% highlight python %}
+def get_obs_agent(self, agent_id):
+        ...
+
+        move_feats = np.zeros(move_feats_dim, dtype=np.float32)
+        enemy_feats = np.zeros(enemy_feats_dim, dtype=np.float32)
+        ally_feats = np.zeros(ally_feats_dim, dtype=np.float32)
+        own_feats = np.zeros(own_feats_dim, dtype=np.float32)
+        agent_id_feats = np.zeros(self.n_agents, dtype=np.float32)
+
+        ...
+
+            # Enemy features
+            for e_id, e_unit in self.enemies.items():
+                e_x = e_unit.pos.x
+                e_y = e_unit.pos.y
+                dist = self.distance(x, y, e_x, e_y)
+
+                if (dist < sight_range and e_unit.health > 0):  # visible and alive
+                    # Sight range > shoot range
+                    enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
+                    enemy_feats[e_id, 1] = dist / sight_range  # distance
+                    enemy_feats[e_id, 2] = (e_x - x) / sight_range  # relative X
+                    enemy_feats[e_id, 3] = (e_y - y) / sight_range  # relative Y
+
+        ...
+
+        agent_obs = np.concatenate((ally_feats.flatten(),
+                                      enemy_feats.flatten(),
+                                      move_feats.flatten(),
+                                      own_feats.flatten()))
+
+        # Agent id features
+        if self.obs_agent_id:
+            agent_id_feats[agent_id] = 1.
+            agent_obs = np.concatenate((ally_feats.flatten(),
+                                          enemy_feats.flatten(),
+                                          move_feats.flatten(),
+                                          own_feats.flatten(),
+                                          agent_id_feats.flatten()))
+        ...
+
+        return agent_obs
+{% endhighlight %}
 
 **Multi-Agent PPO (MAPPO)**
 
-https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327
+> https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327
+
+
+{% highlight python %}
+    def get_state(self, agent_id=-1):
+        ...
+
+        ally_state = np.zeros((self.n_agents, nf_al), dtype=np.float32)
+        enemy_state = np.zeros((self.n_enemies, nf_en), dtype=np.float32)
+        move_state = np.zeros((1, nf_mv), dtype=np.float32)
+
+        for e_id, e_unit in self.enemies.items():
+            if e_unit.health > 0:
+                e_x = e_unit.pos.x
+                e_y = e_unit.pos.y
+                dist = self.distance(x, y, e_x, e_y)
+
+                enemy_state[e_id, 0] = (e_unit.health / e_unit.health_max)  # health     
+        ...
+
+        state = np.append(ally_state.flatten(), enemy_state.flatten())
+      
+        ...
+
+        return state
+        
+{% endhighlight %}
 
 **Noisy-MAPPO**
 
-https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/runner/shared/smac_runner.py#L18
+> https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151
 
+
+{% highlight python %}
+  def forward(self, cent_obs, rnn_states, masks, noise_vector=None):
+        ...
+
+        cent_obs = check(cent_obs).to(**self.tpdv)
+        rnn_states = check(rnn_states).to(**self.tpdv)
+        masks = check(masks).to(**self.tpdv)
+
+        if self.args.use_value_noise:
+            N = self.args.num_agents
+            noise_vector = check(noise_vector).to(**self.tpdv)
+            noise_vector = noise_vector.repeat(cent_obs.shape[0] // N, 1)
+            cent_obs = torch.cat((cent_obs, noise_vector), dim=-1)
+
+        critic_features = self.base(cent_obs)
+
+        ...
+
+        values = self.v_out(critic_features)
+        return values, rnn_states
+        
+{% endhighlight %}
 
 ### Experiments
 
