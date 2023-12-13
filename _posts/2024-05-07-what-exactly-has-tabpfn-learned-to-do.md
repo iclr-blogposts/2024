@@ -179,9 +179,7 @@ We also verify that TabPFN is not simply memorizing the class imbalance in favor
 We compute confusion matrices, shown below, for each train-test split.
 Even though cancer is the most common class in every training split, there does not appear to be any systematic bias across the splits in favor of predicting cancer.
 
-<div class="fake-img l-middle.side">
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/bladderbatch-batch-confusion.png" class="img-fluid" %}
-</div>
 
 
 ## Computer vision as a tabular classification problem
