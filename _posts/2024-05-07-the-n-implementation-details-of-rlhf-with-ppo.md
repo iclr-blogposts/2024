@@ -79,7 +79,7 @@ This work is just for educational / learning purposes. For advanced users requir
 - Finally, we conclude our work with limitations and discussions.
 
 
-Our (anonymized) reproduction codebase is available at [*https://anonymous.4open.science/r/lm-human-preference-details-F9C9/*](https://anonymous.4open.science/r/lm-human-preference-details-F9C9/)
+Our (anonymized) reproduction codebase is available at [*https://anonymous.4open.science/r/lm-human-preference-details-temp-8CDD*](https://anonymous.4open.science/r/lm-human-preference-details-temp-8CDD)
 
 
 # Matching Learning Curves
@@ -222,7 +222,7 @@ We now take a technical deep dive into the implementation details that are relev
         """
         ```
         
-    4. **Note on HF’s transformers — `position_ids` during `generate`:** during generate we should not pass in `position_ids` because the `position_ids` are already adjusted in `transformers` (see [huggingface/transformers#/7552](https://github.com/huggingface/transformers/pull/7552).
+    4. **Note on HF’s transformers — `position_ids` during `generate`:** during generate we should not pass in `position_ids` because the `position_ids` are already adjusted in `transformers` (see [huggingface/transformers#/7552](https://github.com/huggingface/transformers/pull/7552)).
     
     Usually, we almost never pass `position_ids` in transformers. All the masking and shifting logic are already implemented e.g. in the `generate` function (need permanent code link).
 4. **Response generation samples a fixed-length response without padding.**
@@ -275,7 +275,7 @@ We now take a technical deep dive into the implementation details that are relev
     3. Note that in a more recent codebase https://github.com/openai/summarize-from-feedback, OpenAI does stop sampling when encountering EOS token ([summarize_from_feedback/utils/experiment_helpers.py#L19](https://github.com/openai/summarize-from-feedback/blob/8af822a428c93432aa80ffbe5b065a8f93895669/summarize_from_feedback/utils/experiment_helpers.py#L19)). However in this work we aim to do a 1:1 replication, so we align the setting that could keep sampling even eos_token is encountered 
 5. **Learning rate annealing for reward model and policy training.**
     1. As Ziegler et al. (2019)  <d-cite key="Ziegler2019fine"></d-cite> suggested, the reward model is trained for a single epoch to avoid overfitting the limited amount of human annotation data (e.g., the `descriptiveness` task only had about 5000 labels). During this single epoch, the learning rate is annealed to zero ([lm_human_preferences/train_reward.py#L249](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/train_reward.py#L249)).
-    2. Similar to reward model training, the learning rate is annealed to zero ([lm_human_preferences/train_policy.py#L172-L173](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/train_policy.py#L172-L173)).
+    2. Similar to reward model training, the policy's learning rate is annealed to zero ([lm_human_preferences/train_policy.py#L172-L173](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/train_policy.py#L172-L173)).
 6. **Use different seeds for different processes**
     1. When spawning 8 GPU processes to do data parallelism, OpenAI sets a different random seed per process ([lm_human_preferences/utils/core.py#L108-L111](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/utils/core.py#L108-L111)). Implementation-wise, this is done via `local_seed = args.seed + process_rank * 100003`. The seed is going to make the model produce different responses and get different scores, for example.
         1. Note: We believe the dataset shuffling has a bug — the dataset is shuffled using the same seed for some reason ([lm_human_preferences/lm_tasks.py#L94-L97](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/lm_tasks.py#L94-L97)).
@@ -329,11 +329,8 @@ In this section, we will delve into details, such as layer initialization, data 
     1. Ziegler et al. (2019) <d-cite key="Ziegler2019fine"></d-cite> suggested, “We use rejection sampling to ensure there is a period between tokens 16 and 24 and then truncate at that period (This is a crude approximation for ‘end of sentence.’ We chose it because it is easy to integrate into the RL loop, and even a crude approximation is sufficient for the intended purpose of making the human evaluation task somewhat easier). During the RL finetuning, we penalize continuations that don’t have such a period by giving them a fixed reward of −1.”
     2. Specifically, this is achieved with the following steps:
         1. **Token truncation**: We want to truncate at the first occurrence of `truncate_token` that appears at or after position `truncate_after` in the responses ([lm_human_preferences/train_policy.py#L378](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/train_policy.py#L378))
-<!-- 1. Code comment: “central example: replace all tokens after truncate_token with padding_token” -->
         2. **Run reward model on truncated response:** After the response has been truncated by the token truncation process, the code then runs the reward model on the **truncated response**.
         3. **Rejection sampling**: if there is not a period between tokens 16 and 24, then replace the score of the response with a fixed low value (such as -1)([lm_human_preferences/train_policy.py#L384](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/train_policy.py#L384), [lm_human_preferences/train_policy.py#L384-L402](https://github.com/openai/lm-human-preferences/blob/cbfd210bb8b08f6bc5c26878c10984b90f516c66/lm_human_preferences/train_policy.py#L384-L402))
-<!-- 1. Code comment: "central example: ensure that the sample contains `truncate_token`" -->
-<!-- 2. Code comment:  "only query humans on responses that pass that function" -->
         4. To give some examples in `descriptiveness`:
 
         {% include figure.html path="assets/img/2024-05-07-the-n-implementation-details-of-rlhf-with-ppo/descriptiveness-samples.png" class="img-fluid" %}
@@ -573,6 +570,90 @@ Noticed this work does not try to reproduce the summarization work in CNN DM or 
 The particular training run we had showed poor GPU utilization (around 30%), so it takes almost 4 days to perform a training run, which is highly expensive (only AWS sells p3dn.24xlarge, and it costs $31.212 per hour)
 
 Additionally, training was brittle. While the reward goes up, we find it difficult to reproduce the “smart copier” behavior reported by Ziegler et al. (2019) <d-cite key="Ziegler2019fine"></d-cite>. Below are some sample outputs — clearly, the agent overfits somehow. 
+
+```
+QUERY: The modern take on Death & Taxes still plays it. I know as a Tron player I find Mindcensor 
+pretty frustrating. ⏎ However, the answer to your question is probably that the decks that 
+are currently taking up the lion's share of the metagame don't really care about its effect.
+It has a chance to act as an instant speed Stone Rain + Gut Shot in response to a fetch 
+crack, but after that it's a 2/1 flyer that dies to all relevant removal. ⏎ It's especially 
+powerful against Tron since so much of the deck's consistency is in its tutor effects -- 
+Sylvan Scrying, Expedition Map, and Eye of Ugin. This combined with Pyroclasm and Oblivion 
+Stone being the only creature removal the deck has available to it before Karn make 
+Mindcensor fairly potent. ⏎ I'm having trouble thinking of any other popular decks (ignoring
+the interaction with fetches) that Mindcensor really sticks it to, however.
+
+PPO GENERATED RESPONSE: Mindcensor is a very good card, but it's not really worth playing.<|endoftext|>Image 
+caption The family was forced from their home after they were not allowed to leave the 
+house⏎⏎A family of four has been jailed for five years after admitting breaching home rule 
+by refusing to leave their home.⏎
+
+reward: -0.48
+kl: +11.37
+total reward: -0.82
+
+QUERY: To make a long story short, my SO (27/m) and I live in my hometown. We've been together for 
+4 years. His family lives across the country. A lot of the time we spend with my parents but
+besides that, we aren't very social. His family not being here doesn't make me feel like I 
+can't be with mine. I just don't like to. ⏎ I find my extended family (so not my parents) 
+extremely irritating. Especially the ones around my age. They're dramatic and rude. Every 
+family event is some Jerry Springer episode I don't want to participate in. I don't have any
+issues with anyone in particular. I just find them annoying. I'm never uncivil or openly 
+telling them how I feel. If there's get togethers, I tend to avoid them. I don't ask anyone 
+to hang out or come over. ⏎ My SO and I have experienced multiple miscarriages due to 
+unknown reasons. This has made me very sensitive and a bit of a loaner when it comes to the 
+girls in my family my age. I'm not jealous that my family has children. I just don't seem to
+be able to relate to them. When I explained our issues, they reacted very unsympathetic and 
+just weren't very supportive. I guess that was the time that I started to pull away and not 
+try to keep up any relationships. ⏎ My SO and I are pregnant, half way! This is something 
+we're so joyed about. However, when we told everyone, they just didn't really give a 
+reaction. No congrats or that they were happy for us. Since then, I completely pulled away. 
+I talked to my parents about this and I just don't feel the need to contact anyone. The 
+reason I'm posting is because I discussed deleting some relatives off social media with my 
+mom and she was telling me how it's really rude. I don't think it is. We don't talk. There's
+no relationship. Honestly, I think they're just friends with me for gossip purposes. A few 
+times I tried reaching out to some of my cousins with no reply. ⏎ I guess what I'm asking is
+if I should be trying harder to establish something with my family or if it's perfectly OK 
+just to delete them and not talk to them again? Our primary contact is Facebook even though 
+we live in the same town.
+
+PPO GENERATED RESPONSE:  We're dating now. We've met, we're dating. We're dating now. We're dating now. We're dating
+now. We're dating now. We're dating now.⏎⏎We've met⏎⏎We're dating now.⏎⏎We're dating now.⏎
+
+reward: +2.09
+kl: +19.45
+total reward: +1.50
+
+QUERY: This tower totally decided to screw me over on the final stage. So a bit of background I 
+don't have the strongest squad but pretty much I have: ⏎ Guardian Loch (Sacred Jewel) ⏎ 
+Anima Tiara (Flesh Armor) ⏎ Lord Cayena (sacred Jewel) ⏎ Oracle Twins (sacred Jewel) ⏎ 
+Guardian Logan (Burny soul stone) ⏎ and was using a friends maxed michelle. ⏎ So throughout 
+the earlier stages I've seen this guy about 5 times but have never caught him. So I had a 
+little trouble with stage 9 but felt like with the additional 50% atk boost and bb from 
+michelle I could do it. Also on stage 9 the reason I died was because I didn't take any 
+stimulants and this guy managed to paralyze 3 members of my squad. So I replaced mega cures 
+for stimulants. ⏎ Round 3 I meet him. He gets a lucky crit on my caynea and takes her down. 
+I have to use my one revive, take him down and  capture  him. I'm pretty excited. ⏎ Round 7 
+I see the warning danger sign. I face him again and manage to take him down without any of 
+my units dying no capture. At this point I'm starting to get low on healing items. Also I've
+only heard of meeting him twice on a run. But then I checked this thread and saw that he 
+always appears on the last stage. I thought that maybe it glitched and he wouldn't appear on
+the final round. ⏎ Nope. ⏎ This guy shows up on the final round showing up 3 times in one 
+run. Worst part was I manged to get him down to a sliver of health so that as long as one 
+unit hit him I would've defeated him with the next turn. This was also the turn he decided 
+to use soul desecration twice. I definitely felt like my soul got desecrated watching all my
+units die. So at this point it was give up the captured unit and try all over again (knowing
+my luck never capture him again) or gem for the last hit. I was really looking forward to 
+getting the gem for completion (f2p gotta scrap up everything right?) but I let it go.
+
+PPO GENERATED RESPONSE:  ⏎⏎When you capture a unit try to kill it.⏎⏎Kill them.⏎⏎Kill them.⏎⏎Kill them.⏎⏎Kill 
+them.⏎⏎Kill them.⏎⏎Kill them.⏎⏎Kill them.⏎⏎Kill them.⏎⏎Kill them.⏎
+
+reward: +0.79
+kl: +10.82
+total reward: +0.46
+```
+
 # Conclusion
 
 In this work, we took a deep dive into OpenAI’s original RLHF codebase and compiled a list of its implementation details. We also created a minimal base which reproduces the same learning curves as OpenAI’s original RLHF codebase, when the dataset and hyperparameters are controlled. Furthermore, we identify surprising implementation details such as the adam optimizer’s setting which causes aggressive updates in early RLHF training. 
