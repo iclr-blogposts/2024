@@ -78,7 +78,7 @@ Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents ar
 
 In the multi-agent scenarios, agents typically have a limited field of view to observe their surroundings. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP) <d-cite key="png2009pomdps"></d-cite>.
 
-Despite the successful adaptation of numerous reinforcement learning algorithms and their variants to cooperative scenarios in the MARL setting, their performance often leaves room for improvement. A significant challenge is the issue of non-stationarity. Specifically, the changing policies of other agents during training can render the observation non-stationary from the perspective of any individual agent, significantly hindering the policy optimization of MARL. This has led researchers to explore methods that can utilize global information during training without compromising the agents’ ability to rely solely on their respective observations during execution. The simplicity and effectiveness of the Centralized Training with Decentralized Execution (CTDE) paradigm have garnered considerable attention, leading to the proposal of numerous MARL algorithms based on CTDE, thereby making significant strides in the field of MARL.
+Despite the successful adaptation of numerous reinforcement learning algorithms and their variants to cooperative scenarios in the MARL setting, their performance often leaves room for improvement. A significant challenge is the issue of non-stationarity <d-cite key="oliehoek2016concise"></d-cite>. Specifically, the changing policies of other agents during training can render the observation non-stationary from the perspective of any individual agent, significantly hindering the policy optimization of MARL. This has led researchers to explore methods that can utilize global information during training without compromising the agents’ ability to rely solely on their respective observations during execution. The simplicity and effectiveness of the Centralized Training with Decentralized Execution (CTDE) <d-cite key="lowe2017multi"></d-cite> paradigm have garnered considerable attention, leading to the proposal of numerous MARL algorithms based on CTDE, thereby making significant strides in the field of MARL.
 
 ###  From PPO to Multi-agent PPO
 
@@ -115,7 +115,7 @@ During value function training, MAPPO agents have access to global information a
 $$\hat{A}_t=r_t + \gamma V^{\phi}(s_{t+1}^i) - V^{\phi}(s_t)$$: estimator of the shared advantage function
 $$V^{\phi}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|s_t]$$: the shared value function
 
-But during execution, agents only use their own policy likewise IPPO.
+But during execution, agents only use their own policy, likewise with IPPO.
 
 **MAPPO-FP** <d-cite key="yu2022surprising"></d-cite> found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features $s$ into the value function can improve MAPPO's performance:
 
@@ -154,7 +154,7 @@ In order to thoroughly investigate the actual changes from PPO to MAPPO and Nois
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144)
 
-For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information of other agents that each agent can see. The core code here is `dist < sight_range`, which is used to filter out information that is outside the current agent's field of view and cannot be seen, simulating an environment with local observation.
+For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information that each agent can see. The core code here is `dist < sight_range`, which is used to filter out information that is outside the current agent's field of view and cannot be seen, simulating an environment with local observation.
 
 {% highlight python %}
 def get_obs_agent(self, agent_id):
@@ -174,9 +174,6 @@ def get_obs_agent(self, agent_id):
                 if (dist < sight_range and e_unit.health > 0):  # visible and alive
                     # Sight range > shoot range
                     enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
-                    enemy_feats[e_id, 1] = dist / sight_range  # distance
-                    enemy_feats[e_id, 2] = (e_x - x) / sight_range  # relative X
-                    enemy_feats[e_id, 3] = (e_y - y) / sight_range  # relative Y
         ...
             agent_id_feats[agent_id] = 1.
             agent_obs = np.concatenate((ally_feats.flatten(),
@@ -243,9 +240,7 @@ def get_state_agent(self, agent_id):
                     # Sight range > shoot range
                     if unit.health > 0:
                         enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
-                        enemy_feats[e_id, 1] = dist / sight_range  # distance
-                        enemy_feats[e_id, 2] = (e_x - x) / sight_range  # relative X
-                        enemy_feats[e_id, 3] = (e_y - y) / sight_range  # relative Y
+                        ...
                         if dist < sight_range:
                             enemy_feats[e_id, 4] = 1  # visible
 
