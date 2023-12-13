@@ -68,62 +68,56 @@ _styles: >
 
 Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents are trained using reinforcement learning algorithms within the same environment. This technique is particularly useful in complex systems such as robot swarm control, autonomous vehicle coordination, and sensor networks, where the agents interact to collectively achieve a common goal.
 
-The figure provided showcases various multi-agent cooperative scenarios, including chasing in the Multi-Agent Particle Environment (Predator-Prey), the MAgent Environment, Hide & Seek, and the StarCraft Multi-Agent Challenge. In these scenarios, agents typically have a limited field of view to observe their surroundings. As depicted in the figure, the cyan border represents the sight and shooting range of an agent, limiting the agent’s ability to gather information about the terrain or other agents beyond this range. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP).
+In the multi-agent scenarios, agents typically have a limited field of view to observe their surroundings. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP).
 
 Despite the successful adaptation of numerous reinforcement learning algorithms and their variants to cooperative scenarios in the MARL setting, their performance often leaves room for improvement. A significant challenge is the issue of non-stationarity. Specifically, the changing policies of other agents during training can render the observation non-stationary from the perspective of any individual agent, significantly hindering the policy optimization of MARL. This has led researchers to explore methods that can utilize global information during training without compromising the agents’ ability to rely solely on their respective observations during execution. The simplicity and effectiveness of the Centralized Training with Decentralized Execution (CTDE) paradigm have garnered considerable attention, leading to the proposal of numerous MARL algorithms based on CTDE, thereby making significant strides in the field of MARL.
 
-One commonly adopted CTDE-based MARL algorithm is Multi-agent Proximal Policy Optimization (MAPPO). MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog, we delve into the intricacies of MAPPO. We explore the history and origins of MAPPO and further analyze whether MAPPO is actually better than IPPO from a code and experimental perspective.
-
 ###  From PPO to Multi-agent PPO
 
-**Proximal Policy Optimization (PPO)** is a single-agent policy gradient reinforcement learning algorithm. Its main idea is to constrain the divergence between the updated and old policies when conducting policy updates, in order to ensure not overly large update steps.
+**Proximal Policy Optimization (PPO)** is a single-agent policy gradient reinforcement learning algorithm. Its main idea is to constrain the divergence between the updated and old policies when conducting policy updates, in order to ensure not overly large update steps. 
 
-Its objective function can be formulated as:
+**Independent PPO (IPPO)** extends PPO to multi-agent settings where each agent independently learns using the single-agent PPO objective. In IPPO, agents do not share any information or use any multi-agent training techniques. Each agent $i$:
 
-$$ L^{CLIP}(θ) = \hat{\mathbb{E}}_t[\min(r_t(\theta)\hat{A}_t, \textrm{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$
-
-where:
-
-$t$: the timestep
-
-$\theta$: parameters of the policy
-
-$r_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$: 
-probability ratio between the new policies $\pi_\theta$ and old policies $\pi_{\theta_{old}}$ and $a$ is the action, $s$ is the state.
-
-$\hat{A}_t=r_t + \gamma V(s {t+1}) - V(s_t)$: estimator of the advantage function
-
-$V(s_t) = \mathbb{E}[r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + ...|s_t]$: the value function.
-
-$\epsilon$: clipping parameter to constrain the step size of policy updates
-
-This objective function considers both the policy improvement $r_t(\theta)\hat{A}_t$ and update magnitude $\textrm{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t$. It encourages the policy to move in the direction that improves rewards, while avoiding excessively large update steps. Therefore, by limiting the distance between the new and old policies, PPO enables stable and efficient policy updates.
-
-**Independent PPO (IPPO)** is a simple multi-agent extension of PPO where each agent independently learns using the single-agent PPO objective. Here is an overview:
-
-In IPPO, agents do not share any information or use any multi-agent training techniques. Each agent i:
-
-Interacts with the environment and collects its own set of trajectories τ_i
-Estimates the advantages Âˆt_i and value function V_i using only its own experiences
-Optimizes its parameterized policy π_θi by minimizing the PPO loss:
+Interacts with the environment and collects its own set of trajectories $\tau_i$
+Estimates the advantages $$\hat{A}_i$$ and value function $$V_i$$ using only its own experiences
+Optimizes its parameterized policy $\pi_{\theta_i}$ by minimizing the PPO loss:
 
 $$L^{IPPO}(\theta_i)=\hat{\mathbb{E}}_t[\min(r_t^{\theta_i}\hat{A}_t^i, \textrm{clip}(r_t^{\theta_i},1−\epsilon,1+\epsilon)\hat{A}_t^i)]$$
 
-Repeats this process until convergence
-While simple, this approach means each agent views the environment and other agents as part of the dynamics. This can introduce non-stationarity that harms convergence.
+Where for each agent $i$, at timestep $t$:
 
-So while IPPO successfully extends PPO to multi-agent domains, algorithms like MAPPO tend to achieve better performance by accounting for multi-agent effects during training. Still, IPPO is an easy decentralized baseline for MARL experiments.
+$\theta^i$: parameters of the agent $i$
 
-**Multi-Agent PPO (MAPPO)** is an extension of the IPPO algorithm to multi-agent reinforcement learning (MARL) settings. In MARL, multiple learning agents interact with the same environment and face additional challenges such as non-stationarity and complex multi-agent credit assignment.
+$$r_t^{\theta_i}=\frac{\pi_\theta(a_t^i|o_t^i)}{\pi_{\theta_{\text{old}}}(a_t^i|o_t^i)}$$: 
+probability ratio between the new policies $\pi_\theta^i$ and old policies $\pi_{\theta_\text{old}}^i$, $a^i$ is action, $o^i$ is observation of the agent $i$
 
-The key ideas behind MAPPO include:
+$$\hat{A}_t^i=r_t + \gamma V^{\theta_i}(o_{t+1}^i) - V^{\theta_i}(o_t^i)$$: estimator of the advantage function
+$$V^{\theta_i}(o_t^i) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|o_t^i]$$: value function
 
-1. Centralized training with decentralized execution: During value function approximator training, MAPPO agents have access to global information about the enviroment. The shared value function approximator can further improve training stability compared to Independent PPO learners and alleviate non-stationarity. But during execution, agents only use their own policy.
-2. PPO objective per agent: Each MAPPO agent has its own PPO loss with clipped probability ratio between the new and old policies. This limits each agent's individual policy update per batch.
+$\epsilon$: clipping parameter to constrain the step size of policy updates
 
-But stability improvements allow successful policy gradient updates despite the complex MARL training dynamics. This makes MAPPO suitable for a wide range of multi-agent tasks.
+This objective function considers both the policy improvement $r_t^{\theta_i}\hat{A}^i_t$ and update magnitude $\textrm{clip}(r_t(\theta), 1−\epsilon, 1+\epsilon)\hat{A}_t$. It encourages the policy to move in the direction that improves rewards, while avoiding excessively large update steps. Therefore, by limiting the distance between the new and old policies, IPPO enables stable and efficient policy updates. This process repeats until convergence.
+
+While simple, this approach means each agent views the environment and other agents as part of the dynamics. This can introduce non-stationarity that harms convergence. So while IPPO successfully extends PPO to multi-agent domains, algorithms like MAPPO tend to achieve better performance by accounting for multi-agent effects during training. Still, IPPO is an easy decentralized baseline for MARL experiments.
+
+**Multi-Agent PPO (MAPPO)** e leverages the concept of centralized training with decentralized execution (CTDE) to extend the Independent PPO (IPPO) algorithm, alleviating non-stationarity in multi-agent environments:
+
+During value function training, MAPPO agents have access to global information about the environment. The shared value function can further improve training stability compared to Independent PPO learners and alleviate non-stationarity, i.e,
+
+$$\hat{A}_t=r_t + \gamma V^{\theta}(s_{t+1}^i) - V^{\theta}(s_t)$$: estimator of the shared advantage function
+$$V^{\theta_i}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|s_t]$$: the shared value function
+
+But during execution, agents only use their own policy likewise IPPO.
+
+**Noisy-MAPPO**: To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
+
+$$V^i(s) = V^\phi(\text{concat}(s, \mathbf{x^i})), \quad \mathbf{x^i} \sim \mathcal{N}(\mathbf{0},\sigma^2\mathbf{I})$$
+
+Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
 ## IPPO with global information is all you need
+
+MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog, we delve into the intricacies of MAPPO.
 
 ### Code-level analysis
 
