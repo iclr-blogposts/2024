@@ -60,6 +60,14 @@ _styles: >
     text-align: center;
     font-size: 16px;
   }
+
+  .center {
+    margin:0 auto;
+  }
+
+  .width1 {
+    width: 480px;
+  }
 ---
 
 ## Background
@@ -123,7 +131,14 @@ MAPPO is often regarded as the simplest yet most powerful algorithm due to its u
 
 ## Enviroments
 
-We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
+We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure:
+
+<div class="center"> 
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/smac.jpg" class="img-fluid width1" %}
+</div>
+<div class="caption">
+    The StarCraft Multi-Agent Challenge (SMAC).
+</div>
 
 Some key aspects of SMAC:
 
@@ -139,8 +154,7 @@ In order to thoroughly investigate the actual changes from PPO to MAPPO and Nois
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144)
 
-For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information of other agents that each agent can see. The core code here is
-`dist < sight_range`.
+For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information of other agents that each agent can see. The core code here is `dist < sight_range`, which is used to filter out information that is outside the current agent's field of view and cannot be seen, simulating an environment with local observation.
 
 {% highlight python %}
 def get_obs_agent(self, agent_id):
@@ -207,7 +221,7 @@ The input of the policy function MAPPO is the same as the IPPO.
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
-For the input of the value function, MAPPO-FP concatenate `own_feats` of current agent with global information likewise in MAPPO.
+For the input of the value function, MAPPO-FP concatenate `own_feats` (own features) of current agent with global information likewise in MAPPO.
 The input of the policy function MAPPO-FP is the same as the IPPO.
 
 {% highlight python %}
@@ -258,6 +272,7 @@ def get_state_agent(self, agent_id):
 [Code permalink](https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151)
 
 For the input of the value function, Noisy-MAPPO concatenate a `fixed noise vector` with global information likewise in MAPPO.
+**We found in the code that this noise vector does not need to be changed after being well initialized.**
 The input of the policy function Noisy-MAPPO is the same as the IPPO.
 
 {% highlight python %}
@@ -284,34 +299,56 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-Based on code-level analysis, both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the `noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function, i.e, the IPPO with global information.
+Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function, i.e, the IPPO with global information.
 
 ## Experiments
 
-We reproduced some of the experimental results from the original IPPO, MAPPO, and Noisy-MAPPO papers, and borrowed the corresponding settings to use in this blog.
+We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code,
 
-**IPPO vs MAPPO**
+| Algorithms        | 3s5z_vs_3s6z           | 5m_vs_6m  | corridor | 27m_vs_30m | MMM2 | 
+| ------------- |-------------:| -----:| | -------------: |-------------:| -----:|
+| MAPPO       |   53% |  26%  |  3% |  95% |   93% |
+| IPPO        |  84%  |   88% |  98% |  75% |  87%  |
+| MAPPO-FP    |   85% |  89%  |  100% |  94% |   90% |
+| Noisy-MAPPO |   87%  |   89% |  100% |  100% |  96%  |
 
-{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/ippo.jpg" class="img-fluid" %}
+<div class="caption">
+    Experimental results for SMAC, the data in the table represents the win rate.
+</div>
 
-**MAPPO vs MAPPO-FP**
+We also cite the experimental results from these papers themselves below,
 
+<div class="center"> 
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/ippo.jpg" class="img-fluid width1" %}
+</div>
+<div class="caption">
+    (a) IPPO vs MAPPO results for SMAC from the IPPO paper, the data in the table represents the win rate.
+</div>
+
+<div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
+</div>
+<div class="caption">
+    (b) MAPPO-FP (i.e, FP) vs MAPPO (i.e, ) results for SMAC from the MAPPO paper.
+</div>
 
+<div class="center"> 
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid width1" %}
+</div>
+<div class="caption">
+    (c) Noisy-MAPPO (i.e, NV-MAPPO) vs MAPPO results for SMAC from the MAPPO paper.
+</div>
 
-**Noisy-MAPPO vs MAPPO**
-
-{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid" %}
-
-
-From the experimental results, we can see that the centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
+From the experimental results, we can see that 
+1. The centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
+2. Introducing global information into the critic improves the learning efficiency of IPPO.
 
 ### Discussion
 
 In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
-2. The independent value functions are similar to ensemble learning, making the PPO algorithm more robust in unstable multi-agent environments.
+2. The independent value functions are ensemble learning, making the PPO algorithm more robust in unstable multi-agent environments.
 3. Each agent having its own value function can be seen as an implicit credit assignment.
 
 Finally, we hope our blog post has helped you. We aim to let everyone know the true capabilities of IPPO, not just MAPPO.
