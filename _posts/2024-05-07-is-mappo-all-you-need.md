@@ -131,7 +131,7 @@ MAPPO is often regarded as the simplest yet most powerful algorithm due to its u
 
 ## Enviroment
 
-We use StarCraft Multi-Agent Challenge (SMAC) <d-cite key="samvelyan2019starcraft"></d-cite> as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
+We use the StarCraft Multi-Agent Challenge (SMAC) <d-cite key="samvelyan2019starcraft"></d-cite> as our benchmark. SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/smac.jpg" class="img-fluid width1" %}
@@ -240,9 +240,6 @@ def get_state_agent(self, agent_id):
                     # Sight range > shoot range
                     if unit.health > 0:
                         enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
-                        ...
-                        if dist < sight_range:
-                            enemy_feats[e_id, 4] = 1  # visible
 
             # Own features
             ind = 0
@@ -342,7 +339,7 @@ In this blog post, we take a deeper look at the relationship between MAPPO and I
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
 2. The independent value functions are ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
-3. Each agent having its own value function can be seen as an implicit credit assignment.
+3. Each agent having its own value function can be seen as an implicit credit assignment <d-cite key="foerster2018counterfactual"></d-cite>.
 
 Finally, we hope our blog post has helped you. We aim to let everyone know the true capabilities of IPPO, not just MAPPO.
 
