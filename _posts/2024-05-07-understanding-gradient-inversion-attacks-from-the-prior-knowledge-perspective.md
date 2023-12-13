@@ -20,7 +20,9 @@ bibliography: 2024-05-07-understanding-gradient-inversion-attacks-from-the-prior
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
   - name: Fundamental pipeline of GIAs 
-  - name: Core question in GIAs
+  - name: The core question in GIAs
+  - subsections:
+    - name: A simple example of information discards 
   - name: Understanding GIAs from the prior knowledge perspective
   - subsections:
     - name: Unparameterized regularization terms
@@ -120,7 +122,7 @@ It is clear that even though both functions could recover the image, there are s
 </div>
 
 For a given network, the size of gradients is fixed. Therefore, with the increase in batchsize, GIA will experience more obvious information discards. This is easy to understand, and researchers designed a few ways to complement this loss.
-## Understanding GIA from the prior knowledge perspective
+## Understanding GIAs from the prior knowledge perspective
 Realizing the information discards, reviewing the recent paper through the prior knowledge perspective may help understand the logic better. To achieve better image reconstruction quality, it is natural to consider the prior knowledge of images as the complement. Here, the prior knowledge could be explained in three aspects.
 
 ### Unparameterized regularization terms
@@ -141,7 +143,7 @@ However, such a method faces multiple difficulties, such as large input sizes an
 
 ## Limitation and future directions
 For GIAs that require pre-trained models, the key limitation is the auxiliary dataset. It is kind of unrealistic to claim that the dataset used for pretraining generative models (or end-to-end models) shares the same distribution with the unknown private input data, and possibly, with distinct dataset distribution, the generative performance may experience an obvious drop, which is shown in the ablation study of previous works<d-cite key="wu2023learning"></d-cite>. Both GIAS and GIFD use GAN with in-distribution auxiliary data to compare with previous state-of-the-art works, and GIFD paper only shows the reconstruction result of distinct distribution data when `batchsize=1` with the same label space. For the most general situation where the attacker has limited knowledge of the potential distribution of the private data, it may be still hard to recover high-quality batched data with generative networks.
-Considering these limitations, it is of great value to explore algorithms to learn some general prior knowledge, especially those robust among different data distributions. 
+Considering these limitations, it is of great value to explore algorithms to learn some general prior knowledge, especially those robust among different data distributions.
 
 ## Key takeaways
 1. The existence of information discards in gradient aggregation is the core question of GIAs.
