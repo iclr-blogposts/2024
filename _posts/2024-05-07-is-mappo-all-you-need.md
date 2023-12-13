@@ -343,11 +343,15 @@ From the experimental results, we can see that
 
 ### Discussion
 
-In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree possible causes:
+In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? 
+
+Furthermore, we continue to discuss the different implementations of IPPO with global information in MAPPO-FP and Noisy-MAPPO. MAPPO-FP utilizes an agent's own features, including the agent's ID, position, and actions, to form independent value functions. In contrast, Noisy-MAPPO uses Gaussian noise as the ID. Essentially, they both aim to form a set of distinct value functions.
+
+Therefore, there are several reasons for employing independent value functions over a centralized value function:
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
 2. The independent value functions are ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
 3. Each agent having its own value function can be seen as an implicit credit assignment <d-cite key="foerster2018counterfactual"></d-cite>.
 
-Finally, we hope our blog post has helped you. We aim to let everyone know the true capabilities of IPPO, not just MAPPO.
+
 
