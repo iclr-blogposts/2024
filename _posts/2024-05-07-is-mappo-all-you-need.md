@@ -68,13 +68,17 @@ _styles: >
   .width1 {
     width: 480px;
   }
+
+  .width2 {
+    width: 460px;
+  }
 ---
 
 ## Background
 
 ### Multi-agent RL
 
-Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents are trained using reinforcement learning algorithms within the same environment. This technique is particularly useful in complex systems such as robot swarm control, autonomous vehicle coordination, and sensor networks, where the agents interact to collectively achieve a common goal.
+Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents are trained using reinforcement learning algorithms within the same environment. This technique is particularly useful in complex systems such as robot swarm control, autonomous vehicle coordination, and sensor networks, where the agents interact to collectively achieve a common goal <d-cite key="bucsoniu2010multi"></d-cite>.
 
 In the multi-agent scenarios, agents typically have a limited field of view to observe their surroundings. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP) <d-cite key="png2009pomdps"></d-cite>.
 
@@ -140,7 +144,7 @@ We use the StarCraft Multi-Agent Challenge (SMAC) <d-cite key="samvelyan2019star
     (a) The StarCraft Multi-Agent Challenge (SMAC).
 </div>
 
-Some key aspects of SMAC:
+The key aspects of SMAC are:
 
 1. Complex partially observable Markov game environment, with challenges like sparse rewards, imperfect information, micro control, etc.
 2. Designed specifically to test multi-agent collaboration and coordination.
@@ -149,12 +153,13 @@ Some key aspects of SMAC:
 ## Code-level Analysis
 
 In order to thoroughly investigate the actual changes from PPO to MAPPO and Noisy-MAPPO, we delved deeply into their differences at the code level.
+Basically, their main difference lies in the modeling of the value function during the training stage.
 
 **Independent PPO (IPPO)**
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144)
 
-For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information that each agent can see. The core code here is `dist < sight_range`, which is used to filter out information that is outside the current agent's field of view and cannot be seen, simulating an environment with local observation.
+For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information that each agent can see. The core code here is the `dist < sight_range`, which is used to filter out information that is outside the current agent's field of view, simulating an environment with local observation. `agent_id_feats[agent_id] = 1` is used to set the one-hot agent identification (ID).
 
 {% highlight python %}
 def get_obs_agent(self, agent_id):
@@ -175,6 +180,7 @@ def get_obs_agent(self, agent_id):
                     # Sight range > shoot range
                     enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
         ...
+            # One-hot agent_id
             agent_id_feats[agent_id] = 1.
             agent_obs = np.concatenate((ally_feats.flatten(),
                                           enemy_feats.flatten(),
@@ -218,7 +224,7 @@ The input of the policy function MAPPO is the same as the IPPO.
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
-For the input of the value function, MAPPO-FP concatenate `own_feats` (own features) of current agent with global information likewise in MAPPO.
+For the input of the value function, MAPPO-FP concatenate `own_feats` (own features including agent ID and others) of current agent with global information likewise in MAPPO.
 The input of the policy function MAPPO-FP is the same as the IPPO.
 
 {% highlight python %}
@@ -293,7 +299,7 @@ Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as i
 
 ## Experiments
 
-We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code ([IPPO,MAPPO,MAPPO-FP](https://github.com/zoeyuchao/mappo), [Noisy-MAPPO](https://github.com/hijkzzz/noisy-mappo)),
+We then reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code ([IPPO,MAPPO,MAPPO-FP](https://github.com/zoeyuchao/mappo), [Noisy-MAPPO](https://github.com/hijkzzz/noisy-mappo)),
 
 | Algorithms        | 3s5z_vs_3s6z           | 5m_vs_6m  | corridor | 27m_vs_30m | MMM2 | 
 | ------------- |-------------:| -----:| | -------------: |-------------:| -----:|
@@ -323,7 +329,7 @@ We also cite the experimental results from these papers themselves below,
 </div>
 
 <div class="center"> 
-{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid width1" %}
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid width2" %}
 </div>
 <div class="caption">
     (e) Noisy-MAPPO (i.e., NV-MAPPO) vs MAPPO results for SMAC (from the Figure 4 in <d-cite key="hu2021policy"></d-cite>).
@@ -335,7 +341,7 @@ From the experimental results, we can see that
 
 ### Discussion
 
-In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
+In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree possible causes:
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
 2. The independent value functions are ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
