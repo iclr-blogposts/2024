@@ -70,7 +70,7 @@ _styles: >
   }
 
   .width2 {
-    width: 460px;
+    width: 420px;
   }
 ---
 
