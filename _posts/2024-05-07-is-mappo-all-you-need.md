@@ -1,7 +1,8 @@
 ---
 layout: distill
 title: Is MAPPO All You Need in Multi-Agent Reinforcement Learning?
-description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized critic, whereas the Indepedent Proximal Policy Optimization (IPPO) only uses local information to train independent critics. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO actually achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, we find that global information can also help improve the training of the IPPO.
+description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized critic, whereas the Indepedent Proximal Policy Optimization (IPPO) only uses local information to train independent critics. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e, IPPO with global information is all you need.
+
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -39,7 +40,7 @@ toc:
   - name: Enviroments
   - name: Code-level analysis
   - name: Experiments
-  - name: Conjectures
+  - name: Discussion
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -118,25 +119,25 @@ $$V^i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I
 
 Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
-MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need**.
-
 ## Enviroments
 
 We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
 
 Some key aspects of SMAC:
 
-Complex partially observable Markov game environment, with challenges like sparse rewards, imperfect information, micro control, etc.
-Designed specifically to test multi-agent collaboration and coordination.
-Maps of different difficulties and complexities to evaluate performance.
+1. Complex partially observable Markov game environment, with challenges like sparse rewards, imperfect information, micro control, etc.
+2. Designed specifically to test multi-agent collaboration and coordination.
+3. Maps of different difficulties and complexities to evaluate performance.
 
 ## Code-level Analysis
+
+In order to thoroughly investigate the actual changes from PPO to MAPPO and Noisy-MAPPO, we delved deeply into their differences at the code level.
 
 **Independent PPO (IPPO)**
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1144)
 
-IPPO uses the `get_obs_agent` function to obtain the environmental information of other agents that each agent can see. The core code here is
+For the input of the policy function and value function, IPPO uses the `get_obs_agent` function to obtain the environmental information of other agents that each agent can see. The core code here is
 `dist < sight_range`.
 
 {% highlight python %}
@@ -176,6 +177,7 @@ def get_obs_agent(self, agent_id):
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1152)
 
 For the input of the value function, MAPPO removes `dist < sight_range` to retain global information of all agents.
+The input of the policy function MAPPO is the same as the IPPO.
 
 {% highlight python %}
     def get_state(self, agent_id=-1):
@@ -204,6 +206,7 @@ For the input of the value function, MAPPO removes `dist < sight_range` to retai
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
 For the input of the value function, MAPPO-FP concatenate `own_feats` of current agent with global information from MAPPO.
+The input of the policy function MAPPO-FP is the same as the IPPO.
 
 {% highlight python %}
 def get_state_agent(self, agent_id):
@@ -253,6 +256,7 @@ def get_state_agent(self, agent_id):
 [Code permalink](https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151)
 
 For the input of the value function, Noisy-MAPPO concatenate a `random noise vector` with global information from MAPPO.
+The input of the policy function Noisy-MAPPO is the same as the IPPO.
 
 {% highlight python %}
 class R_Critic(nn.Module):
@@ -278,6 +282,8 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
+Based on code-level analysis, both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the noise vector in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function.
+
 ## Experiments
 
 We reproduced some of the experimental results from the original IPPO, MAPPO, and Noisy-MAPPO papers, and borrowed the corresponding settings to use in this blog.
@@ -296,10 +302,11 @@ We reproduced some of the experimental results from the original IPPO, MAPPO, an
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid" %}
 
 
-From the experimental results, we can see that the centralized value function of MAPPO did not provide effective performance improvements. Both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the noise vector in Noisy-MAPPO is equivalent to a Gaussian distributed agent_id, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. The independent value functions for each agent made the multi-agent learning more robust. 
+From the experimental results, we can see that the centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
 
-### Conjectures
+### Discussion
 
+MAPPO is often regarded as the simplest yet most potent algorithm due to its use of global information to boost the training efficiency of a centralized critic. While Independent Proximal Policy Optimization (IPPO) employs local information to train independent critics. In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusions are: **IPPO with global information is all you need**.
 
 Here we propose two conjectures:
 
