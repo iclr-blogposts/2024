@@ -88,11 +88,13 @@ Despite the successful adaptation of numerous reinforcement learning algorithms 
 
 **Proximal Policy Optimization (PPO)** <d-cite key="schulman2017proximal"></d-cite> is a single-agent policy gradient reinforcement learning algorithm. Its main idea is to constrain the divergence between the updated and old policies when conducting policy updates, in order to ensure not overly large update steps. 
 
-**Independent PPO (IPPO)** <d-cite key="de2020independent"></d-cite> extends PPO to multi-agent settings where each agent independently learns using the single-agent PPO objective. In IPPO, agents do not share any information or use any multi-agent training techniques. Each agent $i$:
+**Independent PPO (IPPO)** <d-cite key="de2020independent"></d-cite> extends PPO to multi-agent settings where each agent independently learns using the single-agent PPO objective. In IPPO, agents do not share any information or use any multi-agent training techniques. 
 
-Interacts with the environment and collects its own set of trajectories $\tau_i$
-Estimates the advantages $$\hat{A}_i$$ and value function $$V_i$$ using only its own experiences
-Optimizes its parameterized policy $\pi_{\theta_i}$ by minimizing the PPO loss:
+Each agent $i$:
+
+1. Interacts with the environment and collects its own set of trajectories $\tau_i$
+2. Estimates the advantages $$\hat{A}_i$$ and value function $$V_i$$ using only its own experiences
+3. Optimizes its parameterized policy $\pi_{\theta_i}$ by minimizing the PPO loss:
 
 $$L^{IPPO}(\theta_i)=\hat{\mathbb{E}}_t[\min(r_t^{\theta_i}\hat{A}_t^i, \textrm{clip}(r_t^{\theta_i},1−\epsilon,1+\epsilon)\hat{A}_t^i)]$$
 
@@ -131,7 +133,7 @@ $$V_i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I
 
 Then the policy gradient is computed using the noisy advantage values $A^{\pi}_i$ calculated with the noisy value function $V_i(s)$. This noise regularization prevents policies from overfitting to biased estimated gradients, improving stability.
 
-MAPPO is often regarded as the simplest yet most powerful algorithm due to its use of global information to boost the training efficiency of a centralized critic. While IPPO employs local information to train independent critics.
+MAPPO is often regarded as the simplest yet most powerful algorithm due to its use of global information to boost the training efficiency of a centralized value function. While IPPO employs local information to train independent value functions.
 
 ## Enviroment
 
