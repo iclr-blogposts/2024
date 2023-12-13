@@ -52,7 +52,7 @@ toc:
       - name: Linear self-attention is sufficient
   - name: What is special about linear self-attention?
     subsections:
-      - name: A quick review of least-squares regression
+      - name: Establishing a connection between gradient descent and data manipulation
       - name: Building a linear transformer that implements a gradient descent step
   - name: Experiments and analysis of the linear transformer
     subsections:
@@ -577,7 +577,7 @@ Given an embedding $$\mbE\in\bbR^{d\times c}$$, the softmax self-attention layer
 
 $$
 \begin{equation}
-  f_\text{attn} (\mbtheta_\text{attn}, \mbE) = \mbE + \mbW^P \mbW^V \mbE \sigma\left((\mbW^K \mbE)^\top \mbW^Q \mbE\right),
+  f_\text{attn} (\mbtheta_\text{attn}, \mbE) = \mbE + \mbW^P \mbW^V \mbE \sigma\left(\frac{(\mbW^K \mbE)^\top \mbW^Q \mbE}{\sqrt{d}}\right),
 \end{equation}
 $$
 
@@ -685,7 +685,7 @@ A **linear self-attention** updates embeddings $$\mbE$$
 
 $$
 \begin{equation}
-  f_\text{linattn} (\mbtheta_\text{linattn}, \mbE) = \mbE + \mbW^P \mbV\left(\mbK^\top \mbQ \right),
+  f_\text{linattn} (\mbtheta_\text{linattn}, \mbE) = \mbE + \frac{\mbW^P \mbV\left(\mbK^\top \mbQ \right)}{\sqrt{d}},
 \end{equation}
 $$
 
@@ -711,7 +711,7 @@ We test the linear transformer on the same dataset setup as before, and we will 
   </div>
 </div>
 
-The figure above shows the results of the experiment. For this experiment we can draw the following conclusions:
+The figure above shows the results of the experiment. From this experiment we can draw the following conclusions:
 
 - The same main effects of context-size and number of layers are observed on the test loss.
 - The test loss for the linear transformer actually reaches lower values than for the softmax transformer. Though we offer no real explanation for this, on an intuitive level it seems clear that the softmax Transformer must learn to cancel as best as possible the non-linearities in its outputs in order to solve the linear regression task, a hinderance which is not encoutered by the linear transformer.
@@ -725,7 +725,9 @@ The figure above shows the results of the experiment. For this experiment we can
 From the previous section we have seen that a linear self-attention layer is sufficient to learn linear functions in-context.
 In this section we will try to understand why this is the case, starting from a review of least-squares regression and gradient descent.
 
-### A quick review of least-squares regression
+### Establishing a connection between gradient descent and data manipulation
+
+In this section, we establish an important connection that will be fundamental to understand the mechanism behind ICL with linear self-attention. To do so we need to start from a simple linear regression problem, and we will show that we can achieve the same loss after *one* gradient step by changing the inputs and the targets, and keeping the weights fixed.
 
 <!--
 <div class='todo'>
@@ -770,15 +772,15 @@ $$
 $$
 
 It is trivial to see that if we now define $$\widehat{\mbx}_i = \mbx_i$$ and $$\widehat{\y}_i = \y_i + \Delta \mbw^\top\mbx_i$$, we can compute Equation \eqref{eq:linear-regression-loss} with the new inputs and targets, i.e. $$\cL_{\text{lin}}(\mbw, \{\widehat{\mbx}_i, \widehat{\y}_i\}_{i=0}^{C-1})$$, which is the same as the loss after the gradient descent update (Equation \eqref{eq:linear-regression-loss-after-gd}).
-This observation is important because it shows that we can achieve the same loss after *one* gradient step by changing the inputs and the targets, and keeping the weights fixed.
+To re-iterate, this observation is critical because it shows that we can achieve the same loss after *one* gradient step by changing the inputs and the targets, and keeping the weights fixed.
 
 ### Building a linear transformer that implements a gradient descent step
 
 As we saw before, the starting intuition is that we can build a gradient step on the linear regression loss by manipulating the inputs and the targets.
 
 <div class="proposition"> (Restated from paper)
-Recall the definition of projection, value, key and query matrices as \(\mbP = \mbW^P\mbE\), \(\mbV = \mbW^V\mbE\), \(\mbK = \mbW^K\mbE\), \(\mbQ = \mbW^Q\mbE\).
-Given a 1-head linear attention layer and the tokens \(\mbe_j = (\mbx_j, \y_j)\), for \(j=0,\ldots,C-1\), one can construct key, query and value matrices \(\mbW^K, \mbW^Q, \mbW^V\) as well as the projection matrix \(\mbW^P\) such that a Transformer step on every token \(\mbe_j\) is identical to the gradient-induced dynamics \(\mbe_j \leftarrow (\mbx_j, \y_j) + (0, -\Delta \mbW \mbx_j) = (\mbx_i, \y_{i}) + \mbP \mbV \mbK^{T}\mbq_{j}\) such that \(\mbe_j = (\mbx_j, \y_j - \Delta \y_j)\). For the query data \((\mbx_{\text{query}}, \y_{\text{query}})\), the dynamics are identical.
+Recall the definition of projection, value, key and query matrices as \(\mbV = \mbW^V\mbE\), \(\mbK = \mbW^K\mbE\), \(\mbQ = \mbW^Q\mbE\).
+Given a 1-head linear attention layer and the tokens \(\mbe_j = (\mbx_j, \y_j)\), for \(j=0,\ldots,C-1\), one can construct key, query and value matrices \(\mbW^K, \mbW^Q, \mbW^V\) as well as the projection matrix \(\mbW^P\) such that a Transformer step on every token \(\mbe_j\) is identical to the gradient-induced dynamics \(\mbe_j \leftarrow (\mbx_j, \y_j) + (0, -\Delta \mbW \mbx_j) = (\mbx_i, \y_{i}) + \mbW^{P} \mbV \mbK^{T}\mbq_{j}\) such that \(\mbe_j = (\mbx_j, \y_j - \Delta \y_j)\). For the query data \((\mbx_{\text{query}}, \y_{\text{query}})\), the dynamics are identical.
 </div>
 
 For notation, we will identify with $$\mbtheta_\text{GD}$$ the set of parameters of the linear transformer that implements a gradient descent step.
@@ -832,7 +834,7 @@ It is easy to verify that with this construction we obtain the following dynamic
 \left(\begin{array}{@{}c@{}}
 \mbx_j\\
 \y_j
-\end{array}\right) + \mbP \mbV \mbK^{T}\mbq_{j} = \mbe_j + \frac{\eta}{C} \sum_{i={0}}^{C-1} \left(\begin{array}{@{}c c@{}}
+\end{array}\right) + \mbW^{P} \mbV \mbK^{T}\mbq_{j} = \mbe_j + \frac{\eta}{C} \sum_{i={0}}^{C-1} \left(\begin{array}{@{}c c@{}}
 0
 & 0 \\
 \mbw_0 &
@@ -1050,7 +1052,7 @@ We now show what happens if we use a different GD learning rate than the one fou
   </div>
 </div>
 
-As you can see by adjusting the slider, the similarity between the linear transformer and the GD-transformer is maximized for a specific GD learning rate, which must be found by line search. 
+As can be seen by adjusting the slider, only a specific GD learning rate succeeds in optimizing all three similarity metrics between the linear transformer and the GD-transformer.
 Nonetheless, it's worth noting that despite the fact that the L2 error for both the predictions and the gradients is not converging to zero for all possible GD learning rates, the model similarity is converging to 1 for all GD learning rates. 
 This should not be surprising, as the model similarity is invariant to the scale of the vectors and only depends on the angle between the two models.
 
@@ -1071,7 +1073,7 @@ $$
 <details>
   <summary><b>Analytical derivation of the best GD learning rate</b></summary>
 
-  From the proposition, we know that finding the optimal GD learning rate for a given linear transformer is equivalent to finding the optimal GD learning rate for the least-squares regression problem. Consequently, the analysis can be constructed from the least-squares regression problem \eqref{eq:linear-regression-loss}.
+ We are interested in finding the optimal learning rate for the GD-transformer, which by constrution (see main Proposition),  is equivalent to finding the optimal GD learning rate for the least-squares regression problem. Consequently, the analysis can be constructed from the least-squares regression problem \eqref{eq:linear-regression-loss}.
 
   <br><br>
   
@@ -1124,7 +1126,7 @@ $$
 
 </details>
 
-It is easy to expect that the analytical solution is faster to compute than the line search.
+We can expect that the analytical solution is faster to compute than the line search.
 Indeed, the line search requires on average 10 seconds to find the optimal GD learning rate, while the analytical solution requires only 10 milliseconds (both with JAX's JIT compilation turned on, run on the same GPU).
 
 ### If one layer is a GD step, what about multiple layers?
