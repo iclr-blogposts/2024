@@ -144,6 +144,6 @@ For GIAs that require pre-trained models, the key limitation is the auxiliary da
 Considering these limitations, it is of great value to explore algorithms to learn some general prior knowledge, especially those robust among different data distributions. 
 
 ## Key takeaways
-1. We illustrate the existence of information discards in gradient aggregation, and point out it is the core question of GIAs.
-2. We interpret previous GIA works from the prior knowledge perspective, and summarize three ways to complement information discards.
-3. We claim that it may still be hard to recover batched data from gradients with limited knowledge of private data distribution.
+1. The existence of information discards in gradient aggregation is the core question of GIAs.
+2. From the prior knowledge perspective, previous GIA works provide three ways to complement information discards.
+3. It may still be hard to recover batched data from gradients with limited knowledge of private data distribution.
