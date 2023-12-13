@@ -125,7 +125,7 @@ MAPPO is often regarded as the simplest yet most potent algorithm due to its use
 
 ### Enviroments
 
-We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark: SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
+We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI.
 
 Some key aspects of SMAC:
 
@@ -281,20 +281,25 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-### Experiments
+### Experimental Analysis
 
-We borrowed some of the original data from the IPPO, MAPPO, and Noisy-MAPPO papers here. We reproduced these experiments and did some supplementary experiments:
+We reproduced some of the experimental results from the original IPPO, MAPPO, and Noisy-MAPPO papers, and borrowed the corresponding figures to use in our work.
 
 **Independent PPO (IPPO)**
 
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/ippo.jpg" class="img-fluid" %}
 
 **Multi-Agent PPO (MAPPO)**
+
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
 
 
 **Noisy-MAPPO**
 
+{% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid" %}
 
-From the code and experimental data, we can see that the centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
+
+From the experimental results, we can see that the centralized value function of MAPPO did not provide effective performance improvements. Both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO, where the noise vector in Noisy-MAPPO is equivalent to a Gaussian distributed agent_id, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. The independent value functions for each agent made the multi-agent learning more robust. 
 
 
 ### Conjectures
