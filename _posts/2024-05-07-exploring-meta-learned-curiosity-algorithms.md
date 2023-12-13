@@ -25,10 +25,12 @@ bibliography: 2024-05-07-exploring-meta-learned-curiosity-algorithms.bib
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
   - name: Introduction
+  - name: Background
     subsections:
     - name: Reinforcement Learning
-    - name: Meta Reinforcement Learning
-    - name: Curiosity
+    - name: Meta-RL and meta-learning
+    - name: RND
+    - name: BYOL-Explore
   - name: Meta-learning curiosity algorithms
     subsections:
     - name: Method
@@ -47,6 +49,8 @@ Now curiosity algorithms such as Random Network Distillation (RND) <d-cite key="
 <dcite key="alet2020metalearning">, Meta-learning curiosity algorithms, Alet et al. took a different and unique approach to discovering new curisoity algorithms. They did this by meta-learning pieces of code. Similar to the code segments used by researchers when crafting curiosity algorithms such as neural networks with gradient descent mechanisms, trained objective functions, ensembles, buffers, and various regression models. Two new interpretable algorithms were learned by meta-learning these pieces of code: Fast Action Space Transition and Cycle-Consistency Intrinsic Motivation (CCIM). It is these two algorithms that we will explore and compare their behaviour to our baselines: RND and BYOL-Explore.
 
 The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite DeepSea environment and compare them to the baselines. Finally, we conclude our journey.
+
+## Background
 
 ### Reinforcement Learning
 
