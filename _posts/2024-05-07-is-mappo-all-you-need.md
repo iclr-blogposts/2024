@@ -301,7 +301,7 @@ Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as i
 
 ## Experiments
 
-We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code ([IPPO,MAPPO,MAPPO-FP](https://github.com/zoeyuchao/mappo),[Noisy-MAPPO](https://github.com/hijkzzz/noisy-mappo)),
+We reproduced some of the experimental results from IPPO, MAPPO, and Noisy-MAPPO using their open-sourced code ([IPPO,MAPPO,MAPPO-FP](https://github.com/zoeyuchao/mappo), [Noisy-MAPPO](https://github.com/hijkzzz/noisy-mappo)),
 
 | Algorithms        | 3s5z_vs_3s6z           | 5m_vs_6m  | corridor | 27m_vs_30m | MMM2 | 
 | ------------- |-------------:| -----:| | -------------: |-------------:| -----:|
