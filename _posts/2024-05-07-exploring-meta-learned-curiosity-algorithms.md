@@ -78,7 +78,7 @@ The Figure below shows an extended view of the agent-environment interactions.
     Figure 2. The extended agent-environment interaction. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
 
-Figure 2 actually
+Singh et al. highlight in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent.
 ### Meta-RL and Meta-learning
 
 Provide an overview of meta reinforcement learning and its relevance to the topic.
