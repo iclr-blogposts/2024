@@ -207,7 +207,7 @@ The input of the policy function MAPPO is the same as the IPPO.
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
-For the input of the value function, MAPPO-FP concatenate `own_feats` of current agent with global information from MAPPO.
+For the input of the value function, MAPPO-FP concatenate `own_feats` of current agent with global information likewise in MAPPO.
 The input of the policy function MAPPO-FP is the same as the IPPO.
 
 {% highlight python %}
@@ -257,7 +257,7 @@ def get_state_agent(self, agent_id):
 
 [Code permalink](https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151)
 
-For the input of the value function, Noisy-MAPPO concatenate a `random noise vector` with global information from MAPPO.
+For the input of the value function, Noisy-MAPPO concatenate a `fixed noise vector` with global information likewise in MAPPO.
 The input of the policy function Noisy-MAPPO is the same as the IPPO.
 
 {% highlight python %}
