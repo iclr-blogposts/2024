@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Is MAPPO All You Need in Multi-Agent Reinforcement Learning?
-description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized critic, whereas the Indepedent Proximal Policy Optimization (IPPO) only uses local information to train independent critics. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e, IPPO with global information is all you need.
+description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized critic, whereas Independent Proximal Policy Optimization (IPPO) only uses local information to train independent critics. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e., IPPO with global information is all you need.
 
 date: 2024-05-07
 future: true
@@ -110,7 +110,7 @@ While simple, this approach means each agent views the environment and other age
 
 **Multi-Agent PPO (MAPPO)** <d-cite key="de2020independent"></d-cite> <d-cite key="yu2022surprising"></d-cite> leverages the concept of centralized training with decentralized execution (CTDE) to extend the Independent PPO (IPPO) algorithm, alleviating non-stationarity in multi-agent environments:
 
-During value function training, MAPPO agents have access to global information about the environment. The shared value function can further improve training stability compared to Independent PPO learners and alleviate non-stationarity, i.e,
+During value function training, MAPPO agents have access to global information about the environment. The shared value function can further improve training stability compared to Independent PPO learners and alleviate non-stationarity, i.e.,
 
 $$\hat{A}_t=r_t + \gamma V^{\phi}(s_{t+1}^i) - V^{\phi}(s_t)$$: estimator of the shared advantage function
 $$V^{\phi}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots|s_t]$$: the shared value function
@@ -289,7 +289,7 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function, i.e, the IPPO with global information.
+Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function, i.e., the IPPO with global information.
 
 ## Experiments
 
@@ -319,14 +319,14 @@ We also cite the experimental results from these papers themselves below,
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
 </div>
 <div class="caption">
-    (d) MAPPO-FP (i.e, FP) vs MAPPO (i.e, CL) results for SMAC (from the Figure 16 in <d-cite key="yu2022surprising"></d-cite>).
+    (d) MAPPO-FP (i.e., FP) vs MAPPO (i.e., CL) results for SMAC (from the Figure 16 in <d-cite key="yu2022surprising"></d-cite>).
 </div>
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid width1" %}
 </div>
 <div class="caption">
-    (e) Noisy-MAPPO (i.e, NV-MAPPO) vs MAPPO results for SMAC (from the Figure 4 in <d-cite key="hu2021policy"></d-cite>).
+    (e) Noisy-MAPPO (i.e., NV-MAPPO) vs MAPPO results for SMAC (from the Figure 4 in <d-cite key="hu2021policy"></d-cite>).
 </div>
 
 From the experimental results, we can see that 
