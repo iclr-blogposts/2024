@@ -76,15 +76,15 @@ _styles: >
 
 Multi-Agent Reinforcement Learning (MARL) is a approach where multiple agents are trained using reinforcement learning algorithms within the same environment. This technique is particularly useful in complex systems such as robot swarm control, autonomous vehicle coordination, and sensor networks, where the agents interact to collectively achieve a common goal.
 
-In the multi-agent scenarios, agents typically have a limited field of view to observe their surroundings. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP).
+In the multi-agent scenarios, agents typically have a limited field of view to observe their surroundings. This restricted field of view can pose challenges for agents in accessing global state information, potentially leading to biased policy updates and subpar performance. These multi-agent scenarios are generally modeled as Decentralized Partially Observable Markov Decision Processes (Dec-POMDP) <d-cite key="png2009pomdps"></d-cite>.
 
 Despite the successful adaptation of numerous reinforcement learning algorithms and their variants to cooperative scenarios in the MARL setting, their performance often leaves room for improvement. A significant challenge is the issue of non-stationarity. Specifically, the changing policies of other agents during training can render the observation non-stationary from the perspective of any individual agent, significantly hindering the policy optimization of MARL. This has led researchers to explore methods that can utilize global information during training without compromising the agents’ ability to rely solely on their respective observations during execution. The simplicity and effectiveness of the Centralized Training with Decentralized Execution (CTDE) paradigm have garnered considerable attention, leading to the proposal of numerous MARL algorithms based on CTDE, thereby making significant strides in the field of MARL.
 
 ###  From PPO to Multi-agent PPO
 
-**Proximal Policy Optimization (PPO)** is a single-agent policy gradient reinforcement learning algorithm. Its main idea is to constrain the divergence between the updated and old policies when conducting policy updates, in order to ensure not overly large update steps. 
+**Proximal Policy Optimization (PPO)** <d-cite key="schulman2017proximal"></d-cite> is a single-agent policy gradient reinforcement learning algorithm. Its main idea is to constrain the divergence between the updated and old policies when conducting policy updates, in order to ensure not overly large update steps. 
 
-**Independent PPO (IPPO)** extends PPO to multi-agent settings where each agent independently learns using the single-agent PPO objective. In IPPO, agents do not share any information or use any multi-agent training techniques. Each agent $i$:
+**Independent PPO (IPPO)** <d-cite key="de2020independent"></d-cite> extends PPO to multi-agent settings where each agent independently learns using the single-agent PPO objective. In IPPO, agents do not share any information or use any multi-agent training techniques. Each agent $i$:
 
 Interacts with the environment and collects its own set of trajectories $\tau_i$
 Estimates the advantages $$\hat{A}_i$$ and value function $$V_i$$ using only its own experiences
@@ -108,7 +108,7 @@ This objective function considers both the policy improvement $r_t^{\theta_i}\ha
 
 While simple, this approach means each agent views the environment and other agents as part of the dynamics. This can introduce non-stationarity that harms convergence. So while IPPO successfully extends PPO to multi-agent domains, algorithms like MAPPO tend to achieve better performance by accounting for multi-agent effects during training. Still, IPPO is an easy decentralized baseline for MARL experiments.
 
-**Multi-Agent PPO (MAPPO)** e leverages the concept of centralized training with decentralized execution (CTDE) to extend the Independent PPO (IPPO) algorithm, alleviating non-stationarity in multi-agent environments:
+**Multi-Agent PPO (MAPPO)** <d-cite key="de2020independent"></d-cite> <d-cite key="yu2022surprising"></d-cite> leverages the concept of centralized training with decentralized execution (CTDE) to extend the Independent PPO (IPPO) algorithm, alleviating non-stationarity in multi-agent environments:
 
 During value function training, MAPPO agents have access to global information about the environment. The shared value function can further improve training stability compared to Independent PPO learners and alleviate non-stationarity, i.e,
 
@@ -117,11 +117,11 @@ $$V^{\phi}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \do
 
 But during execution, agents only use their own policy likewise IPPO.
 
-**MAPPO-FP** found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features $s$ into the value function can improve MAPPO's performance:
+**MAPPO-FP** <d-cite key="yu2022surprising"></d-cite> found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features $s$ into the value function can improve MAPPO's performance:
 
 $$V_i(s) = V^\phi(\text{concat}(s, o^i))$$
 
-**Noisy-MAPPO**: To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
+**Noisy-MAPPO**: <d-cite key="hu2021policy"></d-cite> To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
 
 $$V_i(s) = V^\phi(\text{concat}(s, x^i)), \quad x^i \sim \mathcal{N}(0,\sigma^2I)$$
 
@@ -131,7 +131,7 @@ MAPPO is often regarded as the simplest yet most powerful algorithm due to its u
 
 ## Enviroment
 
-We use StarCraft Multi-Agent Challenge (SMAC) as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
+We use StarCraft Multi-Agent Challenge (SMAC) <d-cite key="samvelyan2019starcraft"></d-cite> as our benchmark, SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/smac.jpg" class="img-fluid width1" %}
@@ -144,7 +144,7 @@ Some key aspects of SMAC:
 
 1. Complex partially observable Markov game environment, with challenges like sparse rewards, imperfect information, micro control, etc.
 2. Designed specifically to test multi-agent collaboration and coordination.
-3. Maps of different difficulties and complexities to evaluate performance.
+3. Maps of different difficulties and complexities to evaluate performance, such as the super hard map`3s5z_vs_3s6z` and the easy map `3m`.
 
 ## Code-level Analysis
 
@@ -320,21 +320,21 @@ We also cite the experimental results from these papers themselves below,
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/ippo.jpg" class="img-fluid width1" %}
 </div>
 <div class="caption">
-    (c) IPPO vs MAPPO results for SMAC from the IPPO paper, the data in the table represents the win rate.
+    (c) IPPO vs MAPPO results for SMAC (from the Figure 2 in <d-cite key="de2020independent"></d-cite>), the data in the table represents the win rate.
 </div>
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/mappo.jpg" class="img-fluid" %}
 </div>
 <div class="caption">
-    (d) MAPPO-FP (i.e, FP) vs MAPPO (i.e, CL) results for SMAC from the MAPPO paper.
+    (d) MAPPO-FP (i.e, FP) vs MAPPO (i.e, CL) results for SMAC (from the Figure 16 in <d-cite key="yu2022surprising"></d-cite>).
 </div>
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/noisy.jpg" class="img-fluid width1" %}
 </div>
 <div class="caption">
-    (e) Noisy-MAPPO (i.e, NV-MAPPO) vs MAPPO results for SMAC from the MAPPO paper.
+    (e) Noisy-MAPPO (i.e, NV-MAPPO) vs MAPPO results for SMAC (from the Figure 4 in <d-cite key="hu2021policy"></d-cite>).
 </div>
 
 From the experimental results, we can see that 
@@ -346,7 +346,7 @@ From the experimental results, we can see that
 In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? We propose tree hypotheses: 
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
-2. The independent value functions are ensemble learning, making the PPO algorithm more robust in unstable multi-agent environments.
+2. The independent value functions are ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
 3. Each agent having its own value function can be seen as an implicit credit assignment.
 
 Finally, we hope our blog post has helped you. We aim to let everyone know the true capabilities of IPPO, not just MAPPO.
