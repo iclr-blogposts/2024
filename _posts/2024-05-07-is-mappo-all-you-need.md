@@ -36,7 +36,7 @@ toc:
     subsections:
     - name: Multi-agent RL
     - name: From PPO to Multi-agent PPO
-  - name: IPPO with global information is all you need
+  - name: IPPO with Global Information Is All You Need
     subsections:
     - name: Code-level analysis
     - name: Experiments
@@ -146,6 +146,8 @@ https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0
 
 ### Experiments
 
+We borrowed some of the original data from the IPPO, MAPPO, and Noisy-MAPPO papers here. We reproduced these experiments and did some supplementary experiments:
+
 **Independent PPO (IPPO)**
 
 
@@ -155,9 +157,12 @@ https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0
 **Noisy-MAPPO**
 
 
+From the code and experimental data, we can see that the centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. 
+
+
 ### Conclusion
 
-From the code and experimental data, we can see that the centralized value function of MAPPO did not provide effective performance improvements. The independent value functions for each agent made the multi-agent learning more robust. Here we propose two conjectures:
+Here we propose two conjectures:
 
 Each agent having its own value function can be seen as an implicit credit assignment.
 The independent value functions increase policy diversity and improve exploration capabilities.
