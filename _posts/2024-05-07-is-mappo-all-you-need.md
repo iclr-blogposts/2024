@@ -278,7 +278,7 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-## Experimental Analysis
+## Experiments
 
 We reproduced some of the experimental results from the original IPPO, MAPPO, and Noisy-MAPPO papers, and borrowed the corresponding settings to use in this blog.
 
