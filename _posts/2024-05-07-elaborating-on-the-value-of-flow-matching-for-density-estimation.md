@@ -58,7 +58,16 @@ _styles: >
 
 # Motivation 
 
-todo. ...
+Normalizing Flows (NF) enable the construction of complex probability
+distributions by transforming a simple, known distribution into a more complex
+one. They do so by leveraging the change of variables formula, defining a
+bijection from the simple distribution to the complex one. 
+
+For most of the time, the flows achieving the notable results were constructed
+by chaining several differentiable and invertible transformations. However,
+these diffeomorphic transformations limit the flows in their complexity as such
+have to be simple. Furthermore, this leads to trade-off sampling speed and
+evaluation performance.
 
 # Continuous Normalizing Flows
 
