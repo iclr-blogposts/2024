@@ -531,7 +531,7 @@ Here we take two dimensional data so we can plot each neuron on this 2D plot dur
 
 So scale is about neuron scale, if we take very big neurons at the start, and use a stepsize small enough that we keep close to the gradient Flow, this is what we get :
 
-[gif ]
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif3.gif" class="img-fluid" %}
 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/two.png" class="img-fluid" %} - shows feature learning in a non-linearly separable 2D dataset, lines are the activation region of each neuron
