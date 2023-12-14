@@ -489,13 +489,9 @@ However, despite an equivalent convex problem existing, gradient descent will us
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif2.gif" class="img-fluid" %}
 
-todo: + prove que les activations bougent quoi Here we take two dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insights as it requires us to know the activation patterns. Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample.
+Here we take two dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insights as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
-- todo CITE spline interpo
-
-for example in 2d data
-
-### On large initialisation
+### On large initialisation scale
 
 So scale is about neuron scale, if we take very big neurons at the start, and use a stepsize small enough that we keep close to the gradient Flow, this is what we get :
 
@@ -514,22 +510,13 @@ As seen on this paper https://arxiv.org/pdf/2206.00939.pdf, it's interesting to 
 
 In this setting, there is a first phase where neurons only significantly change in direction, and those direction can be computed. All the results in the paper count on the fact that this phase is long enough that we know which direction are strongly weighted, and that after this neurons will not change patterns anymore (or not significantly.)
 
-The convex approach can make this clear:
-
-- write the derivative clearly
-
-### on classification?
-
-
 ## Conclusion
 
-todo: The main takeaway is ...
+The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. Each local minima usually found by doing gradient descent in the non-convex problem are also described by a convex problem. However, finding the global optima is impossible in practice, and the approximation are costly. There is no evident link between feature learning in the non-convex and the convex reformulation.
 
-chatgpt: As we conclude, the tension between the computational demands of cutting-edge models and the necessity for interpretability becomes apparent. Unveiling the intricacies of training offers a glimpse into simpler, more transparent models, fostering adaptability and responsiveness in the evolving landscape of artificial intelligence. This duality of complexity and clarity underscores the ongoing quest for a more responsible and effective future in machine learning.
+As we conclude, the tension between the computational demands of cutting-edge models and the necessity for interpretability becomes apparent. Unveiling the intricacies of training offers a glimpse into simpler, more transparent models, fostering adaptability and responsiveness in the evolving landscape of artificial intelligence. This duality of complexity and clarity underscores the ongoing quest for a more responsible and effective future in machine learning.
 
-todo: open problems: gap with practice: forced early stopping
-
-todo: chatgpt: Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably forced early stopping. In real-world scenarios, networks often cease learning before reaching a global minima, a phenomenon not adequately addressed by current theoretical frameworks. Bridging this gap is pivotal for a more comprehensive grasp of neural network dynamics and the development of optimization strategies that align more closely with the intricacies of practical applications. Addressing the conundrum of forced early stopping stands as a key frontier in optimizing neural network training for enhanced real-world performance.
+Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minima.
 
 ## todo
 
@@ -538,7 +525,3 @@ todo: chatgpt: Despite advancements in understanding the optimization landscape 
 - check all references
 - table of content
 - optima/optimum confusion everywhere
-
-## deleted 
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra2.png" class="img-fluid" %}
