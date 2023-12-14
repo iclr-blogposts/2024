@@ -123,9 +123,11 @@ $$V^{\phi}(s_t) = \mathbb{E}[r_{t + 1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \do
 
 But during execution, agents only use their own policy, likewise with IPPO.
 
-**MAPPO-FP** <d-cite key="yu2022surprising"></d-cite> found that mixing the observartion $o^i$ of agents $i$ and MAPPO's global features $s$ into the value function can improve MAPPO's performance:
+**MAPPO-FP** <d-cite key="yu2022surprising"></d-cite> found that mixing the features of the agent $i$ and MAPPO's global features $s$ into the value function can improve MAPPO's performance:
 
-$$V_i(s) = V^\phi(\text{concat}(s, o^i))$$
+$$V_i(s) = V^\phi(\text{concat}(s, f^i))$$
+
+where $f^i$ is the features of agent $i$ including the `agent ID`, `position`, `last action` and others.
 
 **Noisy-MAPPO**: <d-cite key="hu2021policy"></d-cite> To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
 
@@ -226,7 +228,7 @@ The input of the policy function MAPPO is the same as the IPPO.
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
-For the input of the value function, MAPPO-FP concatenate `own_feats` (own features including agent ID and others) of current agent with global information likewise in MAPPO.
+For the input of the value function, MAPPO-FP concatenate `own_feats` (including `agent ID`, `position`, `last action` and others) of current agent with global information likewise in MAPPO.
 The input of the policy function MAPPO-FP is the same as the IPPO.
 
 {% highlight python %}
@@ -347,7 +349,7 @@ From the experimental results, we can see that
 
 In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? 
 
-Furthermore, we continue to discuss the different implementations of IPPO with global information in MAPPO-FP and Noisy-MAPPO. MAPPO-FP utilizes an agent's own features, including the `agent ID`, `position`, and `last action`, to form independent value functions. In contrast, Noisy-MAPPO just only uses `agent ID` based on Gaussian noise. Essentially, they both aim to form a set of distinct value functions.
+Furthermore, we continue to discuss the different implementations of IPPO with global information in MAPPO-FP and Noisy-MAPPO. MAPPO-FP utilizes an agent's own features, including the `agent ID`, `position`, `last action` and others, to form independent value functions. In contrast, Noisy-MAPPO just only uses `agent ID` based on Gaussian noise. Essentially, they both aim to form a set of distinct value functions.
 
 Therefore, there are several reasons for employing independent value functions over a centralized value function:
 
