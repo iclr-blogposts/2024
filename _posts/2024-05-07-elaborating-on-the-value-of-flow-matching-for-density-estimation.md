@@ -114,12 +114,24 @@ Moreover, the authors propose a loss function that directly regresses the time
 dependent vector field against the conditional vector fields with respect to
 single samples. 
 
-{{<sidefigure src="imagenet.png" class="invertible">}}
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/imagenet.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Unconditional ImageNet-128 samples of a CNF trained using Flow Matching 
+    with Optimal Transport probability paths.
+</div>
+
+
+<!-- {{<sidefigure src="imagenet.png" class="invertible">}}
 
 Unconditional ImageNet-128 samples of a CNF trained using Flow Matching with
 Optimal Transport probability paths.
 
-{{</sidefigure>}}
+{{</sidefigure>}} -->
 
 Assuming that the target vector field is known, the authors propose a
 loss function that directly regresses the time dependent vector field:
@@ -179,7 +191,20 @@ $$
 where $$\psi_t'$$ denotes the derivative with respect to time $$t$$. 
 
 
-{{<tmfigure src="vectorfields.svg" class="invertible" marginal-caption="true"
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/vectorfields.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Compared to the diffusion path’s conditional score function, the OT path’s
+    conditional vector field has constant direction in time and is arguably 
+    simpler to fit with a parametric model. Note the blue color denotes larger 
+    magnitude while red color denotes smaller magnitude.
+</div>
+
+
+<!-- {{<tmfigure src="vectorfields.svg" class="invertible" marginal-caption="true"
 width="100%" >}}
 
 Compared to the diffusion path’s conditional score function, the OT path’s
@@ -187,7 +212,7 @@ conditional vector field has constant direction in time and is arguably simpler
 to fit with a parametric model. Note the blue color denotes larger magnitude
 while red color denotes smaller magnitude.
 
-{{</tmfigure>}}
+{{</tmfigure>}} -->
 
 They show that it is possible to recover certain diffusion training objectives
 with this choice of conditional probability paths, e.g. the variance preserving
@@ -222,45 +247,96 @@ variance-preserving diffusion paths and optimal transport (OT) paths in Flow
 Matching. The authors explore how directly parameterizing the generating vector
 field and incorporating the Flow Matching objective enhances sample generation.
 
-{{<tmfigure src="imagegen.svg" class="invertible" marginal-caption="true"  >}}
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/imagegen.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Likelihood (BPD), quality of generated samples (FID), and evaluation time 
+    (NFE) for the same model trained with different methods.
+</div>
+
+
+<!-- {{<tmfigure src="imagegen.svg" class="invertible" marginal-caption="true"  >}}
 
 Likelihood (BPD), quality of generated samples (FID), and evaluation time (NFE)
 for the same model trained with different methods.
 
-{{</tmfigure>}}
+{{</tmfigure>}} -->
 
 The findings are presented through a comprehensive evaluation using various
 metrics such as negative log-likelihood (NLL), Frechet Inception Distance
 (FID), and the number of function evaluations (NFE). Flow Matching with OT
 paths consistently outperforms other methods across different resolutions. 
  
-{{<tmfigure src="sampling.svg" class="invertible" marginal-caption="true" >}}
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/sampling.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Flow Matching, especially when using OT paths, allows us to use fewer
+    evaluations for sampling while retaining similar numerical error (left) and
+    sample quality (right). Results are shown for models trained on ImageNet 
+    32×32, and numerical errors are for the midpoint scheme.
+</div>
+
+
+<!-- {{<tmfigure src="sampling.svg" class="invertible" marginal-caption="true" >}}
 
 Flow Matching, especially when using OT paths, allows us to use fewer
 evaluations for sampling while retaining similar numerical error (left) and
 sample quality (right). Results are shown for models trained on ImageNet 32×32,
 and numerical errors are for the midpoint scheme.
 
-{{</tmfigure>}}
+{{</tmfigure>}} -->
 
 The study also delves into the efficiency aspects of Flow Matching, showcasing
 faster convergence during training and improved sampling efficiency,
 particularly with OT paths. 
  
-{{<tmfigure src="sample_path.png" class="invertible" marginal-caption="true"  >}}
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/sample_path.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Sample paths from the same initial noise with models trained on ImageNet 
+    64×64. The OT path reduces noise roughly linearly, while diffusion paths 
+    visibly remove noise only towards the end of the path. Note also the 
+    differences between the generated images.
+</div>
+
+
+<!-- {{<tmfigure src="sample_path.png" class="invertible" marginal-caption="true"  >}}
 
 Sample paths from the same initial noise with models trained on ImageNet 64×64.
 The OT path reduces noise roughly linearly, while diffusion paths visibly remove
 noise only towards the end of the path. Note also the differences between the
 generated images.
 
-{{</tmfigure>}}
+{{</tmfigure>}} -->
 
-{{<sidefigure src="superres.svg" class="invertible" marginal-caption="false" >}}
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/superres.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Image super-resolution on the ImageNet validation set.
+</div>
+
+
+<!-- {{<sidefigure src="superres.svg" class="invertible" marginal-caption="false" >}}
 
 Image super-resolution on the ImageNet validation set.
 
-{{</sidefigure>}}
+{{</sidefigure>}} -->
 
 Additionally, conditional image generation and super-resolution experiments
 demonstrate the versatility of Flow Matching, achieving competitive performance
