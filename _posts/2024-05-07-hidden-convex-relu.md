@@ -244,41 +244,51 @@ _feature learning in a non-linearly separable 2D dataset, lines are the activati
 
 ## Overview and Motivation
 
-50 years ago, two-layers networks with non-linear activations were known to be universal approximators, however they did not catch on as they were hard to train. The recent years have been marked by deeper networks ran on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on a non-convex optimisation problem until the model is accurate enough. Best models usually requires the tuning of billions of parameters and very large datasets. This in turn requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
+50 years ago, two-layers networks with non-linear activations were known to be universal approximators, however they did not catch on as they were hard to train. The recent years have been marked by deeper networks ran on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimisation problem of tuning the weights (and biais) of the connections until the model is accurate enough. Best models usually requires the tuning of billions of such parameters and very large datasets. This in turn requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
 
-Deep learning is not without faults. Even though the test performance is great, it's very hard to know what the network has actually learned because of its black box nature. Interpretability in neural networks is important because it will lead us to simpler models which are cheaper to run, are more robust to small changes in the input and are easier to modify and adapt to specific tasks. Gradient descent is performing tiny changes over billions of parameters to match output to the input's label, and that used to be the end of the explanation. However this should not be the case, as a neural network is a very simple model at its core. 
+Deep learning is not without faults. Even though the test performance can overpass those of many machine learning models, it is very hard to know what the network has actually learned because of its black box nature. Interpretability in neural networks is important because it may lead us to simpler models which are cheaper to run, are more robust to small changes in the input, and are easier to adapt to specific tasks. It is also one of the criteria for future trustworthy AI systems for many countries and regulations.
 
-In this post, we will focus on training a shallow ReLU network using vanilla gradient descent using the full batch of data at each step, in a regression setting. More precisely, we will construct a convex equivalent to the non-convex training problem.
+In this objective of figuring out what does a neural network learn, we will focus in this post on the training a shallow ReLU network using vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
+
+### Problem and notation
+
+Our problem of interest will be the training of a simple two layer neural network with ReLu activation (and no biais for simplicity of exposition). We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following and full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained by backpropagation for instance).
 
 <p class="framed">
     <b class="underline">Two-Layer ReLU Network Training</b><br>
-    <b>Data</b>: Inputs \(\pmb{x}_j \in \RR^d\) and labels \(y_j \in \RR\), step-size \(\step > 0\), regularization term \(\lambda\geq 0\) <br>
-    <b>Model</b>: First layer \(\pmb{w}_i \in \RR^d\), second layer \(\alpha_i \in \RR\)<br>
-    <b>The loss to be minimised</b>:
+    <b>Data:</b> $n$ samples of the form: input \(\pmb{x}_j \in \RR^d\) + label \(y_j \in \RR\), $j=1,..,n$<br/> 
+    <b>Model:</b> $m$ neurons in the hidden layer: First layer \(\pmb{w}_i \in \RR^d\), second layer \(\alpha_i \in \RR\), $i=1,..,m$<br>
+    <b>Hyper-parameters:</b> step-size \(\step > 0\), regularization strength \(\lambda\geq 0\) <br>
+    <b>Loss to be minimized:</b>
     \begin{equation}
-        \min_{(\pmb{W}, \pmb{\alpha})} \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \sum_{j=1}^n \bigg( \underbrace{\sum_{i=1}^m \max(0, \pmb{w}_i^\top \pmb{x}) \alpha_i}_{\text{Network's Output}} - y_j \bigg)^2 + \underbrace{\lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2}_{\text{Weight Decay}}
+         \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \sum_{j=1}^n \bigg( \underbrace{\sum_{i=1}^m \max(0, \pmb{w}_i^\top \pmb{x}) \alpha_i}_{\text{Network's Output}} - y_j \bigg)^2 + \underbrace{\lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2}_{\text{Weight Decay}}
     \end{equation}
-    <b>(Full-batch) Gradient Descent</b>:
+    <b>(Full-batch) Gradient Descent:</b>
     \begin{equation}
         (\pmb{W}, \pmb{\alpha})_{t+1} = (\pmb{W}, \pmb{\alpha})_t - \step \nabla \mathcal{L}((\pmb{W}, \pmb{\alpha})_t)
     \end{equation}
 </p>
 
+
+Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We'll see in this blog post how to retrieve those two optimal neurons and how the data samples activate them using a convex problem.
+
+
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
 _Loss landscape for two neurons, two data points of a single-layer ReLU network_
 
-Even the simplest ReLU models have non-trivial non-convexity. We'll see in this blog post how to retrieve those two optimal neurons using a finite convex problem.
+
 
 ### Research context
 
-Neural network learning theory is an active domain of research with many different active paths of investigation. Its main goal is to lay a mathematical foundation for deep learning and reduce the current necessity of experimental studies. Shallow neural networks act as a stepping stone for studying deeper and more complex networks.
 
-For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global optima<d-cite key="allen-zhuConvergenceTheoryDeep2019a"></d-cite><d-cite key="duGradientDescentProvably2019"></d-cite><d-cite key="jacotNeuralTangentKernel2020a"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018"></d-cite>. The former requires large scale initialization for the network so that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2020"></d-cite>, in constrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex, while we are interested here in feature learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignement, incremental learning<d-cite key="berthierIncrementalLearningDiagonal"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022b"></d-cite>.
+The question of how neural networks learn is a very active domain of research with many different paths of investigation. Its main goal is to lay a mathematical foundation for deep learning and for this, shallow neural networks act as a stepping stone for studying deeper and more complex networks.
 
-Studying the loss landscape reveals that shallow networks with more neurons than data points, always have a non-increasing path to a global minimum<d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>. This is a favorable property for stochastic gradient convergence. The hidden convexity paper extends those results by adding regularization which is used a lot in practice and known as weight decay. If no explicit regularization is used, it is known that there is an implicit bias of gradient descent for linear activations and recently ReLU networks<d-cite key="wangConvexGeometryBackpropagation2021"></d-cite> using the convex reformulation and it is sometimes exactly the same as using weight decay.
+For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019a"></d-cite><d-cite key="duGradientDescentProvably2019"></d-cite><d-cite key="jacotNeuralTangentKernel2020a"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018"></d-cite>. The former requires large scale initialization for the network so that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2020"></d-cite>, in constrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex, while it is noticeable,  we are also interested here in feature learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignement, incremental learning<d-cite key="berthierIncrementalLearningDiagonal"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022b"></d-cite>.
 
-Other convex approachs are limited to an infinite amount of neurons, or to optimize neuron by neuron<d-cite key="bachBreakingCurseDimensionality"></d-cite> which require solving many non-convex problems. The setting studied here allows for any number of neurons.
+Studying the loss landscape reveals that shallow networks with more neurons than data points, always have a non-increasing path to a global minimum<d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>. This is a favorable property for (stochastic) gradient convergence. The hidden convexity paper extends those results by adding regularization which is used a lot in practice and known as weight decay. If no explicit regularization is used, it is known that there is an implicit bias of gradient descent for linear activations and recently ReLU networks<d-cite key="wangConvexGeometryBackpropagation2021"></d-cite> using the convex reformulation and it is sometimes exactly the same as using weight decay.
+
+Other convex approaches are limited to an infinite amount of neurons, or to optimize neuron by neuron<d-cite key="bachBreakingCurseDimensionality"></d-cite> which require solving many non-convex problems. The setting studied here allows for any number of neurons.
 
 To sum up, this work contrasts itself from what precedes by presenting results for shallow network with __finite width layers__, starting from one neuron and incorporating __regularization__ in a __regression__ setting with frequently used __ReLU__ activation.
 
