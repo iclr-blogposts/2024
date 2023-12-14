@@ -139,7 +139,7 @@ MAPPO is often regarded as the simplest yet most powerful algorithm due to its u
 
 ## Enviroment
 
-We use the StarCraft Multi-Agent Challenge (SMAC) <d-cite key="samvelyan2019starcraft"></d-cite> as our benchmark. SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, shown in the Figure (a):
+We use the StarCraft Multi-Agent Challenge (SMAC) <d-cite key="samvelyan2019starcraft"></d-cite> as our benchmark. SMAC uses the real-time strategy game StarCraft as its environment. In SMAC, each agent controls a unit in the game (e.g. marines, medics, zealots). The agents need to learn to work together as a team to defeat the enemy units, which are controlled by the built-in StarCraft AI, as shown in Figure (a):
 
 <div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-is-mappo-all-you-need/smac.jpg" class="img-fluid width1" %}
@@ -156,8 +156,7 @@ The key aspects of SMAC are:
 
 ## Code-level Analysis
 
-In order to thoroughly investigate the actual changes from PPO to MAPPO and Noisy-MAPPO, we delved deeply into their differences at the code level.
-Basically, their main difference lies in the modeling of the value function during the training stage.
+In order to thoroughly investigate the actual changes from PPO to MAPPO and Noisy-MAPPO, we delved deeply into their differences at the code level. Fundamentally, their main difference lies in the modeling of the value function during the training stage.
 
 **Independent PPO (IPPO)**
 
@@ -199,8 +198,7 @@ def get_obs_agent(self, agent_id):
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1152)
 
-For the input of the value function, MAPPO removes `dist < sight_range` to retain global information of all agents.
-The input of the policy function MAPPO is the same as the IPPO.
+For the input of the value function, MAPPO removes `dist < sight_range` to retain global information of all agents. This means MAPPO only has one shared value function, because there is only one state input into the value function. The input of the policy function in MAPPO is the same as in IPPO.
 
 {% highlight python %}
     def get_state(self, agent_id=-1):
@@ -228,8 +226,7 @@ The input of the policy function MAPPO is the same as the IPPO.
 
 [Code permalink](https://github.com/zoeyuchao/mappo/blob/79f6591882088a0f583f7a4bcba44041141f25f5/onpolicy/envs/starcraft2/StarCraft2_Env.py#L1327)
 
-For the input of the value function, MAPPO-FP concatenate `own_feats` (including `agent ID`, `position`, `last action` and others) of current agent with global information likewise in MAPPO.
-The input of the policy function MAPPO-FP is the same as the IPPO.
+For the input of the value function, MAPPO-FP concatenates own_feats (including `agent ID`, `position`, `last action` and others) of the current agent with global information. The input of the policy function in MAPPO-FP is the same as in IPPO.
 
 {% highlight python %}
 def get_state_agent(self, agent_id):
@@ -273,7 +270,7 @@ def get_state_agent(self, agent_id):
 
 [Code permalink](https://github.com/hijkzzz/noisy-mappo/blob/e1f1d97dcb6f1852559e8a95350a0b6226a0f62c/onpolicy/algorithms/r_mappo/algorithm/r_actor_critic.py#L151)
 
-For the input of the value function, Noisy-MAPPO concatenate a `fixed noise vector` with global information likewise in MAPPO.
+For the input of the value function, Noisy-MAPPO concatenate a `fixed noise vector` with global information.
 **We found in the code that this noise vector does not need to be changed after being well initialized.**
 The input of the policy function Noisy-MAPPO is the same as the IPPO.
 
