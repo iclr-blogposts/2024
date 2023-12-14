@@ -68,10 +68,13 @@ by chaining several differentiable and invertible transformations. However,
 these diffeomorphic transformations limit the flows in their complexity as such
 have to be simple. Furthermore, this leads to trade-off sampling speed and
 evaluation performance <d-cite key="papamakarios_normalizing_2019"></d-cite>.
+Their continuous couterpart, Continuous Normalizing Flows (CNFs) have been held
+back by limitations in their simulation-based maximum likelihood training
+<d-cite key="tong_improving_2023"></d-cite>.
 
 # Continuous Normalizing Flows
 
-Continuous normalizing flows (CNFs) are among the first applications of neural
+Continuous normalizing flows are among the first applications of neural
 ordinary differential equations (ODEs) <d-cite key="chen_neural_2018"></d-cite>.
 Instead of the traditional layers of neural networks, the flow is defined by a
 vector field that is integrated over time. 
@@ -236,7 +239,11 @@ convergence and better results.
 
 ## Generalized Flow-Based Models
 
-todo. ...
+Flow matching, as it is described above, is limited to the Gaussian source
+distributions. In order to allow for arbitrary base distributions <d-cite
+key="tong_improving_2023"></d-cite> extended the approach to a generalized
+conditional flow matching technique which are a family of simulation-free
+training objectives for CNFs. 
 
 # Empirical results
 
