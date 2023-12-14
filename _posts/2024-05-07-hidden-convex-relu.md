@@ -438,14 +438,14 @@ This case has been described in the section before, the non-convex problem initi
 
 This would be the usual minima found by GD. Here we have much more neurons than there are existing patterns (while this is unlikely, many neurons do end up in the same pattern in practice). However we can merge (simply adding neuron together to get a new one) neurons in the same pattern without changing the output nor the loss (regularization might change). This generalize and is at the core of the proof.
 
-TODO: precise statements with regul, cite hidden convex, maybe numeric? maybe actual GD? Precise that the loss is 0 in the graphs
-
 ### ACTIVATION PATTERNS
+
+todo - show that d>1 there are many patterns
+todo: - show in d=2 what "missing" some patterns means
 
 The equivalence proof is heavily based on ReLU, specifically that a ReLU unit divides the input space in two regions: one where it will output zero, and the other where it is the identity. If you consider a finite set of samples and a single ReLU, it will activate and deactivate some samples: this is called an activation pattern. A diagonal matrix $$\pmb{D}_i \in \{0,1\}^{n \times n}$$ describes one activation pattern. There is a finite amount of such possible patterns, exponential in the dimension of the data.
 
 In the previous part we considered data to be one-dimensional, in this case there is only two possible activation patterns. Let's now consider two-dimensional data.
-
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra4.png" class="img-fluid" %}
 
