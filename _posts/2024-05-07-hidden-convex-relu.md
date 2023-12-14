@@ -419,7 +419,7 @@ A few questions are left unanswered: what is the number of different activations
 
 Two problems are considered equivalent when their global optima can be seamlessly mapped back and forth.
 
-If we consider all possible activation pattern, only two in the one-dimensional case (and near $$2^{n+1}$$ in general). The convex problem's unique solution corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on datapoints).
+As seen before, there are only two activation patterns in the one-dimensional case, but close to $$2^{n+1}$$ when the data dimension is higher. If we consider all the possible activation patterns, the convex problem's unique solution corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on datapoints).
 
 If we only consider a subset of all patterns, the convex problem correspond to a local optima of the non-convex network. Indeed, it is not as expressive as before. This would either correspond to a non-convex network with not enough neurons, or with too many neurons concentrated in the same regions.
 
@@ -429,13 +429,27 @@ In the non-convex problem, there are the two local minima when we only consider 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra8.png" class="img-fluid" %}
 
-They can be found exactly by solving the convex problem with a subset of all activation possible, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem(that consider only one pattern) is equivalent to the non-convex one. However, once we reach a local minima in the non-convex gradient descent and only then, it is described by a convex problem, by considering one pattern or the other.
+As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all activation possible, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem(that consider only one pattern) is equivalent to the non-convex one. However, once we reach a local minima in the non-convex gradient descent and only then, it is described by a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra9.png" class="img-fluid" %}
 
-This case has been described in the section before, the non-convex problem initialised at random will have three local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima(__left__), or two of them will end up in the same pattern (__right__).
+The non-convex problem initialised at random will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima(__left__), or two of them will end up in the same pattern (__right__).
+
+In this case, the convex problem
+
+<p>
+\begin{equation}
+\mathcal{L}(u_1, u_2)=
+\bigg\| \begin{bmatrix} \czero & 0 \\ 0 & \cone \end{bmatrix}
+\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_1 - \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} +
+\begin{bmatrix} \cone & 0 \\ 0 & \czero \end{bmatrix}
+\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_2 - \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \bigg\|_2^2 + \lambda (| u_1 | + | u_2 |)
+\end{equation}
+</p>
+
+is equivalent to the non-convex problem. Solving it will give the global optima.
 
 #### 1-D EXAMPLE, MANY NEURONS
 
@@ -445,10 +459,15 @@ This would be the usual minima found by GD. Here we have much more neurons than 
 
 ### ACTIVATION PATTERNS
 
-todo - show that d>1 there are many patterns
-todo: - show in d=2 what "missing" some patterns means
-
 The equivalence proof is heavily based on ReLU, specifically that a ReLU unit divides the input space in two regions: one where it will output zero, and the other where it is the identity. If you consider a finite set of samples and a single ReLU, it will activate and deactivate some samples: this is called an activation pattern. A diagonal matrix $$\pmb{D}_i \in \{0,1\}^{n \times n}$$ describes one activation pattern. There is a finite amount of such possible patterns, exponential in the dimension of the data.
+
+Explain the output graph, and where are activations of the neurons.
+
+A gif that shows a lot of regions
+
+
+
+A gif 
 
 In the previous part we considered data to be one-dimensional, in this case there is only two possible activation patterns. Let's now consider two-dimensional data.
 
@@ -460,10 +479,12 @@ On the __left__ we plot the output of one ReLU unit (we omit the second dimensio
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra6.png" class="img-fluid" %}
 
+todo - show that d>1 there are many patterns
+todo: - show in d=2 what "missing" some patterns means
 
-### Extensions
+### Extensions of the convex reformulation to other settings
 
-Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ [Source: https://arxiv.org/abs/2103.01499]. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent [Source: https://arxiv.org/abs/2012.13329]. Three-layer also has a convex equivalent using all possible combinations of two activation matrix. Moreover, parallel networks are also linked to a convex problem [Source: https://arxiv.org/abs/2110.06482]. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games [Source: https://arxiv.org/abs/2107.05680].
+Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ <d-cite key="ergenDemystifyingBatchNormalization2021"></d-cite>. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent <d-cite key="sahinerVectoroutputReLUNeural2020"></d-cite>. Three-layer also has a convex equivalent using all possible combinations of two activation matrix. Moreover, parallel networks are also linked to a convex problem <d-cite key="wangParallelDeepNeural2022"></d-cite>. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games <d-cite key="sahinerHiddenConvexityWasserstein2021"></d-cite>.
 
 ## Is everything solved then? Can we forget the non-convex problem?
 

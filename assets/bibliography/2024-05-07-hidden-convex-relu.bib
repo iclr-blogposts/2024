@@ -109,6 +109,19 @@
   file = {/home/savar/Zotero/storage/ZJQ68Z8F/Du et al. - 2019 - Gradient Descent Provably Optimizes Over-parameter.pdf;/home/savar/Zotero/storage/Z49WVJF2/1810.html}
 }
 
+@inproceedings{ergenDemystifyingBatchNormalization2021,
+  title = {Demystifying Batch Normalization in ReLU Networks: Equivalent Convex Optimization Models and Implicit Regularization},
+  shorttitle = {Demystifying Batch Normalization in ReLU Networks},
+  booktitle = {International Conference on Learning Representations},
+  author = {Ergen, Tolga and Sahiner, Arda and Ozturkler, Batu and Pauly, John M. and Mardani, Morteza and Pilanci, Mert},
+  year = {2021},
+  month = oct,
+  urldate = {2023-12-14},
+  abstract = {Batch Normalization (BN) is a commonly used technique to accelerate and stabilize training of deep neural networks. Despite its empirical success, a full theoretical understanding of BN is yet to be developed. In this work, we analyze BN through the lens of convex optimization. We introduce an analytic framework based on convex duality to obtain exact convex representations of weight-decay regularized ReLU networks with BN, which can be trained in polynomial-time. Our analyses also show that optimal layer weights can be obtained as simple closed-form formulas in the high-dimensional and/or overparameterized regimes. Furthermore, we find that Gradient Descent provides an algorithmic bias effect on the standard non-convex BN network, and we design an approach to explicitly encode this implicit regularization into the convex objective. Experiments with CIFAR image classification highlight the effectiveness of this explicit regularization for mimicking and substantially improving the performance of standard BN networks.},
+  langid = {english},
+  file = {/home/savar/Zotero/storage/TILGFXP6/Ergen et al. - 2021 - Demystifying Batch Normalization in ReLU Networks.pdf}
+}
+
 @misc{jacotNeuralTangentKernel2020a,
   title = {Neural Tangent Kernel: Convergence and Generalization in Neural Networks},
   shorttitle = {Neural Tangent Kernel},
@@ -161,6 +174,32 @@
   file = {/home/savar/Zotero/storage/6RH8PNHW/Pilanci et Ergen - 2020 - Neural Networks are Convex Regularizers Exact Pol.pdf;/home/savar/Zotero/storage/E6U3JCEY/Pilanci et Ergen - 2020 - Neural Networks are Convex Regularizers Exact Pol.pdf}
 }
 
+@inproceedings{sahinerHiddenConvexityWasserstein2021,
+  title = {Hidden Convexity of Wasserstein GANs: Interpretable Generative Models with Closed-Form Solutions},
+  shorttitle = {Hidden Convexity of Wasserstein GANs},
+  booktitle = {International Conference on Learning Representations},
+  author = {Sahiner, Arda and Ergen, Tolga and Ozturkler, Batu and Bartan, Burak and Pauly, John M. and Mardani, Morteza and Pilanci, Mert},
+  year = {2021},
+  month = oct,
+  urldate = {2023-12-14},
+  abstract = {Generative Adversarial Networks (GANs) are commonly used for modeling complex distributions of data. Both the generators and discriminators of GANs are often modeled by neural networks, posing a non-transparent optimization problem which is non-convex and non-concave over the generator and discriminator, respectively. Such networks are often heuristically optimized with gradient descent-ascent (GDA), but it is unclear whether the optimization problem contains any saddle points, or whether heuristic methods can find them in practice. In this work, we analyze the training of Wasserstein GANs with two-layer neural network discriminators through the lens of convex duality, and for a variety of generators expose the conditions under which Wasserstein GANs can be solved exactly with convex optimization approaches, or can be represented as convex-concave games. Using this convex duality interpretation, we further demonstrate the impact of different activation functions of the discriminator. Our observations are verified with numerical results demonstrating the power of the convex interpretation, with an application in progressive training of convex architectures corresponding to linear generators and quadratic-activation discriminators for CelebA image generation. The code for our experiments is available at https://github.com/ardasahiner/ProCoGAN.},
+  langid = {english},
+  file = {/home/savar/Zotero/storage/YTYHWSP9/Sahiner et al. - 2021 - Hidden Convexity of Wasserstein GANs Interpretabl.pdf}
+}
+
+@inproceedings{sahinerVectoroutputReLUNeural2020,
+  title = {Vector-Output ReLU Neural Network Problems Are Copositive Programs: Convex Analysis of Two Layer Networks and Polynomial-Time Algorithms},
+  shorttitle = {Vector-Output ReLU Neural Network Problems Are Copositive Programs},
+  booktitle = {International Conference on Learning Representations},
+  author = {Sahiner, Arda and Ergen, Tolga and Pauly, John M. and Pilanci, Mert},
+  year = {2020},
+  month = oct,
+  urldate = {2023-12-14},
+  abstract = {We describe the convex semi-infinite dual of the two-layer vector-output ReLU neural network training problem. This semi-infinite dual admits a finite dimensional representation, but its support is over a convex set which is difficult to characterize. In particular, we demonstrate that the non-convex neural network training problem is equivalent to a finite-dimensional convex copositive program. Our work is the first to identify this strong connection between the global optima of neural networks and those of copositive programs. We thus demonstrate how neural networks implicitly attempt to solve copositive programs via semi-nonnegative matrix factorization, and draw key insights from this formulation. We describe the first algorithms for provably finding the global minimum of the vector output neural network training problem, which are polynomial in the number of samples for a fixed data rank, yet exponential in the dimension. However, in the case of convolutional architectures, the computational complexity is exponential in only the filter size and polynomial in all other parameters. We describe the circumstances in which we can find the global optimum of this neural network training problem exactly with soft-thresholded SVD, and provide a copositive relaxation which is guaranteed to be exact for certain classes of problems, and which corresponds with the solution of Stochastic Gradient Descent in practice.},
+  langid = {english},
+  file = {/home/savar/Zotero/storage/E6SIXRVU/Sahiner et al. - 2020 - Vector-output ReLU Neural Network Problems are Cop.pdf}
+}
+
 @inproceedings{sharifnassabBoundsOverParameterizationGuaranteed2019,
   title = {Bounds on Over-Parameterization for Guaranteed Existence of Descent Paths in Shallow ReLU Networks},
   booktitle = {International Conference on Learning Representations},
@@ -191,4 +230,16 @@
   publisher = {OpenReview.net},
   urldate = {2023-03-11},
   file = {/home/savar/Zotero/storage/FJ85TBX9/Wang et al. - 2022 - The Hidden Convex Optimization Landscape of Two-La.pdf}
+}
+
+@inproceedings{wangParallelDeepNeural2022,
+  title = {Parallel Deep Neural Networks Have Zero Duality Gap},
+  booktitle = {The Eleventh International Conference on Learning Representations},
+  author = {Wang, Yifei and Ergen, Tolga and Pilanci, Mert},
+  year = {2022},
+  month = sep,
+  urldate = {2023-12-14},
+  abstract = {Training deep neural networks is a challenging non-convex optimization problem. Recent work has proven that the strong duality holds (which means zero duality gap) for regularized finite-width two-layer ReLU networks and consequently provided an equivalent convex training problem. However, extending this result to deeper networks remains to be an open problem. In this paper, we prove that the duality gap for deeper linear networks with vector outputs is non-zero. In contrast, we show that the zero duality gap can be obtained by stacking standard deep networks in parallel, which we call a parallel architecture, and modifying the regularization. Therefore, we prove the strong duality and existence of equivalent convex problems that enable globally optimal training of deep networks. As a by-product of our analysis, we demonstrate that the weight decay regularization on the network parameters explicitly encourages low-rank solutions via closed-form expressions. In addition, we show that strong duality holds for three-layer standard ReLU networks given rank-1 data matrices.},
+  langid = {english},
+  file = {/home/savar/Zotero/storage/HYCHZP2N/Wang et al. - 2022 - Parallel Deep Neural Networks Have Zero Duality Ga.pdf}
 }
