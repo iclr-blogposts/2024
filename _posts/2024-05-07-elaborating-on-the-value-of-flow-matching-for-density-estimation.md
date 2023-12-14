@@ -12,11 +12,11 @@ htmlwidgets: true
 
 authors:
   - name: Maternus Herold
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
+    url: "https://transferlab.ai/"
     affiliations:
       name: TransferLab, appliedAI Institute for Europe gGmbH
   - name: Faried Abu Zaid
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
+    url: "https://transferlab.ai/"
     affiliations:
       name: TransferLab, appliedAI Institute for Europe gGmbH
 
