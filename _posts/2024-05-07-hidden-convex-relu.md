@@ -534,15 +534,11 @@ So scale is about neuron scale, if we take very big neurons at the start, and us
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif3.gif" class="img-fluid" %}
 
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/two.png" class="img-fluid" %} - shows feature learning in a non-linearly separable 2D dataset, lines are the activation region of each neuron
-
 ### On very small initialisation
 
 As seen on this paper https://arxiv.org/pdf/2206.00939.pdf, it's interesting to consider small init.
 
 [ gif ]
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/one.png" class="img-fluid" %} - shows feature learning in a non-linearly separable 2D dataset, lines are the activation region of each neuron
 
 In this setting, there is a first phase where neurons only significantly change in direction, and those direction can be computed. All the results in the paper count on the fact that this phase is long enough that we know which direction are strongly weighted, and that after this neurons will not change patterns anymore (or not significantly.)
 
