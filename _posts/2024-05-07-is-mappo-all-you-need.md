@@ -299,7 +299,7 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function, i.e., the IPPO with global information.
+Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function with global information, i.e., the IPPO with global information.
 
 ## Experiments
 
@@ -347,7 +347,7 @@ From the experimental results, we can see that
 
 In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need.** According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful? 
 
-Furthermore, we continue to discuss the different implementations of IPPO with global information in MAPPO-FP and Noisy-MAPPO. MAPPO-FP utilizes an agent's own features, including the agent's ID, position, and actions, to form independent value functions. In contrast, Noisy-MAPPO uses Gaussian noise as the agent ID. Essentially, they both aim to form a set of distinct value functions.
+Furthermore, we continue to discuss the different implementations of IPPO with global information in MAPPO-FP and Noisy-MAPPO. MAPPO-FP utilizes an agent's own features, including the `agent ID`, `position`, and `last action`, to form independent value functions. In contrast, Noisy-MAPPO just only uses `agent ID` based on Gaussian noise. Essentially, they both aim to form a set of distinct value functions.
 
 Therefore, there are several reasons for employing independent value functions over a centralized value function:
 
