@@ -270,21 +270,26 @@ Our problem of interest will be the training of a simple two layer neural networ
 </p>
 
 
-Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We'll see in this blog post how to retrieve those two optimal neurons and how the data samples activate them using a convex problem.
-
+Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ in function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half the time, a gradient descent will get stuck at a plateau as the gradient is zero along the red line. However we can also notice that there is no spurious valleys.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
-_Loss landscape for two neurons, two data points of a single-layer ReLU network_
+_Loss landscape for two neurons($$w_1, w_2$$), two data points of a single-layer ReLU network_
 
+<p>
+\begin{equation}
+\mathcal{L}(w_1, w_2) = \left(\max(0, x_1 w_1) + \max(0, x_1 w_2) - y_1\right)^2 + \left(\max(0, x_2 w_1) + \max(0, x_2 w_2) - y_2\right)^2
+\end{equation}
+</p>
 
+We'll see in this blog post how to retrieve those two optimal neurons and how the data samples activate them using a convex problem.
 
 ### Research context
 
 
 The question of how neural networks learn is a very active domain of research with many different paths of investigation. Its main goal is to lay a mathematical foundation for deep learning and for this, shallow neural networks act as a stepping stone for studying deeper and more complex networks.
 
-For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019a"></d-cite><d-cite key="duGradientDescentProvably2019"></d-cite><d-cite key="jacotNeuralTangentKernel2020a"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018"></d-cite>. Studying the NTK amounts to studying the first order taylor expansion of the network, treating the network as a linear regression over a feature map. This approximation is accurate if the neurons are initialized at a large scale, large enough that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2020"></d-cite>, in constrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex, while it is noticeable,  we are also interested here in feature learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignement, incremental learning<d-cite key="berthierIncrementalLearningDiagonal"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022b"></d-cite>.
+For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019a"></d-cite><d-cite key="duGradientDescentProvably2019"></d-cite><d-cite key="jacotNeuralTangentKernel2020a"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018"></d-cite>. <a href="https://rajatvd.github.io/NTK/">Studying the NTK</a> amounts to studying the first order taylor expansion of the network, treating the network as a linear regression over a feature map. This approximation is accurate if the neurons are initialized at a large scale, large enough that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2020"></d-cite>, in constrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex, while it is noticeable,  we are also interested here in feature learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignement, incremental learning<d-cite key="berthierIncrementalLearningDiagonal"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022b"></d-cite>.
 
 Studying the loss landscape reveals that shallow networks with more neurons than data points, always have a non-increasing path to a global minimum<d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>. This is a favorable property for (stochastic) gradient convergence. In '_The Hidden Convex Optimization Landscape of Regularized Two-Layer ReLU Networks_'<d-cite key="wangHiddenConvexOptimization2022"></d-cite><d-cite key="pilanciNeuralNetworksAre2020"></d-cite>, they extends those results by adding regularization which is used a lot in practice and known as weight decay. If no explicit regularization is used, it is known that there is an implicit bias of gradient descent for linear activations and recently ReLU networks<d-cite key="wangConvexGeometryBackpropagation2021"></d-cite> using the convex reformulation and it is sometimes exactly the same as using weight decay.
 
