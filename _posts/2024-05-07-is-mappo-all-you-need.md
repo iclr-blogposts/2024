@@ -127,7 +127,7 @@ But during execution, agents only use their own policy, likewise with IPPO.
 
 $$V_i(s) = V^\phi(\text{concat}(s, f^i))$$
 
-where $f^i$ is the features of agent $i$ including the `agent ID`, `position`, `last action` and others.
+where $f^i$ including the features of agent $i$ or the observation from agent $i$.
 
 **Noisy-MAPPO**: <d-cite key="hu2021policy"></d-cite> To improve the stability of MAPPO in non-stationary environments, Noisy-MAPPO adds Gaussian noise into the input of the the shared value network $V^\phi$:
 
