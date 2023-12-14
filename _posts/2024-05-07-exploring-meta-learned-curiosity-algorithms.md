@@ -61,19 +61,19 @@ The roadmap for exploring FAST and CCIM is organised as follows. We begin with a
 Here we dive into background.
 ### Reinforcement Learning
 
-RL is inspired by how biological systems learn as animals are to able learn through trail-and-error. In RL we have an agent that tries to maximise the sum of rewards by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
+RL is inspired by how biological systems learn as animals are to able learn through trail-and-error. In RL we have an agent that tries to maximise the sum of rewards it recieves by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
 
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/MDP.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/MDP.png" class="img-fluid" width="400px" %}
 <div class="caption">
     Figure 1. The agent-environment interaction as a MDP. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
-From the figure we can see that the agent observes a state and then takes action. The agent then can decide on its next action based on the next state it observes and the rewards it receives from the critic in the environmen. The critic 
+From the figure we can see that the agent observes a state and then takes action. The agent then can decide on its next action based on the next state it observes and the rewards it receives from the critic in the environment. The critic decides on what reward the agent receives at every time-step by evaluating its behaviour.
 
-As Sutton et al. highlighted in <d-cite key="sutton2018intro"></d-cite> Figure 1 can be misleading though. It implies that the agent-environment boundary is similar to the physical boundary between an organism entire body and the outside world. In RL we consider anything that the agent cannot change through its actions as the environment. For example, if I were an RL agent my skeletal structure or my muscles could be considered part of the environment. So we can then see that when it comes to RL we have two types of environments: The internal environment, such as sensory organs of an animal, and the external environment. Also the reward the agent receives is not always from the external environment. The rewards can be seen as reward signals like a human's brain releasing dopamine when one achieves an objective.
-Thus the thing in the environment that decides what reward the agent recieves at a particular time-step, i.e. the critic, can also be in inside the RL agent.
+As Sutton et al. highlighted in <d-cite key="sutton2018intro"></d-cite> Figure 1 can be misleading though. It implies that the agent-environment boundary is similar to the physical boundary between an organism entire body and the outside world. In RL we consider anything that the agent cannot change through its actions as the environment. For example, if a human was an RL agent my skeletal structure or my muscles could be considered part of the environment. So we can then see that when it comes to RL we have two types of environments: The internal environment, such as sensory organs of an animal, and the external environment. Also the reward the agent receives is not always from the external environment. The rewards can be seen as reward signals like a human's brain releasing dopamine when one achieves an objective.
+Thus the critic can also be in inside the RL agent.
 The Figure below shows an extended view of the agent-environment interactions.
 
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/extended_mdp.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/extended_mdp.png" class="img-fluid" width="400px" %}
 <div class="caption">
     Figure 2. The extended agent-environment interaction. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
