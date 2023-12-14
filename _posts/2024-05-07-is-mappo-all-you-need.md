@@ -298,7 +298,7 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function with global information, i.e., the IPPO with global information. And during the training phase, each agent only uses its own value function to calculate the advantage value, similar to IPPO.
+Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function with global information, i.e., IPPO with global information. And during the training phase, each agent only uses its own value function to calculate the advantage value and loss, similar to IPPO.
 
 ## Experiments
 
