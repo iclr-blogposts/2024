@@ -65,365 +65,130 @@ _styles: >
 
 Note: please use the table of contents as defined in the front matter rather than the traditional markdown styling.
 
+
 ## What is Algorithmic Reasoning?
 
-Broadly, Algorthmic Reasoning wants to study how well Neural Networks can learn to execute classical computer science algorithms. In particular, we look at size-generalisation, i.e. if we train on inputs of size $$N$$ how well will the Neural Network perform on inputs of size $$2N$$ or $$10N$$. The idea is that neural networks often learn shortcuts that work well in-distribution, but fail out-of-distribution, whereas classical computer science algorithms work no matter the input size. The purpose of this exercise to study the generalisation of reasoning tasks, especially what tricks help to improve robustness and get closer to deducing logical rather than relying on statistical short cuts.
+Broadly, Algorthmic Reasoning <d-cite key="velickovic2020neural"></d-cite> wants to study how well Neural Networks can learn to execute classical computer science algorithms. In particular, we look at size-generalisation, i.e. if we train on inputs of size $$N$$ how well will the Neural Network perform on inputs of size $$2N$$ or $$10N$$. The idea is that neural networks often learn shortcuts that work well in-distribution, but fail out-of-distribution, whereas classical computer science algorithms work no matter the input size. The purpose of this exercise to study the generalisation of reasoning tasks, especially what tricks help to improve robustness and get closer to deducing logical rather than relying on statistical short cuts.
 
 ## Why care about fixed-points?
 
-First, let's remember that a fixed-point $$x_0$$ of a function $$f$$ must satisfy $$f(x_0) = x_0$$. Secondly, we can observe that many algorithms consist of an update rule that you apply until you reach convergence. In a classical computer science algorithm some smart person will have sat down and shown that under some conditions on the input this convergence will happen. The final output can easily be seen to be a fixed-point! An example algorithm would be the Bellman-Ford algorithm to compute the shortest-distance to a given node in a graph. Here the update rule looks like ...
+First, let's remember that a fixed-point $$x_-1$$ of a function $$f$$ must satisfy $$f(x_0) = x_0$$. Secondly, we can observe that many algorithms consist of an update rule that you apply until you reach convergence. In a classical computer science algorithm some smart person will have sat down and shown that under some conditions on the input this convergence will happen. The final output can easily be seen to be a fixed-point! An example algorithm would be the Bellman-Ford algorithm to compute the shortest-distance to a given node in a graph. Here the update rule looks like $$x_i^{(t+1)} =\min(x_i^{(t)}, \min \{x_j^{(t) + e_{ij}\}_{j\in\mathcal{N}(i)})$$, where $$x_i^{(t)}$$ is the shortest distance estimate to the source node at time $$t$$, $$e_{ij}$$ is the distance between nodes $$i$$ and $$j$$, and $$\{j\}_{j\in\matcal{N}(i)}$$ are the neighbours of node $$i$$.
 
 Interestingly, denotational semantics---a theoretical field of computer science---has shown you can represent Turing complete programming languages as mathematical functions. This is mostly quite trivial with the exception of the while loop. Here the trick is a special mathematical operator that returns the minimum fixed point of a function! (If there is no fixed point to a function than the corresponding while loop doesn't terminate.) And thus we can see that fixed-points should be everywhere, and yet they aren't. A missed inductive bias perhaps?
 
-## How can we do fixed-points in DNNs?
+## The details
+### Task specification
 
-## How well does it work?
-
-## What's the problem?
-
-### Convergence is a key issue
-
-### The problem with hard constraints
-
-## What do we take away?
-
-## References
-
-
-This theme supports rendering beautiful math in inline and display modes using [MathJax 3](https://www.mathjax.org/) engine.
-You just need to surround your math expression with `$$`, like `$$ E = mc^2 $$`.
-If you leave it inside a paragraph, it will produce an inline expression, just like $$ E = mc^2 $$.
-
-To use display mode, again surround your expression with `$$` and place it as a separate paragraph.
-Here is an example:
-
-$$
-\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
-$$
-
-Note that MathJax 3 is [a major re-write of MathJax](https://docs.mathjax.org/en/latest/upgrading/whats-new-3.0.html) 
-that brought a significant improvement to the loading and rendering speed, which is now 
-[on par with KaTeX](http://www.intmath.com/cg5/katex-mathjax-comparison.php).
-
-
-## Images and Figures
-
-Its generally a better idea to avoid linking to images hosted elsewhere - links can break and you
-might face losing important information in your blog post.
-To include images in your submission in this way, you must do something like the following:
-
-```markdown
-{% raw %}{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}{% endraw %}
-```
-
-which results in the following image:
-
-{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}
-
-To ensure that there are no namespace conflicts, you must save your asset to your unique directory
-`/assets/img/2024-05-07-[SUBMISSION NAME]` within your submission.
-
-Please avoid using the direct markdown method of embedding images; they may not be properly resized.
-Some more complex ways to load images (note the different styles of the shapes/shadows):
+The CLRS paper <d-cite key="velickovic2022clrs"></d-cite> provides us with a benchmark dataset for algorithmic reasoning. The general structure of the data is a sequence in time of intermediate states of a given algorithm. In other words, at timestep $$t$$ we have a state $$x_t$$ that describes various variables that the algorithm stores, e.g. in BellmanFord $$x_t$$ will contain the current estimate of the shortest path in each node of the graph. At each timestep $$t$$ we then try to predict the next time step, we do this by outputting some $$y_t$$. Note that $$y_t$$ may be slightly different from $$x_t$$ has some state may never change by definition, e.g. the graph in BellmanFord, hence we don't predict it again, and sometimes we simply predict the change, in which case we simply use $$y_t$$ to update $$x_t$ to get $$x_{t+1}$$. This is all illustrated in the next figure, which does split the state into a state at each node $$x$$ and at each edge $$e$$ for a given graph $$G$$ as an example.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-distill-example/9.jpg" class="img-fluid rounded z-depth-1" %}
     </div>
+</div>
+<div class="caption">
+    Algorithmic Reasoning Task, diagram recreated from <d-cite key="velickovic2020neural"></d-cite>
+</div>
+
+### The architecture
+
+The high-level architecture is that of an encoder-processor-decoder. The motivation is that neural networks perform well in high-dimensional spaces but that classical algorithms tend to operate on very low-dimensional variables, e.g. in BellmanFord the shortest distance would be a single scalar. Thus the encoder projects the state into a high-dimensional space $$z_t$$ where the main computation is then done by the processor network---typically a Graph Neural Network. The output of the processor $$z_{t+1}$$ is then decoded back into the low-dimensional space by the decoder. The encoder and decoders mostly consist of linear layers with the occasional softmax for categorical variables for instance. The processor will be a graph neural network several different architectures have been explored in  ... We either use the TripletMPNN from or a simple MPNN with a linear message layer.
+
+<div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-distill-example/9.jpg" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all.
+    High-level architecture employed
 </div>
+
+### Training
+
+Traditionally the training approach has been teacher-forcing. In teacher forcing we train each step of the algorithm independently by feeding the network the ground-truth $$x_t$$ and computing the loss against $$y_t$$ at all $$t$$ simultaneously. This requires us to know the exact number of steps in the algorithm a priori, which is unrealistic in practice. ...
+
+We train on examples of size 16 (i.e. the graph has 16 nodes) and at test time we will use 64 nodes.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/8.jpg" class="img-fluid z-depth-2" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/10.jpg" class="img-fluid z-depth-2" %}
+        {% include figure.html path="assets/img/2024-05-07-distill-example/9.jpg" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
-
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/11.jpg" class="img-fluid"  %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/12.jpg" class="img-fluid" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid" %}
-    </div>
+<div class="caption">
+    An example algorithm: Bellman-Ford <d-cite key="velickovic2022clrs"></d-cite>
 </div>
 
-## Citations
+## How can we do fixed-points in DNNs?
+As shown in <d-cite key="bai2019deep"></d-cite><d-cite key="baiblogpost"></d-cite>
 
-Citations are then used in the article body with the `<d-cite>` tag.
-The key attribute is a reference to the id provided in the bibliography.
-The key attribute can take multiple ids, separated by commas.
+$$z^* = f(z^*,x)$$
 
-The citation is presented inline like this: <d-cite key="gregor2015draw"></d-cite> (a number that displays more information on hover).
-If you have an appendix, a bibliography is automatically created and populated in it.
+In backprop, we ultimately want to compute 
 
-Distill chose a numerical inline citation style to improve readability of citation dense articles and because many of the benefits of longer citations are obviated by displaying more information on hover.
-However, we consider it good style to mention author last names if you discuss something at length and it fits into the flow well — the authors are human and it’s nice for them to have the community associate them with their work.
+$$ \left\frac{\del z^*(.)}{\del(.)}\right)^{\top} y$$
 
-***
+for some incoming gradient $$y$$ from the layers after and $$(.)$$ being anything we want, but usually the weights of the network. We can show by implicit differentation of $$z^* = f(z^*,x)$$ that
 
-## Footnotes
+$$ \left\frac{\del z^*(.)}{\del(.)}\right)^{\top} y = \left(\frac{\del f(z^*, x)}{\del (.)}\right)^{\top}\left(I-\frac{\del f(z^*, x)}{\del z^*}\right)^{-\top}y$$
 
-Just wrap the text you would like to show up in a footnote in a `<d-footnote>` tag.
-The number of the footnote will be automatically generated.<d-footnote>This will become a hoverable footnote.</d-footnote>
+Thus, leaving us with a linear system to solve
 
-***
+$$g = \left(I-\frac{\del f(z^*, x)}{\del z^*}\right)^{-\top}y$$
 
-## Code Blocks
+In general, we can try to solve it in two ways, use a linear system solver, like can be found torch.linalg, or by computing a fixed point to 
 
-This theme implements a built-in Jekyll feature, the use of Rouge, for syntax highlighting.
-It supports more than 100 languages.
-This example is in C++.
-All you have to do is wrap your code in a liquid tag:
+$$g = \left(\frac{\del f(z^*, x)}{\del z^*}\right)^{-\top}g +y$$
 
-{% raw  %}
-{% highlight c++ linenos %}  <br/> code code code <br/> {% endhighlight %}
-{% endraw %}
+We tried both, but stuck to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in future.
 
-The keyword `linenos` triggers display of line numbers. You can try toggling it on or off yourself below:
+### Tricks we employ
 
-{% highlight c++ %}
+To encourage convergence we change the update function to be a minimum update, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{(t+1)}')$$. This update rule is motivated by the problem of getting neural networks to converge to a fixed point. We discuss the effect of this in more detail after the experiments.
 
-int main(int argc, char const \*argv[])
-{
-string myString;
+To enable more ways for the gradient to inform early steps in the algorithm, we propagate the gradient through discrete $$y_t$$. In other words, for categorical variables in the state $$x_t$$ we employ the Rao-Blackwell straight-through gumbel softmax estimator<d-cite key="paulus2020raoblackwellizing"></d-cite> to allow gradients to flow. We name this hint propagation.
 
-    cout << "input a string: ";
-    getline(cin, myString);
-    int length = myString.length();
 
-    char charArray = new char * [length];
+## How well does it work?
 
-    charArray = myString;
-    for(int i = 0; i < length; ++i){
-        cout << charArray[i] << " ";
-    }
+In the table below we show the accuracy<d-footnote>What exactly is measured for the accuracy depends on each algorithm, but usually is a pointer, e.g. in the Bellman-Ford algorithm it is a pointer to the previous node along the shortest path. For more details see the CLRS Benchmark paper.</d-footnote> of the algorithms when tested on graphs of size 64.
 
-    return 0;
-}
+DEQ is our approach of reaching a fixed point together with the implicit differentiation explained above. Hint propagation is simply reaching a fixed point and back propagating through time with no implicit differentiation. Teacher forcing is the baselines, where the first number is the simple MPNN architecture<d-cite key="gilmer2017neural"></d-cite> and the second number is the more complex TripletMPNN <d-cite key="ibarz2022generalist"></d-cite> (these numbers are taken from the paper <d-cite key="ibarz2022generalist"></d-cite>). For BellmanFord and BFS we use the simple MPNN and for all others we use the TripletMPNN.
 
-{% endhighlight %}
+| Tables        | DEQ           | Hint propagation | Teacher forcing |
+| ------------- |:-------------:|:----------------:|:---------------:|
+| BellmanFord*  |     96.4%     |       96.7%      |     92%/97%     |
+| Dijkstra      |     78.8%     |       xx.x%      |     92%/96%     |
+| BFS*          |     98.2%     |       xx.x%      |    100%/100%    |
+| DFS           |     xx.x%     |        3.5%      |     7%/90%      |
+| MST-Kruskal   |     82.2%     |       82.3%      |     71%/90%     |
+| MST-Prim      |     75.2%     |       50.4%      |     71%/90%     |
 
-***
 
-## Diagrams
+As we can see in the table above the approach works very well for simpler algorithms such as BellmanFord and BFS, where with simple MPNN we manage to achieve equal or better accuracy than the simple MPNN and match the TripletMPNN. Interestingly, these are parallel algorithms, i.e. all node representations run the same code in constrast sequential algorithms go through the graph node by node. We did try gating to enable the GNN to better mimic a sequential algorithm, but this didn't help.
 
-This theme supports generating various diagrams from a text description using [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} plugin.
-Below, we generate a few examples of such diagrams using languages such as [mermaid](https://mermaid-js.github.io/mermaid/){:target="\_blank"}, [plantuml](https://plantuml.com/){:target="\_blank"}, [vega-lite](https://vega.github.io/vega-lite/){:target="\_blank"}, etc.
+On the other algorithms while we are able to learn we cannot match the performance of teacher forcing when we know the number of timesteps. This makes the comparison slightly unfair, however, it shows how learning a fixed point is difficult for the network as we are not able to match the performance. We hypothesis about why in the next section.
 
-**Note:** different diagram-generation packages require external dependencies to be installed on your machine.
-Also, be mindful of that because of diagram generation the first time you build your Jekyll website after adding new diagrams will be SLOW.
-For any other details, please refer to [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} README.
+## What's the problem?
 
-**Note:** This is not supported for local rendering! 
+There are a few major issues that we notice during training. The first is that the network is prone to underfitting, while we only show the test accuracy in the table above the training error doesn't actually reach 0. It is unclear what causes this, however, trying to solve some issues with the DEQ may solve this. So let's delve into them.
 
-The diagram below was generated by the following code:
+### Convergence is a key issue
 
-{% raw %}
-```
-{% mermaid %}
-sequenceDiagram
-    participant John
-    participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-{% endmermaid %}
-```
-{% endraw %}
+Firstly, the network will often take a large number of steps to reach a fixed point. We can see on easier algorithms like the BellmanFord algorithm that the number forward steps during training often reaches our set upper limit of 100 forwards steps (the actual algorithm would take on average 4-5, max 10 for this graph size). This is why we implement our architecture trick, where we update the next hidden representation only if it is smaller than the current one, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{(t+1)}')$$ where $$z^{(t+1)}'$$ is the output of our min aggregator in the message passing step (alternatives such as gating and an exponential moving average update function where also tried). This helps with convergence, which enables finding a fixed point in simple cases, but fails to work for more complex architectures and problems, while also introducing a different issue.   
 
-{% mermaid %}
-sequenceDiagram
-participant John
-participant Alice
-Alice->>John: Hello John, how are you?
-John-->>Alice: Great!
-{% endmermaid %}
+TODO: Plot the number of forward steps during training
 
-***
+### The problem with hard constraints to achieve convergence
 
-## Tweets
+Remember that during the implicit differentiation we are trying to solve
 
-An example of displaying a tweet:
-{% twitter https://twitter.com/rubygems/status/518821243320287232 %}
+$$g = \left(I-\frac{\del f(z^*, x)}{\del z^*}\right)^{-\top}y$$
 
-An example of pulling from a timeline:
-{% twitter https://twitter.com/jekyllrb maxwidth=500 limit=3 %}
+i.e. in the linear system $$y = Ax$$ our matrix $$A$$ is equal to $$I-J$$ where $$J$$ is the Jacobian in the above equation. If the Jacobian is equal to the identity then our matrix $A=0$ and our system has no solution. In practice, due $$z^{(t+1)} = \min(z^{(t)}, z^{(t+1)}')$$ many rows of the Jacobian will be the identity due to the function effectively becoming $$f(x)$$ in many dimensions.
 
-For more details on using the plugin visit: [jekyll-twitter-plugin](https://github.com/rob-murray/jekyll-twitter-plugin)
+One solution is to try a soft-min, i.e. $$softmin_{\tau}(a,b) = \frac{ae^{-a/\tau}+be^{-b/\tau}}{e^{-a/\tau}+e^{-b/\tau}}$$. Here we get the ability to trade off between convergence and the Jacobian being interesting. For $$\tau<<1$$ we basically recover the min operation and for $$\tau>>1$$ we simply get an average, i.e. an exponential moving average. In practice, there was a trade-off for which we consistently have an interesting Jacobian, while also converging sufficiently fast.
 
-***
+## What do we take away?
 
-## Blockquotes
+## References
 
-<blockquote>
-    We do not grow absolutely, chronologically. We grow sometimes in one dimension, and not in another, unevenly. We grow partially. We are relative. We are mature in one realm, childish in another.
-    —Anais Nin
-</blockquote>
-
-***
-
-
-## Layouts
-
-The main text column is referred to as the body.
-It is the assumed layout of any direct descendants of the `d-article` element.
-
-<div class="fake-img l-body">
-  <p>.l-body</p>
-</div>
-
-For images you want to display a little larger, try `.l-page`:
-
-<div class="fake-img l-page">
-  <p>.l-page</p>
-</div>
-
-All of these have an outset variant if you want to poke out from the body text a little bit.
-For instance:
-
-<div class="fake-img l-body-outset">
-  <p>.l-body-outset</p>
-</div>
-
-<div class="fake-img l-page-outset">
-  <p>.l-page-outset</p>
-</div>
-
-Occasionally you’ll want to use the full browser width.
-For this, use `.l-screen`.
-You can also inset the element a little from the edge of the browser by using the inset variant.
-
-<div class="fake-img l-screen">
-  <p>.l-screen</p>
-</div>
-<div class="fake-img l-screen-inset">
-  <p>.l-screen-inset</p>
-</div>
-
-The final layout is for marginalia, asides, and footnotes.
-It does not interrupt the normal flow of `.l-body`-sized text except on mobile screen sizes.
-
-<div class="fake-img l-gutter">
-  <p>.l-gutter</p>
-</div>
-
-***
-
-## Other Typography?
-
-Emphasis, aka italics, with *asterisks* (`*asterisks*`) or _underscores_ (`_underscores_`).
-
-Strong emphasis, aka bold, with **asterisks** or __underscores__.
-
-Combined emphasis with **asterisks and _underscores_**.
-
-Strikethrough uses two tildes. ~~Scratch this.~~
-
-1. First ordered list item
-2. Another item
-⋅⋅* Unordered sub-list. 
-1. Actual numbers don't matter, just that it's a number
-⋅⋅1. Ordered sub-list
-4. And another item.
-
-⋅⋅⋅You can have properly indented paragraphs within list items. Notice the blank line above, and the leading spaces (at least one, but we'll use three here to also align the raw Markdown).
-
-⋅⋅⋅To have a line break without a paragraph, you will need to use two trailing spaces.⋅⋅
-⋅⋅⋅Note that this line is separate, but within the same paragraph.⋅⋅
-⋅⋅⋅(This is contrary to the typical GFM line break behavior, where trailing spaces are not required.)
-
-* Unordered lists can use asterisks
-- Or minuses
-+ Or pluses
-
-[I'm an inline-style link](https://www.google.com)
-
-[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
-
-[I'm a reference-style link][Arbitrary case-insensitive reference text]
-
-[I'm a relative reference to a repository file](../blob/master/LICENSE)
-
-[You can use numbers for reference-style link definitions][1]
-
-Or leave it empty and use the [link text itself].
-
-URLs and URLs in angle brackets will automatically get turned into links. 
-http://www.example.com or <http://www.example.com> and sometimes 
-example.com (but not on Github, for example).
-
-Some text to show that the reference links can follow later.
-
-[arbitrary case-insensitive reference text]: https://www.mozilla.org
-[1]: http://slashdot.org
-[link text itself]: http://www.reddit.com
-
-Here's our logo (hover to see the title text):
-
-Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-Reference-style: 
-![alt text][logo]
-
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
-
-Inline `code` has `back-ticks around` it.
-
-```javascript
-var s = "JavaScript syntax highlighting";
-alert(s);
-```
- 
-```python
-s = "Python syntax highlighting"
-print(s)
-```
- 
-```
-No language indicated, so no syntax highlighting. 
-But let's throw in a <b>tag</b>.
-```
-
-Colons can be used to align columns.
-
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-There must be at least 3 dashes separating each header cell.
-The outer pipes (|) are optional, and you don't need to make the 
-raw Markdown line up prettily. You can also use inline Markdown.
-
-Markdown | Less | Pretty
---- | --- | ---
-*Still* | `renders` | **nicely**
-1 | 2 | 3
-
-> Blockquotes are very handy in email to emulate reply text.
-> This line is part of the same quote.
-
-Quote break.
-
-> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote. 
-
-
-Here's a line for us to start with.
-
-This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
-
-This line is also a separate paragraph, but...
-This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
