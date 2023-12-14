@@ -244,15 +244,15 @@ _feature learning in a non-linearly separable 2D dataset, lines are the activati
 
 ## Overview and Motivation
 
-50 years ago, two-layers networks with non-linear activations were known to be universal approximators, however they did not catch on as they were hard to train. The recent years have been marked by deeper networks ran on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimisation problem of tuning the weights (and biais) of the connections until the model is accurate enough. Best models usually requires the tuning of billions of such parameters and very large datasets. This in turn requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
+50 years ago, two-layers networks with non-linear activations were known to be universal approximators, however they did not catch on as they were hard to train. The recent years have been marked by deeper networks ran on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimisation problem of tuning the weights (and bias) of the connections until the model is accurate enough. Best models usually requires the tuning of billions of such parameters and very large datasets. This in turn requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
 
 Deep learning is not without faults. Even though the test performance can overpass those of many machine learning models, it is very hard to know what the network has actually learned because of its black box nature. Interpretability in neural networks is important because it may lead us to simpler models which are cheaper to run, are more robust to small changes in the input, and are easier to adapt to specific tasks. It is also one of the criteria for future trustworthy AI systems for many countries and regulations.
 
-In this objective of figuring out what does a neural network learn, we will focus in this post on the training a shallow ReLU network using vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
+With the objective of figuring out what does a neural network learn, we will focus in this post on the training a shallow ReLU network using vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
 
 ### Problem and notation
 
-Our problem of interest will be the training of a simple two layer neural network with ReLu activation (and no biais for simplicity of exposition). We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following and full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained by backpropagation for instance).
+Our problem of interest will be the training of a simple two layer neural network with ReLu activation. We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following and full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained by backpropagation for instance).
 
 <p class="framed">
     <b class="underline">Two-Layer ReLU Network Training</b><br>
@@ -282,7 +282,7 @@ _Loss landscape for two neurons($$w_1, w_2$$), two data points of a single-layer
 \end{equation}
 </p>
 
-We'll see in this blog post how to retrieve those two optimal neurons and how the data samples activate them using a convex problem.
+We'll see in this blog post how to retrieve those two optimal neurons by building an equivalent convex problem.
 
 ### Research context
 
@@ -411,7 +411,7 @@ using the mapping for each $$u_i, v_i$$:
 \end{align*}
 </p>
 
-$$\pmb{D}_i$$ are the activation matrix as described above (we had $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$), also called activation patterns. And for each neuron $$u_i$$, it is constrained so that it keep its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (Substracting the identity yield $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set $$\mathcal{K}$$ is simply the constraints for all $$m$$ neurons. It is directly convex.
+$$\pmb{D}_i$$ are the activation matrix as described above (we had $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$), also called activation patterns. And for each neuron $$u_i$$, it is constrained so that it keep its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (Substracting the identity yield $$(\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set $$\mathcal{K}$$ is simply the constraints for all $$m$$ neurons. It is directly convex.
 
 A few questions are left unanswered: what is the number of different activations and how many neurons should we consider for both convex and non-convex problems.
 
