@@ -240,7 +240,7 @@ $$
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser.gif" class="img-fluid" %}
 
-_feature learning in a non-linearly separable 2D dataset, lines are the activation region of each neuron_
+_Feature learning in a non-linearly separable 2D dataset_
 
 ## Overview and Motivation
 
@@ -533,6 +533,8 @@ We will compare the classical gradient descent to the convex reformulation metho
 todo: maybe more complex graph.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot.png" class="img-fluid" %}
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot_cmplx.png" class="img-fluid" %}
 
 Remarks: optimal convex loss only changes when the set of activation pattern change, and it's always lower than the non-convex loss by construction.
 
