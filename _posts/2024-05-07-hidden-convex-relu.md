@@ -23,13 +23,14 @@ bibliography: 2024-05-07-hidden-convex-relu.bib
 toc:
   - name: Overview and Motivation
     subsections:
+    - name: Problem and notation
     - name: Research context
-  - name: Convex reformulation
+  - name: Convex Reformulation
     subsections:
-    - name: ACTIVATION PATTERNS
+    - name: Multiplicative non-convexity
     - name: Specifics about equivalence
     - name: Extensions
-  - name: Is everything solved then? Can we forget the non-convex problem?
+  - name: Can we Forget the Non-Convex Problem?
     subsections:
     - name: A word on performance
     - name: Gradient Descent in the non-convex problem
@@ -240,7 +241,7 @@ $$
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser.gif" class="img-fluid" %}
 
-_Feature learning in a non-linearly separable 2D dataset_
+-> cvx optimal output vs GD output
 
 ## Overview and Motivation
 
@@ -429,7 +430,7 @@ In the non-convex problem, there are two local minima when we only consider one 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra8.png" class="img-fluid" %}
 
-As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex  (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minima in the non-convex gradient descent and only them, it is described by a convex problem, by considering one pattern or the other.
+As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex  (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minima in the non-convex gradient descent, then it can be described by a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
@@ -502,11 +503,9 @@ todo: Will probably remove this one :
 
 Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ <d-cite key="ergenDemystifyingBatchNormalization2021"></d-cite>. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent <d-cite key="sahinerVectoroutputReLUNeural2020"></d-cite>. Three-layer also has a convex equivalent using all possible combinations of two activation matrices. Moreover, parallel networks are also linked to a convex problem <d-cite key="wangParallelDeepNeural2022"></d-cite>. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games <d-cite key="sahinerHiddenConvexityWasserstein2021"></d-cite>.
 
-## Is everything solved then? Can we forget the non-convex problem?
+## Can We Forget the Non-Convex Problem?
 
-Our non-convex problem is equivalent to a well-specified and convex optimization problem with constraints. While the global optima is indeed well described, optimizing the non-convex problem almost always leads to a local minima. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. Among other things, we'll see that the convex reformulation cannot predict the nonconvex's local minima.
-
-### A word on performance
+### Solving the convex problem efficiently
 
 Backpropagation for deep ReLU Networks is so simple and fits dedicated hardware that it is hard to beat even with wiser and more complex tools. However, a lot of time is lost in rollbacks whenever a model reaches a bad minimum or gets stuck in training. Convex problems give some hope in directly solving the problem without any luck involved.
 
@@ -523,42 +522,41 @@ _Performance on popular dataset for a single layer network<d-cite key="mishkinFa
 
 A convex equivalent of deeper networks exists but exacerbates existing problems. The only way to make it possible is to optimize layer by layer. This is still a work in progress and needs further improvements to beat the usual methods in accuracy and speed.
 
-### Gradient Descent in the non-convex problem
+### Activation patterns are not a constant in the non-convex problem
 
-(((The goal here is to better understand the gradient descent dynamic of the non-convex problem. We'd like to know where we should start for the best results, and what kind of minima do we stop at.
+Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. While the global optima is indeed well described, optimizing the non-convex problem almost always leads to a local minima. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. Among other things, we'll see that the convex reformulation cannot predict the nonconvex's local minima.
 
 We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterparts associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot_cmplx.png" class="img-fluid" %}
 
-The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation patterns changes, and it's always lower than the non-convex loss by construction. Remark that it is not monotonous.
+The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation patterns changes, and it is always lower than the non-convex loss by construction. Remark that it is not monotonous.
 
-However, despite an equivalent convex problem existing, gradient descent will usually never reach the convex problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
-
-[gif of neurons that moves through activation lines and align themselves to something]
+Here we take two-dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif1.gif" class="img-fluid" %}
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif2.gif" class="img-fluid" %}
 
-Here we take two-dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
-
 ### On large initialisation scale
 
-So the scale is about neuron scale, if we take very big neurons at the start, and use a stepsize small enough that we keep close to the gradient Flow, this is what we get :
+We say we're on a large scale when neurons do not move far from their initial value during descent. And this typically happens when using large initial values for the paremeters of each neurons.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif3.gif" class="img-fluid" %}
 
+todo: add cvx optimal output to this gif
+
+The theory is that you can push the scale high enough that neurons do not change their activation patterns at all. If this is verified, the convex reformulation will describe exactly the minima that the gradient descent will reach. However in practice it is not possible to observe as the loss becomes very small and the training is too slow to compute to the end. The NTK briefly mentionned in the introduction operate in this setting, using the fact that the network is very close to its linear approximation. On a similar note, reducing the step size for the first layer will also guarantee convergence<d-cite key="marionLeveragingTwoTimescale2023"></d-cite></d-footnote>.
 
 ### On very small initialisation
 
-As seen on this paper https://arxiv.org/pdf/2206.00939.pdf, it's interesting to consider small init.
+At the other extreme, the small scale setting effectively let neurons align themselves before ever decreasing the loss. In theory, if you push the scale down enough, neurons will converge to a finite set of direction before trying to fit the objective.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_out.gif" class="img-fluid" %}
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_data.gif" class="img-fluid" %}
+If you take orthogonal data and a small scale, the behavior is very predictable<d-cite key="boursierGradientFlowDynamics2022c"></d-cite> even in a regression setting.
 
-In this setting, there is a first phase where neurons only significantly change in direction, and those direction can be computed. All the results in the paper count on the fact that this phase is long enough that we know which direction are strongly weighted, and that after this neurons will not change patterns anymore (or not significantly.)
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_data.gif" class="img-fluid" %}
 
 ## Conclusion
 
