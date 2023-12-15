@@ -229,6 +229,7 @@ $$
 \newcommand{\param}{\theta}
 \newcommand{\dirac}{\delta}
 
+\definecolor{cvred}{RGB}{230, 29, 0}
 \definecolor{cred}{RGB}{230, 159, 0}
 \definecolor{cblue}{RGB}{86, 180, 233}
 \def\czero{ {\color{cred}{0}} }
@@ -465,10 +466,27 @@ __Two-Dimensional Data.__
 
 In the previous part, we considered data to be one-dimensional, in this case, there are only two possible activation patterns. Let's now consider two-dimensional data. To do so in the simplest way possible, we will consider regular one-dimensional data and a dimension filled with $$1$$s. This will effectively give the neural network a _bias_ to use (since we only have one layer) without modifying the formulas.
 
-On the __left__ we plot the output of one ReLU unit, on the __right__ we plot the two regions divided by the neuron's activation line $$\{ \pmb{a} \in \RR^2 : \pmb{w}^\top \pmb{a} = 0\}$$. The effect of the ReLU is 0 on $$\pmb{x_1}$$ and 1  $$\pmb{x_2}$$. The activation pattern is therefore $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
+We consider two data points: $$\color{cvred}{\pmb{x_1}} = (0.2, 1)$$ and $$\color{cvred}{\pmb{x_2}} = (1, 1)$$, each associated with their label $$y_1 = 1$$ and $$y_2 = 1$$. We plot the output of one ReLU unit. We initialize our neuron at $$\pmb{w}_1 = (0.3, 0.15)$$, $$\alpha_1 = 1$$. Therefore we have that $$max(0, \pmb{w_1}^\top \pmb{x_1}) = 0$$ and $$max(0, \pmb{w}_1^\top \pmb{x_2}) = \pmb{w}_1^\top \pmb{x_2}$$. The activation pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra4.png" class="img-fluid" %}
 
+One point of interest, is the data for which the ReLU will be 0. This is where the output changes its slope: $$a_1 = -\frac{w_1^1}{w_1^2}$$ where $$w_1^i$$ is the i-th coordinate of $$\pmb{w}_i$$. Here, $$a_1 = 0.5$$. We call this the _activation point_ of the neuron $$\pmb{w}_1$$.
+
+We plot the $$\color{cblue}{\text{output}}$$ of the network in function of first dimension of the data $$x^1$$ here simply written $$x$$: $$max(0, \pmb{w_1}^\top (x, 1))$$
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/firstexpl.png" class="img-fluid" %}
+
+
+__Illustration__.
+
+In the animation below, we train this network using classic gradient descent on the two data point $$\pmb{x}_1$$ and $$\pmb{x}_2$$. We plot its output in blue for every possible data point(omitting the second dimension as it it always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame correspond to one step of gradient descent with a relatively small learning rate. We mark the activation point of the neuron by a green triangle, pointed toward which side the neuron activate. The green triangle's height is the slope of the ReLU's output, equal to $$w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
+
+Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, $$\pmb{x}_2$$. As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs $$\pmb{x}_1$$, it activates it and starts fitting both points at the same time.
+
+
+<div style="display: none">
+{<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
 
 Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$ as their activation pattern. We can plot this region on the data graph, as data and neurons have the same dimension.
 
@@ -486,11 +504,8 @@ Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\l
 </style>
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra6.png" class="img-fluid hcenter fifty" %}
-
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
+, on the __right__ we plot the two regions divided by the neuron's activation line $$\{ \pmb{a} \in \RR^2 : \pmb{w}^\top \pmb{a} = 0\}$$. 
+</div>
 
 ### Extensions of the convex reformulation to other settings
 
@@ -527,9 +542,14 @@ The staircase-shaped graph of the optimal convex loss comes from the fact that t
 
 Here we take two-dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
+
+<div style="display: none">
+
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif1.gif" class="img-fluid" %}
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif2.gif" class="img-fluid" %}
+
+</div>
 
 ### On large initialisation scale
 
