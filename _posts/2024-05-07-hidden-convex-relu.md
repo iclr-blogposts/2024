@@ -303,7 +303,6 @@ Consider a network with a single ReLU neuron. We plot its output against two dat
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra11.png" class="img-fluid" %}
 
-todo: wrong side blue dot; write formulas for output; match color
 
 We also plot its loss. Here is the explicit and expanded-out formula:
 
@@ -494,11 +493,6 @@ Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\l
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
 
-
-todo: Will probably remove this one :
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra5.png" class="img-fluid" %}
-
 ### Extensions of the convex reformulation to other settings
 
 Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ <d-cite key="ergenDemystifyingBatchNormalization2021"></d-cite>. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent <d-cite key="sahinerVectoroutputReLUNeural2020"></d-cite>. Three-layer also has a convex equivalent using all possible combinations of two activation matrices. Moreover, parallel networks are also linked to a convex problem <d-cite key="wangParallelDeepNeural2022"></d-cite>. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games <d-cite key="sahinerHiddenConvexityWasserstein2021"></d-cite>.
@@ -544,8 +538,6 @@ We say we're on a large scale when neurons do not move far from their initial va
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif3.gif" class="img-fluid" %}
 
-todo: add cvx optimal output to this gif
-
 The theory is that you can push the scale high enough that neurons do not change their activation patterns at all. If this is verified, the convex reformulation will describe exactly the minima that the gradient descent will reach. However in practice it is not possible to observe as the loss becomes very small and the training is too slow to compute to the end. The NTK briefly mentionned in the introduction operate in this setting, using the fact that the network is very close to its linear approximation. On a similar note, reducing the step size for the first layer will also guarantee convergence<d-cite key="marionLeveragingTwoTimescale2023"></d-cite></d-footnote>.
 
 ### On very small initialisation
@@ -565,11 +557,3 @@ The main takeaway is that the best network for a given dataset can be found exac
 As we conclude, the tension between the computational demands of cutting-edge models and the necessity for interpretability becomes apparent. Unveiling the intricacies of training offers a glimpse into simpler, more transparent models, fostering adaptability and responsiveness in the evolving landscape of artificial intelligence. This duality of complexity and clarity underscores the ongoing quest for a more responsible and effective future in machine learning.
 
 Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minima.
-
-## todo
-
-- check if 6 <= length <= 10
-- replace () by footnotes
-- check all references
-- table of content
-- optima/optimum confusion everywhere
