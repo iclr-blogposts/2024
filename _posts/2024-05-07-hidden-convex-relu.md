@@ -500,19 +500,19 @@ todo: Will probably remove this one :
 
 ### Extensions of the convex reformulation to other settings
 
-Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ <d-cite key="ergenDemystifyingBatchNormalization2021"></d-cite>. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent <d-cite key="sahinerVectoroutputReLUNeural2020"></d-cite>. Three-layer also has a convex equivalent using all possible combinations of two activation matrix. Moreover, parallel networks are also linked to a convex problem <d-cite key="wangParallelDeepNeural2022"></d-cite>. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games <d-cite key="sahinerHiddenConvexityWasserstein2021"></d-cite>.
+Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ <d-cite key="ergenDemystifyingBatchNormalization2021"></d-cite>. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent <d-cite key="sahinerVectoroutputReLUNeural2020"></d-cite>. Three-layer also has a convex equivalent using all possible combinations of two activation matrices. Moreover, parallel networks are also linked to a convex problem <d-cite key="wangParallelDeepNeural2022"></d-cite>. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games <d-cite key="sahinerHiddenConvexityWasserstein2021"></d-cite>.
 
 ## Is everything solved then? Can we forget the non-convex problem?
 
-Our non-convex problem is equivalent to a well specified and convex optimisation problem with constraints. While the global optima is indeed well described, optimizing the non-convex problem almost always lead to a local minima. Because there is too many activation to consider them all, the convex problem will also only find a local minima. Among other things, we'll see that the convex reformulation cannot predict the non-convex's local minima.
+Our non-convex problem is equivalent to a well-specified and convex optimization problem with constraints. While the global optima is indeed well described, optimizing the non-convex problem almost always leads to a local minima. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. Among other things, we'll see that the convex reformulation cannot predict the nonconvex's local minima.
 
 ### A word on performance
 
-Backpropagation for deep ReLU Networks is so simple and fits dedicated hardware that it is hard to beat even with wiser and more complex tools. However, a lot of time is lost in rollbacks whenever a model reachs a bad minima or get stuck in training. Convex problems gives some hope into directly solving the problem without any luck involved.
+Backpropagation for deep ReLU Networks is so simple and fits dedicated hardware that it is hard to beat even with wiser and more complex tools. However, a lot of time is lost in rollbacks whenever a model reaches a bad minimum or gets stuck in training. Convex problems give some hope in directly solving the problem without any luck involved.
 
-In complexity terms, the convex formulation with all activations allows algorithm in polynomial time for all parameters but the rank of the data matrix<d-cite key="pilanciNeuralNetworksAre2020"></d-cite>. In practice and with usual datasets, the rank is high and there will be too many patterns to consider them all.
+In complexity terms, the convex formulation with all activations allows the algorithm in polynomial time for all parameters but the rank of the data matrix<d-cite key="pilanciNeuralNetworksAre2020"></d-cite>. In practice and with usual datasets, the rank is high and there will be too many patterns to consider them all.
 
-There has been some work focused on solving the convex problem quickly<d-cite key="mishkinFastConvexOptimization2022a"></d-cite><d-cite key="baiEfficientGlobalOptimization2022"></d-cite>. The first attempt is to take a random subset of activation patterns and using standard convex solvers. Current convex solvers(ECOS, ...) are not tailored to problem with many constraints. There is some hope in considering the unconstrained version of the problem to build an approximation. In most deep learning scenarios, it is hard to be faster than a simple gradient descent running on GPUs. 
+There has been some work focused on solving the convex problem quickly<d-cite key="mishkinFastConvexOptimization2022a"></d-cite><d-cite key="baiEfficientGlobalOptimization2022"></d-cite>. The first attempt is to take a random subset of activation patterns and use standard convex solvers. Current convex solvers (ECOS, ...) are not tailored to problems with many constraints. There is some hope in considering the unconstrained version of the problem to build an approximation. In most deep learning scenarios, it is hard to be faster than a simple gradient descent running on GPUs. 
 
 | Dataset  | Convex | Adam | SGD  | Adagrad |
 |----------|--------|------|------|---------|
@@ -521,19 +521,19 @@ There has been some work focused on solving the convex problem quickly<d-cite ke
 
 _Performance on popular dataset for a single layer network<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>._
 
-A convex equivalent of deeper networks exists but exacerbate existing problems. The only way to make it possible is to optimise layer by layer. This is still a work in progress and needs further improvements to beat usual methods in accuracy and speed.
+A convex equivalent of deeper networks exists but exacerbates existing problems. The only way to make it possible is to optimize layer by layer. This is still a work in progress and needs further improvements to beat the usual methods in accuracy and speed.
 
 ### Gradient Descent in the non-convex problem
 
-(((The goal here is to better understand the gradient descent dynamic of the non-convex problem. We'd like to know where we should start for best results, what kind of minima do we stop at.
+(((The goal here is to better understand the gradient descent dynamic of the non-convex problem. We'd like to know where we should start for the best results, and what kind of minima do we stop at.
 
-We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterpart associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
+We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterparts associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot_cmplx.png" class="img-fluid" %}
 
-The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation pattern change, and it's always lower than the non-convex loss by construction. Remark that it is not monotonous however.
+The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation patterns changes, and it's always lower than the non-convex loss by construction. Remark that it is not monotonous.
 
-However, despite an equivalent convex problem existing, gradient descent will usually never reach the convex's problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
+However, despite an equivalent convex problem existing, gradient descent will usually never reach the convex problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
 
 [gif of neurons that moves through activation lines and align themselves to something]
 
@@ -541,11 +541,11 @@ However, despite an equivalent convex problem existing, gradient descent will us
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif2.gif" class="img-fluid" %}
 
-Here we take two dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insights as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
+Here we take two-dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
 ### On large initialisation scale
 
-So scale is about neuron scale, if we take very big neurons at the start, and use a stepsize small enough that we keep close to the gradient Flow, this is what we get :
+So the scale is about neuron scale, if we take very big neurons at the start, and use a stepsize small enough that we keep close to the gradient Flow, this is what we get :
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif3.gif" class="img-fluid" %}
 
