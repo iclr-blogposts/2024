@@ -526,18 +526,15 @@ A convex equivalent of deeper networks exists but exacerbate existing problems. 
 
 ### Gradient Descent in the non-convex problem
 
-We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterpart associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern.
+(((The goal here is to better understand the gradient descent dynamic of the non-convex problem. We'd like to know where we should start for best results, what kind of minima do we stop at.
+
+We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterpart associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
+
+todo: maybe more complex graph.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot.png" class="img-fluid" %}
 
-
-First, let's consider a more complex example than in the previous section to verify in experiments that we can solve a convex problem to get the global optima of the usual non-convex one.
-
-We have X data points in 2 dimensions, and a total of  Y total patterns. We thus assign two neurons to each regions. We will plot the optimal neurons and observe that many are zero.
-
-We also plot the result of gradient descent
-
-The goal here is to better understand the gradient descent dynamic of the non-convex problem. We'd like to know where we should start for best results, what kind of minima do we stop at.
+Remarks: optimal convex loss only changes when the set of activation pattern change, and it's always lower than the non-convex loss by construction.
 
 However, despite an equivalent convex problem existing, gradient descent will usually never reach the convex's problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
 
