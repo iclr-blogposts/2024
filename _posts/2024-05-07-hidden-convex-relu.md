@@ -324,11 +324,13 @@ Consider a network with a single ReLU neuron. We plot its output against two dat
 
 __Multiplicative non-convexity.__
 
-If we ignore ReLU for a moment, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables. However, this non-convexity can be ignored by considering the convex equivalent problem  $$(x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ and then mapping back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs and minima are the same. They are equivalent because they have the same expressivity.
+If we ignore ReLU for a moment, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables. However, this non-convexity can be ignored for positive outputs by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ is a summary variable for $w_1 \alpha_1$ and then mapping back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs and minima are the same for positive outputs and so they are equivalent because they have the same expressivity in that case.
 
-Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity: $$\alpha_1$$ can be negative! Here the convex equivalent problem would require two variables $$u_1$$ and $$v_1$$ to represent a neuron with a positive second layer and a neuron with a negative second layer as follows: $$(\max(0, x_1 u_1) - \max(0, x_1 v_1) - y_1)^2 + \lambda (\vert u_1 \vert + \vert v_1 \vert)$$. At the optimum, only one of the two will be non-zero. We simply use the same mapping as before for $$u_1$$, however if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
+Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity in general as $$\alpha_1$$ can be negative (to produce negative outputs) ! Here the convex equivalent problem requires two variables $$u_1$$ and $$v_1$$ to represent a neuron with a positive second layer and a neuron with a negative second layer and form a loss function $$(u_1,v_1)\mapsto(\max(0, x_1 u_1) - \max(0, x_1 v_1) - y_1)^2 + \lambda (\vert u_1 \vert + \vert v_1 \vert)$$ for *non-negative* values of $u_1$ and $v_1$. This is indeed a convex objective, with convex constraints (non-negativity).  At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
 
-__Non-Linear convexity.__
+__Activation.__
+
+As noticed previously, the activation of data points plays a big role in the loss. Assuming that we only need a positive neuron, the considered loss is:
 
 <p>
 \begin{equation}
@@ -338,7 +340,7 @@ __Non-Linear convexity.__
 
 _For simplicity, we'll assume that we only need positive neurons to solve the problem, thus we only consider $$u_1$$ to be non-zero_
 
-Now let's try to resolve the non-convexity emerging from using ReLU. Notice that starting from the current initialization, the ReLU zeroes out the first example and is linear for $$x_2$$. If we fix the ReLU's activation to this behavior and __replace the max__ by simply $$\czero$$ or $$\cone$$:
+If we come back to our previous example where $x_2>0$ is activated and not $x_1<0$. If we fix the ReLU's activation to this behavior and __replace the max__ by simply $$\czero$$ or $$\cone$$:
 
 <p>
 \begin{equation}
@@ -346,7 +348,7 @@ Now let's try to resolve the non-convexity emerging from using ReLU. Notice that
 \end{equation}
 </p>
 
-Then this problem is convex! It has a unique solution. Before solving it, the formula can be simplified by using vectors and matrices for the data:
+Then this problem is convex and has a unique solution. The formula can be  further simplified by introducing the *diagonal activation matrix*  of the data as follows:
 
 <p>
 \begin{equation}
@@ -356,16 +358,18 @@ Then this problem is convex! It has a unique solution. Before solving it, the fo
 \end{equation}
 </p>
 
-If we solve this problem, we only find one of the two local optima. If we choose the wrong activation matrix, it won't be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minima.
+If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minima.
 
 
 __Equivalent Convex problem.__
+
+Now, let us see how we can fit two data points, *ie* having both data points activated. To do so, we have to gather the two activation patterns, each activated by  a separate neuron:
 
 <p>
 \begin{equation}
 \mathcal{L}(u_1, u_2)=
 \bigg\| \begin{bmatrix} \czero & 0 \\ 0 & \cone \end{bmatrix}
-\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_1 - \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} +
+\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_1  +
 \begin{bmatrix} \cone & 0 \\ 0 & \czero \end{bmatrix}
 \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_2 - \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \bigg\|_2^2 + \lambda (| u_1 | + | u_2 |)
 \end{equation}
@@ -373,8 +377,7 @@ __Equivalent Convex problem.__
 
 If we optimize this, the found $$u_1$$ can be negative, and $$u_2$$ positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
 
-Indeed, we have to constrain the two variables so that when mapped back to the original problem they keep the same activation.
-
+To overcome this problem, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>.</d-footnote> If we translate mathematically the fact that the neuron $1$ activates $x_2$ and the neuron $2$ activates $x_1$, we obtain 
 <p>
 \begin{align*}
 u_1 x_1 &< 0 & u_2 x_1 &\geq 0 \\
@@ -382,7 +385,7 @@ u_1 x_2 &\geq 0 & u_2 x_2 &< 0 \\
 \end{align*}
 </p>
 
-Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$. (Because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem: $$(u_1, u_2) = (1.95, -0.95)$$ and use this mapping:
+Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem formed of the convex objective and the convex constraints detailed above. We obtain $$(u_1, u_2) = (1.95, -0.95)$$ and use the mapping:
 
 <p>
 \begin{align*}
@@ -391,37 +394,36 @@ Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$. (Because $$x_1=-1, x_
 \end{align*}
 </p>
 
-to get the optimal solution to the non-convex ReLU problem that has at least 2 neurons.
+to get the optimal *global* solution to the problem of fitting two data points with a single layer ReLU network. In order to reformulate the non-convex problem into this convex one, we had to introduce (at least) 2 neurons; otherwise, it would have been impossible to reach the *global* minimizer which is our object of study here, since we want to be as expressive as possible.
 
 __General Case.__
 
-Non-convex two-layer ReLU network:
-
+Let us consider a general (non-convex) two-layer ReLU network with an input of size $d$, an output of size $1$ and a hidden layer of size $m$. With $n$ datapoints, the full loss is 
 <p>
 \begin{equation}
     \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \| \sum_{i=1}^m \max(0, \pmb{X} \pmb{w}_i) \alpha_i - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2
-\end{equation}
+\end{equation} 
 </p>
 
-Equivalent convex problem:
-
+By analogy with what we saw earlier, an equivalent convex problem can be found as
 <p>
 \begin{equation}
     \min_{\pmb{U}, \pmb{V} \in \mathcal{K}} \| \sum_{i=1}^m \pmb{D}_i \pmb{X} (\pmb{u}_i - \pmb{v}_i) - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{u}_i \|_2 + \| \pmb{v}_i \|_2
 \end{equation}
 </p>
+where $$\pmb{D}_i$$ are the activation matrix/pattern as described above. For each neuron $$u_i$$, it is constrained so that it keeps its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (Substracting the identity to $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ yield $$(\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set of the constraints $$\mathcal{K}$$ is the concatenation of these constraints for all the neurons plus the non-negativity constraints. It is directly convex.
 
-Here's the mapping from the convex neurons $$u_i$$ to the non-convex neurons $$(w_i, \alpha_i)$$:
+From a solution of the problem, the *convex neurons* $$u_i$$ can be mapped to the *non-convex neurons* $$(w_i, \alpha_i)$$ by
 <p>
 \begin{align*}
-(w_i, \alpha_i) &= (\frac{u_i}{\sqrt{u_i}}, \sqrt{u_i}) \\
+(w_i, \alpha_i) &= (\frac{u_i}{\sqrt{u_i}}, \sqrt{u_i}) & \text{   if $u_i$ is positive}\\
 (w_i, \alpha_i) &= (\frac{v_i}{\sqrt{v_i}}, - \sqrt{v_i}) & \text{   if $u_i$ is zero}\\
 \end{align*}
 </p>
 
-$$\pmb{D}_i$$ are the activation matrix as described above (we had $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$), also called activation patterns. And for each neuron $$u_i$$, it is constrained so that it keeps its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (Substracting the identity yield $$(\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set $$\mathcal{K}$$ is the constraint set for all $$m$$ neurons. It is directly convex.
 
-A few questions are left unanswered: what is the number of different activations and how many neurons should we consider for both convex and non-convex problems?
+Here, we fixed the number of neurons and the corresponding activations. 
+A few questions are thus left unanswered: what is the number of different activations and how many neurons should we consider for both convex and non-convex problems?
 
 ### Specifics about equivalence
 
@@ -453,7 +455,7 @@ In this case, the convex problem
 \begin{equation}
 \mathcal{L}(u_1, u_2)=
 \bigg\| \begin{bmatrix} \czero & 0 \\ 0 & \cone \end{bmatrix}
-\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_1 - \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} +
+\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_1 +
 \begin{bmatrix} \cone & 0 \\ 0 & \czero \end{bmatrix}
 \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} u_2 - \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} \bigg\|_2^2 + \lambda (| u_1 | + | u_2 |)
 \end{equation}
@@ -465,7 +467,7 @@ is equivalent to the non-convex problem. Solving it will give the global optima.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra10.png" class="img-fluid" %}
 
-This would be the usual minima found by GD. Here we have much more neurons than there are existing patterns (while this is unlikely, many neurons do end up in the same pattern in practice). However, we can merge (simply summing neurons together to get a new one) neurons in the same pattern without changing the output nor the loss (regularization might change). This generalize and is at the core of the proof.
+This would be the usual minima found by GD. Here we have much more neurons than there are existing patterns (while there is much less neurons than activations in most situations, many neurons do end up in the same pattern in practice). However, we can merge (simply summing neurons together to get a new one) neurons in the same pattern without changing the output nor the loss (regularization might change). This generalize and is at the core of the proof.
 
 ### Activation Patterns
 
@@ -475,19 +477,19 @@ __Two-Dimensional Data.__
 
 In the previous part, we considered data to be one-dimensional, in this case, there are only two possible activation patterns. Let's now consider two-dimensional data. To do so in the simplest way possible, we will consider regular one-dimensional data and a dimension filled with $$1$$s. This will effectively give the neural network a _bias_ to use (since we only have one layer) without modifying the formulas.
 
-We consider two data points: $$\color{cvred}{\pmb{x_1}} = (0.2, 1)$$ and $$\color{cvred}{\pmb{x_2}} = (1, 1)$$, each associated with their label $$y_1 = 1$$ and $$y_2 = 1$$. We plot the output of one ReLU unit. We initialize our neuron at $$\pmb{w}_1 = (0.3, 0.15)$$, $$\alpha_1 = 1$$. Therefore we have that $$max(0, \pmb{w_1}^\top \pmb{x_1}) = 0$$ and $$max(0, \pmb{w}_1^\top \pmb{x_2}) = \pmb{w}_1^\top \pmb{x_2}$$. The activation pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
+We consider two data points: $$\color{cvred}{\pmb{x_1}} = (0.2, 1)$$ and $$\color{cvred}{\pmb{x_2}} = (1, 1)$$, each associated with their label $$y_1 = 1$$ and $$y_2 = 1$$. We plot the output of one ReLU unit. We initialize our neuron at $$\pmb{w}_1 = (0.3, 0.15)$$, $$\alpha_1 = 1$$. Therefore we have that $$\max(0, \pmb{w_1}^\top \pmb{x_1}) = 0$$ and $$\max(0, \pmb{w}_1^\top \pmb{x_2}) = \pmb{w}_1^\top \pmb{x_2}$$. The activation pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
 
 
 One point of interest, is the data for which the ReLU will be 0. This is where the output changes its slope: $$a_1 = -\frac{w_1^1}{w_1^2}$$ where $$w_1^i$$ is the i-th coordinate of $$\pmb{w}_i$$. Here, $$a_1 = 0.5$$. We call this the _activation point_ of the neuron $$\pmb{w}_1$$.
 
-We plot the $$\color{cblue}{\text{output}}$$ of the network in function of first dimension of the data $$x^1$$ here simply written $$x$$: $$max(0, \pmb{w_1}^\top (x, 1))$$
+We plot the $$\color{cblue}{\text{output}}$$ of the network in function of first dimension of the data $$x^1$$ here simply written $$x$$: $$\max(0, \pmb{w_1}^\top (x, 1))$$
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/firstexpl.png" class="img-fluid" %}
 
 
 __Illustration__.
 
-In the animation below, we train this network using classic gradient descent on the two data point $$\pmb{x}_1$$ and $$\pmb{x}_2$$. We plot its output in blue for every possible data point(omitting the second dimension as it it always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame correspond to one step of gradient descent with a relatively small learning rate. We mark the activation point of the neuron by a green triangle, pointed toward which side the neuron activate. The green triangle's height is the slope of the ReLU's output, equal to $$w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
+In the animation below, we train this network using classic gradient descent on the two data point $$\pmb{x}_1$$ and $$\pmb{x}_2$$, represented by the red crosses. We plot its output in blue for every possible data point (omitting the second dimension as it it always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame correspond to one step of full-batch gradient descent with a small learning rate. We mark the activation point of the neuron by a green triangle, pointed towards which side the neuron activate. The green triangle's height is the slope of the ReLU's output, equal to $$u_1^1 = w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
 
