@@ -203,6 +203,7 @@ _styles: >
   .underline {
     text-decoration: underline;
   }
+
 ---
 
 <!-- some latex shortcuts -->
@@ -482,11 +483,13 @@ In the animation below, we train this network using classic gradient descent on 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
 
-Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, $$\pmb{x}_2$$. As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs $$\pmb{x}_1$$, it activates it and starts fitting both points at the same time. Its activation pattern is now $$\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)$$
+Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, $$\color{cvred}{\pmb{x}_2}$$. As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs $$\color{cvred}{\pmb{x}_1}$$, it activates it and starts fitting both points at the same time. Its activation pattern is now $$\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)$$
 
 Adding more neuron will not create additional activation patterns, adding more data point will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. Here we plot in blue the individual output and activation point of each of these ten possible ReLU.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/manyexpl.png" class="img-fluid" %}
+
+When moving the activation point between two data points, the activation pattern do not change
 
 In higher dimension we cannot visualize the activation patterns as easily, but we can understand that as high dimension increase, more patterns are possible as it's easier to separate different data points.
 
@@ -516,7 +519,7 @@ Batch Normalization (BN) is a key process that adjusts a batch of data to have a
 
 ## Can We Forget the Non-Convex Problem?
 
-### Solving the convex problem efficiently
+### Solving the convex problem efficiently is hard
 
 Backpropagation for deep ReLU Networks is so simple and fits dedicated hardware that it is hard to beat even with wiser and more complex tools. However, a lot of time is lost in rollbacks whenever a model reaches a bad minimum or gets stuck in training. Convex problems give some hope in directly solving the problem without any luck involved.
 
@@ -535,7 +538,7 @@ A convex equivalent of deeper networks exists but exacerbates existing problems.
 
 ### Activation patterns are not a constant in the non-convex problem
 
-Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. While the global optima is indeed well described, optimizing the non-convex problem almost always leads to a local minima. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. Among other things, we'll see that the convex reformulation cannot predict the nonconvex's local minima.
+Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. While the global optima is indeed well described, optimizing the non-convex problem almost always leads to a local minima. Because there are too many activations to consider them all, the convex problem will also only find a local minima. Among other things, we'll see that the convex reformulation cannot predict the nonconvex's local minima.
 
 We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterparts associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
 
