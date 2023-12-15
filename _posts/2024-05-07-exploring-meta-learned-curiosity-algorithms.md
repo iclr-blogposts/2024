@@ -63,7 +63,7 @@ Here we dive into background.
 
 RL is inspired by how biological systems learn as animals are to able learn through trail-and-error. In RL we have an agent that tries to maximise the sum of rewards it recieves by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
 
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/MDP.png" class="img-fluid" width="400px" %}
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/MDP.png" class="img-fluid" width="100px" %}
 <div class="caption">
     Figure 1. The agent-environment interaction as a MDP. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
@@ -73,7 +73,7 @@ As Sutton et al. highlighted in <d-cite key="sutton2018intro"></d-cite> Figure 1
 Thus the critic can also be in inside the RL agent.
 The Figure below shows an extended view of the agent-environment interactions.
 
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/extended_mdp.png" class="img-fluid" width="400px" %}
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/extended_mdp.png" class="img-fluid" width="200px" %}
 <div class="caption">
     Figure 2. The extended agent-environment interaction. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
@@ -82,13 +82,14 @@ Singh et al. highlight in <d-cite key="singh2004intri"></d-cite> that Figure 2 s
 
 ### Meta-RL and Meta-learning
 
-The next stop on our journey takes us to meta-learning. Meta-learning is about learning how to to learn. Ideally we want our agents to improve their learning ability over time. 
-There are two two loops involved in meta-learning: The inner loop and the outer loop. In the inner loop our learning algorithm solves a new task, using experience and it obtained from solving other tasks in the outer loop. We refer to inner-loop as adaptation and the outer-loop stage as meta-training <d-cite key="beck2023survey"></d-cite>. While the inner loop concerns itself with a single task, the outer loop concerns itself with distribution of tasks. The figure below illsutrates the idea of meta-learning:
+The next stop on our journey takes us to meta-learning. Meta-learning is about learning how to to learn. Ideally we want our meta-learning agents to improve their learning ability over time generalise to new unseen task.
+There are two two loops involved in meta-learning: The inner loop and the outer loop. In the inner loop our learning algorithm solves a new task, using experience and it obtained from solving other tasks in the outer loop. We refer to inner-loop as adaptation and the outer-loop stage as meta-training <d-cite key="beck2023survey"></d-cite>. While the inner loop concerns itself with a single task, the outer loop concerns itself with distribution of tasks. The figure below illustrates the idea of meta-learning.
 
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/meta-learning.png" class="img-fluid" width="400px" %}
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/meta-learning.png" class="img-fluid"  %}
 <div class="caption">
     Figure 3. An illustration of meta-learning. Taken from <d-cite key="huisman2021survey"></d-cite>.
 </div>
+Meta-learning in RL, known as meta-RL, is when the agent is learning how to reinforce learn <d-cite key="beck2023survey"></d-cite>. We have a distribution of MDPs.
 
 ### RND
 
