@@ -482,14 +482,17 @@ In the animation below, we train this network using classic gradient descent on 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
 
-Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, $$\pmb{x}_2$$. As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs $$\pmb{x}_1$$, it activates it and starts fitting both points at the same time.
+Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, $$\pmb{x}_2$$. As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs $$\pmb{x}_1$$, it activates it and starts fitting both points at the same time. Its activation pattern is now $$\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)$$
 
+Adding more neuron will not create additional activation patterns, adding more data point will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. Here we plot in blue the individual output and activation point of each of these ten possible ReLU.
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/manyexpl.png" class="img-fluid" %}
+
+In higher dimension we cannot visualize the activation patterns as easily, but we can understand that as high dimension increase, more patterns are possible as it's easier to separate different data points.
 
 <div style="display: none">
 {<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
-
 Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$ as their activation pattern. We can plot this region on the data graph, as data and neurons have the same dimension.
-
 
 <style>
   .hcenter {
