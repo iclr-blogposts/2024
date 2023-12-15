@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Is MAPPO All You Need in Multi-Agent Reinforcement Learning?
-description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized value function, whereas Independent Proximal Policy Optimization (IPPO) only uses local information to train independent value functions. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e., IPPO with global information is all you need.
+description: Multi-agent Proximal Policy Optimization (MAPPO), a very classic multi-agent reinforcement learning algorithm, is generally considered to be the simplest yet most powerful algorithm. MAPPO utilizes global information to enhance the training efficiency of a centralized value function, whereas Independent Proximal Policy Optimization (IPPO) only uses local information to train independent value functions. In this work, we discuss the history and origins of MAPPO and discover a startling fact, MAPPO does not outperform IPPO. IPPO achieves better performance than MAPPO in complex scenarios like The StarCraft Multi-Agent Challenge (SMAC). Furthermore, the global information can also help improve the training of the IPPO, i.e., IPPO with global information (Multi-agent IPPO) is all you need.
 
 date: 2024-05-07
 future: true
@@ -298,7 +298,7 @@ class R_Critic(nn.Module):
         
 {% endhighlight %}
 
-Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function with global information, i.e., IPPO with global information. And during the training phase, each agent only uses its own value function to calculate the advantage value and loss, be equivalent to IPPO.
+Based on code-level analysis, **both MAPPO-FP and Noisy-MAPPO can be viewed as instances of IPPO**, where the `fixed noise vector` in Noisy-MAPPO is equivalent to a Gaussian distributed `agent_id`, while MAPPO-FP is simply IPPO with supplementary global information appended to the input of the value function. Their common characteristic is that each agent has an independent value function with global information, i.e., IPPO with global information. And during the training phase, each agent only uses its own value function to calculate the advantage value and loss, be equivalent to IPPO. We refer to this type of algorithm as Multi-agent IPPO (MAIPPO).
 
 ## Experiments
 
@@ -344,7 +344,7 @@ From the experimental results, we can see that
 
 ### Discussion
 
-In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information is all you need**. According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful?
+In this blog post, we take a deeper look at the relationship between MAPPO and IPPO from the perspective of code and experiments. Our conclusion is: **IPPO with global information (Multi-agent IPPO) is all you need**. According to the principle of CTDE, the centralized value function in MAPPO should be easier to learn than IPPO and unbiased. Then why is IPPO, better than paradigms like MAPPO, more useful?
 
 Furthermore, we continue to discuss the different implementations of IPPO with global information in MAPPO-FP and Noisy-MAPPO. MAPPO-FP utilizes an agent's own features, including the `agent ID`, `position`, `last action` and others, to form independent value functions. In contrast, Noisy-MAPPO just only uses `agent ID based on Gaussian noise`. Essentially, they both aim to form a distinct set of value functions.
 
@@ -353,6 +353,8 @@ Therefore, there are several reasons for employing independent value functions o
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
 2. The independent value functions are ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
 3. Each agent having its own value function can be seen as an implicit credit assignment <d-cite key="foerster2018counterfactual"></d-cite>.
+
+With this blog post, we aim to broaden awareness for the MAIPPO class of algorithms, beyond the well-known MAPPO method alone. We believe the full MAIPPO family holds untapped potential which deserves exploration. 
 
 
 
