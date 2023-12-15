@@ -351,7 +351,7 @@ Furthermore, we continue to discuss the different implementations of IPPO with g
 Therefore, there are several reasons for employing independent value functions over a centralized value function:
 
 1. The independent value functions increase policy diversity and improve exploration capabilities. 
-2. The independent value functions are ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
+2. The independent value functions constitute ensemble learning <d-cite key="krawczyk2017ensemble"></d-cite> , making the PPO algorithm more robust in unstable multi-agent environments.
 3. Each agent having its own value function can be seen as an implicit credit assignment <d-cite key="foerster2018counterfactual"></d-cite>.
 
 With this blog post, we aim to broaden awareness for the MAIPPO class of algorithms, beyond the well-known MAPPO method alone. We believe the full MAIPPO family holds untapped potential which deserves exploration. 
