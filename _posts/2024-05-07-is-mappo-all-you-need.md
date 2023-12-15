@@ -247,7 +247,7 @@ def get_state_agent(self, agent_id):
                     # Sight range > shoot range
                     if unit.health > 0:
                         enemy_feats[e_id, 0] = avail_actions[self.n_actions_no_attack + e_id]  # available
-
+            ...
             # Own features
             ind = 0
             own_feats[0] = 1  # visible
