@@ -529,13 +529,9 @@ A convex equivalent of deeper networks exists but exacerbate existing problems. 
 
 We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterpart associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
 
-todo: maybe more complex graph.
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot.png" class="img-fluid" %}
-
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot_cmplx.png" class="img-fluid" %}
 
-Remarks: optimal convex loss only changes when the set of activation pattern change, and it's always lower than the non-convex loss by construction.
+The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation pattern change, and it's always lower than the non-convex loss by construction. Remark that it is not monotonous however.
 
 However, despite an equivalent convex problem existing, gradient descent will usually never reach the convex's problem's unique global optimum. Neurons are not constrained and activation patterns will change as we descend.
 
@@ -558,7 +554,9 @@ So scale is about neuron scale, if we take very big neurons at the start, and us
 
 As seen on this paper https://arxiv.org/pdf/2206.00939.pdf, it's interesting to consider small init.
 
-[ gif ]
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_out.gif" class="img-fluid" %}
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_data.gif" class="img-fluid" %}
 
 In this setting, there is a first phase where neurons only significantly change in direction, and those direction can be computed. All the results in the paper count on the fact that this phase is long enough that we know which direction are strongly weighted, and that after this neurons will not change patterns anymore (or not significantly.)
 
