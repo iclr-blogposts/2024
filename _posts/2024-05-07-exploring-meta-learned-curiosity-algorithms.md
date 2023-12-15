@@ -105,21 +105,35 @@ Figure 4 illustrates that the outer loop is where we update the meta-parameters 
 
 ### Random Network Distillation
 
-We now move onto our curiosity-driven exploration baselines. The first baseline that we will briefly discuss is RND <d-cite key="burda2018exploration"></d-cite>. RND works by having two neural networks. One is the predictor network and the other is the target network. The target network is randomly initialised and its parameters stay fixed during training. Given a state, $$s_t$$, it then outputs the feature representation of that state $$f_t$$. The predictor network then tries to predict to $$f_t$$ given $s_t$$ as well. The error in this prediction is then the intrinsic reward, $$r_i$$, given to the agent and it is given by the following formula,
+We now move onto our curiosity-driven exploration baselines. The first baseline that we will briefly discuss is RND <d-cite key="burda2018exploration"></d-cite>. RND works by having two neural networks. One is the predictor network and the other is the target network. The target network is randomly initialised and its parameters stay fixed during training. Given a state, $$s_t$$, it then outputs the feature representation of that state $$f_t$$. The predictor network then tries to predict to $$f_t$$ given $$s_t$$ as well. The error in this prediction is then the intrinsic reward, $$r_i$$, given to the agent and it is given by the following formula,
 
 $$
-r_i=\|\hat{f}_t - f_t\|_2^2.
+r_i=\|\hat{f}_t - f_t\|_2^2,
 $$
+
 where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
 <div class="caption">
-    Figure 5. An illustration of RND. Taken from <d-cite key="burda2018reinforcement"></d-cite>.
+    Figure 5. The process of RND. Taken from <d-cite key="burda2018reinforcement"></d-cite>.
 </div>
 
 ### BYOL-Explore
 
-BYOL-Explore also has two networks
+BYOL-Explore builds upon Bootsrap Your Own Latent (BYOL) <d-cite key="grill2020bootstrap"></d-cite>, self-supervised learning algorithm used in computer vision and representation learning. BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> is similar to RND in that there's a network that tries to predict the output of a target network. In BYOL-Explore we have an online network that consists of: an encoder, a close-loop recurrent neural network (RNN) cell, an open-loop RRN cell and a predictor. While the target network just consists of an encoder. The key difference is that the target's network parameters do not stay fixed like in RND. We update the target network using the exponentially moving average (EMA) of the online network's predictor. So we update the target's network using the following formula,
+
+$$
+\phi \leftarrow \alpha\phi + (1-\alpha)\theta.
+$$
+
+In the above equation, $$\phi$$, is the target network's parameters, $$\theta$$ is the online network's predictor network and $$\alpha$$ is the target network EMA parameter. In our implementation of BYOL-Explore we do not make use of the RNNs as we are dealing with simple environments, we call our implementation BYOL-Explore lite.
+In our implementation the online network is composed of a multilayer perceptron (MLP) encoder and a predictor. The target network, $$h$$, is just composed of the MLP encoder. Here's the process: Assume the current state of the environment is $$s_t$$. State $$s_t$$ is then inputed into the encoder, $$f$$, which outputs a feature representation of the state $$f(s_t)$$. This feature representation is then passed onto the RL agent and the predictor, $$g$$. The RL agent uses $$f(s_t)$$ to decide on its next action and determine the value of that state. The predictor makes use of $$f(s_t)$$ to predict $$h(s_{t+1})$$ and so it is trying trying to predict what the feature representation of the next state will be. There are two losses namely the encoder loss and the predictor loss. The predictor loss is given by,
+
+$$
+\mathcal{L}_p=\|\frac{g(f(s_{t+1}))}{\|g(f(s_{t+1}))\|_2}-\frac{h(s_{t+1})}{\|h(s_{t+1})\|_2}\|_2^2.
+$$
+
+Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss.
 
 ## Meta-learning curiosity algorithms
 
