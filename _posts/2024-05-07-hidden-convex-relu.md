@@ -402,11 +402,11 @@ Equivalent convex problem:
 \end{equation}
 </p>
 
-using the mapping for each $$u_i, v_i$$:
+Here's the mapping from the convex neurons $$u_i$$ to the non-convex neurons $$(w_i, \alpha_i)$$:
 <p>
 \begin{align*}
 (w_i, \alpha_i) &= (\frac{u_i}{\sqrt{u_i}}, \sqrt{u_i}) \\
-(w_i, \alpha_i) &= (\frac{v_i}{\sqrt{v_i}}, - \sqrt{v_i}) \text{ if non-zero}\\
+(w_i, \alpha_i) &= (\frac{v_i}{\sqrt{v_i}}, - \sqrt{v_i}) & \text{   if $u_i$ is zero}\\
 \end{align*}
 </p>
 
@@ -525,6 +525,11 @@ _Performance on popular dataset for a single layer network<d-cite key="mishkinFa
 A convex equivalent of deeper networks exists but exacerbate existing problems. The only way to make it possible is to optimise layer by layer. This is still a work in progress and needs further improvements to beat usual methods in accuracy and speed.
 
 ### Gradient Descent in the non-convex problem
+
+We will compare the classical gradient descent to the convex reformulation method. To be able to compare, we map the non-convex neurons to their convex counterpart associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern.
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/progressplot.png" class="img-fluid" %}
+
 
 First, let's consider a more complex example than in the previous section to verify in experiments that we can solve a convex problem to get the global optima of the usual non-convex one.
 
