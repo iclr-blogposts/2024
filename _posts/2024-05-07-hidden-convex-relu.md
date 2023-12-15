@@ -244,15 +244,15 @@ _Feature learning in a non-linearly separable 2D dataset_
 
 ## Overview and Motivation
 
-50 years ago, two-layers networks with non-linear activations were known to be universal approximators, however they did not catch on as they were hard to train. The recent years have been marked by deeper networks ran on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimisation problem of tuning the weights (and bias) of the connections until the model is accurate enough. Best models usually requires the tuning of billions of such parameters and very large datasets. This in turn requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
+50 years ago, two-layer networks with non-linear activations were known to be universal approximators, however, they did not catch on as they were hard to train. The recent years have been marked by deeper networks running on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimization problem of tuning the weights (and bias) of the connections until the model is accurate enough. Best models usually require the tuning of billions of such parameters and very large datasets. This, in turn, requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
 
-Deep learning is not without faults. Even though the test performance can overpass those of many machine learning models, it is very hard to know what the network has actually learned because of its black box nature. Interpretability in neural networks is important because it may lead us to simpler models which are cheaper to run, are more robust to small changes in the input, and are easier to adapt to specific tasks. It is also one of the criteria for future trustworthy AI systems for many countries and regulations.
+Deep learning is not without faults. Even though the test performance can overpass those of many machine learning models, it is very hard to know what the network has learned because of its black-box nature. Interpretability in neural networks is important because it may lead us to simpler models that are cheaper to run, are more robust to small changes in the input, and are easier to adapt to specific tasks. It is also one of the criteria for future trustworthy AI systems for many countries and regulations.
 
-With the objective of figuring out what does a neural network learn, we will focus in this post on the training a shallow ReLU network using vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
+To figure out what a neural network learns, we will focus in this post on the training of a shallow ReLU network using vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
 
 ### Problem and notation
 
-Our problem of interest will be the training of a simple two layer neural network with ReLu activation. We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following and full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained by backpropagation for instance).
+Our problem of interest will be the training of a simple two-layer neural network with ReLU activation. We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained by backpropagation for instance).
 
 <p class="framed">
     <b class="underline">Two-Layer ReLU Network Training</b><br>
@@ -270,7 +270,7 @@ Our problem of interest will be the training of a simple two layer neural networ
 </p>
 
 
-Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ in function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half the time, a gradient descent will get stuck at a plateau as the gradient is zero along the red line. However we can also notice that there is no spurious valleys.
+Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ as a function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half of the time, gradient descent will get stuck at a plateau as the gradient is zero along the red line. However, we can also notice that there are no spurious valleys. (IEVGEN: not sure spurious valley is explained somewhere before)
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
@@ -286,26 +286,25 @@ We'll see in this blog post how to retrieve those two optimal neurons by buildin
 
 ### Research context
 
-
 The question of how neural networks learn is a very active domain of research with many different paths of investigation. Its main goal is to lay a mathematical foundation for deep learning and for this, shallow neural networks act as a stepping stone for studying deeper and more complex networks.
 
-For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019a"></d-cite><d-cite key="duGradientDescentProvably2019"></d-cite><d-cite key="jacotNeuralTangentKernel2020a"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018"></d-cite>. <a href="https://rajatvd.github.io/NTK/">Studying the NTK</a> amounts to studying the first order taylor expansion of the network, treating the network as a linear regression over a feature map. This approximation is accurate if the neurons are initialized at a large scale, large enough that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2020"></d-cite>, in constrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex, while it is noticeable,  we are also interested here in feature learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignement, incremental learning<d-cite key="berthierIncrementalLearningDiagonal"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022b"></d-cite>.
+For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019a"></d-cite><d-cite key="duGradientDescentProvably2019"></d-cite><d-cite key="jacotNeuralTangentKernel2020a"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018"></d-cite>. <a href="https://rajatvd.github.io/NTK/">Studying the NTK</a> amounts to studying the first-order Taylor expansion of the network, treating the network as a linear regression over a feature map. This approximation is accurate if the neurons are initialized at a large scale, large enough that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2020"></d-cite>, in contrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex, while it is noticeable,  we are also interested here in a feature-learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignment, incremental learning<d-cite key="berthierIncrementalLearningDiagonal"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022b"></d-cite>.
 
-Studying the loss landscape reveals that shallow networks with more neurons than data points, always have a non-increasing path to a global minimum<d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>. This is a favorable property for (stochastic) gradient convergence. In '_The Hidden Convex Optimization Landscape of Regularized Two-Layer ReLU Networks_'<d-cite key="wangHiddenConvexOptimization2022"></d-cite><d-cite key="pilanciNeuralNetworksAre2020"></d-cite>, they extends those results by adding regularization which is used a lot in practice and known as weight decay. If no explicit regularization is used, it is known that there is an implicit bias of gradient descent for linear activations and recently ReLU networks<d-cite key="wangConvexGeometryBackpropagation2021"></d-cite> using the convex reformulation and it is sometimes exactly the same as using weight decay.
+Studying the loss landscape reveals that shallow networks with more neurons than data points, always have a non-increasing path to a global minimum<d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>. This is a favorable property for (stochastic) gradient convergence. In '_The Hidden Convex Optimization Landscape of Regularized Two-Layer ReLU Networks_'<d-cite key="wangHiddenConvexOptimization2022"></d-cite><d-cite key="pilanciNeuralNetworksAre2020"></d-cite>, the authors extend those results by adding the famous weight decay regularization. If no explicit regularization is used, it is known that there is an implicit bias of gradient descent for linear activations and recently ReLU networks<d-cite key="wangConvexGeometryBackpropagation2021"></d-cite> using the convex reformulation and it is sometimes exactly the same as using weight decay. (IEVGEN: this phrase is not clear)
 
-Other convex approaches are limited to an infinite amount of neurons, or to optimize neuron by neuron<d-cite key="bachBreakingCurseDimensionality"></d-cite> which require solving many non-convex problems. The setting studied here allows for any number of neurons.
+Other convex approaches are limited to an infinite amount of neurons, or to optimization in neuron-by-neuron fashion <d-cite key="bachBreakingCurseDimensionality"></d-cite> which requires solving many non-convex problems. The setting studied here allows for any number of neurons.
 
-To sum up, the convex reformulation approach described in this post contrasts itself from what precedes by presenting results for shallow network with __finite width layers__, starting from one neuron and incorporating __regularization__ in a __regression__ setting with frequently used __ReLU__ activation.
+To sum up, the convex reformulation approach described in this post contrasts itself from what precedes by presenting results for a shallow network with __finite width layers__, starting from one neuron and incorporating __regularization__ in a __regression__ setting with frequently used __ReLU__ activation.
 
 ## Convex reformulation
 
-Consider a network with a single ReLU neuron. We plot its output against two data point: $$y = \max(0, x w_1) \alpha_1$$ with $$w_1$$ the first layer's weight and $$\alpha_1$$ the second layer's weight. Even if we wanted to only optimize the first layer, we'd have a non-convex function to optimize. 
+Consider a network with a single ReLU neuron. We plot its output against two data points: $$y = \max(0, x w_1) \alpha_1$$ with $$w_1$$ the first layer's weight and $$\alpha_1$$ the second layer's weight. Even if we wanted to only optimize the first layer, we'd have a non-convex function to optimize. (IEVGEN: mention the reasons for non-convexity to use them later)
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra11.png" class="img-fluid" %}
 
 todo: wrong side blue dot; write formulas for output; match color
 
-We also plot its loss. Here is the explicit and expanded out formula:
+We also plot its loss. Here is the explicit and expanded-out formula:
 
 <p>
 \begin{equation}
@@ -315,9 +314,9 @@ We also plot its loss. Here is the explicit and expanded out formula:
 
 __Multiplicative non-convexity.__
 
-If we ignore ReLU for a moment, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multipliying two variables. However this non-convexity can be ignored by considering the convex equivalent problem  $$(x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ and then mapping back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs and minimas are the same. They are equivalent because they have the same expressivity.
+If we ignore ReLU for a moment, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables. However, this non-convexity can be ignored by considering the convex equivalent problem  $$(x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ and then mapping back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs and minima are the same. They are equivalent because they have the same expressivity.
 
-Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity: $$\alpha_1$$ could be negative! Here the convex equivalent problem would require two variables $$u_1$$ and $$v_1$$ to represent a neuron with a positive second layer, and a neuron with a negative second layer.  $$(\max(0, x_1 u_1) - \max(0, x_1 v_1) - y_1)^2 + \lambda (\vert u_1 \vert + \vert v_1 \vert)$$. At the optimal, only one of the two will be non-zero. We simply use the same mapping as before for $$u_1$$, however if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to negative: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
+Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity: $$\alpha_1$$ can be negative! Here the convex equivalent problem would require two variables $$u_1$$ and $$v_1$$ to represent a neuron with a positive second layer and a neuron with a negative second layer as follows: $$(\max(0, x_1 u_1) - \max(0, x_1 v_1) - y_1)^2 + \lambda (\vert u_1 \vert + \vert v_1 \vert)$$. At the optimum, only one of the two will be non-zero. We simply use the same mapping as before for $$u_1$$, however if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
 
 __Non-Linear convexity.__
 
@@ -347,7 +346,7 @@ Then this problem is convex! It has a unique solution. Before solving it, the fo
 \end{equation}
 </p>
 
-If we solve this problem.. we only find one of the two local optima. If we chose the wrong activation matrix, it won't be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minima.
+If we solve this problem, we only find one of the two local optima. If we choose the wrong activation matrix, it won't be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minima.
 
 
 __Equivalent Convex problem.__
@@ -364,7 +363,7 @@ __Equivalent Convex problem.__
 
 If we optimize this, the found $$u_1$$ can be negative, and $$u_2$$ positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
 
-Indeed, we have to constrain the two variables so that (when mapped back) keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022a"></d-cite> </d-footnote>.
+Indeed, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022a"></d-cite> </d-footnote>.
 
 <p>
 \begin{align*}
@@ -373,7 +372,7 @@ u_1 x_2 &\geq 0 & u_2 x_2 &< 0 \\
 \end{align*}
 </p>
 
-Those constraints translate  to $$u_1 \geq 0, u_2 \leq 0$$. (Because $$x_1=-1, x_2=1$$). All that is left is to solve the Solve the convex problem: $$(u_1, u_2) = (1.95, -0.95)$$ and use this mapping:
+Those constraints translate  to $$u_1 \geq 0, u_2 \leq 0$$. (Because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem: $$(u_1, u_2) = (1.95, -0.95)$$ and use this mapping:
 
 <p>
 \begin{align*}
@@ -382,7 +381,7 @@ Those constraints translate  to $$u_1 \geq 0, u_2 \leq 0$$. (Because $$x_1=-1, x
 \end{align*}
 </p>
 
-To get the optimal solution to the non-convex ReLU problem that has at least 2 neurons.
+to get the optimal solution to the non-convex ReLU problem that has at least 2 neurons.
 
 __General Case.__
 
