@@ -82,7 +82,13 @@ Singh et al. highlight in <d-cite key="singh2004intri"></d-cite> that Figure 2 s
 
 ### Meta-RL and Meta-learning
 
-The next stop on our journey takes us to meta-learning
+The next stop on our journey takes us to meta-learning. Meta-learning is about learning how to to learn. Ideally we want our agents to improve their learning ability over time. 
+There are two two loops involved in meta-learning: The inner loop and the outer loop. In the inner loop our learning algorithm solves a new task, using experience and it obtained from solving other tasks in the outer loop. We refer to inner-loop as adaptation and the outer-loop stage as meta-training <d-cite key="beck2023survey"></d-cite>. While the inner loop concerns itself with a single task, the outer loop concerns itself with distribution of tasks. The figure below illsutrates the idea of meta-learning:
+
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/meta-learning.png" class="img-fluid" width="400px" %}
+<div class="caption">
+    Figure 3. An illustration of meta-learning. Taken from <d-cite key="huisman2021survey"></d-cite>.
+</div>
 
 ### RND
 
