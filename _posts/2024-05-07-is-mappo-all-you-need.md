@@ -156,7 +156,7 @@ The key aspects of SMAC are:
 
 ## Code-level Analysis
 
-In order to thoroughly investigate the actual changes from PPO to MAPPO and Noisy-MAPPO, we delved deeply into their differences at the code level. Fundamentally, their main difference lies in the modeling of the value function during the training stage.
+In order to thoroughly investigate the actual changes from PPO to MAPPO and Noisy-MAPPO, we delved deeply into their differences at the code level with SMAC. Fundamentally, their main difference lies in the modeling of the value function during the training stage.
 
 **Independent PPO (IPPO)**
 
