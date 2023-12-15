@@ -78,27 +78,34 @@ The Figure below shows an extended view of the agent-environment interactions.
     Figure 2. The extended agent-environment interaction. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
 
-Singh et al. highlight in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent. And this motivational system should ideally remain consistent across a wide range of diverse environments.
+Singh et al. highlighted in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent. And this motivational system should ideally remain consistent across a wide range of diverse environments. Since we can view as the critic being inside the agent we can instil intrinsic motivation into the agent. This means that the agent can recieve two types rewards, namely external rewards from the external environments and intrinsic rewards from the external environment.
+Singh et al. (<d-cite key="singh2004intri"></d-cite>) highlighted the advantages of endowing an agent with intrinsic motivation. They pointed out that an agent equipped with a collection of skills learned through intrinsic reward can more easily adapt to and learn a wide variety of extrinsically rewarded tasks compared to an agent lacking these skills.
 
 ### Meta-RL and Meta-learning
 
-The next stop on our journey takes us to meta-learning. Meta-learning is about learning how to to learn. Ideally we want our meta-learning agents to improve their learning ability over time generalise to new unseen task.
-There are two two loops involved in meta-learning: The inner loop and the outer loop. In the inner loop our learning algorithm solves a new task, using experience and it obtained from solving other tasks in the outer loop. We refer to inner-loop as adaptation and the outer-loop stage as meta-training <d-cite key="beck2023survey"></d-cite>. While the inner loop concerns itself with a single task, the outer loop concerns itself with distribution of tasks. The figure below illustrates the idea of meta-learning.
+The next stop on our journey takes us to meta-learning. Meta-learning is about learning how to to learn. The goal is for meta-learning agents to enhance their learning abilities over time, enabling them to generalise to new, unseen tasks. Meta-learning involves two essential loops: the inner loop and the outer loop. In the inner loop, our learning algorithm adapts to a new task using experiences obtained from solving other tasks in the outer loop, which is referred to as meta-training <d-cite key="beck2023survey"></d-cite>.
+
+The inner loop addresses a single task, while the outer loop deals with the distribution of tasks. Figure 3 illustrates this concept of meta-learning.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/meta-learning.png" class="img-fluid" %}
+
 <div class="caption">
     Figure 3. An illustration of meta-learning. Taken from <d-cite key="huisman2021survey"></d-cite>.
 </div>
-Meta-learning in RL, known as meta-RL, is when the agent is learning how to reinforce learn <d-cite key="beck2023survey"></d-cite>. We have a distribution of MDPs and our meta-RL agent tries to maximise the sum of rewards it receives from the distribution of MDPs. 
-While in basic RL we have an algorithm, $$f$$, that outputs a policy, a mapping from states to actions. In meta-RL, we have a algorithm with meta parameters $$\theta$$ that will output $$f$$ and $$f$$ will then output a policy when given a new MDP. 
+Moving into the intersection of meta-learning and reinforcement learning (RL) is meta-RL, where the agent learns how to reinforce learn <d-cite key="beck2023survey"></d-cite>. In meta-RL, the agent aims to maximise the sum of rewards from a distribution of MDPs.
 
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/meta-learning.png" class="img-fluid" %}
+In basic RL, we have an algorithm $$f$$ that outputs a policy, mapping states to actions. However, in meta-RL, our algorithm has meta-parameters $$\theta$$ that outputs $$f$$, and $$f$$ then produces a policy when faced with a new MDP.
+
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/meta-rl.png" class="img-fluid" %}
+
 <div class="caption">
-    Figure 3. An illustration of meta-RL. Taken from <d-cite key="botvinick2019rlfastslow,"></d-cite>.
+    Figure 4. An illustration of meta-RL. Taken from <d-cite key="botvinick2019rlfastslow"></d-cite>.
 </div>
+Figure 4 illustrates that the outer loop is where we update the meta-parameters $$\theta$$. 
+
 ### RND
 
-Introduce the concept of curiosity in the context of learning algorithms.
+Recall earlier we pointed out that a RL agent has motivational system. Now 
 
 ### BYOL-Explore
 
