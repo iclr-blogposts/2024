@@ -1070,10 +1070,12 @@ $$
 \end{equation}
 $$
 
+
+
 <details>
   <summary><b>Analytical derivation of the best GD learning rate</b></summary>
 
- We are interested in finding the optimal learning rate for the GD-transformer, which by constrution (see main Proposition),  is equivalent to finding the optimal GD learning rate for the least-squares regression problem. Consequently, the analysis can be constructed from the least-squares regression problem \eqref{eq:linear-regression-loss}.
+ We are interested in finding the optimal learning rate for the GD-transformer, which by construction (see main Proposition), is equivalent to finding the optimal GD learning rate for the least-squares regression problem. Consequently, the analysis can be constructed from the least-squares regression problem \eqref{eq:linear-regression-loss}.
 
   <br><br>
   
@@ -1128,6 +1130,13 @@ $$
 
 We can expect that the analytical solution is faster to compute than the line search.
 Indeed, the line search requires on average 10 seconds to find the optimal GD learning rate, while the analytical solution requires only 10 milliseconds (both with JAX's JIT compilation turned on, run on the same GPU).
+
+So, now we have all the tools for showing why the linear transformer converges to the loss of a transformer implementing a gradient descent step only for *one specific value* of the GD learning rate. 
+Because the construction of the GD transformer is not unique, it's not easy to see the effect of the GD learning rate once we compare it with the trained linear transformer. 
+In fact, the GD learning rate affects the projection matrix $$\mbW^P$$, but it can be absorbed in any of the other matrices in the linear transformer.
+Moreover, the loss function used for the line search and the one used for the analytical solution is equivalent to the transformer loss in Equation \eqref{eq:pre-train-loss} used during training.
+This means that when we are training the linear transformer, we are also implicitly training the GD learning rate.
+This justifies the need for line search (or the use for the analytical solution), and also explains why the linear transformer converges to the loss of a transformer implementing a gradient descent step only for *one* specific value of the GD learning rate.
 
 ### If one layer is a GD step, what about multiple layers?
 
@@ -1240,6 +1249,8 @@ In this quest, the developing theory of mesa-optimization <d-cite key="hubinger2
 
 Finally, we want to highlight that the main results shown in this blog post are consequences of the simplified hypothesis and the experimental setup we have considered (linear functions, least-squares regression loss, linear self-attention layers).
 In an equally recent paper <d-cite key="geshkovski2023the"></d-cite>, for example, the authors take a completely different route: by representing transformers as interacting particle systems, they were able to show that tokens tend to cluster to limiting objects, which are dependent on the input context.
+This suggests that other interpretations of the behavior of transformers are not only possible, but also possibly necessary to fully understand these models.
+
 
 <!-- ## Implementation details 
 
