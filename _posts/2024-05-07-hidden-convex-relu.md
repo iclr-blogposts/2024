@@ -337,7 +337,7 @@ Now let's try to resolve the non-convexity emerging from using ReLU. Notice that
 \end{equation}
 </p>
 
-Then this problem is convex! It has a unique solution. Before solving it, but the formula can be simplified by using vectors and matrices for the data:
+Then this problem is convex! It has a unique solution. Before solving it, the formula can be simplified by using vectors and matrices for the data:
 
 <p>
 \begin{equation}
@@ -347,8 +347,7 @@ Then this problem is convex! It has a unique solution. Before solving it, but th
 \end{equation}
 </p>
 
-If we solve this problem.. we only find one of the two local optima. If we chose the wrong activation pattern, it won't be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minima.
-
+If we solve this problem.. we only find one of the two local optima. If we chose the wrong activation matrix, it won't be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minima.
 
 
 __Equivalent Convex problem.__
@@ -419,9 +418,11 @@ A few questions are left unanswered: what is the number of different activations
 
 Two problems are considered equivalent when their global optima can be seamlessly mapped back and forth.
 
-As seen before, there are only two activation patterns in the one-dimensional case, but close to $$2^{n+1}$$ when the data dimension is higher. If we consider all the possible activation patterns, the convex problem's unique solution corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on datapoints).
+As seen before, there are only two activation patterns in the one-dimensional case, but close to $$2^n$$ when the data dimension is higher. If we consider all the possible activation patterns, the convex problem's unique solution corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on datapoints).
 
 If we only consider a subset of all patterns, the convex problem correspond to a local optima of the non-convex network. Indeed, it is not as expressive as before. This would either correspond to a non-convex network with not enough neurons, or with too many neurons concentrated in the same regions.
+
+Let's see this through the same example with one dimensional data.
 
 #### 1-D EXAMPLE, ONE NEURON
 
@@ -457,30 +458,46 @@ is equivalent to the non-convex problem. Solving it will give the global optima.
 
 This would be the usual minima found by GD. Here we have much more neurons than there are existing patterns (while this is unlikely, many neurons do end up in the same pattern in practice). However we can merge (simply adding neuron together to get a new one) neurons in the same pattern without changing the output nor the loss (regularization might change). This generalize and is at the core of the proof.
 
-### ACTIVATION PATTERNS
+### Activation Patterns
 
 The equivalence proof is heavily based on ReLU, specifically that a ReLU unit divides the input space in two regions: one where it will output zero, and the other where it is the identity. If you consider a finite set of samples and a single ReLU, it will activate and deactivate some samples: this is called an activation pattern. A diagonal matrix $$\pmb{D}_i \in \{0,1\}^{n \times n}$$ describes one activation pattern. There is a finite amount of such possible patterns, exponential in the dimension of the data.
 
-Explain the output graph, and where are activations of the neurons.
+__Two-Dimensional Data.__
 
-A gif that shows a lot of regions
+In the previous part we considered data to be one-dimensional, in this case there is only two possible activation patterns. Let's now consider two-dimensional data. To do so in the simplest way possible, we will consider regular one-dimensional data, and a dimension filled with $$1$$. This will effectively give the neural network a _bias_ to use (since we only have one layer) without modifying the formulas.
 
-
-
-A gif 
-
-In the previous part we considered data to be one-dimensional, in this case there is only two possible activation patterns. Let's now consider two-dimensional data.
+On the __left__ we plot the output of one ReLU unit, on the __right__ we plot the two regions divided by the neuron's activation line $$\{ \pmb{a} \in \RR^2 : \pmb{w}^\top \pmb{a} = 0\}$$. The effect of the ReLU is 0 on $$\pmb{x_1}$$ and 1  $$\pmb{x_2}$$. The activation pattern is therefore $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra4.png" class="img-fluid" %}
 
-On the __left__ we plot the output of one ReLU unit (we omit the second dimension of the data which is identical and can be interpreted as having a bias for the neuron), on the __right__ we plot the two regions divided by the neuron's activation line $$\{ \pmb{a} \in \RR^2 : \pmb{w}^\top \pmb{a} = 0\}$$. The effect of the ReLU is 0 on $$\pmb{x_1}$$ and 1  $$\pmb{x_2}$$. The activation matrix for this pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} 0 & 0 \\ 0 & 1 \end{smallmatrix}\right)$$.
+((Make it obvious that the this below graph and the right graph are the same
+
+Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$ as their activation pattern. We can plot this region on the data graph, as data and neurons have the same dimension.
+
+
+<style>
+  .hcenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .fifty {
+    max-height: 500px;
+    width: auto;
+   }
+</style>
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra6.png" class="img-fluid hcenter fifty" %}
+
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
+
+
+todo: Will probably remove this one :
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra5.png" class="img-fluid" %}
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra6.png" class="img-fluid" %}
-
-todo - show that d>1 there are many patterns
-todo: - show in d=2 what "missing" some patterns means
 
 ### Extensions of the convex reformulation to other settings
 
