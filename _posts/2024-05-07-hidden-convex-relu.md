@@ -570,7 +570,9 @@ At the other extreme, the small scale setting effectively let neurons align them
 
 If you take orthogonal data and a small scale, the behavior is very predictable<d-cite key="boursierGradientFlowDynamics2022c"></d-cite> even in a regression setting.
 
+<div style="display: none">
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_data.gif" class="img-fluid" %}
+</div>
 
 ## Conclusion
 
