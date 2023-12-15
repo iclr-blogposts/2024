@@ -191,6 +191,12 @@ _styles: >
       margin-right: auto;
   }
 
+  .legend {
+      display: block;
+      margin-left: 30px;
+      margin-right: 30px;
+  }
+
   .framed {
     border: 1px var(--global-text-color) dashed !important;
     padding: 20px;
@@ -272,16 +278,17 @@ Our problem of interest will be the training of a simple two-layer neural networ
     \end{equation}
 </p>
 
-
 Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ as a function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half of the time, gradient descent will get stuck at a plateau as the gradient is zero along the red line. However there always exist a path of non-increasing loss from initialisation to the global minimum.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
-_Loss landscape for two neurons($$w_1, w_2$$), two data points of a single-layer ReLU network_
+<p class="legend">Loss landscape of a network with two parameters, one for each ReLU neurons, and two data points. Since the labels are positive, we fix the second layer $\alpha_1, \alpha_2$ to 1 to be able to plot this in 2D without a loss of generality. The data points $(x_1, y_1) = (-1, 1)$ and $(x_2, y_2) = (1, 2)$ are fixed. The black lines represent the loss for only one neuron (since the other is equal to 0). The red lines are the only path of parameters for which the loss is constant, they represent the parameters for which the neuron fit exactly one data point and is deactivated for the other and thus suffer a loss of $(y_1)^2$ for the red line on the left, and $(y_2)^2$ for the other. The exact formula to compute each point of this graph is:
 
-<p>
 \begin{equation}
-\mathcal{L}(w_1, w_2) = \left(\max(0, x_1 w_1) + \max(0, x_1 w_2) - y_1\right)^2 + \left(\max(0, x_2 w_1) + \max(0, x_2 w_2) - y_2\right)^2
+\begin{split}
+\mathcal{L}(w_1, w_2) =&\ \left(\max(0, x_1 w_1) + \max(0, x_1 w_2) - y_1\right)^2 \\
++&\ \left(\max(0, x_2 w_1) + \max(0, x_2 w_2) - y_2\right)^2
+\end{split}
 \end{equation}
 </p>
 
@@ -303,13 +310,15 @@ To sum up, the convex reformulation approach described in this post contrasts it
 
 Consider a network with a single ReLU neuron. We plot its output against two data points $(x_1,y_1)$ and $(x_2,y_2)$. We have that this one-neuron neural net's output is $$\max(0, x ~ w_1) \alpha_1$$ with $$w_1$$ the first layer's weight and $$\alpha_1$$ the second layer's weight. Even if we only wanted to optimize the first layer (below we fix $\alpha_1=1$ without loss of expressivity as the target outputs $y_1,y_2$ are both positive), we would have a non-convex function to optimize because of ReLU's non-linearity.
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra11.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside.png" class="img-fluid" %}
 
-_Representation of the output of a one-neuron ReLU net with a positive weight $w_1$ and $\alpha_1 = 1$. The ReLU *activate* the second data point (as $x_2>0$), the network can thus fit its output to reach $y_2$. However, doing so it cannot activate $x_1$ and will thus suffer a constant loss $(y_1)^2$ for that. Overall, depending on the sign of $w_1$ we will have a loss comprised of a constant term for not activating one point and a term for matching the output for the activated data point. The total loss plotted on the right is thus non-convex. Its explicit formula is:_
+<p class="legend">Representation of the output of a one-neuron ReLU net with a positive weight $w_1$ and $\alpha_1 = 1$. The ReLU *activate* the second data point (as $x_2>0$), the network can thus fit its output to reach $y_2$. However, doing so it cannot activate $x_1$ and will thus suffer a constant loss $(y_1)^2$ for that. Overall, depending on the sign of $w_1$ we will have a loss comprised of a constant term for not activating one point and a term for matching the output for the activated data point. The total loss plotted on the right is thus non-convex. Its explicit formula is:
 
-<p>
 \begin{equation}
-\mathcal{L}(w_1, \alpha_1) = (\max(0, x_1 w_1) \alpha_1 - y_1)^2+(\max(0, x_2 w_1) \alpha_1 - y_2)^2 + \frac{\lambda}{2} (|w_1|^2 + |\alpha_1|^2)
+\begin{split}
+\mathcal{L}(w_1, \alpha_1) = (\max(0, x_1 w_1) \alpha_1 - y_1)^2+(\max(0, x_2 w_1) \alpha_1 - y_2)^2  \\
++ \frac{\lambda}{2} \left(|w_1|^2 + |\alpha_1|^2\right)
+\end{split}
 \end{equation}
 </p>
 
@@ -364,7 +373,7 @@ __Equivalent Convex problem.__
 
 If we optimize this, the found $$u_1$$ can be negative, and $$u_2$$ positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
 
-Indeed, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022a"></d-cite> </d-footnote>.
+Indeed, we have to constrain the two variables so that when mapped back to the original problem they keep the same activation.
 
 <p>
 \begin{align*}
@@ -482,15 +491,15 @@ In the animation below, we train this network using classic gradient descent on 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
 
-Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, $$\color{cvred}{\pmb{x}_2}$$. As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs $$\color{cvred}{\pmb{x}_1}$$, it activates it and starts fitting both points at the same time. Its activation pattern is now $$\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)$$
+<p class="legend">Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, \(\color{cvred}{\pmb{x}_2}\). As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs \(\color{cvred}{\pmb{x}_1}\), it activates it and starts fitting both points at the same time. Its activation pattern is now \(\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)\)</p>
 
 Adding more neuron will not create additional activation patterns, adding more data point will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. Here we plot in blue the individual output and activation point of each of these ten possible ReLU.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/manyexpl.png" class="img-fluid" %}
 
-When moving the activation point between two data points, the activation pattern do not change
+<p class="legend">When moving the activation point between two data points, the activation pattern do not change</p>
 
-In higher dimension we cannot visualize the activation patterns as easily, but we can understand that as high dimension increase, more patterns are possible as it's easier to separate different data points.
+<p class="remark"> In higher dimension we cannot visualize the activation patterns as easily, but we can understand that as high dimension increase, more patterns are possible as it's easier to separate different data points.</p>
 
 <div style="display: none">
 {<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
