@@ -469,7 +469,6 @@ On the __left__ we plot the output of one ReLU unit, on the __right__ we plot th
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra4.png" class="img-fluid" %}
 
-((Make it obvious that the this below graph and the right graph are the same
 
 Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$ as their activation pattern. We can plot this region on the data graph, as data and neurons have the same dimension.
 
