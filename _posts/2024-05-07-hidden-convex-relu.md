@@ -300,12 +300,11 @@ To sum up, the convex reformulation approach described in this post contrasts it
 
 ## Convex reformulation
 
-Consider a network with a single ReLU neuron. We plot its output against two data points: $$y = \max(0, x w_1) \alpha_1$$ with $$w_1$$ the first layer's weight and $$\alpha_1$$ the second layer's weight. Even if we only wanted to optimize the first layer, we'd have a non-convex function to optimize because of ReLU's non-linearity.
+Consider a network with a single ReLU neuron. We plot its output against two data points $(x_1,y_1)$ and $(x_2,y_2)$. We have that this one-neuron neural net's output is $$\max(0, x ~ w_1) \alpha_1$$ with $$w_1$$ the first layer's weight and $$\alpha_1$$ the second layer's weight. Even if we only wanted to optimize the first layer (below we fix $\alpha_1=1$ without loss of expressivity as the target outputs $y_1,y_2$ are both positive), we would have a non-convex function to optimize because of ReLU's non-linearity.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra11.png" class="img-fluid" %}
 
-
-We also plot its loss. Here is the explicit and expanded-out formula:
+_Representation of the output of a one-neuron ReLU net with a positive weight $w_1$ and $\alpha_1 = 1$. The ReLU *activate* the second data point (as $x_2>0$), the network can thus fit its output to reach $y_2$. However, doing so it cannot activate $x_1$ and will thus suffer a constant loss $(y_1)^2$ for that. Overall, depending on the sign of $w_1$ we will have a loss comprised of a constant term for not activating one point and a term for matching the output for the activated data point. The total loss plotted on the right is thus non-convex. Its explicit formula is:_
 
 <p>
 \begin{equation}
