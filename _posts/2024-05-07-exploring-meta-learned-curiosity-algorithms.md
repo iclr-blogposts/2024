@@ -47,7 +47,7 @@ toc:
 ## Introduction
 
 Dealing with environments with sparse rewards, i.e. feedback at a low frequency, in reinforcement learning (RL) requires meaningful exploration.
-One way to encourage the RL agent to perform meaningful exploration is by instilling intrinsic motivation into the agents. This intrinsic motivation usually comes in the form of curiosity. As Schmidhuber <d-cite key="Schmidhuber1991APF"></d-cite> highlighted : One becomes curious as soon as one believes there's something about the world that one does not know. It is because of this that curiosity or intrinsic rewards are usually predictive errors. For instance, an RL agent equipped with a world model is given the current state of the environment, $$s_t$$, and attempts to predict the next state, $$s_{t+1}$$. The error in this prediction is the intrinsic reward. As the world model improves one should expect the intrinsic rewards to decrease as the agent's knowledge about environment increases.
+One way to encourage the RL agent to perform meaningful exploration is by instilling intrinsic motivation into the agents. This intrinsic motivation usually comes in the form of curiosity. As Schmidhuber <d-cite key="Schmidhuber1991APF"></d-cite> highlighted : One becomes curious as soon as one believes there's something about the world that one does not know. It is because of this that curiosity or intrinsic rewards are usually predictive errors. For instance, an RL agent equipped with a world model is given the current state of the environment, $$s_t$$, and attempts to predict the next state, $$s_{t+1}$$. The error in this prediction is the intrinsic reward. As the world model improves one should expect the intrinsic rewards to decrease as the agent's knowledge about environment increases. This is known as curiosity-driven exploration.
 
 Now there has been success with curious agents solving environments with sparse rewards <d-cite key="burda2018exploration, guo2022byolexplore, jarrett2023curiosity, pathak2017curiositydriven,burda2018largescale"></d-cite>. Curiosity algorithms such as Random Network Distillation (RND) <d-cite key="burda2018exploration"></d-cite> and BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> are hand-designed and are able to perform well across different environments.
 However, in the 2020 paper <d-cite key="alet2020metalearning"></d-cite>, Meta-learning curiosity algorithms, Alet et al. took a different and unique approach to discovering new curisoity algorithms. They did this by meta-learning pieces of code.
@@ -55,7 +55,7 @@ Similar to the code segments used by researchers when crafting curiosity algorit
 Two new interpretable algorithms were learned by meta-learning these pieces of code: Fast Action Space Transition and Cycle-Consistency Intrinsic Motivation (CCIM).
 It is these two algorithms that we will explore and compare their behaviour to our baselines: RND and BYOL-Explore.
 
-The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite deep sea environment and compare them to the baselines. Finally, we conclude our journey.
+The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how curiosity-driven exploration baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite deep sea environment and compare them to the baselines. Finally, we conclude our journey.
 
 ## Background
 
@@ -105,12 +105,12 @@ Figure 4 illustrates that the outer loop is where we update the meta-parameters 
 
 ### Random Network Distillation
 
-We now move onto our baselines. The first baseline that we will briefly discuss is RND <d-cite key="burda2018exploration"></d-cite>. RND works by having two neural networks. One is the predictor network and the other is the random network. The random network is randomly initialised and its parameters stay fixed during training. Given a state, $$s_t$$, it then outputs the feature representation of that state $$f_t$$. The predictor network then tries to predict to $$f_t$$ given $s_t$$ as well. The error in this prediction is then the intrinsic reward, $$r_i$$, given to the agent and it is given by the following formula,
+We now move onto our curiosity-driven exploration baselines. The first baseline that we will briefly discuss is RND <d-cite key="burda2018exploration"></d-cite>. RND works by having two neural networks. One is the predictor network and the other is the target network. The target network is randomly initialised and its parameters stay fixed during training. Given a state, $$s_t$$, it then outputs the feature representation of that state $$f_t$$. The predictor network then tries to predict to $$f_t$$ given $s_t$$ as well. The error in this prediction is then the intrinsic reward, $$r_i$$, given to the agent and it is given by the following formula,
 
 $$
 r_i=\|\hat{f}_t - f_t\|_2^2.
 $$
-where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic. The figure below illustrates the process of RND.
+where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
 <div class="caption">
@@ -119,7 +119,7 @@ where $$ \hat{f}_t$$ is the output of the predictor network. The formula above a
 
 ### BYOL-Explore
 
-This section delves into the meta-learning curiosity algorithms. You can explain the methods, including FAST and ICCM.
+BYOL-Explore also has two networks
 
 ## Meta-learning curiosity algorithms
 
