@@ -28,8 +28,8 @@ toc:
   - name: Background
     subsections:
     - name: Reinforcement Learning
-    - name: Meta-RL and meta-learning
-    - name: RND
+    - name: Meta-learning and Meta-RL
+    - name: Random Network Distillation
     - name: BYOL-Explore
   - name: Meta-learning curiosity algorithms
     subsections:
@@ -58,7 +58,7 @@ It is these two algorithms that we will explore and compare their behaviour to o
 The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite deep sea environment and compare them to the baselines. Finally, we conclude our journey.
 
 ## Background
-Here we dive into background.
+
 ### Reinforcement Learning
 
 RL is inspired by how biological systems learn as animals are to able learn through trail-and-error. In RL we have an agent that tries to maximise the sum of rewards it recieves by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
@@ -103,9 +103,19 @@ In basic RL, we have an algorithm $$f$$ that outputs a policy, mapping states to
 </div>
 Figure 4 illustrates that the outer loop is where we update the meta-parameters $$\theta$$. 
 
-### RND
+### Random Network Distillation
 
-Recall earlier we pointed out that a RL agent has motivational system. Now 
+We now move onto our baselines. The first baseline that we will briefly discuss is RND <d-cite key="burda2018exploration"></d-cite>. RND works by having two neural networks. One is the predictor network and the other is the random network. The random network is randomly initialised and its parameters stay fixed during training. Given a state, $$s_t$$, it then outputs the feature representation of that state $$f_t$$. The predictor network then tries to predict to $$f_t$$ given $s_t$$ as well. The error in this prediction is then the intrinsic reward, $$r_i$$, given to the agent and it is given by the following formula,
+
+$$
+r_i=\|\hat{f}_t - f_t\|_2^2.
+$$
+where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic. The figure below illustrates the process of RND.
+
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
+<div class="caption">
+    Figure 5. An illustration of RND. Taken from <d-cite key="burda2018reinforcement"></d-cite>.
+</div>
 
 ### BYOL-Explore
 
