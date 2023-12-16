@@ -123,7 +123,7 @@ Remember that neural networks are really good at learning in-distribution shortc
 ## How can we do fixed-points in DNNs?
 One approach to training neural networks that run until they reach a fixed point is deep equilibrium models<d-cite key="bai2019deep"></d-cite> (DEQ). We give a brief introduction to this approach next based on the blogpost <d-cite key="baiblog"></d-cite>. 
 
-Given our input $$x$$, our hidden state $$z$$,and our processor $$f$$, the goal is to optimise the fixed point $$z^*=f(z^*,x)$$ we reach. The question how can we backprop through $$z^* = f(z^*,x)$$.
+Given our input $$x$$, our hidden state $$z$$, and our processor $$f$$, the goal is to optimise the fixed point $$z^*=f(z^*,x)$$ we reach. The question how can we backprop through $$z^* = f(z^*,x)$$.
 
 In backprop, we ultimately want to compute 
 
@@ -135,7 +135,7 @@ $$ \left(\frac{\partial z^*(.)}{\partial(.)}\right)^{\top} g = \left(\frac{\part
 
 The difficult to term to solve in the above equation is $$\left(I-\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}g$$, which is the solution of a linear system, namely:
 
-$$h = \left(I-\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}g$$
+$$\left(I-\frac{\partial f(z^*, x)}{\partial z^*}\right)^{\top}h = g$$
 
 In general, we can try to solve it in two ways, use a linear system solver, like can be found torch.linalg, or by computing a fixed point to 
 
@@ -143,13 +143,13 @@ $$h = \left(\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}h +g$$
 
 In the DEQ blogpost <d-cite key="baiblog"></d-cite> they suggest solving the above fixed point. The reason to use implicit differentiation is that backpropagating through time may easily run into exploding or vanishing gradients or error accumulation due to the number of steps needed to reach a fixed point.
 
-We tried both, solving the linear system with torch.linalg.solve and finding the above fixed point. But we converged to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in the future. 
+We tried both: solving the linear system with torch.linalg.solve and finding the above fixed point. But we converged to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in the future. 
 
 ### Tricks we employ
 
 To encourage convergence we change the update function in the MPNN<d-cite key="gilmer2017neural"></d-cite> to be a minimum update, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$. This update rule is motivated by the problem of getting neural networks to converge to a fixed point. We discuss the effect of this in more detail after the experimental section.
 
-Currently, gradient flows through the implicit differentiation explained above as well as back in time through standard backprop through $$z_t$$. To enable more ways for the gradient to inform early steps in the algorithm, we propagate the gradient through $$y_t$$ as well. For discrete $$y_t$$, in other words, for categorical variables in the state $$x_t$$ we employ the Rao-Blackwell straight-through gumbel softmax estimator<d-cite key="paulus2020raoblackwellizing"></d-cite> to allow gradients to flow.
+Currently, gradient flows through the implicit differentiation explained above as well as back in time through standard backprop via $$z_t$$. To enable more ways for the gradient to inform early steps in the algorithm, we propagate the gradient through $$y_t$$ as well. For discrete $$y_t$$, in other words, for categorical variables in the state $$x_t$$ we employ the Rao-Blackwell straight-through gumbel softmax estimator<d-cite key="paulus2020raoblackwellizing"></d-cite> to allow gradients to flow.
 
 Finally, we also try adding a loss for the number of steps by adding the penalty $$\sum_{t=0}^{T} \|z_{t+1} - z_{t}\|^2$$. The penalty will be larger as we take more steps and stay away from the fixed point, thus hopefully encouraging convergence to a fixed point more quickly.
 
@@ -180,13 +180,13 @@ There are a few major issues that we notice during training. The first is that t
 
 ### Convergence is a key issue
 
-Firstly, the network will often take a large number of steps to reach a fixed point. We can see on easier algorithms like the BellmanFord algorithm that the number of forward steps during training often reaches our set upper limit of 64 forwards steps (the actual algorithm would take on average 4-5, max 10 for this graph size). This is why we implement our architecture trick, where we update the next hidden representation only if it is smaller than the current one, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ where $$z^{'(t+1)}$$ is the output of our min aggregator in the message passing step (alternatives such as gating and an exponential moving average update function were also tried). This helps with convergence, which enables finding a fixed point in simple cases, but fails to work for more complex architectures and problems, while also introducing a different issue.   
+Firstly, the network will often take a large number of steps to reach a fixed point. We can see on easier algorithms like the BellmanFord algorithm that the number of forward steps during training often reaches our set upper limit of 64 forwards steps (the actual algorithm would take on average 4-5, max 10 for this graph size). This is why we implement our architecture trick, where we update the next hidden representation only if it is smaller than the current one, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ where $$z^{'(t+1)}$$ is the output of our min aggregator in the message passing step (alternatives such as gating and an exponential moving average update function were also tried). This helps with convergence, which enables finding a fixed point in simple cases, but fails to work reliably for more complex architectures and problems, while also introducing a different issue.   
 
 ### The problem with hard constraints to achieve convergence
 
 Remember that during the implicit differentiation we are trying to solve
 
-$$g = \left(I-\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}y$$
+$$h = \left(I-\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}g$$
 
 i.e. in the linear system $$y = Ax$$ our matrix $$A$$ is equal to $$I-J$$ where $$J$$ is the Jacobian in the above equation. If the Jacobian is equal to the identity then our matrix $A=0$ and our system has no solution. In practice, $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ will reduce to $$f(z) = z$$ in many dimensions of $$z$$. This leads to many rows of the Jacobian being the identity due to the function effectively becoming $$f(x)=x$$ in many dimensions. Thus leading to rows that are entirely zero in $$A$$, which is ill-defined and has no solution causing the optimisation to break.
 
@@ -195,7 +195,7 @@ One solution is to try a soft-min, i.e. $$softmin_{\tau}(a,b) = \frac{ae^{-a/\ta
 ## What do we take away?
 
 1. Training to reach a fixed point can work as way to determine when to stop reasoning. But it gets increasingly more difficult as the underlying problem gets harder.
-2. It's unclear what inductive bias to choose in order to ensure fast convergence to a fixed point. There are downsides such as uninformative gradients at the fixed point.
+2. It's unclear what inductive bias to choose in order to ensure fast enough convergence to a fixed point. There are downsides such as uninformative gradients at the fixed point.
 3. Optimisation is tricky and stands in the way. In particular, with implicit differentiation through the fixed point.
 
 
