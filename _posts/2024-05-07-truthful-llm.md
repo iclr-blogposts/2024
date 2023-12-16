@@ -19,7 +19,7 @@ authors:
       name: Anonymous
 
 # must be the exact same name as your blogpost
-bibliography: Truthful-llama.bib  
+bibliography: 2024-05-07-truthful-llm.bib 
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
@@ -41,7 +41,7 @@ toc:
 
 The increasing use of Large Language Models(LLMs) in real-world scenarios offers intriguing potential, but it also introduces novel risks. These risks include inaccuracies like hallucinations, reasoning error, sycophancy. The risks can become a grave issue in situations where correctness is essential. 
 
-Recent research directions show that often there’s also a  mismatch between the internal representation of the LLMs and the output produced. ITI suggests promising ways to use the model's activation space to improve performance for truthful behaviour.
+Recent research directions <d-cite key="burns2022discovering"></d-cite><d-cite key="li2023othello"></d-cite><d-cite key="moschella2022relative"></d-cite> show that often there’s also a  mismatch between the internal representation of the LLMs and the output produced. ITI suggests promising ways to use the model's activation space to improve performance for truthful behaviour.
 
 ITI works by recognizing the direction in the activation space linked to truthful statements and subsequently adjusting model activations along that direction during the inference process.
 
@@ -79,14 +79,14 @@ where $$P_l^h\in R^{D\times DH}$$ projects stream activation to a $$D$$-dimensio
 
 ## Inference Time Intervention
 
-Inference time intervention technique uses probing to identify truthful heads, and alters the activations of these heads at the time of inference to make the model more truthful with minimal intervention. Authors have used the TruthfulQA dataset for probing which is an adversarially constructed dataset to assess the truthfulness of a language model's responses. It focuses on evaluating the model's ability to avoid common human misconceptions.  
+Inference time intervention technique uses probing to identify truthful heads, and alters the activations of these heads at the time of inference to make the model more truthful with minimal intervention. TruthfulQA<d-cite key="lin2021truthfulqa"></d-cite> dataset is used in ITI method for probing. This is an adversarially constructed dataset to assess the truthfulness of a language model's responses. It focuses on evaluating the model's ability to avoid common human misconceptions.  
 
 
 The whole process of probing and inference time intervention is described in Figure 1.
 
 <figure>
 {% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
-<figcaption>Figure 1</figcaption>
+<figcaption>Figure 1: Workflow for ITI method</figcaption>
 </figure>
 
 
@@ -197,14 +197,5 @@ model.save_pretrained(save_folder_path)
 {% endhighlight %}
 
 
-### Upsides of ITI
-
-- No finetuning required to increase affinity towards truthfulness
-- ITI uses as few as 40 samples to locate and find truthful heads and directions
-- Minimally invasive, edits the activation only for the identified top-k heads
-- After performing the intervention, the new model can be saved and loaded as a standard pre-trained model for inference tasks.
-- Agnostic to decoding algorithm in use
-
-
-## TL;DR
+## Conclusion
 There can be a difference between the LLM’s internal representation of the world and the text they output, this leads to hallucinations in the output, and makes them less truthful. Some of the attention heads are more correlated with truthfulness, we can identify them with the help of a small dataset and probes, shift the activations of these attention heads towards the truthful direction at the time of inference to get more truthful outputs with a minimal invasive procedure and almost no computational overhead.
