@@ -224,15 +224,20 @@ We hypothesize that this algorithm may not perform well in environments where th
 
 
 ### CCIM
-CCIM took us quite a well  to understand.
+CCIM took us quite a well to understand and process. Let us first go through its DAG below.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/CCIM_diagram.png" class="img-fluid" %}
 <div class="caption">
     Figure 9. The DAG of CCIM. Taken from <d-cite key="alet2020metalearning"></d-cite>.
-</div>M
+</div>
+
+We can see that there are 3 neural networks: a random network, a random and forward network and a backward network. The parameters $$\theta$${1} are the parameters of the random network, $$\theta$${2} are the parameters of the backward network, and $$\theta$${3} are the parameters of the random and forward network. Looking at the black border of $$\theta$${1}'s rectangle we can see that the random network's parameters stay fixed during training like in RND.
 
 ## Experiments
-One thing that is puzzles us about FAST is how are the intrinsic rewards supposed to decrease as the agent explores?
+
+We now discuss the experimental details to explore our FAST and CCIM. Our codebase based of PureJaxRL <d-cite key="lu2022discovered"></d-cite>.
+
 ### Empty grid-world
+
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/anim_BYOL_0.gif" class="img-fluid" %}
 <div class="caption">
     Figure 10. The empty grid-world environment.
@@ -242,8 +247,22 @@ One thing that is puzzles us about FAST is how are the intrinsic rewards suppose
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/deepsea.png" class="img-fluid" %}
 <div class="caption">
-    Figure 10. The empty grid-world environment.
+    Figure 11. The Deep sea environment.
 </div>
+
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_byol_lite_30.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_fast_30.png" class="img-fluid"  %}
+    </div>
+</div>
+
 ## Discussion
 
 more random info
