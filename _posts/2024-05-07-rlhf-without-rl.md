@@ -153,8 +153,8 @@ $$
 This expression is well known in the RL literature and is sometimes referred to as *Boltzmann policy*
 (note that in the 1-step RL setting, the Q-function is given by the reward itself).
 
-Similar results were proved in the REPS algorithm {{<d-cite "peters2010relative"/>}} and follow-up work (a more recent paper in that
-direction is {{<d-cite "peng2019advantage"/>}}). While this solution for $\pi_r$ in
+Similar results were proved in the REPS algorithm {{<d-cite key="peters2010relative"/>}} and follow-up work (a more recent paper in that
+direction is {{<d-cite key="peng2019advantage"/>}}). While this solution for $\pi_r$ in
 itself is intractable (because of the partition function $Z(x)$), it can be used
 to express the reward as a function of the optimal policy:
 
