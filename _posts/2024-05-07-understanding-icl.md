@@ -1031,12 +1031,9 @@ Once more, this is a visualization that the linear transformer is not learning a
 
 ### The effect of the GD learning rate
 
-Next, we study the effect of the GD learning rate on the test loss of the linear transformer.
+Next, we study the effect of the GD learning rate on the test loss of the GD-equivalent transformer.
 We believe this is an important point of discussion which was covered only briefly in the paper.
-
-Indeed, as we will see in a moment, the linear transformer converges to the loss of a transformer implementing a gradient descent step only for one specific value of the GD learning rate, a value which must be found by line search.
-
-In the following experiment, we visualize this behavior, by plotting the metrics described above for different values of the GD learning rate.
+Indeed, as we will see in a moment, the linear transformer converges to the loss of a GD-equivalent transformer only for one specific value of the GD learning rate, a value which must be found by line search.
 
 Quoting from the original paper:
 
@@ -1044,11 +1041,13 @@ Quoting from the original paper:
 
 Indeed, this is the same procedure we have used to find the optimal GD learning rate for our previous experiments.
 We now show what happens if we use a different GD learning rate than the one found with line search.
+In the following experiment, we visualize this behavior, by plotting the metrics described above for different values of the GD learning rate.
+
 
 <div class="l-body rounded z-depth-1" style="margin-bottom:1rem;">
   <iframe src="{{ 'assets/html/2024-05-07-understanding-icl/tr-vs-gd-lr.html' | relative_url }}" frameborder='0' scrolling='no' height="400px" width="100%"></iframe>
   <div class="caption" style="margin-top: -20px;">
-    <b>Figure 12</b>: Effect of the GD learning rate on the alignment between the linear transformer and the GD-transformer. The test loss of the linear transformer is minimized for a specific GD learning rate, which must be found by line search. Use the slider to manually change the GD learning rate.
+    <b>Figure 12</b>: Effect of the GD learning rate on the alignment between the linear transformer and the GD-transformer. The agreement between the two is maximized for a specific GD learning rate, which must be found by line search. Use the slider to manually change the GD learning rate.
   </div>
 </div>
 
@@ -1128,15 +1127,39 @@ $$
 
 </details>
 
-We can expect that the analytical solution is faster to compute than the line search.
-Indeed, the line search requires on average 10 seconds to find the optimal GD learning rate, while the analytical solution requires only 10 milliseconds (both with JAX's JIT compilation turned on, run on the same GPU).
+This derivation of the optimal GD learning rate $$\eta^*$$ agrees well with the line search procedure (up to the numerical precision of the line search procedure itself).
+While this is expected, let's take a moment to understand why this is the case.
+First of all, note that the analytical solution is obtained starting from the linear regression loss, while the line search procedure using the loss $$\cL(\mbtheta_\text{GD})$$ defined in Equation \eqref{eq:pre-train-loss}.
+However, the two losses are equivalent by construction, hence the two procedures are equivalent.
 
-So, now we have all the tools for showing why the linear transformer converges to the loss of a transformer implementing a gradient descent step only for *one specific value* of the GD learning rate. 
+Let us now analyze why it happens that the training loss of the linear transformer converges to the loss of the GD-transformer for the optimal GD learning rate. 
+Because the construction of the GD transformer is not unique, it's not easy to see the effect of the GD learning rate once we compare it with the trained linear transformer. 
+Recall that due to its parametrization, the linear transformer does not have an explicit $$\eta$$ parameter, which it can be absorbed in any of the weight matrices in the linear self-attention layer.
+Yet, the linear transformer converges to the exact same loss of the GD-transformer for the optimal GD learning rate $$\eta^*$$.
+This is expected because fundamentally the loss function used for the line search and the one used for the analytical solution is equivalent to the loss in Equation \eqref{eq:pre-train-loss} used during the transformer training.
+Said differently, what we did in two steps for the GD-transformer (first build the $$\mbW^K, \mbW^Q, \mbW^V$$ matrices, then find the optimal GD learning rate) is done implicitly during the training of the linear transformer.
+
+The following table summarizes the three different procedures we have discussed so far.
+
+| | Loss function | GD learning rate |
+| --- | --- | --- | --- | --- |
+| Least-squares regression | $$\cL_\text{lin}(\mbw-\Delta \mbw)$$ |  Explicit $$\eta^*$$ by analytical solution |  
+| GD-transformer | $$\cL(\mbtheta_\text{GD})$$ |  Explicit $$\eta^*$$  by line search |
+| Linear transformer | $$\cL(\mbtheta)$$ | Implicit $$\eta^*$$ by training $$\mbtheta$$ |
+
+
+
+Finally, one comment on the computational complexity of the two procedures.
+It doesn't come as a surprise that the analytical solution is faster to compute than the line search: the line search requires on average 10 seconds to find the optimal GD learning rate, while the analytical solution requires only 10 milliseconds (both with JAX's JIT compilation turned on, run on the same GPU).
+<!-- We can expect that the analytical solution is faster to compute than the line search. -->
+<!-- Indeed, the line search requires on average 10 seconds to find the optimal GD learning rate, while the analytical solution requires only 10 milliseconds (both with JAX's JIT compilation turned on, run on the same GPU). -->
+
+<!-- So, now we have all the tools for showing why the linear transformer converges to the loss of a transformer implementing a gradient descent step only for *one specific value* of the GD learning rate. 
 Because the construction of the GD transformer is not unique, it's not easy to see the effect of the GD learning rate once we compare it with the trained linear transformer. 
 In fact, the GD learning rate affects the projection matrix $$\mbW^P$$, but it can be absorbed in any of the other matrices in the linear transformer.
 Moreover, the loss function used for the line search and the one used for the analytical solution is equivalent to the transformer loss in Equation \eqref{eq:pre-train-loss} used during training.
 This means that when we are training the linear transformer, we are also implicitly training the GD learning rate.
-This justifies the need for line search (or the use for the analytical solution), and also explains why the linear transformer converges to the loss of a transformer implementing a gradient descent step only for *one* specific value of the GD learning rate.
+This justifies the need for line search (or the use for the analytical solution), and also explains why the linear transformer converges to the loss of a transformer implementing a gradient descent step only for *one* specific value of the GD learning rate. -->
 
 ### If one layer is a GD step, what about multiple layers?
 
