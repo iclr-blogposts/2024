@@ -417,6 +417,13 @@ of samples from the joint distribution can be generated $$\mathcal{X} = \{
 (\theta, \mathbf{x})_i \}^N_{i=1}$$. A density estimator is then fitted on the
 provided dataset in order to estimate the desired distribution.
 
+The interested reader shall be directed to <d-cite
+key="papamakarios_fast_2016"></d-cite> and especially <d-cite
+key="papamakarios_normalizing_2019"></d-cite> for a more rigorous introduction
+to SBI. In order to compare the the performances of the different approaches to
+SBI and their performance with respect to certain tasks, an excellent overview
+is provided in <d-cite key="papamakarios_normalizing_2019"></d-cite>.
+
 ## Flow Matching for Simulation-based Inference 
 
 # A Personal Note 
