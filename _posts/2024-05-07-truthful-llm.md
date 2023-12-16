@@ -38,15 +38,11 @@ toc:
 ## Introduction
 
 
-The increasing use of Large Language Models(LLMs) in real-world scenarios offers intriguing potential, but it also introduces novel risks. These risks include inaccuracies like hallucinations, reasoning error, sycophancy. The risks can become a grave issues in situations where correctness is essential. Recent research directions show that internal representation of LLMs can contain interpretable directions which causally affect the model’s generated text.
-Inference time intervention(ITI) demonstrates this effect and suggests promising ways to use the model's activation space to improve performance for truthful behaviour.
-To give a quick overview, ITI works by recognizing the direction in the activation space linked to truthful statements and subsequently adjusting model activations along that direction during the inference process.
-Upsides of ITI:
-No finetuning required to increase affinity towards truthfulness
-ITI uses as few as 40 samples to locate and find truthful heads and directions
-Minimally invasive. Edits the activation for the identified heads
-After intervention, model can be saved and coupled with any text decoding algorithms to generate responses
+The increasing use of Large Language Models(LLMs) in real-world scenarios offers intriguing potential, but it also introduces novel risks. These risks include inaccuracies like hallucinations, reasoning error, sycophancy. The risks can become a grave issue in situations where correctness is essential. 
 
+Recent research directions show that often there’s also a  mismatch between the internal representation of the LLMs and the output produced. ITI suggests promising ways to use the model's activation space to improve performance for truthful behaviour.
+
+ITI works by recognizing the direction in the activation space linked to truthful statements and subsequently adjusting model activations along that direction during the inference process.
 
 
 ## Let's brush up on the basics
@@ -59,7 +55,7 @@ During the inference phase of a transformer model, each token is embedded into a
 
 ## Inference Time Intervention
 
-Inference time intervention technique uses probing to identify truthful heads, and alters the activations of these heads at the time of inference to make the model more truthful with minimal intervention. We discuss the crux of the technique in detail.
+Inference time intervention technique uses probing to identify truthful heads, and alters the activations of these heads at the time of inference to make the model more truthful with minimal intervention. Authors have used the TruthfulQA dataset for probing which is an adversarially constructed dataset to assess the truthfulness of a language model's responses. It focuses on evaluating the model's ability to avoid common human misconceptions.  We discuss the crux of the ITI technique in detail below.
 
 ### Probing for truthfulness
 
@@ -146,6 +142,16 @@ The whole process of probing and inference time intervention is described in Fig
 {% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
 <figcaption>Figure 1</figcaption>
 </figure>
+
+
+### Conclusion
+
+Upsides of ITI:
+- No finetuning required to increase affinity towards truthfulness
+- ITI uses as few as 40 samples to locate and find truthful heads and directions
+- Minimally invasive. Edits the activation for the identified top-k heads
+- After performing the intervention, the new model can be saved and loaded as a standard pre-trained model for inference tasks.
+- Agnostic to decoding algorithm in use
 
 
 ## TL;DR
