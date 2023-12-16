@@ -436,3 +436,26 @@ is provided in <d-cite key="papamakarios_normalizing_2019"></d-cite>.
 
 # A Personal Note 
 
+Whilst this is a blog post, I'd like to use this last part to express my
+personal thoughts on this topic. SBI is a powerful method, enabling Bayesian
+Inference where it would not be possible<d-footnote>It might be more fitting to
+say that Bayesian Inference is not practically feasible in many secanrios as, in
+theory, it might still be possible by sampling. However, this is essentially not
+possible where single evaluations of the forward model are expensive or further
+evaluations are simply not available, as shown in the example.</d-footnote>
+otherwise. Due to the natural problem setting of SBI, where problems are
+high-dimensional, observations are scarce, and distribution complex, density
+estimators capable to counter these are required. In the past, Normalizing Flows
+have proven themselves to meet these challenges, whilst not resolving them
+completely. CNFs, due to their higher flexibility, have been a desired method to
+put to test whether they could even improve on these but were limited in the
+inability to train the efficiently.
+
+Formulating the Flow Matching variant of CNFs has allowed their application to
+complex density estimation tasks, as for example in SBI, and they've shown to
+yield the expected improvements -- on standard SBI benchmarking tasks as well a
+very high dimensional task from the field of astrophysics. Furthermore, the
+generalization of CFM even broadens their applicability. It will be very
+interesting to see what possibilities are opened by this exact formulation and,
+in addition, what further improvements can be obtained by transferring
+techniques from the Diffusion Models to Normalizing Flows. 
