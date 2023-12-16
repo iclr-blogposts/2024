@@ -69,11 +69,10 @@ Does Ekansh? This theme supports rendering beautiful math in inline and display 
 You just need to surround your math expression with `$$`, like `$$ E = mc^2 $$`.
 If you leave it inside a paragraph, it will produce an inline expression, just like $$ E = mc^2 $$.
 
-{% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
-
 ### Inference
 
-Something
+{% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
+
 
 
 ## Conclusion
