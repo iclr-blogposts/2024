@@ -135,7 +135,8 @@ single samples.
 </div>
 <div class="caption">
     Unconditional ImageNet-128 samples of a CNF trained using Flow Matching 
-    with Optimal Transport probability paths.
+    with Optimal Transport probability paths. Figure obtained from 
+    <d-cite key="lipman_flow_2023"></d-cite>.
 </div>
 
 
@@ -216,7 +217,8 @@ where $$\psi_t'$$ denotes the derivative with respect to time $$t$$.
     Compared to the diffusion path’s conditional score function, the OT path’s
     conditional vector field has constant direction in time and is arguably 
     simpler to fit with a parametric model. Note the blue color denotes larger 
-    magnitude while red color denotes smaller magnitude.
+    magnitude while red color denotes smaller magnitude. Figure obtained from 
+    <d-cite key="lipman_flow_2023"></d-cite>.
 </div>
 
 
@@ -305,7 +307,8 @@ field and incorporating the Flow Matching objective enhances sample generation.
 </div>
 <div class="caption">
     Likelihood (BPD), quality of generated samples (FID), and evaluation time 
-    (NFE) for the same model trained with different methods.
+    (NFE) for the same model trained with different methods. Figure from 
+    <d-cite key="lipman_flow_2023"></d-cite>.
 </div>
 
 
@@ -331,7 +334,8 @@ paths consistently outperforms other methods across different resolutions.
     Flow Matching, especially when using OT paths, allows us to use fewer
     evaluations for sampling while retaining similar numerical error (left) and
     sample quality (right). Results are shown for models trained on ImageNet 
-    32×32, and numerical errors are for the midpoint scheme.
+    32×32, and numerical errors are for the midpoint scheme. Figure from 
+    <d-cite key="lipman_flow_2023"></d-cite>.
 </div>
 
 
@@ -358,7 +362,8 @@ particularly with OT paths.
     Sample paths from the same initial noise with models trained on ImageNet 
     64×64. The OT path reduces noise roughly linearly, while diffusion paths 
     visibly remove noise only towards the end of the path. Note also the 
-    differences between the generated images.
+    differences between the generated images. Figure from 
+    <d-cite key="lipman_flow_2023"></d-cite>.
 </div>
 
 
@@ -378,7 +383,8 @@ generated images.
     </div>
 </div>
 <div class="caption">
-    Image super-resolution on the ImageNet validation set.
+    Image super-resolution on the ImageNet validation set. Figure from 
+    <d-cite key="lipman_flow_2023"></d-cite>.
 </div>
 
 
@@ -433,7 +439,7 @@ conditioned on different data, or non-amortized.
     The figure depicts the schematic flow of information for different kinds of 
     Likelihood-free methods. Modern methods in SBI are depicted in the bottom 
     row where the likelihood is approximated in subfigure E, the posterior is 
-    approximated in subfigure F, and the likelihood-ratio in subfigure G.
+    approximated in subfigure F, and the likelihood-ratio in subfigure G. Figure from <d-cite key="cranmer_frontier_2020"></d-cite>.
 </div>
 
 
@@ -542,7 +548,8 @@ the classical NPE approach.
   the pair plot on the left, the choice was made to only show the four 
   parameters for which the classical NPE method performs the worst. While the
   Flow Matching approach could perform worse on other dimensions, this is 
-  not the case as shown on the right. 
+  not the case as shown on the right. Figure from <d-cite key="dax_flow_2023">
+  </d-cite>.
 </div>
 
 Whilst the examples are interesting themselves, their evaluation has shown the
