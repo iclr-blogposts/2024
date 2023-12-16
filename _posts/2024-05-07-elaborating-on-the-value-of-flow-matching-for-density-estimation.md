@@ -471,14 +471,15 @@ of this post, an more abstract understanding is enough.
 
 The approach using the Flow Matching formulation to fit the density network is
 presented by Dax et al. <d-cite key="dax_flow_2023"></d-cite>. In the setting
-described by the author's and the before mentioned SBI context, the goal is to
+described by the authors and the before mentioned SBI context, the goal is to
 approximate a posterior distribution of over model parameters given observations
 $$p(\theta \vert x)$$. In order to learn the posterior, the Flow Matching loss
 is adapted to the following:
 
 $$
 \mathcal{L}_{FMPE} = \mathbb{E}_{t \sim p(t),\theta_1 \sim p(\theta), x \sim p(x
-\vert \theta_1),\theta_t \sim p_t(\theta_t \mid \theta_1)} \Vert v_{t,x}(\theta_t) - u_t(\theta_t \mid \theta_1)
+\vert \theta_1),\theta_t \sim p_t(\theta_t \mid \theta_1)} \Vert
+f_{\omega,x}(\theta_t, t) - u_t(\theta_t \mid \theta_1)
 \Vert^2
 $$
 
@@ -490,16 +491,16 @@ samples.
 
 Another adaption by the authors is to exchange the uniform distribution over the
 time with a general distribution $$t \sim p(t)$$. The effects of this
-substitution won't be at the focus. However, adapting the distribution makes
+substitution won't be focus deeper. However, adapting the distribution makes
 intuitive sense as the training gets harder close to the target distribution.
 Therefore, focussing on time steps $$t$$ closer to one is beneficial, as the
-authors have found.  
+authors have also found in their empirical studies.  
 
 In order to provide a general comparison of the Flow Matching-based SBI
 approach, the CFM model is tested on the SBI benchmarking tasks <d-cite
-key="lueckmann_benchmarking_2021"></d-cite>. The results show a either equal or
-better performance on the benchmark, underscoring the approaches ability and
-applicability to SBI. 
+key="lueckmann_benchmarking_2021"></d-cite>. The results show either equal or
+better performance, underscoring the approaches ability and applicability to
+SBI. 
 
 
 <div class="row mt-3">
@@ -516,16 +517,16 @@ Besides the general benchmarks, the authors use their proposed technique to
 estimate the posterior distribution of gravitational wave parameters $$p(\theta
 \mid x)$$ where $$\theta \in \mathbb{R}^{15}, x \in \mathbb{R}^{15744}$$. In
 order to reduce the problem's dimensionality and increase the information
-density, the observations are compressed to $$128$$ dimensions using a embedding
-network. 
+density, the observations are compressed to $$128$$ dimensions using an
+embedding network. 
 
 Following the preprocessing of the data, three density estimators are fitted and
 compared to each other. The first method uses a neural spline flow, which has
-proven itself in this setting. It is compared to a neural posterior estimation
-using the Flow Matching approach described here. Finally, a neural posterior
-estimator leveraging physical symmetries is used to estimate the targeted
-posterior. All were trained on a simulation budget of $$5 \cdot 10^6$$ samples
-for a total of 400 epochs. 
+proven itself on these kinds of problems. It is compared to a neural posterior
+estimation using the Flow Matching approach described here. Finally, a neural
+posterior estimator leveraging physical symmetries is used to estimate the
+targeted posterior. All were trained on a simulation budget of $$5 \cdot 10^6$$
+samples for a total of 400 epochs. 
 
 In order to evaluate the models' performances, the obtained posteriors were
 compared w.r.t. their 50% credible regions as well as Jensen-Shannon divergence
@@ -561,10 +562,10 @@ discussion of Flow Matching in the first place and hopefully become clear now.
 
 # A Personal Note 
 
-Whilst this is a blog post, I'd like to use this last part to express my
+Whilst this is a blog post, we'd like to use this last part to express our
 personal thoughts on this topic. SBI is a powerful method, enabling Bayesian
 Inference where it would not be possible<d-footnote>It might be more fitting to
-say that Bayesian Inference is not practically feasible in many secanrios as, in
+say that Bayesian Inference is not practically feasible in many scenarios as, in
 theory, it might still be possible by sampling. However, this is essentially not
 possible where single evaluations of the forward model are expensive or further
 evaluations are simply not available, as shown in the example.</d-footnote>
