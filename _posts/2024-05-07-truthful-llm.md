@@ -1,6 +1,6 @@
 ---
 layout: distill
-title: Truthful Language Models
+title: Unlock the Truth - Enhancing the Honesty of Language Models
 description: The NeurIPS 2023 paper Inference-Time Intervention - Eliciting Truthful Answers from a Language Model offers a fascinating exploration into improving the truthfulness of LLMs. This blog post delves into the paper's critical insights for a minimally invasive technique in guiding language models towards truthfulness. 
 
 
