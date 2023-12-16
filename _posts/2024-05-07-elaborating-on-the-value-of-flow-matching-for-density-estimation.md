@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Elaborating on the Value of Flow Matching for Density Estimation
-description:  The transfer of Flow Matching from Diffusion Models to Normalizing
+description:  The transfer of matching-based training from Diffusion Models to Normalizing
               Flows allows to fit expressive continuous normalizing flows 
               efficiently and therefore enables their usage for different kinds 
               of density estimation tasks. One particularly interesting task is 
@@ -9,7 +9,7 @@ description:  The transfer of Flow Matching from Diffusion Models to Normalizing
               improvements. The post shall focus on the discussion of Flow 
               Matching for Continuous Normalizing Flows. To highlight the 
               relevance and the practicality of the method, their use and 
-              advantageous for Simulation-based Inference is elaborated. 
+              advantages for Simulation-based Inference is elaborated. 
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -35,7 +35,7 @@ toc:
   - name: Empirical Results
   - name: Application of Flow Matching in Simulation-based Inference 
     subsections:
-    - name: Superficial Introduction to Simulation-based Inference
+    - name: Primer on Simulation-based Inference
     - name: Flow Matching for Simulation-based Inference 
   - name: A Personal Note 
 
@@ -413,7 +413,7 @@ the more complex transformations allowed by continuous normalizing flows. To
 start out, a brief introduction to SBI shall be given as not many might be
 familiar with this topic.
 
-## Superficial Introduction to Simulation-based Inference
+## Primer on Simulation-based Inference
 
 In many practical scenarios, the likelihood function of a model is intractable
 and cannot be described analytically. This might be the case for where the
@@ -458,10 +458,10 @@ the posterior $$q_{\omega}(\theta \mid x) \approx p(\theta \mid x)$$.
 The interested reader shall be directed to <d-cite
 key="papamakarios_fast_2016"></d-cite> and especially <d-cite
 key="papamakarios_normalizing_2019"></d-cite> for a more rigorous introduction
-to SBI. In order to compare the the performances of the different approaches to
+to SBI. In order to compare the performances of the different approaches to
 SBI and their performance with respect to certain tasks, an excellent overview
 is provided in <d-cite key="lueckmann_benchmarking_2021"></d-cite>. For the sake
-of this post, an more abstract understanding is enough.
+of this post, a more abstract understanding is enough.
 
 ## Flow Matching for Simulation-based Inference 
 
@@ -469,7 +469,7 @@ The approach using the Flow Matching formulation to fit the density network is
 presented by Dax et al. <d-cite key="dax_flow_2023"></d-cite>. In the setting
 described by the authors and the before mentioned SBI context, the goal is to
 approximate a posterior distribution of over model parameters given observations
-$$p(\theta \vert x)$$. In order to learn the posterior, the Flow Matching loss
+$$p(\theta \vert x)$$. To learn the posterior, the Flow Matching loss
 is adapted to the following:
 
 $$
