@@ -439,13 +439,13 @@ Let's see this through the same example with one-dimensional data.
 
 In the non-convex problem, there are two local minima when we only consider one neuron:
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra8.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned1.png" class="img-fluid" %}
 
 As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex  (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minimum in the non-convex gradient descent, then it can be described by a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra9.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned2.png" class="img-fluid" %}
 
 The non-convex problem initialized at random will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima(__left__), or two of them will end up in the same pattern (__right__), activating the same data point.
 
@@ -465,7 +465,7 @@ is equivalent to the non-convex problem. Solving it will give the global optima.
 
 #### 1-D EXAMPLE, MANY NEURONS
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra10.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned3.png" class="img-fluid" %}
 
 <p class="legend">Plotting the positive part of many ReLU neurons. Summed up, they form a network output that perfectly fit the data.</p>
 
@@ -568,19 +568,24 @@ We have previously seen that activation pattern can and will change when doing g
 
 <p class="legend">Training a network with 100 random data point in 10 dimensions. The network only has 20 neurons but the labels are linear. Neurones are randomly initialized and all 20 of them have an unique activation pattern as can be seen on the graph. It is expected in this setting because there are so many possible activation patterns (close to $10^{25}$). However as training progress, neuron <em>align</em> themselves to the same pattern. After 300 steps, the 20 neurons only share 5 unique activation patterns.</p>
 
+We will not do an extensive benchmark on the convex method's performance with realistic data. However we can show an aspect that really set gradient descent and solving the convex problem apart. The convex problem has fixed activation patterns. If the patterns are bad, the solution will be bad. Meanwhile in the non-convex problem, the gradient descent keeps shifting from patterns to pattern until it converges.
+
 __Illustration.__
 
-We will study further this setting with 100 data point and 20 neurons in high dimension.
+We will study further this setting with 100 data point and 20 neurons in high dimension. To compare the how the two methods deal with activation patterns, we will use the activation pattern of the neurons of the non-convex problem to construct a convex problem and solve it. To be more explicit, for each non-convex neuron $$\pmb{w}_i$$, we find its activation pattern and add a $$\pmb{u}_i$$ constrained to this pattern to the convex problem. In the end, we have a convex problem with 20 neurons that will activate exactly the same data points as the non-convex neurons.
 
-To be able to compare, we map the non-convex neurons to their convex counterparts associated with the same activation pattern. Remember that to solve the convex problem, we constrain the convex neurons to their activation pattern. So, for each step of gradient descent, we plot in orange dots the optimal loss of the convex problem _only using_ the activation pattern that the non-convex neurons are currently in.
+We train the non-convex network using gradient descent, and at each step we construct a convex problem, solve it and compare its minimum to our current non-convex loss.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/cvx_vs.png" class="img-fluid" %}
 
-<p class="legend"></p>
+<p class="legend">
 
 The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation patterns changes, and it is always lower than the non-convex loss by construction. Remark that it is not monotonous.
-
 Here we take two-dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
+
+</p>
+
+
 
 
 <div style="display: none">
