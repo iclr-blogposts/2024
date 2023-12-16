@@ -17,10 +17,6 @@ authors:
 
 bibliography: 2024-05-07-rlhf-without-rl.bib
 
-# Add a table of contents to your post.
-#   - make sure that TOC names match the actual section names
-#     for hyperlinks within the post to work correctly.
-#   - please use this format rather than manually creating a markdown table of contents.
 toc:
   - name: Background
     id: background
