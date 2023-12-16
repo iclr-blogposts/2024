@@ -101,14 +101,20 @@ Interestingly, experiments indicate almost 40% difference between probe accuracy
 The psuedocode for the training the linear probes would look like : 
 
 {% highlight python %}
-# GetHeadActivations(Model,input_text) -> Get head activations for each head in each layer; Output Shape: (num_layers,num_heads,sequence_length,activations)
-# Top_K(accuracy_scores) -> Select top K heads with the highest accuracy scores on validation data
+# GetHeadActivations(Model,input_text)
+# Get head activations for each head in each layer; 
+# Output Shape: (num_layers,num_heads,sequence_length,activations)
+# 
+# Top_K(accuracy_scores)
+# Select top K heads with the highest accuracy scores on validation data
+# 
 # Normalize(vec) -> L2 normalization to form unit vector
 
 def CreateProbeData(S,model):
   all_probe_data = np.zeros((len(S),num_Layers,num_Heads,activations))
   for (Q_i, A_i), y_i in S:
-    x_i = GetHeadActivations(model, 'Q: ' + Q_i + '\n\nA: ' + A_i) [:,:,-1,:] # select head activations at the last token
+    # select head activations at the last token
+    x_i = GetHeadActivations(model, 'Q: ' + Q_i + '\n\nA: ' + A_i) [:,:,-1,:] 
     all_probe_data[i,:] = x_i
   return all_probe_data
 
@@ -120,7 +126,9 @@ probes = []
 all_head_accs = []
 for layer in range(num_Layers):
   for head in range(num_Heads):
-    X_train, X_val, Y_train, Y_val = train_test_split(all_probe_data[:, l, h, :],y)
+    X_train, X_val, Y_train, Y_val = train_test_split(
+        all_probe_data[:, l, h, :],y
+    )
     probe = LogisticRegression(X_train, Y_train)
     y_pred = probe.predict(X_train)
     y_val_pred = probe.predict(X_val)
@@ -182,13 +190,20 @@ The psuedocode for the inference step would look like :
 {% highlight python %}
 # For top-K heads modify the attention output.
 for layer, list_params in interventions.items():
-    displacement = np.zeros((int(num_Heads), int(model.config.hidden_size / num_Heads)))
+    displacement = np.zeros((int(num_Heads), 
+        int(model.config.hidden_size / num_Heads)
+    ))
     for head,probe_direction,sigma in list_params.items():
         displacement[head] = alpha * sigma * probe_direction
-    #Add a linear layer to the model which calculates matrix multiplication of displacement terms with original self-attention output for heads
-    intervention_term = torch.nn.functional.linear(inputs=displacement,weights=model.model.layers[layer_no].self_attn.o_proj.weight)
+    # Add a linear layer to the model which calculates matrix multiplication 
+    # of displacement terms with original self-attention output for heads
+    intervention_term = torch.nn.functional.linear(
+        inputs=displacement,
+        weights=model.model.layers[layer_no].self_attn.o_proj.weight
+    )
     #Add intervention_term calculated above to self attention output
-    model.layers[layer].self_attn.o_proj.bias = torch.nn.parameter.Parameter(intervention_term)
+    model.layers[layer].self_attn.o_proj.bias = \ 
+        torch.nn.parameter.Parameter(intervention_term)
 
 # Save the new model ready for inference
 model.save_pretrained(save_folder_path)
