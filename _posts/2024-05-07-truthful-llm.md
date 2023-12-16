@@ -33,6 +33,7 @@ toc:
     - name: Probing for truthfulness
     - name: Inference
   - name: Conclusion
+  - name: TL;DR
 ---
 
 ## Introduction
@@ -146,10 +147,10 @@ The whole process of probing and inference time intervention is described in Fig
 
 ### Conclusion
 
-Upsides of ITI:
+Upsides of ITI method:
 - No finetuning required to increase affinity towards truthfulness
 - ITI uses as few as 40 samples to locate and find truthful heads and directions
-- Minimally invasive. Edits the activation for the identified top-k heads
+- Minimally invasive. Edits the activation only for the identified top-k heads
 - After performing the intervention, the new model can be saved and loaded as a standard pre-trained model for inference tasks.
 - Agnostic to decoding algorithm in use
 
