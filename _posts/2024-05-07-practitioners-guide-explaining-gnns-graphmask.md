@@ -162,7 +162,7 @@ This loss is calculated by taking the predictions of the target model using the 
 The code that implements this procedure can be found [here](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L182-L196).
 
 The loss function also contains a hyperparameter $\beta$, which is a tolerance level or [allowance](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L157) for any model divergence.
-The model is not penalised for any changing behaviour below this threshold, in keeping with the idea that aiming for completely faithful explanations is unrealistic (see Jacovi and Goldberg (2021) for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>).
+The model is not penalised for any changing behaviour below this threshold, in keeping with the idea that aiming for completely faithful explanations is unrealistic (see Jacovi and Goldberg (2020) for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>).
 
 #### Undifferentiable unmasked edge penalty
 
@@ -236,7 +236,7 @@ In addition, the value of the Lagrange multiplier $\lambda$ can give insight int
 
 A trained and validated GraphMask probe outputs a layer-by-layer mask of which edges can be dropped without changing model behaviour — the explanation.
 For practical analysis of which edges were important overall, we recommend collapsing this mask and saying that an edge is important if selected in any layer, but it is also possible to attach more importance to edges used in more layers.
-This set of edges is a high recall, unknown precision prediction of the 'true' set of edges actually used by the model<d-footnote>It is not clear that a single set of edges exists that would constitute a 'true' explanation; see Jacovi and Goldberg (2021) for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>. Nevertheless, this is a useful abstraction.</d-footnote>.
+This set of edges is a high recall, unknown precision prediction of the 'true' set of edges actually used by the model<d-footnote>It is not clear that a single set of edges exists that would constitute a 'true' explanation; see Jacovi and Goldberg (2020) for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>. Nevertheless, this is a useful abstraction.</d-footnote>.
 
 > Given an example graph $\mathcal{G}$, our method returns for each layer $k$ a subgraph $\mathcal{G}^{(k)}_S$
 > such that we can faithfully claim that no edges outside $\mathcal{G}^{(k)}_S$ influence the
