@@ -1,7 +1,15 @@
 ---
 layout: distill
 title: Elaborating on the Value of Flow Matching for Density Estimation
-description: todo.
+description:  The transfer of Flow Matching from Diffusion Models to Normalizing
+              Flows allows to fit expressive continuous normalizing flows 
+              efficiently and therefore enables their usage for different kinds 
+              of density estimation tasks. One particularly interesting task is 
+              Simulation-based Inference, where Flow Matching enabled several 
+              improvements. The post shall focus on the discussion of Flow 
+              Matching for Continuous Normalizing Flows. To highlight the 
+              relevance and the practicality of the method, their use and 
+              advantageous for Simulation-based Inference is elaborated. 
 date: 2024-05-07
 future: true
 htmlwidgets: true
