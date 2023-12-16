@@ -35,6 +35,11 @@ toc:
     - name: Gaussian conditional probability paths
     - name: Generalized Flow-Based Models
   - name: Empirical Results
+  - name: Application of Flow Matching in Simulation-based Inference 
+    subsections:
+    - name: Superficial Introduction to Simulation-based Inference
+    - name: Flow Matching for Simulation-based Inference 
+  - name: A Personal Note 
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -108,7 +113,7 @@ naively with maximum likelihood since the flow has to be integrated over time
 for each sample. This is especially problematic for large datasets which are
 needed for the precise estimation of complex high-dimensional distributions.
 
-# Flow matching
+# Flow Matching
 
 The authors of <d-cite key="lipman_flow_2023"></d-cite> propose a new method for
 training CNFs, which avoids the need for simulation. The key idea is to regress
@@ -168,7 +173,7 @@ from $$p_D$$ are available, $$p_t(x|x_1)$$ can be efficiently sampled, and
 $$u_t(x|x_1)$$ can be computed efficiently. We discuss these points in the
 following.
 
-## Gaussian conditional probability paths
+## Gaussian Conditional Probability Paths
 
 The vector field that defines a probability path is usually not unique. This is
 often due to invariance properties of the distribution, e.g. rotational
@@ -238,7 +243,7 @@ $$
 The authors argue that this choice leads to more natural vector fields, faster
 convergence and better results.
 
-## Generalized Flow-Based Models
+## Generalized Flow-based Models
 
 Flow matching, as it is described above, is limited to the Gaussian source
 distributions. In order to allow for arbitrary base distributions <d-cite
@@ -252,7 +257,7 @@ Specifically, dynamic optimal transport (DOT) is presented to improve training
 and inference time even further, while improving the accuracy of the flows as
 well.
 
-# Empirical results
+# Empirical Results
 
 The authors investigate the utility of Flow Matching in the context of image
 datasets, employing CIFAR-10 and ImageNet at different resolutions. Ablation
@@ -357,3 +362,48 @@ demonstrate the versatility of Flow Matching, achieving competitive performance
 in comparison to state-of-the-art models. The results suggest that Flow
 Matching presents a promising approach for generative modeling with notable
 advantages in terms of model efficiency and sample quality.
+
+# Application of Flow Matching in Simulation-based Inference 
+
+A very specifically interesting application of density estimation, i.e.
+Normalizing Flows, is in Simulation-based Inference (SBI). In SBI, Normalizing
+Flows are used to estimate the posterior distribution of model parameters given
+some observations. An important factor here are the sample efficiency,
+scalability, and expressivity of the density model. Especially for the later
+two, Flow Matching has shown to the yield an improvement. This is due to the
+efficient transport between source and target density and the flexibility due
+the more complex transformations allowed by continuous normalizing flows. To
+start out, a brief introduction to SBI shall be given as not many might be
+familiar with this topic.
+
+## Superficial Introduction to Simulation-based Inference
+
+In many practical scenarios, the likelihood function of a model is intractable
+and cannot be described analytically. This might be the case for where the
+forward model is a complex or proprietary simulation, or if it is a physical
+experiment <d-cite key="papamakarios_normalizing_2019"></d-cite>. In order to
+still be able to perform Bayesian inference, one can resort to a class of
+methods called Likelihood-free Inference. One possible but popular method in
+this class is SBI. The core idea is to use a prior in combination with the
+simulator to obtain samples from the joint distribution of the parameters and
+the data. Based on these samples, the posterior can either be learned directly
+or the likelihood can be approximated <d-cite
+key="cranmer_frontier_2020"></d-cite>. Depending on the exact method chosen, the
+approximated posterior is either amortized, i.e. does not require refitting when
+conditioned on different data, or non-amortized. 
+
+In order to formalize the method, let $$\theta \sim \pi(\theta)$$ denote the
+parameters to a system and its respective prior distribution. The system under
+evaluation and the respective observations obtained are denoted by $$\mathbf{x}
+= \mathcal{M}(\theta)$$. To sample from the joint distribution $$p(\theta,
+\mathbf{x})$$, the dedicated parameter $$\theta_i$$ is sampled from the prior
+and the observation is obtained by evaluating the forward model on that
+parameter $$x_i = \mathcal{M}(\theta_i)$$. According to this approach, a dataset
+of samples from the joint distribution can be generated $$\mathcal{X} = \{
+(\theta, \mathbf{x})_i \}^N_{i=1}$$. A density estimator is then fitted on the
+provided dataset in order to estimate the desired distribution. 
+
+## Flow Matching for Simulation-based Inference 
+
+# A Personal Note 
+
