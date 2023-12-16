@@ -456,7 +456,8 @@ and the observation is obtained by evaluating the forward model on that
 parameter $$x_i = \mathcal{M}(\theta_i)$$. According to this approach, a dataset
 of samples from the joint distribution can be generated $$\mathcal{X} = \{
 (\theta, \mathbf{x})_i \}^N_{i=1}$$. A density estimator is then fitted on the
-provided dataset in order to estimate the desired distribution.
+provided dataset in order to estimate the desired distribution, e.g. directly
+the posterior $$q_{\omega}(\theta \mid x) \approx p(\theta \mid x)$$.
 
 The interested reader shall be directed to <d-cite
 key="papamakarios_fast_2016"></d-cite> and especially <d-cite
