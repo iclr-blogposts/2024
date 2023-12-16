@@ -63,14 +63,15 @@ distributions by transforming a simple, known distribution into a more complex
 one. They do so by leveraging the change of variables formula, defining a
 bijection from the simple distribution to the complex one. 
 
-For most of the time, the flows achieving the notable results were constructed
-by chaining several differentiable and invertible transformations. However,
-these diffeomorphic transformations limit the flows in their complexity as such
-have to be simple. Furthermore, this leads to trade-off sampling speed and
-evaluation performance <d-cite key="papamakarios_normalizing_2019"></d-cite>.
-Their continuous couterpart, Continuous Normalizing Flows (CNFs) have been held
-back by limitations in their simulation-based maximum likelihood training
-<d-cite key="tong_improving_2023"></d-cite>.
+For most of the time, the standard definition of flows, achieving the notable
+results, was based on chaining several differentiable and invertible
+transformations. However, these diffeomorphic transformations limit the flows in
+their complexity as such have to be simple. Furthermore, this leads to trade-off
+sampling speed and evaluation performance <d-cite
+key="papamakarios_normalizing_2019"></d-cite>. Their continuous couterpart,
+Continuous Normalizing Flows (CNFs) have been held back by limitations in their
+simulation-based maximum likelihood training <d-cite
+key="tong_improving_2023"></d-cite>.
 
 # Continuous Normalizing Flows
 
@@ -243,7 +244,13 @@ Flow matching, as it is described above, is limited to the Gaussian source
 distributions. In order to allow for arbitrary base distributions <d-cite
 key="tong_improving_2023"></d-cite> extended the approach to a generalized
 conditional flow matching technique which are a family of simulation-free
-training objectives for CNFs. 
+training objectives for CNFs. Increasing the set of objectives to connect two
+arbitrary distributions broadens the applicability of the flow matching
+formulation. Similarly to the initial flow matching approach, the optimal
+transport objective allows for a more stable training and faster inference.
+Specifically, dynamic optimal transport (DOT) is presented to improve training
+and inference time even further, while improving the accuracy of the flows as
+well.
 
 # Empirical results
 
