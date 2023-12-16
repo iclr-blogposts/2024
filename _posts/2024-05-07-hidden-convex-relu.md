@@ -496,29 +496,29 @@ We consider two data points: $$\color{cvred}{\pmb{x_1}} = (0.2, 1)$$ and $$\colo
 The activation pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
 
 
-One point of interest, is the data for which the ReLU will be 0. This is where the output changes its slope: $$a_1 = -\frac{w_1^1}{w_1^2}$$ where $$w_1^i$$ is the i-th coordinate of $$\pmb{w}_i$$. Here, $$a_1 = 0.5$$. We call this the _activation point_ of the neuron $$\pmb{w}_1$$.
+One point of interest is the data for which the ReLU will be 0. This is where the output changes its slope: $$a_1 = -\frac{w_1^1}{w_1^2}$$ where $$w_1^i$$ is the i-th coordinate of $$\pmb{w}_i$$. Here, $$a_1 = 0.5$$. We call this the _activation point_ of the neuron $$\pmb{w}_1$$.
 
-We plot the $$\color{cblue}{\text{output}}$$ of the network in function of first dimension of the data $$x^1$$ here simply written $$x$$: $$\max(0, \pmb{w_1}^\top (x, 1))$$
+We plot the $$\color{cblue}{\text{output}}$$ of the network in the function of the first dimension of the data $$x^1$$ here simply written $$x$$: $$\max(0, \pmb{w_1}^\top (x, 1))$$
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/firstexpl.png" class="img-fluid" %}
 
-<p class="legend">A neuron initialized so that it activate only one data point <em>i.e.</em> its activation point is between the two samples, and its slope tells us if it activate on the left or on the right like in this case.</p>
+<p class="legend">A neuron initialized so that it activates only one data point <em>i.e.</em> its activation point is between the two samples, and its slope tells us if it activates on the left or on the right like in this case.</p>
 
 __Illustration__.
 
-In the animation below, we train this network using classic gradient descent on the two data point $$\pmb{x}_1$$ and $$\pmb{x}_2$$, represented by the red crosses. We plot its output in blue for every possible data point (omitting the second dimension as it it always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame correspond to one step of full-batch gradient descent with a small learning rate. We mark the activation point of the neuron by a green triangle, pointed towards which side the neuron activate. The green triangle's height is the slope of the ReLU's output, equal to $$u_1^1 = w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
+In the animation below, we train this network using classic gradient descent on the two data points $$\pmb{x}_1$$ and $$\pmb{x}_2$$, represented by the red crosses. We plot its output in blue for every possible data point (omitting the second dimension as it is always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame corresponds to one step of full-batch gradient descent with a small learning rate. We mark the activation point of the neuron with a green triangle, pointing toward which side the neuron activates. The green triangle's height is the slope of the ReLU's output, equal to $$u_1^1 = w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_outneur.gif" class="img-fluid" %}
 
-<p class="legend">Training a single neuron network with gradient descent until it exactly fits two data points. It start by fitting the only point it activates, \(\color{cvred}{\pmb{x}_2}\). As training progress, the activation point represented by a green triangle shifts position. As soon as the activation point reachs \(\color{cvred}{\pmb{x}_1}\), it activates it and starts fitting both points at the same time. Its activation pattern is now \(\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)\)</p>
+<p class="legend">Training a single neuron network with gradient descent until it exactly fits two data points. It starts by fitting the only point it activates, \(\color{cvred}{\pmb{x}_2}\). As training progresses, the activation point represented by a green triangle shifts position. As soon as the activation point reaches \(\color{cvred}{\pmb{x}_1}\), it activates it and starts fitting both points at the same time. Its activation pattern is now \(\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)\)</p>
 
-Adding more neuron will not create additional activation patterns, adding more data point will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. 
+Adding more neurons will not create additional activation patterns, adding more data points will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/manyexpl.png" class="img-fluid" %}
 
-<p class="legend">Plotting individual output and activation point of each of these ten possible ReLU neurons in blue. Those are the 10 (20 with negative ones) neurons that need to be considered to get the global optima using the convex equivalent. When moving the activation point between two data points, the activation pattern do not change.</p>
+<p class="legend">Plotting individual output and activation points of each of these ten possible ReLU neurons in blue. Those are the 10 (20 with negative ones) neurons that need to be considered to get the global optima using the convex equivalent. When moving the activation point between two data points, the activation pattern does not change.</p>
 
-<p class="remark"> In higher dimension we cannot visualize the activation patterns as easily, but we can understand that as high dimension increase, more patterns are possible as it's easier to separate different data points.</p>
+<p class="remark"> In higher dimensions we cannot visualize the activation patterns as easily, but we can understand that as dimensionality increases, more patterns are possible as it's easier to separate different data points.</p>
 
 <div style="display: none">
 {<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
@@ -565,7 +565,7 @@ A convex equivalent of deeper networks exists but exacerbates existing problems.
 
 ### Activation patterns are not a constant in the non-convex problem
 
-Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. The global optima might be the same, but training the network gradient descent almost always leads to a local minimum. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. However, it is not clear if they find the same local minimum.
+Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. The global optima might be the same, but training the network with gradient descent almost always leads to a local minimum. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. However, it is not clear if they find the same local minimum.
 
 Activation patterns can and will change during gradient descent in the non-convex problem. In some cases, this shifting is useful because the new activation patterns allow for a better global minima. To verify this, we monitor the number of unique activation patterns used by the network at each step of a gradient descent. If two neurons have the same activation pattern (_i.e._ they activate and deactivate the same data points), we would only count one.
 
@@ -585,50 +585,50 @@ We train the non-convex network using gradient descent, and at each step, we con
 
 <p class="legend">
 
-Training a 20-neuron network with gradient descent and using the same activation patterns solve the convex equivalent. We plot for each step, the loss of the non-convex network and the optimal loss of the convex problem. We use <em>cvxpy</em> to define the problem and solve it using <em>ECOS</em>. The convex loss is always lower than the non-convex loss and that's expected, in the convex problem we are using the same neurons and trying to improve the loss without changing the activation. The convex loss at the start is quickly beaten by gradient descent, this means our initial choice of activation pattern was bad, and gradient descent continually improves them.
+Training a 20-neuron network with gradient descent and using the same activation patterns to solve the convex equivalent. We plot for each step, the loss of the non-convex network and the optimal loss of the convex problem. We use <em>cvxpy</em> to define the problem and solve it using <em>ECOS</em>. The convex loss is always lower than the non-convex loss and that's expected, in the convex problem we are using the same neurons and trying to improve the loss without changing the activation. The convex loss at the start is quickly beaten by gradient descent, this means our initial choice of activation pattern was bad, and gradient descent continually improves them.
 </p>
 
 In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
-In the next section we focus on cases where the non-convex minima can be accurately described by convex problems.
+In the next section, we focus on cases where the non-convex minima can be accurately described by convex problems.
 
-### On large initialisation scale
+### On large initialization scale
 
-Initialisation scale of network, is the absolute size of the neurons' parameters. To get a change the scale, we can simply multiply every parameters by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. We say we're on a large scale when neurons do not move far from their initial value during descent. And this typically happens when using large initial values for the paremeters of each neurons.
+The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. We say we're on a large scale when neurons do not move far from their initial value during descent. And this typically happens when using large initial values for the parameters of each neuron.
 
-The theory is that you can push the scale high enough that neurons do not change their activation patterns at all. If this is verified, the convex reformulation will describe exactly the minima that the gradient descent will reach. However in practice it is not possible to observe as the loss becomes very small and the training is too slow to compute to the end. The NTK briefly mentionned in the introduction operate in this setting, using the fact that the network is very close to its linear approximation. On a similar note, reducing the step size for the first layer will also guarantee convergence<d-cite key="marionLeveragingTwoTimescale2023"></d-cite></d-footnote>.
+The theory states that you can push the scale used high enough so that neurons will not change their activation patterns at all. If this is verified, the convex reformulation will describe exactly the minima that the gradient descent will reach. However, in practice it is not possible to observe as the loss becomes very small and the training is too slow to compute to the end. The NTK briefly mentioned in the introduction operates in this setting, using the fact that the network is very close to its linear approximation. On a similar note, reducing the step size for the first layer will also guarantee convergence<d-cite key="marionLeveragingTwoTimescale2023"></d-cite></d-footnote>.
 
 __Illustration.__
 
-Using an animation, we plot every step of a gradient descent in the non-convex problem until the loss is small enough. As mentionned before, the training is too slow to continue until we reach a real local minimum described by the convex problem here. We plot the output of the network, which is the sum of all the neurons We want to focus on the activation point of each neurone
+Using an animation, we plot every step of a gradient descent in the non-convex problem until the loss is small enough. As mentioned before, the training is too slow to continue until we reach a real local minimum described by the convex problem here. We plot the output of the network, which is the sum of all the neurons We want to focus on the activation point of each neuron.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/bigscale_movie.gif" class="img-fluid" %}
 
 <p class="legend">
-Training a network with 1000 neurons with big initial values using gradient descent. The output of the network is in blue, the four data point(red crosses) represent linear data. Each green triangle represent one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveal which side the neuron will activate the data. At initialisation, the repartition of activation point is uniform. The movement of the activation point is minimal, only a few neuron will actually change pattern, among the thousands.
+Training a network with 1000 neurons with big initial values using gradient descent. The output of the network is in blue, and the four data points  (red crosses) represent linear data. Each green triangle represents one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveals which side the neuron will activate the data. At initialization, the repartition of the activation point is uniform. The movement of the activation point is minimal, only a few neurons will actually change the pattern, among the thousands.
 </p>
 
-<p class="remark"> A side effect of the large initialisation is the catastrophic overfitting i.e. there are very large variation between data points which will negatively impact test loss.
+<p class="remark"> A side effect of the large initialization is catastrophic overfitting i.e. there are very large variations between data points which will negatively impact test loss.
 </p>
 
 
-### On very small initialisation
+### On very small initialization
 
-At the other extreme, the small scale setting effectively let neurons align themselves before ever decreasing the loss. In theory, if you push the scale down enough, neurons will converge to a finite set of direction before trying to fit the objective.
+At the other extreme, the small-scale setting effectively lets neurons align themselves before ever decreasing the loss. In theory, if you push the scale down enough, neurons will converge to a finite set of directions before trying to fit the objective.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_movie.gif" class="img-fluid" %}
 
 <p class="legend">
-Training a network with 1000 neurons with very small initial values using gradient descent. The output of the network is in blue, the four data point(red crosses) represent linear data. Each green triangle represent one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveal which side the neuron will activate the data. At initialisation, the repartition of activation point is uniform. However as training progress most neurons that activate toward the right converges to $-1.3$. Once the norm of the neuron at activating at $-1.3$ is large enough, the loss decrease and we quickly reach convergence.
+Training a network with 1000 neurons with very small initial values using gradient descent. The output of the network is in blue, the four data points (red crosses) represent linear data. Each green triangle represents one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveals which side the neuron will activate the data. At initialization, the repartition of the activation point is uniform. However, as training progress most neurons that activate toward the right converge to $-1.3$. Once the norm of the neuron at activating at $-1.3$ is large enough, the loss decreases and we quickly reach convergence.
 </p>
 
 If you take orthogonal data and a small scale, the behavior is very predictable<d-cite key="boursierGradientFlowDynamics2022c"></d-cite> even in a regression setting.
 
-<p class="remark">  Unless mentionned otherwise, all experiments were ran using full batch vanilla gradient descent. In experiments it is clear that adding momentum or using the Adam optimiser much easier to use on top of being faster to converge. However, the behavior is much less predictable.</p>
+<p class="remark">  Unless mentioned otherwise, all experiments were run using full batch vanilla gradient descent. In experiments, it is clear that adding momentum or using the Adam optimizer is much easier to use on top of being faster to converge. However, the behavior is much less predictable.</p>
 
 ## Conclusion
 
-The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minima found by gradient descent in the non-convex. However, finding the global optima is impossible in practice, and approximations are still costly. There is no evident link between feature learning in the non-convex and the convex reformulation.
+The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minimum found by gradient descent in the non-convex setting. However, finding the global optima is impossible in practice, and approximations are still costly. There is no evident link between feature learning in the non-convex and the convex reformulation.
 
 As we conclude, the tension between the computational demands of cutting-edge models and the necessity for interpretability becomes apparent. Unveiling the intricacies of training offers a glimpse into simpler, more transparent models, fostering adaptability and responsiveness in the evolving landscape of artificial intelligence. This duality of complexity and clarity underscores the ongoing quest for a more responsible and effective future in machine learning.
 
