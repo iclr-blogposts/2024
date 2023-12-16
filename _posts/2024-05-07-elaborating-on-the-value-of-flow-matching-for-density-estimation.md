@@ -160,7 +160,7 @@ Assuming that the target vector field is known, the authors propose a
 loss function that directly regresses the time dependent vector field:
 
 $$
-  L_{\textrm{FM}}(\theta) = \mathbb{E}_{t, p_t(x)}(|f_{\theta}(x, t) - u_t(x)|^2),
+  L_{\textrm{FM}}(\omega) = \mathbb{E}_{t, p_t(x)}(|f_{\omega}(x, t) - u_t(x)|^2),
 $$
 
 where $$u_t$$ is a vector field that generates $$p_t$$ and the expectation with
@@ -178,8 +178,8 @@ Using this fact, the conditional flow matching loss can be defined, obtaining
 equivalent gradients as the flow matching loss.
 
 $$ 
-  L_{\textrm{CFM}}(\theta) = \mathbb{E}_{t, p_t(x|x_1),
-  p_D(x_1)}(|f\_{\theta}(x, t) - u_t(x|x_1)|^2). 
+  L_{\textrm{CFM}}(\omega) = \mathbb{E}_{t, p_t(x|x_1),
+  p_D(x_1)}(|f_{\omega}(x, t) - u_t(x|x_1)|^2). 
 $$
 
 Finally, one can easily obtain an unbiased estimate for this loss if samples
