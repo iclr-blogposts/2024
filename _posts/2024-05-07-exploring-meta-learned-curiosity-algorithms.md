@@ -156,8 +156,26 @@ As mention earlier the Alet et al. focused on meta-learning pieces of code or ra
 The DSL used to find component $$\mathcal{I}$$ consisted of programs such as neural networks complete with gradient-descent mechanisms, L2 distance calculation, and ensembles of neural networks.
 Component $$\mathcal{I}$$'s DSL can describe many other hand-designed curiosity algorithms such as RND. 
 
-The components $$\mathcal{I}$$ and $$\chi$$ are represented as Directed Acyclic Graphs (DAGs).
+The components $$\mathcal{I}$$ and $$\chi$$ are represented as Directed Acyclic Graphs (DAGs). The DAGs consist of the following types of modules:
+- Input modules. These are the inputs we put in each component of module $$\mathcal{C}$$. 
+- Parameter and Buffer modules. This module either consist of the weights of a neural network which can be updated via back-propagation or a First In, First Out queues that output a finite list of the most recent $$k$$. 
+- Functional modules. This type module calculate the output given some input.
+- Update modules. These modules can add real-valued outputs to the loss function of the neural network or add variables to buffers.
 
+The DAGs also have an output node which is a single node and the output of this node is the output of the entire program. To make these ideas more concrete, let us look the DAG that describes RND.
+
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND_DAG.png" class="img-fluid" %}
+<div class="caption">
+    Figure 7. The DAG of RND. Taken from <d-cite key="alet2020metalearning"></d-cite>.
+</div>
+
+The blue rectangles represent the input modules and we can see from the inputs are states from the environment. 
+The parameter modules are the gray rectangles and these are the parameters of the target network and the predictor network.
+The target network's parameters are given by $$\theta$${1} and the predictor network's parameter's are given by $$\theta$${2}.
+The functional modules are the white rectangles and these are the neural networks. The update module is the pink rectangle which is the loss function.
+The output node is the green rectangle and is the L2 distance between the output of predictor network and the target network. This is the loss function described in the RND section. Note that $$\theta$${2} rectangle has a pink border and a pink arrow this indicates that it can be updated via back-propagation. While $$\theta$${1} rectangle has black border and a black arrow indicating the parameters are not updated via back-propagation. This makes sense since $$\theta$${1} are the parameters of the target network whose parameters stay fixed and $$\theta$${2} are the parameters of predictor network whose parameters we do update during training.
+
+  
 ### FAST
 
 Explain the ICCM algorithm and how it contributes to the meta-learning approach.
