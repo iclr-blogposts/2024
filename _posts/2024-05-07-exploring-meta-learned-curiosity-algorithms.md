@@ -33,6 +33,7 @@ toc:
     - name: BYOL-Explore
   - name: Meta-learning curiosity algorithms
     subsections:
+    - name: Domain-Specific Language of $$\mathcal{C}$$
     - name: Method
     - name: FAST
     - name: ICCM
@@ -148,19 +149,18 @@ In this case the outer loop searches over the curiosity algorithm space while th
 </div>
 
 In the above figure can see that the curiosity algorithm, $$\mathcal{C}$$, takes in the state and reward from the environment and then feeds proxy reward $$\hat{r}$$ to the RL agent. The RL algorithm used is a fully-specified algorithm, i.e., all its hyperparameters are specified. There were two stages in the authors search. The module $$\mathcal{C}$$ is made from of two components.
-The first component, $$\mathcal{I}$$, calculates the intrinsic reward given the current state, next state and the action taken. The second component, $$\chi$$, then takes the extrinsic reward, the intrinsic reward and the current normalised time step to combine them and output $$\hat{r}$$. We now look at the method used to find the module $$\mathcal{C}$$.
+The first component, $$\mathcal{I}$$, calculates the intrinsic reward given the current state, next state and the action taken. The second component, $$\chi$$, then takes the extrinsic reward, the intrinsic reward and the current normalised time step to combine them and output $$\hat{r}$$. 
 
-### Method
+### Domain-Specific Language of $$\mathcal{C}$$
 
-As mention earlier the Alet et al. focused on meta-learning pieces of code or rather meta-learning in space of programs or operations. The programs and operations are represented in domain-specific language (DSL). The DSL used to find component $$\chi$$ consisted of but not limited to arithmetic, Min, Max operations. 
-The DSL used to find component $$\mathcal{I}$$ consisted of programs such as neural networks complete with gradient-descent mechanisms, L2 distance calculation, and ensembles of neural networks.
-Component $$\mathcal{I}$$'s DSL can describe many other hand-designed curiosity algorithms such as RND. 
+As mention earlier the Alet et al. focused on meta-learning pieces of code or rather meta-learning in a space of programs or operations. The programs and operations are represented in domain-specific language (DSL). The DSL used to find component $$\chi$$ consisted of operations such as arithmetic, Min, Max and more. 
+While the DSL used to find component $$\mathcal{I}$$ consisted of programs such as neural networks complete with gradient-descent mechanisms, L2 distance calculation, and ensembles of neural networks and more. Component $$\mathcal{I}$$'s DSL can describe many other hand-designed curiosity algorithms in literature, such as RND. 
 
 The components $$\mathcal{I}$$ and $$\chi$$ are represented as Directed Acyclic Graphs (DAGs). The DAGs consist of the following types of modules:
-- Input modules. These are the inputs we put in each component of module $$\mathcal{C}$$. 
-- Parameter and Buffer modules. This module either consist of the weights of a neural network which can be updated via back-propagation or a First In, First Out queues that output a finite list of the most recent $$k$$. 
-- Functional modules. This type module calculate the output given some input.
-- Update modules. These modules can add real-valued outputs to the loss function of the neural network or add variables to buffers.
+- Input modules: These are the inputs we put in each component of module $$\mathcal{C}$$. 
+- Parameter and Buffer modules: This module either consists of the weights of a neural network which can be updated via back-propagation or a First In, First Out queues that output a finite list of the most recent $$k$$ inputs. 
+- Functional modules: This type module calculate the output given some input.
+- Update modules: These modules can add real-valued outputs to the loss function of the neural network or add variables to buffers.
 
 The DAGs also have an output node which is a single node and the output of this node is the output of the entire program. To make these ideas more concrete, let us look the DAG that describes RND.
 
@@ -169,13 +169,25 @@ The DAGs also have an output node which is a single node and the output of this 
     Figure 7. The DAG of RND. Taken from <d-cite key="alet2020metalearning"></d-cite>.
 </div>
 
-The blue rectangles represent the input modules and we can see from the inputs are states from the environment. 
+The blue rectangles represent the input modules, and we can see from the inputs are states from the environment. 
 The parameter modules are the gray rectangles and these are the parameters of the target network and the predictor network.
-The target network's parameters are given by $$\theta$${1} and the predictor network's parameter's are given by $$\theta$${2}.
+Note that the target network's parameters are given by $$\theta$${1} and the predictor network's parameter's are given by $$\theta$${2}.
 The functional modules are the white rectangles and these are the neural networks. The update module is the pink rectangle which is the loss function.
-The output node is the green rectangle and is the L2 distance between the output of predictor network and the target network. This is the loss function described in the RND section. Note that $$\theta$${2} rectangle has a pink border and a pink arrow this indicates that it can be updated via back-propagation. While $$\theta$${1} rectangle has black border and a black arrow indicating the parameters are not updated via back-propagation. This makes sense since $$\theta$${1} are the parameters of the target network whose parameters stay fixed and $$\theta$${2} are the parameters of predictor network whose parameters we do update during training.
 
+The output node is the green rectangle and is the L2 distance between the output of predictor network and the target network. This is the loss function described in the RND section. Note that $$\theta$${2} rectangle has a pink border and a pink arrow this indicates that it can be updated via back-propagation. While $$\theta$${1} rectangle has black border and a black arrow indicating the parameters are not updated via back-propagation. Also note that the functional module that makes use of those parameters has the word "Detach" indicating the gradient information is not flowing back. Recall that $$\theta$${1} represents the parameters of the target network, which remain fixed, and $$\theta$${2} represents the parameters of the predictor network, which are updated during training.
+
+Now a very important idea is that the DAGs have polymorphically types inputs and outputs. There are four types:
+- $$\mathbb{R}$$, the real numbers.
+- $$\mathbb{S}$$, the state space of the environment.
+- $$\mathbb{A}$$, the action space of the environment. 
+- $$\mathbb{F}$$, the feature space.
   
+The instantiation of some types depends on the environment. For example in Figure 7, if $$\mathbb{S}$$ is an image then both the target network and the predictor network are instantiated as a convolutional neural network.
+If $$\mathbb{S}$$ is just an array of numbers then target network and the predictor network are fully connected neural networks. We now look at the method used to find the components $$\mathcal{I}$$ and $$\chi$$.
+
+### Method
+
+
 ### FAST
 
 Explain the ICCM algorithm and how it contributes to the meta-learning approach.
