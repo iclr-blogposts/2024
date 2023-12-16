@@ -249,12 +249,12 @@ $$
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser_movie.gif" class="img-fluid" %}
 
-<p class="legend">
 
+<p class="legend">
+   
 a few words
 
 </p>
-
 
 ## Overview and Motivation
 
@@ -266,7 +266,7 @@ To figure out what a neural network learns, we will focus in this post on the tr
 
 ### Problem and notation
 
-Our problem of interest will be the training of a simple two-layer neural network with ReLU activation. We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained by backpropagation for instance).
+Our problem of interest will be the training of a simple two-layer neural network with ReLU activation. We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained, for instance, by backpropagation).
 
 <p class="framed">
     <b class="underline">Two-Layer ReLU Network Training</b><br>
@@ -283,11 +283,11 @@ Our problem of interest will be the training of a simple two-layer neural networ
     \end{equation}
 </p>
 
-Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ as a function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half of the time, gradient descent will get stuck at a plateau as the gradient is zero along the red line. However there always exist a path of non-increasing loss from initialisation to the global minimum.
+Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ as a function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half of the time, gradient descent will get stuck at a plateau as the gradient is zero along the red line. However, there always exists a path of non-increasing loss from initialization to the global minimum.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
-<p class="legend">Loss landscape of a network with two parameters, one for each ReLU neurons, and two data points. Since the labels are positive, we fix the second layer $\alpha_1, \alpha_2$ to 1 to be able to plot this in 2D without a loss of generality. The data points $(x_1, y_1) = (-1, 1)$ and $(x_2, y_2) = (1, 2)$ are fixed. The black lines represent the loss for only one neuron (since the other is equal to 0). The red lines are the only path of parameters for which the loss is constant, they represent the parameters for which the neuron fit exactly one data point and is deactivated for the other and thus suffer a loss of $(y_1)^2$ for the red line on the left, and $(y_2)^2$ for the other. The exact formula to compute each point of this graph is:
+<p class="legend">Loss landscape of a network with two parameters, one for each ReLU neuron, and two data points. Since the labels are positive, we fix the second layer $\alpha_1, \alpha_2$ to 1 to plot this in 2D without a loss of generality. The data points $(x_1, y_1) = (-1, 1)$ and $(x_2, y_2) = (1, 2)$ are fixed. The black lines represent the loss for only one neuron (since the other is equal to 0). The red lines are the only path of parameters for which the loss is constant, they represent the parameters for which the neuron fits exactly one data point and is deactivated for the other and thus suffers a loss of $(y_1)^2$ for the red line on the left, and $(y_2)^2$ for the other. The exact formula to compute each point of this graph is:
 
 \begin{equation}
 \begin{split}
@@ -317,7 +317,7 @@ Consider a network with a single ReLU neuron. We plot its output against two dat
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside.png" class="img-fluid" %}
 
-<p class="legend">Representation of the output of a one-neuron ReLU net with a positive weight $w_1$ and $\alpha_1 = 1$. The ReLU *activate* the second data point (as $x_2>0$), the network can thus fit its output to reach $y_2$. However, doing so it cannot activate $x_1$ and will thus suffer a constant loss $(y_1)^2$ for that. Overall, depending on the sign of $w_1$ we will have a loss comprised of a constant term for not activating one point and a term for matching the output for the activated data point. The total loss plotted on the right is thus non-convex. Its explicit formula is:
+<p class="legend">Representation of the output of a one-neuron ReLU net with a positive weight $w_1$ and $\alpha_1 = 1$. The ReLU *activates* the second data point (as $x_2>0$), and the network can thus fit its output to reach $y_2$. However, doing so cannot activate $x_1$ and will incur a constant loss $(y_1)^2$. Overall, depending on the sign of $w_1$ we will have a loss consisting of a constant term for not activating one point and a term for matching the output for the activated data point. The total loss plotted on the right is thus non-convex. Its explicit formula is:
 
 \begin{equation}
 \begin{split}
