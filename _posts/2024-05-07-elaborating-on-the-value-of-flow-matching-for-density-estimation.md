@@ -265,6 +265,26 @@ Specifically, dynamic optimal transport (DOT) is presented to improve training
 and inference time even further, while improving the accuracy of the flows as
 well.
 
+In the generalized setting, the above described Flow Matching algorithm by
+<d-cite key="lipman_flow_2023"></d-cite> is treated as a special case and the
+latent variable distribution is now treated as product $$q(z) = q(x_0)q(x_1)$$
+of both marginals over $$x_0,x_1$$. The conditional flows between the two points
+are dented by the following Gaussian probability path and respective vector
+field:
+
+\begin{align*}
+  p_t(x \ mid z) &= \mathcal{N}(x \mid tx_1 + (1 - t)x_0, \sigma^2)  \\
+  u_t(x \mid z) &= x_1 - x_0
+\end{align*}
+
+The described conditional vector field is obtained by using formulation provided
+above with a mean $$\mu_t = tx_1 + (1-t)x_0$$ and a time independent variance
+$$\sigma_t = \sigma$$. Due to modelling the probability path with a Gaussian, it
+is easy to sample from it. Further, the vector field is efficiently computable,
+which leads to an efficient computation of the conditional flow matching loss,
+as it is described above for the specific case. 
+
+
 # Empirical Results
 
 The authors investigate the utility of Flow Matching in the context of image
@@ -416,9 +436,9 @@ conditioned on different data, or non-amortized.
 
 In order to formalize the method, let $$\theta \sim \pi(\theta)$$ denote the
 parameters to a system and its respective prior distribution. The system under
-evaluation and the respective observations obtained are denoted by $$\mathbf{x}
+evaluation and the respective observations obtained are denoted by $$x
 = \mathcal{M}(\theta)$$. To sample from the joint distribution $$p(\theta,
-\mathbf{x})$$, the dedicated parameter $$\theta_i$$ is sampled from the prior
+x)$$, the dedicated parameter $$\theta_i$$ is sampled from the prior
 and the observation is obtained by evaluating the forward model on that
 parameter $$x_i = \mathcal{M}(\theta_i)$$. According to this approach, a dataset
 of samples from the joint distribution can be generated $$\mathcal{X} = \{
@@ -430,9 +450,98 @@ key="papamakarios_fast_2016"></d-cite> and especially <d-cite
 key="papamakarios_normalizing_2019"></d-cite> for a more rigorous introduction
 to SBI. In order to compare the the performances of the different approaches to
 SBI and their performance with respect to certain tasks, an excellent overview
-is provided in <d-cite key="papamakarios_normalizing_2019"></d-cite>.
+is provided in <d-cite key="lueckmann_benchmarking_2021"></d-cite>.
 
 ## Flow Matching for Simulation-based Inference 
+
+The approach using the Flow Matching formulation to fit the density network is
+presented by Dax et al. <d-cite key="dax_flow_2023"></d-cite>. In the setting
+described by the author's and the before mentioned SBI context, the goal is to
+approximate a posterior distribution of over model parameters given observations
+$$p(\theta \vert x)$$. In order to learn the posterior, the Flow Matching loss
+is adapted to the following:
+
+$$
+\mathcal{L}_{FMPE} = \mathbb{E}_{t \sim p(t),\theta_1 \sim p(\theta), x \sim p(x
+\vert \theta_1),\theta_t \sim p_t(\theta_t \mid \theta_1)} \Vert v_{t,x}(\theta_t) - u_t(\theta_t \mid \theta_1)
+\Vert^2
+$$
+
+The important details to note here are the adaptations to minimize the loss
+w.r.t. samples drawn from the joint distribution, as it is described in the
+general section to SBI. To do so, the expectation is adapted to be w.r.t.
+$$\theta_1 \sim p(\theta), x \sim p(x \vert \theta_1)$$, which yield the desired
+samples. 
+
+Another adaption by the authors is to exchange the uniform distribution over the
+time with a general distribution $$t \sim p(t)$$. The effects of this
+substitution won't be at the focus. However, adapting the distribution makes
+intuitive sense as the training gets harder close to the target distribution.
+Therefore, focussing on time steps $$t$$ closer to one is beneficial, as the
+authors have found.  
+
+In order to provide a general comparison of the Flow Matching-based SBI
+approach, the CFM model is tested on the SBI benchmarking tasks <d-cite
+key="lueckmann_benchmarking_2021"></d-cite>. The results show a either equal or
+better performance on the benchmark, underscoring the approaches ability and
+applicability to SBI. 
+
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/fmpe_sbi_benchmark.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+  The figure depicts the results of the CFM model on the SBI benchmarking tasks, as carried out by the authors of <d-cite key="dax_flow_2023"></d-cite>. Comparing the results to such obtained by neural posterior estimation with a normalizing flow shows comparable performance on most tasks while outperforming on some.
+</div>
+
+
+Besides the general benchmarks, the authors use their proposed technique to
+estimate the posterior distribution of gravitational wave parameters $$p(\theta
+\mid x)$$ where $$\theta \in \mathbb{R}^15, x \in \mathbb{R}^15744$$. In order
+to reduce the problem's dimensionality and increase the information density, the
+observations are compressed to $$128$$ dimensions using a embedding network. 
+
+Following the preprocessing of the data, three density estimators are fitted and
+compared to each other. The first method uses a neural spline flow, which has
+proven itself in this setting. It is compared to a neural posterior estimation
+using the Flow Matching approach described here. Finally, a neural posterior
+estimator leveraging physical symmetries is used to estimate the targeted
+posterior. All were trained on a simulation budget of $$5 \cdot 10^6$$ samples
+for a total of 400 epochs. 
+
+In order to evaluate the models' performances, the obtained posteriors were
+compared w.r.t. their 50% credible regions as well as Jensen-Shannon divergence
+between the inferred posterior and reference results. The results shown below
+support the advantages found in the benchmarking tasks. The Flow Matching-based
+shows a good performance for all shown parameters and has a clear advantage over
+the classical NPE approach. 
+
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/fmpe_results_gw.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+  The figure shows the single performances of a classic NPE approach using 
+  neural spline flows, the proposed Flow Matching approach, and a 
+  physics-focussed NPE approach. The results are shown for the 50% credible
+  regions on the left, as well as the Jensen-Shannon divergence between the
+  inferred posterior and reference results on the right. The Flow 
+  Matching-based approach shows a good performance for all investigated 
+  parameters and has a clear advantage over the classical NPE approach. In 
+  the pair plot on the left, the choice was made to only show the four 
+  parameters for which the classical NPE method performs the worst. While the
+  Flow Matching approach could perform worse on other dimensions, this is 
+  not the case as shown on the right. 
+</div>
+
+Whilst the examples are interesting themselves, their evaluation has shown the
+applicability, scalability, and flexibility of Flow Matching for density
+estimation. These performance improvements in different areas have motivated the
+discussion of Flow Matching in the first place and hopefully become clear now.
 
 # A Personal Note 
 
