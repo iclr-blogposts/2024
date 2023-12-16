@@ -29,9 +29,6 @@ toc:
   - name: Closing Remarks
     id: closing-remarks
 
-# Below is an example of injecting additional post-specific styles.
-# This is used in the 'Layouts' section of this post.
-# If you use this post as a template, delete this _styles block.
 _styles: >
   .fake-img {
     background: #bbb;
