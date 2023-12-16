@@ -199,7 +199,10 @@ $$\phi_t(x \mid x_1) = \sigma_t(x_1)x + \mu_t(x_1)$$. The time-dependent functio
 $$\sigma_t$$ and $$\mu_t$$ are chosen such that $$\sigma_0(x_1) = 1$$ and $$\sigma_1 =
 \sigma\_{\text{min}}$$ (chosen sufficiently small), as well as $$\mu_0(x_1) = 0$$
 and $$\mu_1(x_1)=x_1$$. The corresponding probability path can be written as
-$$p_t(x|x_1) = \mathcal{N}(x; \mu_t(x_1), \sigma_t(x_1)^2 I)$$. 
+
+$$
+p_t(x|x_1) = \mathcal{N}(x; \mu_t(x_1), \sigma_t(x_1)^2 I).
+$$
 
 In order to train a CNF, it is necessary to derive the corresponding conditional
 vector field. An important contribution of the authors is therefore the
