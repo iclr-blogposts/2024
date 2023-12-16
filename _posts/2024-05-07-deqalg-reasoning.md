@@ -67,7 +67,7 @@ _styles: >
 
 ## What is Algorithmic Reasoning?
 
-Broadly, algorthmic reasoning <d-cite key="velickovic2020neural"></d-cite> wants to study how well neural networks can learn to execute classical computer science algorithms. In particular to measure how well an algorithm has been learned we look at size-generalisation, i.e. if we train on inputs of size $$N$$ how well will the Neural Network perform on inputs of size $$2N$$ or $$10N$$. The idea is that neural networks often learn shortcuts that work well in-distribution, but fail out-of-distribution, whereas classical computer science algorithms work no matter the input size. The purpose of this exercise is to study the generalisation of reasoning tasks, especially what tricks help to improve robustness and get the network closer to deducing logically rather than relying on statistical short cuts.
+Broadly, algorthmic reasoning <d-cite key="velickovic2020neural"></d-cite> studies how well neural networks can learn to execute classical computer science algorithms. In particular to measure how well an algorithm has been learned we look at size-generalisation, i.e. if we train on inputs of size $$N$$ how well will the Neural Network perform on inputs of size $$2N$$ or $$10N$$. The idea is that neural networks often learn shortcuts that work well in-distribution, but fail out-of-distribution, whereas classical computer science algorithms work no matter the input size. The purpose of this exercise is to study the generalisation of reasoning tasks, especially what tricks help to improve robustness and get the network closer to deducing logically rather than relying on statistical short cuts.
 
 ## Why care about fixed-points?
 
@@ -93,7 +93,8 @@ The CLRS paper<d-cite key="velickovic2022clrs"></d-cite> provides us with a benc
 
 ### The architecture
 
-The high-level architecture is that of an encoder-processor-decoder. The motivation is that neural networks perform well in high-dimensional spaces but that classical algorithms tend to operate on very low-dimensional variables, e.g. in BellmanFord the shortest distance would be a single scalar. Thus the encoder projects the state into a high-dimensional space $$z_t$$ where the main computation is then done by the processor network---typically a Graph Neural Network. The output of the processor $$z_{t+1}$$ is then decoded back into the low-dimensional space by the decoder. The encoder and decoders mostly consist of linear layers with the occasional exception, e.g. a softmax for categorical variables. The processor will be a graph neural network several different architectures have been explored in<d-cite key="ibarz2022generalist"></d-cite>. We either use the TripletMPNN from or a simple MPNN with a linear message layer.
+The high-level architecture is that of an encoder-processor-decoder. The motivation is that neural networks perform well in high-dimensional spaces but that classical algorithms tend to operate on very low-dimensional variables, e.g. in BellmanFord the shortest distance would be a single scalar. Thus the encoder projects the state into a high-dimensional space $$z_t$$ where the main computation is then done by the processor network---typically a Graph Neural Network. The output of the processor $$z_{t+1}$$ is then decoded back into the low-dimensional space by the decoder. The encoder and decoders mostly consist of linear layers with the occasional exception, e.g. a softmax for categorical variables. The processor will be a graph neural network, for which several different architectures have been explored, for example in<d-cite key="ibarz2022generalist"></d-cite>. We either use the TripletMPNN from<d-cite key="ibarz2022generalist"></d-cite> which adds edge message passing or a simple MPNN with a linear message layer.
+
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -142,11 +143,11 @@ $$h = \left(\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}h +g$$
 
 In the DEQ blogpost </d-cite><d-cite key="baiblog"></d-cite> they suggest solving the above fixed point. The reason to use implicit differentiation is that backpropagating through time may easily run into exploding or vanishing gradients or error accumulation due to the number of steps needed to reach a fixed point.
 
-We tried both, solving the linear system with torch.linalg.solve and finding the above fixed point but stuck to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in future. 
+We tried both, solving the linear system with torch.linalg.solve and finding the above fixed point but converged to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in future. 
 
 ### Tricks we employ
 
-To encourage convergence we change the update function in the MPNN<d-cite key="gilmer2017neural"></d-cite> to be a minimum update, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$. This update rule is motivated by the problem of getting neural networks to converge to a fixed point. We discuss the effect of this in more detail after the experiments.
+To encourage convergence we change the update function in the MPNN<d-cite key="gilmer2017neural"></d-cite> to be a minimum update, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$. This update rule is motivated by the problem of getting neural networks to converge to a fixed point. We discuss the effect of this in more detail after the experimental section.
 
 Currently, gradient flows through the implicit differentiation explained above as well as back in time through standard backprop through $$z_t$$. To enable more ways for the gradient to inform early steps in the algorithm, we propagate the gradient through $$y_t$$. For discrete $$y_t$$, in other words, for categorical variables in the state $$x_t$$ we employ the Rao-Blackwell straight-through gumbel softmax estimator<d-cite key="paulus2020raoblackwellizing"></d-cite> to allow gradients to flow.
 
@@ -157,21 +158,21 @@ Finally, we also try adding a loss for the number of steps by adding the penalty
 
 In the table below we show the accuracy<d-footnote>What exactly is measured for the accuracy depends on each algorithm, but usually is a pointer, e.g. in the Bellman-Ford algorithm it is a pointer to the previous node along the shortest path. For more details see the CLRS Benchmark paper.</d-footnote> of the algorithms when tested on graphs of size 64.
 
-DEQ is our approach of reaching a fixed point together with the implicit differentiation explained above. Hint propagation is simply reaching a fixed point and back propagating through time with no implicit differentiation. Teacher forcing is the baselines, where the first number is the simple MPNN architecture<d-cite key="gilmer2017neural"></d-cite> and the second number is the more complex TripletMPNN <d-cite key="ibarz2022generalist"></d-cite> (these numbers are taken from the paper <d-cite key="ibarz2022generalist"></d-cite>). For BellmanFord and BFS we use the simple MPNN and for all others we use the TripletMPNN.
+DEQ is our approach of reaching a fixed point together with the implicit differentiation explained above. Hint propagation is simply reaching a fixed point and back propagating through time with no implicit differentiation. Teacher forcing is used for the baselines, where the first number is the simple MPNN architecture<d-cite key="gilmer2017neural"></d-cite> and the second number is the more complex TripletMPNN <d-cite key="ibarz2022generalist"></d-cite> (these numbers are taken from the paper <d-cite key="ibarz2022generalist"></d-cite>). For BellmanFord and BFS we use the simple MPNN and for all others we use the TripletMPNN.
 
 | Tables        | DEQ           | Hint propagation | Teacher forcing |
 | ------------- |:-------------:|:----------------:|:---------------:|
 | BellmanFord*  |     96.4%     |       96.7%      |     92%/97%     |
 | Dijkstra      |     78.8%     |       84.4%      |     92%/96%     |
-| BFS*          |     98.2%     |       xx.x%      |    100%/100%    |
+| BFS*          |     53.8%     |       57.1%      |    100%/100%    |
 | DFS           |      5.0%     |        4.7%      |     7%/48%      |
 | MST-Kruskal   |     82.3%     |       82.3%      |     71%/90%     |
 | MST-Prim      |     75.2%     |       50.4%      |     71%/90%     |
 
 
-As we can see in the table above the approach works very well for simpler algorithms such as BellmanFord and BFS, where with simple MPNN we manage to achieve equal or better accuracy than the simple MPNN and match the TripletMPNN. Interestingly, these are parallel algorithms, i.e. all node representations run the same code in constrast sequential algorithms go through the graph node by node. We did try gating to enable the GNN to better mimic a sequential algorithm, but this didn't help.
+As we can see in the table above the approach works very well for simpler algorithms such as BellmanFord and BFS, where with simple MPNN we manage to achieve equal or better accuracy than the simple MPNN and match the TripletMPNN. Interestingly, these are parallel algorithms, i.e. all node representations run the same code, in constrast sequential algorithms which go through the graph node by node. We did try gating to enable the GNN to better mimic a sequential algorithm, but this didn't help.
 
-On the other algorithms while we are able to learn we cannot match the performance of teacher forcing where we assume to know the number of timesteps to run the neural network. This additional help makes the comparison slightly unfair, however, it shows how learning a fixed point is difficult for the network as we are not able to match the performance. We hypothesis about why in the next section.
+On the other algorithms while we are able to learn we cannot match the performance of teacher forcing where we assume to know the number of timesteps to run the neural network. This additional help makes the comparison slightly unfair, however, it shows how learning a fixed point is difficult for the network as we are not able to match the performance. We hypothesise about the reasons behind this in the next section.
 
 ## What's the problem?
 
@@ -179,7 +180,7 @@ There are a few major issues that we notice during training. The first is that t
 
 ### Convergence is a key issue
 
-Firstly, the network will often take a large number of steps to reach a fixed point. We can see on easier algorithms like the BellmanFord algorithm that the number forward steps during training often reaches our set upper limit of 64 forwards steps (the actual algorithm would take on average 4-5, max 10 for this graph size). This is why we implement our architecture trick, where we update the next hidden representation only if it is smaller than the current one, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ where $$z^{'(t+1)}$$ is the output of our min aggregator in the message passing step (alternatives such as gating and an exponential moving average update function where also tried). This helps with convergence, which enables finding a fixed point in simple cases, but fails to work for more complex architectures and problems, while also introducing a different issue.   
+Firstly, the network will often take a large number of steps to reach a fixed point. We can see on easier algorithms like the BellmanFord algorithm that the number of forward steps during training often reaches our set upper limit of 64 forwards steps (the actual algorithm would take on average 4-5, max 10 for this graph size). This is why we implement our architecture trick, where we update the next hidden representation only if it is smaller than the current one, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ where $$z^{'(t+1)}$$ is the output of our min aggregator in the message passing step (alternatives such as gating and an exponential moving average update function were also tried). This helps with convergence, which enables finding a fixed point in simple cases, but fails to work for more complex architectures and problems, while also introducing a different issue.   
 
 ### The problem with hard constraints to achieve convergence
 
