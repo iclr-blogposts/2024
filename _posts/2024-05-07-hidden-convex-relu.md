@@ -560,40 +560,32 @@ A convex equivalent of deeper networks exists but exacerbates existing problems.
 
 ### Activation patterns are not a constant in the non-convex problem
 
-Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. While the global optima is well described, optimizing the non-convex problem using gradient descent almost always leads to a local minimum. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. However, it is not clear if they find the same local minimum.
+Our non-convex problem is equivalent to a convex and well-specified optimization problem with constraints. The global optima might be the same, but training the network gradient descent almost always leads to a local minimum. Because there are too many activations to consider them all, the convex problem will also only find a local minimum. However, it is not clear if they find the same local minimum.
 
-We have previously seen that activation pattern can and will change when doing gradient descent in the non-convex problem. In some cases, this shifting is useful because the new activation patterns allows a better global minima. To verify this, we monitor the number of unique activation pattern used by the network at each step of a gradient descent. If two neurons have the same activation pattern (_i.e._ they activate and deactive exactly the same data points), we would only count one.
+Activation patterns can and will change during gradient descent in the non-convex problem. In some cases, this shifting is useful because the new activation patterns allow for a better global minima. To verify this, we monitor the number of unique activation patterns used by the network at each step of a gradient descent. If two neurons have the same activation pattern (_i.e._ they activate and deactivate the same data points), we would only count one.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nbactiv.png" class="img-fluid" %}
 
-<p class="legend">Training a network with 100 random data point in 10 dimensions. The network only has 20 neurons but the labels are linear. Neurones are randomly initialized and all 20 of them have an unique activation pattern as can be seen on the graph. It is expected in this setting because there are so many possible activation patterns (close to $10^{25}$). However as training progress, neuron <em>align</em> themselves to the same pattern. After 300 steps, the 20 neurons only share 5 unique activation patterns.</p>
+<p class="legend">Training a network with 100 random data points in 10 dimensions. The network only has 20 randomly initialized neurons and the labels are linear. Each neuron has a unique activation pattern as can be seen on the graph. It is expected in this setting because there are so many possible activation patterns (close to $10^{25}$). However, as training progresses, neurons <em>align</em> themselves to the same pattern. After 300 steps, the 20 neurons only share 5 unique activation patterns.</p>
 
-We will not do an extensive benchmark on the convex method's performance with realistic data. However we can show an aspect that really set gradient descent and solving the convex problem apart. The convex problem has fixed activation patterns. If the patterns are bad, the solution will be bad. Meanwhile in the non-convex problem, the gradient descent keeps shifting from patterns to pattern until it converges.
+We will not do an extensive benchmark on the convex method's performance with realistic data. However, we can show an aspect that sets gradient descent and solving the convex problem apart. The convex problem has fixed activation patterns. If the activations are missing important data, the convex solution will not be optimal. Meanwhile, in the non-convex problem, the gradient descent keeps shifting from pattern to pattern until it converges.
 
 __Illustration.__
 
-We will study further this setting with 100 data point and 20 neurons in high dimension. To compare the how the two methods deal with activation patterns, we will use the activation pattern of the neurons of the non-convex problem to construct a convex problem and solve it. To be more explicit, for each non-convex neuron $$\pmb{w}_i$$, we find its activation pattern and add a $$\pmb{u}_i$$ constrained to this pattern to the convex problem. In the end, we have a convex problem with 20 neurons that will activate exactly the same data points as the non-convex neurons.
+We will further study this setting with 100 data points and 20 neurons in high dimensions. To compare how the two methods deal with activation patterns, we will use the activation pattern of the neurons of the non-convex problem to construct a convex problem and solve it. To be more explicit, for each non-convex neuron $$\pmb{w}_i$$, we find its activation pattern and add a $$\pmb{u}_i$$ constrained to this pattern to the convex problem. In the end, we have a convex problem with 20 neurons that will activate the same data points as the non-convex neurons.
 
-We train the non-convex network using gradient descent, and at each step we construct a convex problem, solve it and compare its global minimum to our current non-convex loss. This convex problem fully describe the local minimum we would find if the non-convex problem was constrained to never change its activation patterns.
+We train the non-convex network using gradient descent, and at each step, we construct a convex problem, solve it, and compare its global minimum to our current non-convex loss. This convex problem fully describes the local minimum we would find if the non-convex problem was constrained to never change its activation patterns.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/cvx_vs.png" class="img-fluid" %}
 
 <p class="legend">
 
-Training a 20 neuron network with gradient descent and using the same activation patterns to plot the equivalent convex problem's global minimum. We use <em>cvxpy</em> to define the problem and solve it using <em>ECOS</em>. The convex loss is always lower than the non-convex loss and that's expected, in the convex problem we are using the same neurons and trying to improve the loss without changing the activation. The convex loss at the start is quickly beaten by gradient descent, this means our initial choice of activation pattern was bad and gradient descent continually improve them.
+Training a 20-neuron network with gradient descent and using the same activation patterns solve the convex equivalent. We plot for each step, the loss of the non-convex network and the optimal loss of the convex problem. We use <em>cvxpy</em> to define the problem and solve it using <em>ECOS</em>. The convex loss is always lower than the non-convex loss and that's expected, in the convex problem we are using the same neurons and trying to improve the loss without changing the activation. The convex loss at the start is quickly beaten by gradient descent, this means our initial choice of activation pattern was bad, and gradient descent continually improves them.
 </p>
 
 In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
-However, we will now study two cases where things can be described by convex problem and are in general much more predictable.
-
-<div style="display: none">
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif1.gif" class="img-fluid" %}
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif2.gif" class="img-fluid" %}
-
-</div>
+In the next section we focus on cases where the non-convex minima can be accurately described by convex problems.
 
 ### On large initialisation scale
 
@@ -615,7 +607,7 @@ If you take orthogonal data and a small scale, the behavior is very predictable<
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_data.gif" class="img-fluid" %}
 </div>
 
-<p class="remark">Unless mentionned otherwise, all experiments were ran using full batch vanilla gradient descent. In experiments it is clear that adding momentum or using the Adam optimiser much easier to use on top of being faster to converge. However, the behavior is much less predictable.</p>
+<p class="remark">  Unless mentionned otherwise, all experiments were ran using full batch vanilla gradient descent. In experiments it is clear that adding momentum or using the Adam optimiser much easier to use on top of being faster to converge. However, the behavior is much less predictable.</p>
 
 ## Conclusion
 
