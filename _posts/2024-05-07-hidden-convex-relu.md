@@ -403,7 +403,7 @@ to get the optimal *global* solution to the problem of fitting two data points w
 
 __General Case.__
 
-Let us consider a general (non-convex) two-layer ReLU network with an input of size $d$, an output of size $1$ and a hidden layer of size $m$. With $n$ datapoints, the full loss is 
+Let us consider a general (non-convex) two-layer ReLU network with an input of size $d$, an output of size $1$ and a hidden layer of size $m$. With $n$ data points, the full loss is 
 <p>
 \begin{equation}
     \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \| \sum_{i=1}^m \max(0, \pmb{X} \pmb{w}_i) \alpha_i - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2.
@@ -452,7 +452,7 @@ As seen in the previous section, they can be found exactly by solving the convex
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned2.png" class="img-fluid" %}
 
-The non-convex problem initialized at random will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima(__left__), or two of them will end up in the same pattern (__right__), activating the same data point.
+The non-convex problem initialized at random will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima (__left__), or two of them will end up in the same pattern (__right__), activating the same data point.
 
 In this case, the convex problem
 
@@ -472,9 +472,9 @@ is equivalent to the non-convex problem. Solving it will give the global optima.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned3.png" class="img-fluid" %}
 
-<p class="legend">Plotting the positive part of many ReLU neurons. Summed up, they form a network output that perfectly fit the data.</p>
+<p class="legend">Plotting the positive part of many ReLU neurons. Summed up, they form a network output that perfectly fits the data.</p>
 
-We pictured an usual local minimum for gradient descent in the specific case of having more neurons than existing patterns. In pratice(more data in higher dimension) there is much less neurons than possible activations, however there are many situations in which neurons will gather toward the same patterns. We can merge(simply summing neurons together to get a new one) neurons that are in the same activation pattern without changing neither the output nor the loss (regularization might decrease). The fact that having more than one neurons in one pattern does not decrease the loss generalize and is at the core of the proof.
+We pictured a usual local minimum for gradient descent in the specific case of having more neurons than existing patterns. In practice (more data in higher dimension) there are much fewer neurons than possible activations, however, there are many situations in which neurons will lead to the same activation patterns. We can merge (simply summing neurons together to get a new one) neurons that are in the same activation pattern without changing either the output or the loss (regularization might decrease). The fact that having more than one neuron in one pattern does not decrease the loss is at the core of the proof.
 
 ### Activation Patterns
 
