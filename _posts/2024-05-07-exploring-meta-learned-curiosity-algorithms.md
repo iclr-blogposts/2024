@@ -135,23 +135,28 @@ $$
 \mathcal{L}_p=\left\|\frac{g(f(s_{t+1}))}{\|g(f(s_{t+1}))\|_2}-\frac{h(s_{t+1})}{\|h(s_{t+1})\|_2}\right\|_2^2.
 $$
 
-Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss. Importantly, the loss $$\mathcal{L}_p$$ serves as the intrinsic reward that the RL agent receives at each step. We normalise the intrinsic rewards by dividing it by the an EMA estimate of their standard deviation.
+Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss. Importantly, the loss $$\mathcal{L}_p$$ serves as the intrinsic reward that the RL agent receives at each step. We normalise the intrinsic rewards by dividing it by the EMA estimate of their standard deviation.
 
 ## Meta-learning curiosity algorithms
 
-Alet et al. <d-cite key="alet2020metalearning"></d-cite> view curiosity as a mechanism that is found by evolution. They turn to meta-learning to discover curiosity algorithms. In this case the outer loop searches over the curiosity algorithm space while the inner loop performs the standard RL procedure. The figure below illustrates this process.
+Alet et al. <d-cite key="alet2020metalearning"></d-cite> view curiosity as a mechanism that is found by evolution. As a result they turn to meta-learning to discover newcuriosity algorithms.
+In this case the outer loop searches over the curiosity algorithm space while the inner loop performs the standard RL procedure. The figure below illustrates this process.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/mlc.png" class="img-fluid" %}
 <div class="caption">
-    Figure 6. The meta-learning curiosity algorithm process. Taken from <d-cite key="alet2020metalearning"></d-cite>.
+    Figure 6. The process meta-learning curiosity algorithms. Taken from <d-cite key="alet2020metalearning"></d-cite>.
 </div>
 
-In the above figure can see that the curiosity algorithm, $$\mathcal{C}$$, takes in the state and reward from the environment and then feeds proxy reward $$\hat{r}$$ to the RL agent. The RL algorithm used is a fully-specified algorithm, i.e. all its hyperparameters are specified. There were two stages in the authors search. The module $$\mathcal{C}$$ is made from of two components.
-The first component, $$\mathcal{I}$$, calculates the intrinsic reward given the current state, next state and the action taken. The second component, $$\chi$$, then takes the extrinsic reward, the intrinsic reward and the current time step to combine them and output the $$\hat{r}$$. We now look at the method used to find the module $$\mathcal{C}$$.
+In the above figure can see that the curiosity algorithm, $$\mathcal{C}$$, takes in the state and reward from the environment and then feeds proxy reward $$\hat{r}$$ to the RL agent. The RL algorithm used is a fully-specified algorithm, i.e., all its hyperparameters are specified. There were two stages in the authors search. The module $$\mathcal{C}$$ is made from of two components.
+The first component, $$\mathcal{I}$$, calculates the intrinsic reward given the current state, next state and the action taken. The second component, $$\chi$$, then takes the extrinsic reward, the intrinsic reward and the current normalised time step to combine them and output $$\hat{r}$$. We now look at the method used to find the module $$\mathcal{C}$$.
 
 ### Method
 
-Provide details about the FAST algorithm and its role in meta-learning curiosity.
+As mention earlier the Alet et al. focused on meta-learning pieces of code or rather meta-learning in space of programs or operations. The programs and operations are represented in domain-specific language (DSL). The DSL used to find component $$\chi$$ consisted of but not limited to arithmetic, Min, Max operations. 
+The DSL used to find component $$\mathcal{I}$$ consisted of programs such as neural networks complete with gradient-descent mechanisms, L2 distance calculation, and ensembles of neural networks.
+Component $$\mathcal{I}$$'s DSL can describe many other hand-designed curiosity algorithms such as RND. 
+
+The components $$\mathcal{I}$$ and $$\chi$$ are represented as Directed Acyclic Graphs (DAGs).
 
 ### FAST
 
