@@ -15,18 +15,8 @@ future: true
 htmlwidgets: true
 
 # Anonymize when submitting
-# authors:
-#   - name: Anonymous
-
 authors:
-  - name: Maternus Herold
-    url: "https://transferlab.ai/"
-    affiliations:
-      name: TransferLab, appliedAI Institute for Europe gGmbH
-  - name: Faried Abu Zaid
-    url: "https://transferlab.ai/"
-    affiliations:
-      name: TransferLab, appliedAI Institute for Europe gGmbH
+  - name: Anonymous
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation.bib  
