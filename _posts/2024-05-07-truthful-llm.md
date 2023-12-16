@@ -32,7 +32,6 @@ toc:
     subsections:
     - name: Probing for truthfulness
     - name: Inference
-  - name: Conclusion
   - name: TL;DR
 ---
 
@@ -197,5 +196,5 @@ model.save_pretrained(save_folder_path)
 {% endhighlight %}
 
 
-## Conclusion
+## TL;DR
 There can be a difference between the LLM’s internal representation of the world and the text they output, this leads to hallucinations in the output, and makes them less truthful. Some of the attention heads are more correlated with truthfulness, we can identify them with the help of a small dataset and probes, shift the activations of these attention heads towards the truthful direction at the time of inference to get more truthful outputs with a minimal invasive procedure and almost no computational overhead.
