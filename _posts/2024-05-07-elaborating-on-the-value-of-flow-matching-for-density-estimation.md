@@ -392,6 +392,20 @@ key="cranmer_frontier_2020"></d-cite>. Depending on the exact method chosen, the
 approximated posterior is either amortized, i.e. does not require refitting when
 conditioned on different data, or non-amortized. 
 
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation/kinds_of_sbi.jpg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    The figure depicts the schematic flow of information for different kinds of 
+    Likelihood-free methods. Modern methods in SBI are depicted in the bottom 
+    row where the likelihood is approximated in subfigure E, the posterior is 
+    approximated in subfigure F, and the likelihood-ratio in subfigure G.
+</div>
+
+
 In order to formalize the method, let $$\theta \sim \pi(\theta)$$ denote the
 parameters to a system and its respective prior distribution. The system under
 evaluation and the respective observations obtained are denoted by $$\mathbf{x}
@@ -401,7 +415,7 @@ and the observation is obtained by evaluating the forward model on that
 parameter $$x_i = \mathcal{M}(\theta_i)$$. According to this approach, a dataset
 of samples from the joint distribution can be generated $$\mathcal{X} = \{
 (\theta, \mathbf{x})_i \}^N_{i=1}$$. A density estimator is then fitted on the
-provided dataset in order to estimate the desired distribution. 
+provided dataset in order to estimate the desired distribution.
 
 ## Flow Matching for Simulation-based Inference 
 
