@@ -46,17 +46,51 @@ Recent research directions show that often there’s also a  mismatch between th
 ITI works by recognizing the direction in the activation space linked to truthful statements and subsequently adjusting model activations along that direction during the inference process.
 
 
+ITI is a promising direction because 
+
+- No finetuning or RLHF required to increase affinity towards truthfulness
+- ITI uses as few as 40 samples to locate and find truthful heads and directions
+- Minimally invasive, edits the activations for a sparse set of attention heads.
+- After performing the intervention, the new model can be saved and loaded as a standard pre-trained model for inference tasks.
+- Agnostic to the choice of decoding algorithm.
+
+
+
 ## Let's brush up on the basics
 
  Transformer model operates by first embedding tokens into a high-dimensional space, where each token is represented as a vector capturing its semantic and syntactic features. 
 
 The model can be thought of as a series of layers. Each layer contains the multihead attention mechanism (MHA) and an MLP block. 
 
-During the inference phase of a transformer model, each token is embedded into a high-dimensional vector space, resulting in an initial vector $$ x_0 $$. This vector $$ x_0 $$ begins what is known as the residual stream—a sequence of vectors representing the data as it flows through the transformer layers. At each layer, the model takes in a vector $$ x_i $$, performs a series of computations involving attention mechanisms and neural network layers, and produces a new vector $$ x_{i+1} $$, which is added to the stream. After processing through all layers, the final vector in the stream is used to predict the probability distribution of the next token in the sequence, effectively generating the next piece of output based on the learned patterns from the training data.
+During the inference phase of a transformer model, each token is embedded into a high-dimensional vector space, resulting in an initial vector $$ x_0 $$. This vector $$ x_0 $$ begins what is known as the residual stream—a sequence of vectors representing the data as it flows through the transformer layers. At each layer, the model takes in a vector $$ x_l $$, performs a series of computations involving attention mechanisms and neural network layers, and produces a new vector $$ x_{l+1} $$, which is added to the stream. After processing through all layers, the final vector in the stream is used to predict the probability distribution of the next token in the sequence, effectively generating the next piece of output based on the learned patterns from the training data.
+
+Multi Head Attention with H heads can be written as:
+
+$$
+\begin{align}
+    x_{l+1} = x_l + \sum_{h=1}^H Q_l^h \operatorname{Att}_l^h(P_l^h x_l),
+    \label{formula1}
+\end{align}
+$$
+
+where $$P_l^h\in R^{D\times DH}$$ projects stream activation to a $$D$$-dimensional head space, and $$Q_l^h\in R^{DH\times D}$$ maps it back. ITI intervenes after $$\operatorname{Att}$$ and before $Q_l^h$.
+
+
 
 ## Inference Time Intervention
 
-Inference time intervention technique uses probing to identify truthful heads, and alters the activations of these heads at the time of inference to make the model more truthful with minimal intervention. Authors have used the TruthfulQA dataset for probing which is an adversarially constructed dataset to assess the truthfulness of a language model's responses. It focuses on evaluating the model's ability to avoid common human misconceptions.  We discuss the crux of the ITI technique in detail below.
+Inference time intervention technique uses probing to identify truthful heads, and alters the activations of these heads at the time of inference to make the model more truthful with minimal intervention. Authors have used the TruthfulQA dataset for probing which is an adversarially constructed dataset to assess the truthfulness of a language model's responses. It focuses on evaluating the model's ability to avoid common human misconceptions.  
+
+
+The whole process of probing and inference time intervention is described in Figure 1.
+
+<figure>
+{% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
+<figcaption>Figure 1</figcaption>
+</figure>
+
+
+We discuss these steps and the crux of the ITI technique in detail below.
 
 ### Probing for truthfulness
 
@@ -64,6 +98,8 @@ Probing uses model’s activations to study the inner workings of a larger trans
 To create the probing dataset, concatenate the question/answer together, perform inference through the original model and collect head activations at the last token for every attention head in each layer. Next step is to train the probe for every head and finally localize top K heads based on the accuracy scores. 
 
 Interestingly, experiments indicate almost 40% difference between probe accuracy and generation accuracy. This figure highlights a major misalignment between what information is encoded in intermediate layers verus the model’s generation.
+
+The psuedocode for the training the linear probes would look like : 
 
 {% highlight python %}
 # GetHeadActivations(Model,input_text) -> Get head activations for each head in each layer; Output Shape: (num_layers,num_heads,sequence_length,activations)
@@ -77,10 +113,10 @@ def CreateProbeData(S,model):
     all_probe_data[i,:] = x_i
   return all_probe_data
 
-#1. Collect data to train and get probe accuracy
+# Collect data to train and get probe accuracy
 all_probe_data = CreateProbeData(S, model)
 
-#2. Train probes for  every head
+# Train probes for every head
 probes = []
 all_head_accs = []
 for layer in range(num_Layers):
@@ -92,10 +128,10 @@ for layer in range(num_Layers):
     all_head_accs.append(accuracy_score(y_val, y_val_pred))
     probes.append(probe)
 
-#3. Rank and select top K heads
+# Rank and select top K heads
 top_k_heads = Top_K(all_head_accs)
 
-#4. Calculate intervention directions using the Probe weight direction method
+# Calculate intervention directions using the Probe weight direction method
 interventions = {}
 for (layer, head) in top_k_heads:
     interventions[l] = []
@@ -104,18 +140,6 @@ for layer, head in top_heads:
     proj = probe_direction @ all_probe_data[:,l,h,:].T
     sigma = np.std(proj)
     interventions[layer].append((head, probe_direction, sigma))
-
-#5. For top-K heads modify the attention output.
-for layer, list_params in interventions.items():
-    displacement = np.zeros((int(num_Heads), int(model.config.hidden_size / num_Heads)))
-    for head,probe_direction,sigma in list_params.items():
-        displacement[head] = alpha * sigma * probe_direction
-    #Add a linear layer to the model which calculates matrix multiplication of displacement terms with original self-attention output for heads
-    intervention_term = torch.nn.functional.linear(inputs=displacement,weights=model.model.layers[layer_no].self_attn.o_proj.weight)
-    #Add intervention_term calculated above to self attention output
-    model.layers[layer].self_attn.o_proj.bias = torch.nn.parameter.Parameter(intervention_term)
-
-# Save the new model ready for inference
 
 {% endhighlight %}
 
@@ -135,22 +159,49 @@ Paper discusses two ways to get the truthful direction $$ \theta^h_l$$ :
 
 The vector for the truthful direction ($$ \theta^h_l$$) is added to the top k (ranked according to truth correlation from probe) activations, scaled by the standard deviation of activations $$\sigma^h_l $$  along the truthful direction (estimated using the activations from both the training and validation sets) and the strength of the intervention α (The value of α is determined experimentally).
 
+Multi Head Attention under ITI can be reformulated as:
+
+$$
+\begin{align}
+    x_{l+1} = x_l + \sum_{h=1}^H Q_l^h \left( \operatorname{Att}_l^h(P_l^h x_l) + \alpha \sigma_l^h \theta_l^h \right).
+    \label{formula2}
+\end{align}
+$$
+
+$$
+\begin{align}
+    x_{l+1} = x_l + \sum_{h=1}^H Q_l^h \operatorname{Att}_l^h(P_l^h x_l) + \underbrace{\alpha \sum_{h=1}^H Q_l^h\sigma_l^h \theta_l^h}_\text{Intervention Term}
+    \label{formula3}
+\end{align}
+$$
+
 This procedure only alters  top-k heads ranked according to their truth relatedness  rather than altering all heads. This makes it a minimally invasive approach. For these top k heads, ITI only adds a single constant vector per layer. This constant vector can also be baked into the bias term of the output projection layer, which makes the computational overhead close to zero for this mehod. After performing the intervention, the new model can be saved and loaded as a standard pre-trained model for inference tasks.
 
-The whole process of probing and inference time intervention is described in Figure 1.
 
-<figure>
-{% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
-<figcaption>Figure 1</figcaption>
-</figure>
+The psuedocode for the inference step would look like : 
+
+{% highlight python %}
+# For top-K heads modify the attention output.
+for layer, list_params in interventions.items():
+    displacement = np.zeros((int(num_Heads), int(model.config.hidden_size / num_Heads)))
+    for head,probe_direction,sigma in list_params.items():
+        displacement[head] = alpha * sigma * probe_direction
+    #Add a linear layer to the model which calculates matrix multiplication of displacement terms with original self-attention output for heads
+    intervention_term = torch.nn.functional.linear(inputs=displacement,weights=model.model.layers[layer_no].self_attn.o_proj.weight)
+    #Add intervention_term calculated above to self attention output
+    model.layers[layer].self_attn.o_proj.bias = torch.nn.parameter.Parameter(intervention_term)
 
 
-### Conclusion
+# Save the new model ready for inference
+model.save_pretrained(save_folder_path)
+{% endhighlight %}
 
-Upsides of ITI method:
+
+### Upsides of ITI
+
 - No finetuning required to increase affinity towards truthfulness
 - ITI uses as few as 40 samples to locate and find truthful heads and directions
-- Minimally invasive. Edits the activation only for the identified top-k heads
+- Minimally invasive, edits the activation only for the identified top-k heads
 - After performing the intervention, the new model can be saved and loaded as a standard pre-trained model for inference tasks.
 - Agnostic to decoding algorithm in use
 
