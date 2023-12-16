@@ -140,14 +140,15 @@ In general, we can try to solve it in two ways, use a linear system solver, like
 
 $$h = \left(\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}h +g$$
 
-Explain where my contribution starts and lit review ends
-We tried both, but stuck to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in future. The reason to use implicit differentiation is that backpropagating through time may easily run into exploding or vanishing gradients or error accumulation due to the number of steps needed to reach a fixed point.
+In the DEQ blogpost </d-cite><d-cite key="baiblog"></d-cite> they suggest solving the above fixed point. The reason to use implicit differentiation is that backpropagating through time may easily run into exploding or vanishing gradients or error accumulation due to the number of steps needed to reach a fixed point.
+
+We tried both, solving the linear system with torch.linalg.solve and finding the above fixed point but stuck to computing the fixed point of the equation above as suggested by the deep equilibrium blogpost as it is computationally faster, while the added accuracy of linear system solvers wasn't beneficial. Note this trade-off is heavily informed by what is readily implemented in PyTorch to run on GPU, hence the balance may shift in future. 
 
 ### Tricks we employ
 
 To encourage convergence we change the update function in the MPNN<d-cite key="gilmer2017neural"></d-cite> to be a minimum update, i.e. $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$. This update rule is motivated by the problem of getting neural networks to converge to a fixed point. We discuss the effect of this in more detail after the experiments.
 
-To enable more ways for the gradient to inform early steps in the algorithm, we propagate the gradient through discrete $$y_t$$. In other words, for categorical variables in the state $$x_t$$ we employ the Rao-Blackwell straight-through gumbel softmax estimator<d-cite key="paulus2020raoblackwellizing"></d-cite> to allow gradients to flow. We name this hint propagation.
+Currently, gradient flows through the implicit differentiation explained above as well as back in time through standard backprop through $$z_t$$. To enable more ways for the gradient to inform early steps in the algorithm, we propagate the gradient through $$y_t$$. For discrete $$y_t$$, in other words, for categorical variables in the state $$x_t$$ we employ the Rao-Blackwell straight-through gumbel softmax estimator<d-cite key="paulus2020raoblackwellizing"></d-cite> to allow gradients to flow.
 
 Finally, we also try adding a loss for the number of steps by adding the penalty $$\sum_{t=0}^{T} \|z_{t+1} - z_{t}\|^2$$. The penalty will be larger as we take more steps and stay away from the fixed point, thus hopefully encouraging convergence to a fixed point more quickly.
 
@@ -186,7 +187,7 @@ Remember that during the implicit differentiation we are trying to solve
 
 $$g = \left(I-\frac{\partial f(z^*, x)}{\partial z^*}\right)^{-\top}y$$
 
-i.e. in the linear system $$y = Ax$$ our matrix $$A$$ is equal to $$I-J$$ where $$J$$ is the Jacobian in the above equation. If the Jacobian is equal to the identity then our matrix $A=0$ and our system has no solution. In practice, due $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ many rows of the Jacobian will be the identity due to the function effectively becoming $$f(x)$$ in many dimensions.
+i.e. in the linear system $$y = Ax$$ our matrix $$A$$ is equal to $$I-J$$ where $$J$$ is the Jacobian in the above equation. If the Jacobian is equal to the identity then our matrix $A=0$ and our system has no solution. In practice, $$z^{(t+1)} = \min(z^{(t)}, z^{'(t+1)})$$ will reduce to $$f(z) = z$$ in many dimensions of $$z$$. This leads to many rows of the Jacobian being the identity due to the function effectively becoming $$f(x)=x$$ in many dimensions. Thus leading to rows that are entirely zero in $$A$$, which is ill-defined and has no solution causing the optimisation to break.
 
 One solution is to try a soft-min, i.e. $$softmin_{\tau}(a,b) = \frac{ae^{-a/\tau}+be^{-b/\tau}}{e^{-a/\tau}+e^{-b/\tau}}$$. Here we get the ability to trade off between convergence and the Jacobian being interesting. For $$\tau<<1$$ we basically recover the min operation and for $$\tau>>1$$ we simply get an average, i.e. an exponential moving average. In practice, there was a trade-off for which we consistently have an interesting Jacobian, while also converging sufficiently fast.
 
