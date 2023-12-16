@@ -154,7 +154,7 @@ Assuming that the target vector field is known, the authors propose a
 loss function that directly regresses the time dependent vector field:
 
 $$
-  L_{\textrm{FM}}(\theta) = \mathbb{E}_{t, p_t(x)}(|f\_{\theta}(x, t) - u_t(x)|^2),
+  L_{\textrm{FM}}(\theta) = \mathbb{E}_{t, p_t(x)}(|f_{\theta}(x, t) - u_t(x)|^2),
 $$
 
 where $$u_t$$ is a vector field that generates $$p_t$$ and the expectation with
