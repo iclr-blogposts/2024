@@ -235,10 +235,12 @@ They show that it is possible to recover certain diffusion training objectives
 with this choice of conditional probability paths, e.g. the variance preserving
 diffusion path with noise scaling function $$\beta$$ is given by: 
 
+$$
 \begin{align*}
   \phi_t(x \mid x_1) &= (1-\alpha_{1-t}^2)x + \alpha_{1-t}x_1 \\\
   \alpha_{t} &= \exp\left(-\frac{1}{2}\int_0^t \beta(s) ds\right) 
 \end{align*}
+$$
 
 Additionally, they propose a novel conditional probability path based on optimal
 transport, which linearly interpolates between the base and the
@@ -272,10 +274,12 @@ of both marginals over $$x_0,x_1$$. The conditional flows between the two points
 are dented by the following Gaussian probability path and respective vector
 field:
 
+$$
 \begin{align*}
   p_t(x \ mid z) &= \mathcal{N}(x \mid tx_1 + (1 - t)x_0, \sigma^2)  \\
   u_t(x \mid z) &= x_1 - x_0
 \end{align*}
+$$
 
 The described conditional vector field is obtained by using formulation provided
 above with a mean $$\mu_t = tx_1 + (1-t)x_0$$ and a time independent variance
