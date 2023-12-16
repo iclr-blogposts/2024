@@ -589,23 +589,35 @@ In the next section we focus on cases where the non-convex minima can be accurat
 
 ### On large initialisation scale
 
-We say we're on a large scale when neurons do not move far from their initial value during descent. And this typically happens when using large initial values for the paremeters of each neurons.
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gif3.gif" class="img-fluid" %}
+Initialisation scale of network, is the absolute size of the neurons' parameters. To get a change the scale, we can simply multiply every parameters by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. We say we're on a large scale when neurons do not move far from their initial value during descent. And this typically happens when using large initial values for the paremeters of each neurons.
 
 The theory is that you can push the scale high enough that neurons do not change their activation patterns at all. If this is verified, the convex reformulation will describe exactly the minima that the gradient descent will reach. However in practice it is not possible to observe as the loss becomes very small and the training is too slow to compute to the end. The NTK briefly mentionned in the introduction operate in this setting, using the fact that the network is very close to its linear approximation. On a similar note, reducing the step size for the first layer will also guarantee convergence<d-cite key="marionLeveragingTwoTimescale2023"></d-cite></d-footnote>.
+
+__Illustration.__
+
+Using an animation, we plot every step of a gradient descent in the non-convex problem until the loss is small enough. As mentionned before, the training is too slow to continue until we reach a real local minimum described by the convex problem here. We plot the output of the network, which is the sum of all the neurons We want to focus on the activation point of each neurone
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/bigscale_movie.gif" class="img-fluid" %}
+
+<p class="legend">
+Training a network with 1000 neurons with big initial values using gradient descent. The output of the network is in blue, the four data point(red crosses) represent linear data. Each green triangle represent one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveal which side the neuron will activate the data. At initialisation, the repartition of activation point is uniform. The movement of the activation point is minimal, only a few neuron will actually change pattern, among the thousands.
+</p>
+
+<p class="remark"> A side effect of the large initialisation is the catastrophic overfitting i.e. there are very large variation between data points which will negatively impact test loss.
+</p>
+
 
 ### On very small initialisation
 
 At the other extreme, the small scale setting effectively let neurons align themselves before ever decreasing the loss. In theory, if you push the scale down enough, neurons will converge to a finite set of direction before trying to fit the objective.
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_out.gif" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_movie.gif" class="img-fluid" %}
+
+<p class="legend">
+Training a network with 1000 neurons with very small initial values using gradient descent. The output of the network is in blue, the four data point(red crosses) represent linear data. Each green triangle represent one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveal which side the neuron will activate the data. At initialisation, the repartition of activation point is uniform. However as training progress most neurons that activate toward the right converges to $-1.3$. Once the norm of the neuron at activating at $-1.3$ is large enough, the loss decrease and we quickly reach convergence.
+</p>
 
 If you take orthogonal data and a small scale, the behavior is very predictable<d-cite key="boursierGradientFlowDynamics2022c"></d-cite> even in a regression setting.
-
-<div style="display: none">
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_data.gif" class="img-fluid" %}
-</div>
 
 <p class="remark">  Unless mentionned otherwise, all experiments were ran using full batch vanilla gradient descent. In experiments it is clear that adding momentum or using the Adam optimiser much easier to use on top of being faster to converge. However, the behavior is much less predictable.</p>
 
