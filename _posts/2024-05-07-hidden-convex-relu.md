@@ -247,9 +247,14 @@ $$
 $$
 </div>
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser.gif" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser_movie.gif" class="img-fluid" %}
 
--> cvx optimal output vs GD output
+<p class="legend">
+
+a few words
+
+</p>
+
 
 ## Overview and Motivation
 
