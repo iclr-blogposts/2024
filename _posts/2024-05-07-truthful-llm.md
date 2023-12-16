@@ -71,8 +71,23 @@ If you leave it inside a paragraph, it will produce an inline expression, just l
 
 ### Inference
 
-{% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
+Now that we know from the probing, the heads which are strongly correlated with truthfulness. At  the time of inference, we intervene to shift the activations of those heads in the truthful direction. 
 
+To get the truthful direction, we first calculate the average of truthful and false activations and then use the vector pointing from the false mean to the truthful mean for intervention. 
+
+The vector for the truthful direction, denoted as $$ \theta^h_l$$ , is not added directly to the activations. Instead, the standard deviation of activations along the truthful direction is estimated to be $$\sigma^h_l $$ using the activations from both the training and validation sets. Concretely this intervention can be written as an alternative form of MHA: 
+
+$$
+x_{l+1} = x_l + \sum_{h=1}^{H} Q^h_l \left( \text{Att}^h_l \left( P^h_l x_l \right) + \alpha \sigma^h_l \theta^h_l \right).
+$$
+
+This procedure only alters  top-k heads ranked according to their truth relatedness  rather than altering all heads. This makes it a minimally invasive approach. 
+
+The paper explores two key parameters: the number of attention heads to intervene upon (K) and the strength of the intervention (α). Optimal values are sought experimentally, with the understanding that practitioners will adjust α based on their tolerance for inaccuracies and the need for helpfulness.
+
+
+
+{% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
 
 
 ## Conclusion
