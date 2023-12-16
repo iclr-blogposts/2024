@@ -574,19 +574,18 @@ __Illustration.__
 
 We will study further this setting with 100 data point and 20 neurons in high dimension. To compare the how the two methods deal with activation patterns, we will use the activation pattern of the neurons of the non-convex problem to construct a convex problem and solve it. To be more explicit, for each non-convex neuron $$\pmb{w}_i$$, we find its activation pattern and add a $$\pmb{u}_i$$ constrained to this pattern to the convex problem. In the end, we have a convex problem with 20 neurons that will activate exactly the same data points as the non-convex neurons.
 
-We train the non-convex network using gradient descent, and at each step we construct a convex problem, solve it and compare its minimum to our current non-convex loss.
+We train the non-convex network using gradient descent, and at each step we construct a convex problem, solve it and compare its global minimum to our current non-convex loss. This convex problem fully describe the local minimum we would find if the non-convex problem was constrained to never change its activation patterns.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/cvx_vs.png" class="img-fluid" %}
 
 <p class="legend">
 
-The staircase-shaped graph of the optimal convex loss comes from the fact that the optimal only changes when the set of activation patterns changes, and it is always lower than the non-convex loss by construction. Remark that it is not monotonous.
-Here we take two-dimensional data so we can plot each neuron on this 2D plot during a descent. In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
-
+Training a 20 neuron network with gradient descent and using the same activation patterns to plot the equivalent convex problem's global minimum. We use <em>cvxpy</em> to define the problem and solve it using <em>ECOS</em>. The convex loss is always lower than the non-convex loss and that's expected, in the convex problem we are using the same neurons and trying to improve the loss without changing the activation. The convex loss at the start is quickly beaten by gradient descent, this means our initial choice of activation pattern was bad and gradient descent continually improve them.
 </p>
 
+In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
 
-
+However, we will now study two cases where things can be described by convex problem and are in general much more predictable.
 
 <div style="display: none">
 
