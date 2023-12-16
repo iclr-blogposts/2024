@@ -187,15 +187,17 @@ If $$\mathbb{S}$$ is just an array of numbers then target network and the predic
 
 ### Method
 
-We now turn our attention to how component $$\mathcal{I}$$ was searched for. Alet et al. decided to focus on environment that has sparse reward which is an image-based grid world. In this environment the agent is tasked with finding the goal position and only obtains a reward if it finds the goal position. This is environment has sparse reward as the agent only receives feedback one it finds the goal position. They limited the number of operations that component $$\mathcal{I}$$ could perform to 7 so that the search space remains manageable, and we can still interpret the algorithm. They focused on finding a component $$\mathcal{I}$$ that optimises the number of distinct cells visited. From the search 13 of the top 16 components found where variants of FAST and 3 of them were variants of CCIm which will be explained in the upcoming sections.
+We now turn our attention to how component $$\mathcal{I}$$ was searched for. Alet et al. decided to focus on environment that has sparse reward which is an image-based grid world. In this environment the agent is tasked with finding the goal position and only obtains a reward if it finds the goal position. This is environment has sparse reward as the agent only receives feedback one it finds the goal position. They limited the number of operations that component $$\mathcal{I}$$ could perform to 7 so that the search space remains manageable, and we can still interpret the algorithm. They focused on finding a component $$\mathcal{I}$$ that optimises the number of distinct cells visited. From the search 13 of the top 16 components found where variants of FAST and 3 of them were variants of CCIM. We will cover FAST and CCIM in the upcoming sections.
 
-For the component $$\chi$$ they focused on the Lunar Landar environment as it has a strong external reward signal. The algorithm used to output the intrinsic reward was a variant of RND. The main difference was that instead of single neural network for the predicator network an ensemble is used. This algorithm came from a preliminary set of algorithms that all resemble RND. The best reward combiner found was,
+For the component $$\chi$$ they focused on the Lunar Lander environment as it has a strong external reward signal. The algorithm used to output the intrinsic reward was a variant of RND. The main difference was that instead of single neural network for the predicator network an ensemble is used. This algorithm came from a preliminary set of algorithms that all resemble RND. The best reward combiner found was,
 
 $$
 \hat{r}_t = \frac{(1+ri_t-t/T)\cdot ri_t+ r_t\cdot t/T}{1+ri_t}.
 $$
 
-Here $$r_t$$ is the external reward, $$t$$ is the current time-step, $$T$$ is the maximum steps possible in the episode, and $$ri_t$$ is the intrinsic reward. However, in this blog post we decided not to focus on the reward combinor $$\chi$$ but instead focus on FAST and CCIM. The reason for this is that we could not obtain good results for the reward combiner but how work on it was not exhaustive.
+Here $$r_t$$ is the external reward, $$t$$ is the current time-step, $$T$$ is the maximum steps possible in the episode, and $$ri_t$$ is the intrinsic reward. 
+However, in this blog post we decided not to focus on the reward combiner $$\chi$$ but instead focus on FAST and CCIM.<d-footnote>This decision arises because we felt our exploration of it was not exhaustive enough.</d-footnote>.
+
 
 
 ### FAST
@@ -207,26 +209,41 @@ FAST is very simple algorithm in that it only contains one neural network. Below
     Figure 8. The DAG of FAST. Taken from <d-cite key="alet2020metalearning"></d-cite>.
 </div>
 
+This single neural network in FAST is a policy-mimicking network, $$\hat{\pi}$$. The network $$\hat{\pi}$$ tries to predict what action the agent took given a state of the environment<d-footnote>We assume the environment has a discrete action space but this not be the case.</d-footnote>. Then the loss of the policy-mimicking network will be the negative log likelihood (NLL) loss. Note that by looking at the DAG that the output of FAST is not the same as loss function of the policy-mimicking network. The output is given by,
+
+$$
+ri_t=\|\hat{\pi}(s_{t+1})-\hat{\pi}(s_{t})\|_2.
+$$
+
+This already is very different from RND and BYOL-Explore Lite. The intrinsic reward is not given by a predictive error or the loss of one of the networks in the program.
+We understood the above formula as the L2 difference between the logits of the current state and the next state before the logits are passed to the softmax function.
+The agent is then rewarded if the next state's probability distribution is different from the current state. 
+Importantly, the agent isn't rewarded for taking a different action in the next state. Alet et al. pointed out that if an agent has a uniform distribution over the action space in all states, it will receive an intrinsic reward of zero.
+We hypothesize that this algorithm may not perform well in environments where the optimal policy requires the agent to visit states with very similar probability distributions. While the agent explores by going to different states, ideally, we wish for the intrinsic rewards to decrease as the agent explores.
 
 
 
 ### CCIM
-
+CCIM took us quite a well  to understand.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/CCIM_diagram.png" class="img-fluid" %}
 <div class="caption">
     Figure 9. The DAG of CCIM. Taken from <d-cite key="alet2020metalearning"></d-cite>.
 </div>M
 
 ## Experiments
-
+One thing that is puzzles us about FAST is how are the intrinsic rewards supposed to decrease as the agent explores?
 ### Empty grid-world
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/anim_BYOL_0.gif" class="img-fluid" %}
 <div class="caption">
     Figure 10. The empty grid-world environment.
-</div>M
+</div>
 
 ### Deep sea
 
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/deepsea.png" class="img-fluid" %}
+<div class="caption">
+    Figure 10. The empty grid-world environment.
+</div>
 ## Discussion
 
 more random info
