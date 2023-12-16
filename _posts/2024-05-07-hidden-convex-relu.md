@@ -353,7 +353,7 @@ We now come back to our previous example where $x_2>0$ is activated and not $x_1
 \end{equation}
 </p>
 
-Then this problem is convex and has a unique solution. The formula can be  further simplified by introducing the *diagonal activation matrix*  of the data as follows:
+then the obtained problem is convex and has a unique solution. The formula can be  further simplified by introducing the *diagonal activation matrix*  of the data as follows:
 
 <p>
 \begin{equation}
@@ -363,7 +363,7 @@ Then this problem is convex and has a unique solution. The formula can be  furth
 \end{equation}
 </p>
 
-If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optima of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minimum.
+If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optimumu of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minimum.
 
 
 __Equivalent Convex problem.__
@@ -380,13 +380,13 @@ Now, let us see how we can fit two data points, *i.e.* having both data points a
 \end{equation}
 </p>
 
-If we optimize this, the found $$u_1$$ can be negative, and $$u_2$$ positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
+If we optimize this, the found $$u_1$$ can be negative, and $$u_2$$ is positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
 
 To overcome this problem, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>.</d-footnote>. If we translate mathematically the fact that the neuron $1$ activates $x_2$ and the neuron $2$ activates $x_1$, we obtain 
 <p>
 \begin{align*}
-u_1 x_1 &< 0 & u_2 x_1 &\geq 0 \\
-u_1 x_2 &\geq 0 & u_2 x_2 &< 0 \\
+u_1 x_1 &< 0 & u_2 x_1 &\geq 0. \\
+u_1 x_2 &\geq 0 & u_2 x_2 &< 0. \\
 \end{align*}
 </p>
 
@@ -394,8 +394,8 @@ Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (becaus
 
 <p>
 \begin{align*}
-(w_1, \alpha_1) &= (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1}) \\
-(w_2, \alpha_2) &= (\frac{u_2}{\sqrt{u_2}}, \sqrt{u_2}) 
+(w_1, \alpha_1) &= (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1}), \\
+(w_2, \alpha_2) &= (\frac{u_2}{\sqrt{u_2}}, \sqrt{u_2}),
 \end{align*}
 </p>
 
@@ -406,17 +406,17 @@ __General Case.__
 Let us consider a general (non-convex) two-layer ReLU network with an input of size $d$, an output of size $1$ and a hidden layer of size $m$. With $n$ datapoints, the full loss is 
 <p>
 \begin{equation}
-    \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \| \sum_{i=1}^m \max(0, \pmb{X} \pmb{w}_i) \alpha_i - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2
+    \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \| \sum_{i=1}^m \max(0, \pmb{X} \pmb{w}_i) \alpha_i - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2.
 \end{equation} 
 </p>
 
 By analogy with what we saw earlier, an equivalent convex problem can be found as
 <p>
 \begin{equation}
-    \min_{\pmb{U}, \pmb{V} \in \mathcal{K}} \| \sum_{i=1}^m \pmb{D}_i \pmb{X} (\pmb{u}_i - \pmb{v}_i) - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{u}_i \|_2 + \| \pmb{v}_i \|_2
+    \min_{\pmb{U}, \pmb{V} \in \mathcal{K}} \| \sum_{i=1}^m \pmb{D}_i \pmb{X} (\pmb{u}_i - \pmb{v}_i) - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{u}_i \|_2 + \| \pmb{v}_i \|_2,
 \end{equation}
 </p>
-where $$\pmb{D}_i$$ are the activation matrix/pattern as described above. For each neuron $$u_i$$, it is constrained so that it keeps its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (Substracting the identity to $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ yield $$(\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set of the constraints $$\mathcal{K}$$ is the concatenation of these constraints for all the neurons plus the non-negativity constraints. It is directly convex.
+where $$\pmb{D}_i$$ are the activation matrix/pattern as described above. For each neuron $$u_i$$, it is constrained so that it keeps its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (subtracting the identity to $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ yields $$(\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set of the constraints $$\mathcal{K}$$ is the concatenation of these constraints for all the neurons plus the non-negativity constraints. It is directly convex.
 
 From a solution of the problem, the *convex neurons* $$u_i$$ can be mapped to the *non-convex neurons* $$(w_i, \alpha_i)$$ by
 <p>
@@ -446,7 +446,7 @@ In the non-convex problem, there are two local minima when we only consider one 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned1.png" class="img-fluid" %}
 
-As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex  (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minimum in the non-convex gradient descent, then it can be described by a convex problem, by considering one pattern or the other.
+As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minimum in the non-convex gradient descent, then it can be described by a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
