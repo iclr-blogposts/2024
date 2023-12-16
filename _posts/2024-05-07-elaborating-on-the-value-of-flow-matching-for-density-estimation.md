@@ -76,15 +76,21 @@ distributions by transforming a simple, known distribution into a more complex
 one. They do so by leveraging the change of variables formula, defining a
 bijection from the simple distribution to the complex one. 
 
-For most of the time, the standard definition of flows, achieving the notable
-results, was based on chaining several differentiable and invertible
-transformations. However, these diffeomorphic transformations limit the flows in
-their complexity as such have to be simple. Furthermore, this leads to trade-off
-sampling speed and evaluation performance <d-cite
+For most of the time, flows were based on chaining several differentiable and
+invertible transformations. However, these diffeomorphic transformations limit
+the flows in their complexity as such have to be simple. Furthermore, this leads
+to trade-off sampling speed and evaluation performance <d-cite
 key="papamakarios_normalizing_2019"></d-cite>. Their continuous couterpart,
 Continuous Normalizing Flows (CNFs) have been held back by limitations in their
 simulation-based maximum likelihood training <d-cite
-key="tong_improving_2023"></d-cite>.
+key="tong_improving_2023"></d-cite>. By utilizing Flow Matching, this limitation
+has been overcome and CNFs have been shown to be a powerful tool for density
+estimation. 
+
+In the following sections, CNFs and Flow Matching are explained. Following the
+explanation, the empirical results of Flow Matching are presented. Finally, the
+application of Flow Matching in Simulation-based Inference is discussed, which
+shall highlight their wide applicability and consistent improvement.
 
 # Continuous Normalizing Flows
 
