@@ -499,9 +499,10 @@ applicability to SBI.
 
 Besides the general benchmarks, the authors use their proposed technique to
 estimate the posterior distribution of gravitational wave parameters $$p(\theta
-\mid x)$$ where $$\theta \in \mathbb{R}^15, x \in \mathbb{R}^15744$$. In order
-to reduce the problem's dimensionality and increase the information density, the
-observations are compressed to $$128$$ dimensions using a embedding network. 
+\mid x)$$ where $$\theta \in \mathbb{R}^{15}, x \in \mathbb{R}^{15744}$$. In
+order to reduce the problem's dimensionality and increase the information
+density, the observations are compressed to $$128$$ dimensions using a embedding
+network. 
 
 Following the preprocessing of the data, three density estimators are fitted and
 compared to each other. The first method uses a neural spline flow, which has
