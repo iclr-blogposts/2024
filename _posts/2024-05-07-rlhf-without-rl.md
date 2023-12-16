@@ -64,7 +64,7 @@ RLHF for language models works roughly as follows:
    sufficient variability in them.
 3. Ask human annotators to rate the completions, thereby obtaining a dataset of preferences
    $x, y_{rank_1}, ..., y_{rank_N}$.
-4. Train a parametrized reward function $r_\phi$ (mapping pairs $(x,y)$ to scalars) on the collected preferences by minimizing the loss
+4. Train a parameterized reward function $r_\phi$ (mapping pairs $(x,y)$ to scalars) on the collected preferences by minimizing the loss
 
    $$
    \mathcal{L}(r) = \mathbb{E}_{(x, y_{rank_i})} \left[ \log \frac{e^{r(x, y_{rank_i})}}{\sum_{j=1}^N e^{r(x, y_{rank_j})}} \right].
@@ -153,8 +153,8 @@ $$
 This expression is well known in the RL literature and is sometimes referred to as *Boltzmann policy*
 (note that in the 1-step RL setting, the Q-function is given by the reward itself).
 
-Similar results were proved in the REPS algorithm {{<cite "peters_relative_2010">}} and follow-up work (a more recent paper in that
-direction is {{<cite "peng_advantageweighted_2019">}}). While this solution for $\pi_r$ in
+Similar results were proved in the REPS algorithm {{<d-cite "peters2010relative"/>}} and follow-up work (a more recent paper in that
+direction is {{<d-cite "peng2019advantage"/>}}). While this solution for $\pi_r$ in
 itself is intractable (because of the partition function $Z(x)$), it can be used
 to express the reward as a function of the optimal policy:
 
@@ -235,7 +235,7 @@ completeness:
     </div>
 </div>
 <div class="caption">
-    Original evaluation of DPO on small-scale models and datasets.
+    Original evaluation<d-cite key="rafailov2023direct"/> of DPO on small-scale models and datasets.
     Left: TL;DR summarization win rates vs.
     human-written summaries, using GPT-4 as evaluator. DPO exceeds PPO’s best-case
     performance on summarization, while being more robust to changes in the sampling
