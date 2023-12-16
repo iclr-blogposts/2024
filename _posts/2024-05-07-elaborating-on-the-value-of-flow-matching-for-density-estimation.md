@@ -41,7 +41,7 @@ toc:
   - name: Flow Matching
     subsections:
     - name: Gaussian conditional probability paths
-    - name: Generalized Flow-Based Models
+    # - name: Generalized Flow-Based Models
   - name: Empirical Results
   - name: Application of Flow Matching in Simulation-based Inference 
     subsections:
@@ -251,7 +251,7 @@ $$
 The authors argue that this choice leads to more natural vector fields, faster
 convergence and better results.
 
-## Generalized Flow-based Models
+<!-- ## Generalized Flow-based Models
 
 Flow matching, as it is described above, is limited to the Gaussian source
 distributions. In order to allow for arbitrary base distributions <d-cite
@@ -282,7 +282,7 @@ above with a mean $$\mu_t = tx_1 + (1-t)x_0$$ and a time independent variance
 $$\sigma_t = \sigma$$. Due to modelling the probability path with a Gaussian, it
 is easy to sample from it. Further, the vector field is efficiently computable,
 which leads to an efficient computation of the conditional flow matching loss,
-as it is described above for the specific case. 
+as it is described above for the specific case.  -->
 
 
 # Empirical Results
