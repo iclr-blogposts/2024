@@ -464,7 +464,8 @@ key="papamakarios_fast_2016"></d-cite> and especially <d-cite
 key="papamakarios_normalizing_2019"></d-cite> for a more rigorous introduction
 to SBI. In order to compare the the performances of the different approaches to
 SBI and their performance with respect to certain tasks, an excellent overview
-is provided in <d-cite key="lueckmann_benchmarking_2021"></d-cite>.
+is provided in <d-cite key="lueckmann_benchmarking_2021"></d-cite>. For the sake
+of this post, an more abstract understanding is enough.
 
 ## Flow Matching for Simulation-based Inference 
 
