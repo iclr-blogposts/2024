@@ -4,7 +4,7 @@ title: RLHF without RL - Direct Preference Optimization
 description: We discuss the RL part of RLHF and its recent displacement by direct preference optimization (DPO).
   With DPO, a language model can be aligned with
   human preferences without sampling from an LM, thereby significantly
-  simplifying the training process. By now DPO has been implemented in many projects and seems to be here to stay.
+  simplifying the training process. By now, DPO has been implemented in many projects and seems to be here to stay.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -51,7 +51,7 @@ _styles: >
 Reinforcement learning from human feedback (RLHF) is an important technique for
 aligning (large) language models (LM)
 with human preferences. It was introduced by Christiano et al.<d-cite key="christiano2017deep"/> and then first 
-applied to language models in by Ziegler et al.<d-cite key="ziegler2019fine"/>. 
+applied to language models in the work by Ziegler et al.<d-cite key="ziegler2019fine"/>. 
 Since then, RLHF has become a central building block of many LLM-based applications, 
 including the first versions of ChatGPT.
 
@@ -74,7 +74,7 @@ RLHF for language models works roughly as follows:
    maximum-entropy inverse RL<d-cite key="ziebart2008maximum"/>. 
    Intuitively, it encourages the reward function to assign higher rewards to completions that are preferred by humans.
    Usually, the reward function is parameterized by the LM itself with an additional linear layer. Thus, the mapping from $(x, y)$ to $r(x, y)$ is given by
-   simply concatenating the sequences $x$ and $y$ and passing the embedding of the last (or an differently selected) token through a linear layer.
+   simply concatenating the sequences $x$ and $y$ and passing the embedding of the last (or a differently selected) token through a linear layer.
 5. Fine-tune the LM by viewing it as a policy $\pi_\theta$ and using RL with the learned reward function $r_\phi$ as the
    reward. For this step, a separate dataset of prompts $\mathcal{D}\_{\text{RL}}$ is used to query the LM and collect completions.
    Since the reward is learned on a very limited subset of possible completions, and is therefore unreliable in
@@ -101,16 +101,16 @@ Note, however, that the RLHF scheme has quite some complexity when it comes to a
 
 ## Is RLHF Reinforcement Learning?
 
-From the beginning, RLHF has sparked some controversy. Some regarded it as one of the prime applications of reinforcement learning,
+From the beginning, RLHF has sparked some controversy. Some regarded it as one of the prime applications of reinforcement learning
 (which may currently be perceived as "less hot" than LLMs, wherefore applying RL in LLMs is in the former's favor). 
 At the same time, others were skeptical about whether RLHF is reinforcement learning at all.
 
 Indeed, some crucial components of RL are missing in RLHF. First, the current forms of RLHF do not involve sequential decision-making
-(although there is some work on that, e.g. the ILQL algorithm<d-cite key="snell2022offline"/>)
+(although there is some work on that, e.g., the ILQL algorithm<d-cite key="snell2022offline"/>).
 While the rollout of a completion can formally be viewed as a sequence of actions, the reward is not given after the completion
 has ended. Moreover, for the purpose of RLHF the LM itself can be regarded as a direct mapping from inputs to distributions over completions,
 rather than a sequential decision-making agent in the space of tokens. Thus, at best, RLHF is a form of single-step, 
-immediate-reward RL- in other words, a *contextual bandit*.
+immediate-reward RL - in other words, a *contextual bandit*.
 
 Even more troubling than the non-sequential nature of RLHF may be its information flow. While the policy optimization of RLHF is framed as an online RL algorithm,
 *the environment consists of the policy itself*. Usually, in online RL an agent is able to extract new information from the environment.
@@ -190,7 +190,7 @@ $$
 $$
 
 where $\sigma$ is the sigmoid function. Note that only _differences of rewards_
-enter \ref{eq:reward-loss-binary}.
+enter (\ref{eq:reward-loss-binary}).
 
 ### 3. DPO Objective
 
@@ -209,12 +209,12 @@ $$
 
 Thus, instead of first learning a reward and then finding the optimizing policy,
 one directly finds the optimal policy such that its reward as obtained from
-\ref{eq:reward-as-function-of-policy}
-corresponds to collected human preferences (i.e. a reward that
-optimizes \ref{eq:reward-loss-binary}). Note that while the induced reward function
+(\ref{eq:reward-as-function-of-policy})
+corresponds to collected human preferences (i.e., a reward that
+optimizes (\ref{eq:reward-loss-binary})). Note that while the induced reward function
 itself is intractable, the differences of rewards remain tractable and can be
 computed using the learned policy. This should be sufficient for practical
-purposes, where rewards are mostly used to rank completions and e.g., perform
+purposes, where rewards are mostly used to rank completions and, e.g., perform
 rejection sampling.
 
 The paper includes some more details and a discussion of the interpretation of
