@@ -33,7 +33,7 @@ toc:
     - name: BYOL-Explore
   - name: Meta-learning curiosity algorithms
     subsections:
-    - name: Domain-Specific Language of $$\mathcal{C}$$
+    - name: Meta-Learned Components and their DAGs
     - name: Method
     - name: FAST
     - name: ICCM
@@ -133,7 +133,7 @@ In the above equation, $$\phi$$, is the target network's parameters, $$\theta$$ 
 In our implementation the online network is composed of a multilayer perceptron (MLP) encoder and a predictor. The target network, $$h$$, is just composed of an MLP encoder. In the BYOL-Explore Lite process the current state of the environment, $$s_t$$, is inputted into the encoder $$f$$, which outputs a feature representation of the state, $$f(s_t)$$. This feature representation is then passed to both the RL agent and the predictor $$g$$. The RL agent uses $$f(s_t)$$ to decide on its next action and determine the value of that state. The predictor uses $$f(s_t)$$ to predict $$h(s_{t+1})$$, attempting to predict the target network's output for the next state. There are two losses namely the encoder loss and the predictor loss. The predictor loss is given by,
 
 $$
-\mathcal{L}_p=\left\|\frac{g(f(s_{t+1}))}{\|g(f(s_{t+1}))\|_2}-\frac{h(s_{t+1})}{\|h(s_{t+1})\|_2}\right\|_2^2.
+\mathcal{L}_p=\left\|\frac{g(f(s_{t}))}{\|g(f(s_{t}))\|_2}-\frac{h(s_{t+1})}{\|h(s_{t+1})\|_2}\right\|_2^2.
 $$
 
 Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss. Importantly, the loss $$\mathcal{L}_p$$ serves as the intrinsic reward that the RL agent receives at each step. We normalise the intrinsic rewards by dividing it by the EMA estimate of their standard deviation.
@@ -151,7 +151,7 @@ In this case the outer loop searches over the curiosity algorithm space while th
 In the above figure can see that the curiosity algorithm, $$\mathcal{C}$$, takes in the state and reward from the environment and then feeds proxy reward $$\hat{r}$$ to the RL agent. The RL algorithm used is a fully-specified algorithm, i.e., all its hyperparameters are specified. There were two stages in the authors search. The module $$\mathcal{C}$$ is made from of two components.
 The first component, $$\mathcal{I}$$, calculates the intrinsic reward given the current state, next state and the action taken. The second component, $$\chi$$, then takes the extrinsic reward, the intrinsic reward and the current normalised time step to combine them and output $$\hat{r}$$. 
 
-### Domain-Specific Language of $$\mathcal{C}$$
+### Meta-Learned Components and their DAGs
 
 As mention earlier the Alet et al. focused on meta-learning pieces of code or rather meta-learning in a space of programs or operations. The programs and operations are represented in domain-specific language (DSL). The DSL used to find component $$\chi$$ consisted of operations such as arithmetic, Min, Max and more. 
 While the DSL used to find component $$\mathcal{I}$$ consisted of programs such as neural networks complete with gradient-descent mechanisms, L2 distance calculation, and ensembles of neural networks and more. Component $$\mathcal{I}$$'s DSL can describe many other hand-designed curiosity algorithms in literature, such as RND. 
@@ -187,18 +187,43 @@ If $$\mathbb{S}$$ is just an array of numbers then target network and the predic
 
 ### Method
 
+We now turn our attention to how component $$\mathcal{I}$$ was searched for. Alet et al. decided to focus on environment that has sparse reward which is an image-based grid world. In this environment the agent is tasked with finding the goal position and only obtains a reward if it finds the goal position. This is environment has sparse reward as the agent only receives feedback one it finds the goal position. They limited the number of operations that component $$\mathcal{I}$$ could perform to 7 so that the search space remains manageable, and we can still interpret the algorithm. They focused on finding a component $$\mathcal{I}$$ that optimises the number of distinct cells visited. From the search 13 of the top 16 components found where variants of FAST and 3 of them were variants of CCIm which will be explained in the upcoming sections.
+
+For the component $$\chi$$ they focused on the Lunar Landar environment as it has a strong external reward signal. The algorithm used to output the intrinsic reward was a variant of RND. The main difference was that instead of single neural network for the predicator network an ensemble is used. This algorithm came from a preliminary set of algorithms that all resemble RND. The best reward combiner found was,
+
+$$
+\hat{r}_t = \frac{(1+ri_t-t/T)\cdot ri_t+ r_t\cdot t/T}{1+ri_t}.
+$$
+
+Here $$r_t$$ is the external reward, $$t$$ is the current time-step, $$T$$ is the maximum steps possible in the episode, and $$ri_t$$ is the intrinsic reward. However, in this blog post we decided not to focus on the reward combinor $$\chi$$ but instead focus on FAST and CCIM. The reason for this is that we could not obtain good results for the reward combiner but how work on it was not exhaustive.
+
 
 ### FAST
 
-Explain the ICCM algorithm and how it contributes to the meta-learning approach.
+FAST is very simple algorithm in that it only contains one neural network. Below is the DAG of FAST.
+
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/FAST_diagram.png" class="img-fluid" %}
+<div class="caption">
+    Figure 8. The DAG of FAST. Taken from <d-cite key="alet2020metalearning"></d-cite>.
+</div>
+
+
+
 
 ### CCIM
 
-here is CCIM
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/CCIM_diagram.png" class="img-fluid" %}
+<div class="caption">
+    Figure 9. The DAG of CCIM. Taken from <d-cite key="alet2020metalearning"></d-cite>.
+</div>M
 
 ## Experiments
 
 ### Empty grid-world
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/anim_BYOL_0.gif" class="img-fluid" %}
+<div class="caption">
+    Figure 10. The empty grid-world environment.
+</div>M
 
 ### Deep sea
 
