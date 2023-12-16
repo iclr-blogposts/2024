@@ -190,7 +190,6 @@ for layer, list_params in interventions.items():
     #Add intervention_term calculated above to self attention output
     model.layers[layer].self_attn.o_proj.bias = torch.nn.parameter.Parameter(intervention_term)
 
-
 # Save the new model ready for inference
 model.save_pretrained(save_folder_path)
 {% endhighlight %}
