@@ -90,7 +90,7 @@ The whole process of probing and inference time intervention is described in Fig
 </figure>
 
 
-We discuss these steps and the crux of the ITI technique in detail below.
+We discuss these steps and the crux of the ITI technique in detail sections below.
 
 ### Probing for truthfulness
 
