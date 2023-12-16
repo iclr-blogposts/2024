@@ -83,10 +83,12 @@ Inference time intervention technique uses probing to identify truthful heads, a
 
 The whole process of probing and inference time intervention is described in Figure 1.
 
-<figure>
+<div class="center"> 
 {% include figure.html path="assets/img/2024-05-07-truthful-llm/ITI.png" class="img-fluid" %}
-<figcaption>Figure 1: Workflow for ITI method</figcaption>
-</figure>
+</div>
+<div class="caption">
+    Figure 1: Workflow for Inference Time Intervention
+</div>
 
 
 We discuss these steps and the crux of the ITI technique in detail sections below.
