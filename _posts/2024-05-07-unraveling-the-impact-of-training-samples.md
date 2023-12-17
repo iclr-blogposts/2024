@@ -63,7 +63,7 @@ _styles: >
     font-size: 16px;
   }
   .proof-expand {
-    color: orange;
+    color: white;
   }
 ---
 
@@ -168,9 +168,8 @@ Despite the simplicity and accuracy of datamodels in predictions, training them 
 ### TRAK <d-cite key="park2023trak"></d-cite>
 Inspired by Datamodeling framework and motivated to circumvent its expensive training cost, in ***TRAK:Attributing Model Behavior at Scale***, Ilyas et al. <d-cite key="park2023trak"></d-cite> propose a new data attribution framework, *Tracing with the Randomly-Projected After Kernel* (TRAK).
 
-First, in this paper the authors further denote $\tau(z, S_i)$ as a data attribution method that assigns a real-valued score to each training input in $S_i$, indicating its importance to the model output $f_{\mathcal{A}}(z;S_i)$.
+First, in this paper the authors further denote $\tau(z, S_i)$ as a data attribution method that assigns a real-valued score to each training input in $S_i$, indicating its importance to the model output $f_{\mathcal{A}}(z;S_i)$. The key concept of TRAK is to use first order Taylor expansion to approximate the trained model $\theta^{\*}(S)$, of an algorithm for a given training dataset, and then use random projections to reduce the dimensionality of the gradient. Each time, we sample a training subset $S_i$ of size $\alpha \times \|S\|$ from $S$, and train a model $\theta^{\*}(S_i)$, and then use random projection to project the high-dimensional gradient matrix at $\theta^{\*}$ from $p$ to $k$ dimension where $k \ll p$. Ilyas et al. <d-cite key="park2023trak"></d-cite> denote the projected gradients to be $\phi_t$ and conclude that using a training subset $S_i$, The TRAK attribution scores for an example of interest $z$ is:
 
-The key concept of TRAK is to use first order Taylor expansion to approximate the trained model $\theta^{\*}(S)$, of an algorithm for a given training dataset, and then use random projections to reduce the dimensionality of the gradient. Each time, we sample a training subset $S_i$ of size $\alpha \times |S|$ from $S$, and train a model $\theta^{\*}(S_i)$, and then use random projection to project the high-dimensional gradient matrix at $\theta^{\*}$ from $p$ to $k$ dimension where $k \ll p$. Ilyas et al. <d-cite key="park2023trak"></d-cite> denote the projected gradients to be $\phi_t$ and conclude that using a training subset $S_i$, The TRAK attribution scores for an example of interest $z$ is:
 
 $$\tau(z, S_i) := \phi_{i}(z)^{T}(\Phi_{i}^{T}\Phi_{i})^{-1}\Phi_{i}^{T}\mathbf{Q_{i}}$$
 > $i$: the index of a training subset;  
