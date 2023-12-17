@@ -120,7 +120,7 @@ Therefore, $\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\te
 
 </details>
 
-Since one training sample romoval can be understood as setting $\epsilon=-\frac{1}{n}$, we can predict the corresponding test loss difference by $-\frac{1}{n}\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}})$. By comparing the predicted test loss difference and the actual test loss difference by leave-one-out retraining, we can verify the accuracy of the proposed influence scores, as shown in the figure below.
+Since one training sample romoval can be understood as setting $\epsilon=-\frac{1}{n}$, we can predict the corresponding test loss difference by $-\frac{1}{n}\mathcal{I}_{removal,loss}(z,z_{test})$. By comparing the predicted test loss difference and the actual test loss difference by leave-one-out retraining, we can verify the accuracy of the proposed influence scores, as shown in the figure below.
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/1.png" class="img-fluid" %}
 
@@ -293,7 +293,7 @@ Except for comparing learning algorithms, we can also leverage the importance sc
 *Source: From the randomly selected validation points provided by Ilyas et al. <d-cite key="park2023trak"></d-cite>, we found this data leakage example*
 <br>
 
-We can also use the data attribution methods to identify brittle predictions (i.e. the model outputs which are brittle to a few training samples removal) and estimate data counterfactual (i.e. the casual effect of removing a set of training samples on model outputs).
+We can leverage such phenomenon to identify train-test leakage in different benchmark datasets. For example, in the second line of the figure, Harshay et al. identified significant data leakage on CIFAR10 dataset. Extending this data leakage detection technique to different datasets holds the potential to assist the ML community in curating datasets, thereby enhancing overall data quality.
 
 ### Prediction Brittleness Examination
 We can also use the data attribution methods to identify brittle predictions (i.e. the model outputs which are brittle to a few training samples removal) and estimate data counterfactual (i.e. the casual effect of removing a set of training samples on model outputs). 
