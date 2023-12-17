@@ -250,8 +250,9 @@ where <br>
 
 Ilyas et al. <d-cite key="park2023trak"></d-cite> conducted a study utilizing TRAK to attribute various classifiers on datasets such as CIFAR-2, CIFAR-10, QNLI, and ImageNet. Their findings demonstrated that TRAK achieves superior accuracy while utilizing significantly fewer models. 
 
-<!-- TO REFINE -->
-During our experiments performed to validate the result presented in TRAK <d-cite key="park2023trak"></d-cite> , we found that the TRAK algorithm is expensive in terms of memory. It saves a large amount of model checkpoints during the phase when we train models on training subsets and calculate the gradients for each training samples. On the other hand, we found that the TRAK scores and true model margins are not highly linear correlated. This indicates that the predicted margins provided by TRAK is not a good estimate of the model output. This could be resulted from the output margin function chosen in TRAK $f(z;\theta):=log(\frac{p(z;\theta)}{1 - p(z; \theta)})$. Though TRAK provides a interpretable way to analyze the impact of training data, this reveals a limitation of TRAK. Its ability of predicting model outputs is not on par with Data Model
+In replicating the experiments detailed in Ilyas et al. <d-cite key="park2023trak"></d-cite>, we encountered a notable drawback in the TRAK algorithm, we found that the TRAK algorithm is memory-expensive. It requires recording numerous model gradients for each test sample across models trained on different subsets, which is intractable for Modern Foundation Models. Furthermore, our investigation unveiled a limited linear correlation between TRAK scores and true model margins. This observation suggests that the predicted margins derived from TRAK do not serve as robust estimates of the model output and its ability of predicting model outputs is not on par with Datamodels.
+
+While TRAK offers an interpretable and computationally efficient way to analyze training data impact, its limitations cannot be overlooked. Further research is needed to propose better data attribution methods.
 
 
 <!-- 3. The sample perturbation IF can be used as an "training-sample-specific" adversarial attack method, i.e. flipping the prediction on a separate test sample by adding undetectable perturbation on just one training sample.  -->
