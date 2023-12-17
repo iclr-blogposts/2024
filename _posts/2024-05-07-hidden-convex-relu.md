@@ -530,7 +530,7 @@ Adding more neurons will not create additional activation patterns, adding more 
 
 <p class="legend">Plotting individual output and activation points of each of these ten possible ReLU neurons in blue. Those are the 10 (20 with negative ones) neurons that need to be considered to get the global optima using the convex equivalent. When moving the activation point between two data points, the activation pattern does not change.</p>
 
-<p class="remark"> Notice that it is not possible to only activate the data points in the middle. However if we increase the data's dimension, this becomes possible. In higher dimensions we cannot visualize the activation patterns as easily, but we can understand that as dimensionality increases, more patterns are possible as it's easier to separate different data points.</p>
+<p class="remark"> Notice that it is not possible to only activate the data points in the middle. However, if we increase the data's dimension, this becomes possible. In higher dimensions, we cannot visualize the activation patterns as easily, but we can understand that as dimensionality increases, more patterns are possible as it's easier to separate different data points.</p>
 
 <div style="display: none">
 {<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
@@ -573,7 +573,7 @@ There has been some work focused on solving the convex problem quickly<d-cite ke
 
 _Performance on popular dataset for a single layer network<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>._
 
-For small datasets and networks, convex solvers are fast, do not require any tuning to get convergence is easy. On the other hand, you have to correctly tune the learning rate to reach a stable solution in reasonable time with gradient descent.
+For small datasets and networks, convex solvers are fast, and do not require any tuning to get convergence is easy. On the other hand, you have to correctly tune the learning rate to reach a stable solution in a reasonable time with gradient descent.
 
 <p class="remark">
 A convex equivalent of deeper networks exists but exacerbates existing problems. The only way to make it possible is to optimize layer by layer. This is still a work in progress and needs further improvements to beat the usual methods in accuracy and speed.
@@ -646,7 +646,7 @@ If you take orthogonal data and a small scale, the behavior is very predictable<
 
 The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minimum found by gradient descent in the non-convex setting. However, finding the global optima is impossible in practice, and approximations are still costly. While there is no evident link between feature learning in the non-convex and the convex reformulation, many settings allow for a direct equivalence and the whole convex toolkit for proofs.
 
-The convex reformulation will probably hugely benefit from dedicated software as it has been the case for gradient descent in deep networks, and will offer a no-tuning alternative to costly stochastic gradient descent.
+The convex reformulation will probably hugely benefit from dedicated software as has been the case for gradient descent in deep networks, and will offer a no-tuning alternative to costly stochastic gradient descent.
 
 Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minimum.
 
