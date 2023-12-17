@@ -55,7 +55,7 @@ One way to encourage the RL agent to perform meaningful exploration is by instil
 Now there has been success with curious agents solving environments with sparse rewards <d-cite key="burda2018exploration, guo2022byolexplore, jarrett2023curiosity, pathak2017curiositydriven,burda2018largescale"></d-cite>. Curiosity algorithms such as Random Network Distillation (RND) <d-cite key="burda2018exploration"></d-cite> and BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> are hand-designed and are able to perform well across different environments.
 However, in the 2020 paper <d-cite key="alet2020metalearning"></d-cite>, Meta-learning curiosity algorithms, Alet et al. took a different and unique approach to discovering new curisoity algorithms. They did this by meta-learning pieces of code.
 Similar to the code segments used by researchers when crafting curiosity algorithms such as neural networks with gradient descent mechanisms, trained objective functions, ensembles, buffers, and various regression models.
-Two new interpretable algorithms were learned by meta-learning these pieces of code: Fast Action Space Transition and Cycle-Consistency Intrinsic Motivation (CCIM).
+Two new interpretable algorithms were learned by meta-learning these pieces of code: Fast Action Space Transition (FAST) and Cycle-Consistency Intrinsic Motivation (CCIM).
 It is these two algorithms that we will explore and compare their behaviour to our baselines: RND and BYOL-Explore.
 
 The roadmap for exploring FAST and CCIM is organised as follows. We begin with a brief introduction to RL, meta-learning, and meta-reinforcement learning (meta-RL). Next, we provide concise explanations of how curiosity-driven exploration baselines, RND and BYOL-Explore, operate. Subsequently, we delve into the discovery process of FAST and CCIM. Following that, we explore the intricacies of FAST and CCIM, evaluating their performance and studying their behaviour in both the empty grid-world environment and the bsuite deep sea environment and compare them to the baselines. Finally, we conclude our journey.
@@ -64,13 +64,14 @@ The roadmap for exploring FAST and CCIM is organised as follows. We begin with a
 
 ### Reinforcement Learning
 
-RL is inspired by how biological systems learn as animals are to able learn through trail-and-error. In RL we have an agent that tries to maximise the sum of rewards it recieves by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
+RL is inspired by how biological systems learn as animals are to able learn through trial-and-error. In RL we have an agent that tries to maximise the sum of rewards it recieves by learning from its interactions with the environment. This agent-environment interaction is usually modelled as a Markov decision process (MDP). Figure 1 below illstrustates this agent-environment interaction.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/MDP.png" class="img-fluid" width="100px" %}
 <div class="caption">
     Figure 1. The agent-environment interaction as a MDP. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
-From the figure we can see that the agent observes a state and then takes action. The agent then can decide on its next action based on the next state it observes and the rewards it receives from the critic in the environment. The critic decides on what reward the agent receives at every time-step by evaluating its behaviour.
+
+From the figure we can see that the agent observes a state and then takes action. The agent can then decide on its next action based on the next state it observes and the rewards it receives from the critic in the environment. The critic decides on what reward the agent receives at every time-step by evaluating its behaviour.
 
 As Sutton et al. highlighted in <d-cite key="sutton2018intro"></d-cite> Figure 1 can be misleading though. It implies that the agent-environment boundary is similar to the physical boundary between an organism entire body and the outside world. In RL we consider anything that the agent cannot change through its actions as the environment. For example, if a human was an RL agent their skeletal structure or their muscles could be considered part of the environment. So we can then see that when it comes to RL we have two types of environments: The internal environment, such as sensory organs of an animal, and the external environment. Also, the reward the agent receives is not always from the external environment. The rewards can be seen as reward signals like a human's brain releasing dopamine when one achieves an objective.
 Thus, the critic can also be in inside the RL agent.
@@ -81,7 +82,7 @@ The figure below shows an extended view of the agent-environment interactions.
     Figure 2. The extended agent-environment interaction. Taken from <d-cite key="singh2004intri"></d-cite>.
 </div>
 
-Singh et al. highlighted in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent. And this motivational system should ideally remain consistent across a wide range of diverse environments. Since we can view as the critic being inside the agent we can instil intrinsic motivation into the agent. This means that the agent can receive two types rewards, namely extrinsic rewards from the external environments and intrinsic rewards from the internal environment.
+Singh et al. highlighted in <d-cite key="singh2004intri"></d-cite> that Figure 2 shows that an RL agent has a motivational system since the critic can be within the internal environment of the agent. And this motivational system should ideally remain consistent across a wide range of diverse environments. Since we can view the critic as being inside the agent we can instil intrinsic motivation into the agent. This means that the agent can receive two types rewards, namely extrinsic rewards from the external environments and intrinsic rewards from the internal environment.
 Singh et al. (<d-cite key="singh2004intri"></d-cite>) highlighted the advantages of endowing an agent with intrinsic motivation. They pointed out that an agent equipped with a collection of skills learned through intrinsic reward can more easily adapt to and learn a wide variety of extrinsically rewarded tasks compared to an agent lacking these skills.
 
 ### Meta-RL and Meta-learning
@@ -116,7 +117,7 @@ $$
 
 where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network.
 We normalise $$r_i$$ by dividing it by the running estimate of the standard deviations of
-the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments and times. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wild range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
+the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments and times. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
 <div class="caption">
@@ -125,7 +126,7 @@ the intrinsic returns. We do this because the intrinsic rewards can be very diff
 
 ### BYOL-Explore
 
-BYOL-Explore builds upon Bootstrap Your Own Latent (BYOL) <d-cite key="grill2020bootstrap"></d-cite>, self-supervised learning algorithm used in computer vision and representation learning. BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> is similar to RND in that there's a network that tries to predict the output of a target network. In BYOL-Explore we have an online network that consists of: an encoder, a close-loop recurrent neural network (RNN) cell, an open-loop RRN cell and a predictor. While the target network just consists of an encoder. The key difference is that the target's network parameters do not stay fixed like in RND. We update the target network using the exponential moving average (EMA) of the online network's predictor. The update is performed using the formula:
+BYOL-Explore builds upon Bootstrap Your Own Latent (BYOL) <d-cite key="grill2020bootstrap"></d-cite>, self-supervised learning algorithm used in computer vision and representation learning. BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> is similar to RND in that there's a network that tries to predict the output of a target network. In BYOL-Explore we have an online network that consists of: an encoder, a close-loop recurrent neural network (RNN) cell, an open-loop RNN cell and a predictor. While the target network just consists of an encoder. The key difference is that the target's network parameters do not stay fixed like in RND. We update the target network using the exponential moving average (EMA) of the online network's predictor. The update is performed using the formula:
 
 $$
 \phi \leftarrow \alpha\phi + (1-\alpha)\theta.
@@ -275,6 +276,11 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 ### Results
 
 #### CCIM
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/FAST_diagram.png" class="img-fluid" %}
+<div class="caption">
+    Figure 11. The average epi.
+</div>
+
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_ccim_30.png" class="img-fluid"  %}
