@@ -335,14 +335,16 @@ Using mean squared loss and weight decay regularization, our loss function is
 \end{equation}
 </p>
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside.png" class="img-fluid" %}
+The figure below shows the plot of the loss.
 
-<p class="legend">(<b>Left</b>) Representation of the output of a one-neuron ReLU net with a positive weight $w_1$, $\alpha_1 = 1$ and a small regularization $\lambda$. The ReLU <em>activates</em> the second data point (as $x_2>0$), and the network can thus fit its output to reach $y_2$. However, doing so cannot activate $x_1$ and will incur a constant loss $(y_1)^2$. Overall, depending on the sign of $w_1$ we will have a loss consisting of a constant term for not activating one point and a quadratic term for matching the output for the activated data point. The total loss plotted on the <b>right</b> is thus non-convex. The loss is given by \eqref{eq:one_neuron_loss}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside_correct.png" class="img-fluid" %}
+
+<p class="legend">(<b>Left</b>) Representation of the output of a one-neuron ReLU net with a positive weight $w_1$, $\alpha_1 = 1$ and a small regularization $\lambda$. The ReLU <em>activates</em> the second data point (as $x_2>0$ and $w_1 > 0$) so the network can fit the second data point. However, doing so means it cannot activate $x_1$ and will incur a constant loss $(y_1)^2$. Overall, depending on the sign of $w_1$ we will have a loss consisting of a constant term for not activating one point and a quadratic term for matching the output for the activated data point. The total loss plotted on the <b>right</b> is thus non-convex. Using gradient descent to optimize this network will never be able to switch from fitting one data point to the other.
 </p>
 
 #### Multiplicative non-convexity
 
-Putting ReLU aside briefly, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables together: $w_1 ~ \alpha_1$. However, this non-convexity can be ignored by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ take the role of the product $w_1 \alpha_1$. We can solve the minimisation problem with only $$u_1$$ and then map it back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs matches. The global minima are the same as they have the same expressivity, we can say the two problem are equivalent.
+Putting ReLU aside briefly, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables together: $w_1 ~ \alpha_1$. However, this non-convexity can be ignored by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ takes the role of the product $w_1 \alpha_1$. We can solve the minimization problem with only $$u_1$$ and then map it back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs match. The global minima are the same as they have the same expressivity, we can say the two problems are equivalent.
 
 Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity in general as $$\alpha_1$$ can be negative (to produce negative outputs)! We split the role of a non-convex variable into two: $$u_1$$ and $$v_1$$. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
 
@@ -354,7 +356,7 @@ Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u
 
 This is indeed a convex objective. At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to a negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
 
-With a bit of effort, the two problem share the same global minima as we can easily map back and forth without altering the loss.
+With a bit of effort, the two problems share the same global minima as we can easily map back and forth without altering the loss.
 
 #### Activation
 
@@ -403,7 +405,7 @@ Now, let us see how we can fit two data points, *i.e.* having both data points a
 \end{equation*}
 </p>
 
-If we optimize this, the $$u_1$$ we find can be negative and $$u_2$$ is positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
+If we optimize this, the $$u_1$$ we find can be negative, and $$u_2$$ can be positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
 
 To overcome this problem, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022b"></d-cite>.</d-footnote>. If we translate mathematically the fact that the neuron $1$ activates $x_2$ and the neuron $2$ activates $x_1$, we obtain 
 <p>
@@ -473,13 +475,13 @@ In the non-convex problem with only one neuron, there are two local minima:
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned1.png" class="img-fluid" %}
 
-As seen in the previous section, each local minimum can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \czero & 0 \\ 0 & \cone\end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one, because the global minimum of the non-convex cannot be achieved in the convex problem. However, once we reach a local minimum in the non-convex gradient descent, then it can be described as a convex problem, by considering one pattern or the other.
+As seen in the previous section, each local minimum can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \czero & 0 \\ 0 & \cone\end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one because the global minimum of the non-convex cannot be achieved in the convex problem. However, once we reach a local minimum in the non-convex gradient descent, then it can be described as a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned2.png" class="img-fluid" %}
 
-<p class="legend"> The non-convex problem initialized at random and optimised with gradient descent will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima (<b>left</b>), or two of them will end up in the same pattern (<b>right</b>), activating the same data point.</p>
+<p class="legend"> The non-convex problem initialized at random and optimized with gradient descent will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima (<b>left</b>), or two of them will end up in the same pattern (<b>right</b>), activating the same data point.</p>
 
 In the case of two neurons, the following convex equivalent problem
 
@@ -501,7 +503,7 @@ is equivalent to the non-convex problem <em>i.e.</em> solving it will give the g
 
 <p class="legend">Plotting the positive part of many ReLU neurons. Summed up, they form a network output that perfectly fits the data.</p>
 
-We draw one example of a usual local minimum for gradient descent in the specific case of having more neurons than existing patterns. In practice (with more data in higher dimension) there are much fewer neurons than possible activations. However, there are many situations in which neurons will lead to the same activation patterns. 
+We draw one example of a usual local minimum for gradient descent in the specific case of having more neurons than existing patterns. In practice (with more data in higher dimensions) there are much fewer neurons than possible activations. However, there are many situations in which neurons will lead to the same activation patterns. 
 
 Note that we can merge neurons that are in the same activation pattern by summing them up, creating a new neuron, and keeping both the output and the loss unchanged (although regularization might decrease). The fact that having more than one neuron in one pattern does not decrease the loss is at the core of the proof.
 
@@ -642,7 +644,7 @@ Using an animation, we plot every step of a gradient descent in the non-convex p
 Training a network with 1000 neurons with big initial values using gradient descent. The output of the network is in blue, and the four data points  (red crosses) represent linear data. Each green triangle represents one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveals which side the neuron will activate the data. At initialization, the repartition of the activation point is uniform. The movement of the activation point is minimal, only a few neurons will change their patterns, among the thousands.
 </p>
 
-Here, computing the convex optimal gives us a single neuron to fit the linear data. While the non-convex problem has converged to very low loss, their output are completely different.
+Here, computing the convex optimal gives us a single neuron to fit the linear data. While the non-convex problem has converged to very low loss, their outputs are completely different.
 
 <p class="remark"> A side effect of the large initialization is catastrophic overfitting i.e. there are very large variations between data points which will negatively impact test loss.
 </p>
@@ -658,10 +660,10 @@ At the other extreme, the small-scale setting effectively lets neurons align the
 Training a network with 1000 neurons with very small initial values using gradient descent. The output of the network is in blue, the four data points (red crosses) represent linear data. Each green triangle represents one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveals which side the neuron will activate the data. At initialization, the repartition of the activation point is uniform. However, as training progresses most neurons that activate toward the right converge to $-1.3$. Once the norm of the neuron at activating at $-1.3$ is large enough, the loss decreases and we quickly reach convergence.
 </p>
 
-Taking a look at the loss on the same problem, we can identify the two distinct regime: alignement and fitting (then convergence).
+Taking a look at the loss on the same problem, we can identify the two distinct regimes: alignment and fitting (then convergence).
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/lastgif_plot.png" class="img-fluid" %}
-<p class="legend"> Plot of the loss during gradient descent in the same setting as the animation above. In the first half only the direction of the neuron are changing (<em>i.e. their activation patterns</em>), and start fitting the four data points once their parameter are large. </p>
+<p class="legend"> Plot of the loss during gradient descent in the same setting as the animation above. In the first half only the directions of the neurons are changing (<em>i.e. their activation patterns</em>), and start fitting the four data points once their parameters are large enough. </p>
 
 If you take orthogonal data and a small scale, the behavior is very predictable<d-cite key="boursierGradientFlowDynamics2022d"></d-cite> even in a regression setting.
 
@@ -671,6 +673,6 @@ If you take orthogonal data and a small scale, the behavior is very predictable<
 
 The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minimum found by gradient descent in the non-convex setting. However, finding the global optima is impossible in practice, and approximations are still costly. While there is no evident link between feature learning in the non-convex and the convex reformulation, many settings allow for a direct equivalence and the whole convex toolkit for proofs.
 
-The convex reformulation will hugely benefit from dedicated software as has been the case for gradient descent in deep networks. Only then will it offer a no-tuning alternative to costly stochastic gradient descent. In smaller settings, it already allows to quickly find all the possible local minima which are so important in machine learning.
+The convex reformulation will hugely benefit from dedicated software as has been the case for gradient descent in deep networks. Only then will it offer a no-tuning alternative to costly stochastic gradient descent. In smaller settings, it already allows us to quickly find all the possible local minima that are so important in machine learning.
 
-Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minimum and this has direct impact (for example in large scale initialization) but there is limited results.
+Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minimum and this has a direct impact (in large-scale initialization) but there are limited results.
