@@ -363,7 +363,7 @@ then the obtained problem is convex and has a unique solution. The formula can b
 \end{equation}
 </p>
 
-If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optimumu of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minimum.
+If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optimum of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minimum.
 
 
 __Equivalent Convex problem.__
@@ -390,7 +390,7 @@ u_1 x_2 &\geq 0 & u_2 x_2 &< 0. \\
 \end{align*}
 </p>
 
-Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem formed of the convex objective and the convex constraints detailed above. We obtain $$(u_1, u_2) = (1.95, -0.95)$$ and use the mapping:
+Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem formed by the convex objective and the convex constraints detailed above. We obtain $$(u_1, u_2) = (1.95, -0.95)$$ and use the mapping:
 
 <p>
 \begin{align*}
@@ -399,7 +399,7 @@ Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (becaus
 \end{align*}
 </p>
 
-to get the optimal *global* solution to the problem of fitting two data points with a single layer ReLU network. In order to reformulate the non-convex problem into this convex one, we had to introduce (at least) 2 neurons; otherwise, it would have been impossible to reach the *global* minimizer which is our object of study here, since we want to be as expressive as possible.
+to get the optimal *global* solution to the problem of fitting two data points with a single-layer ReLU network. In order to reformulate the non-convex problem into this convex one, we had to introduce (at least) 2 neurons; otherwise, it would have been impossible to reach the *global* minimizer which is our object of study here, since we want to be as expressive as possible.
 
 __General Case.__
 
@@ -446,7 +446,7 @@ In the non-convex problem, there are two local minima when we only consider one 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned1.png" class="img-fluid" %}
 
-As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minimum in the non-convex gradient descent, then it can be described by a convex problem, by considering one pattern or the other.
+As seen in the previous section, they can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one. However, once we reach a local minimum in the non-convex gradient descent, then it can be described as a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
@@ -594,7 +594,7 @@ In the next section, we focus on cases where the non-convex minima can be accura
 
 ### On large initialization scale
 
-The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. We say we're on a large scale when neurons do not move far from their initial value during descent. And this typically happens when using large initial values for the parameters of each neuron.
+The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. We say we're on a large scale when neurons do not move far from their initial value during descent. This typically happens when using large initial values for the parameters of each neuron.
 
 The theory states that you can push the scale used high enough so that neurons will not change their activation patterns at all. If this is verified, the convex reformulation will describe exactly the minima that the gradient descent will reach. However, in practice it is not possible to observe as the loss becomes very small and the training is too slow to compute to the end. The NTK briefly mentioned in the introduction operates in this setting, using the fact that the network is very close to its linear approximation. On a similar note, reducing the step size for the first layer will also guarantee convergence<d-cite key="marionLeveragingTwoTimescale2023"></d-cite></d-footnote>.
 
@@ -619,7 +619,7 @@ At the other extreme, the small-scale setting effectively lets neurons align the
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/smallscale_movie.gif" class="img-fluid" %}
 
 <p class="legend">
-Training a network with 1000 neurons with very small initial values using gradient descent. The output of the network is in blue, the four data points (red crosses) represent linear data. Each green triangle represents one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveals which side the neuron will activate the data. At initialization, the repartition of the activation point is uniform. However, as training progress most neurons that activate toward the right converge to $-1.3$. Once the norm of the neuron at activating at $-1.3$ is large enough, the loss decreases and we quickly reach convergence.
+Training a network with 1000 neurons with very small initial values using gradient descent. The output of the network is in blue, the four data points (red crosses) represent linear data. Each green triangle represents one neuron with its activation point horizontally, and its norm vertically. The orientation of the triangle reveals which side the neuron will activate the data. At initialization, the repartition of the activation point is uniform. However, as training progresses most neurons that activate toward the right converge to $-1.3$. Once the norm of the neuron at activating at $-1.3$ is large enough, the loss decreases and we quickly reach convergence.
 </p>
 
 If you take orthogonal data and a small scale, the behavior is very predictable<d-cite key="boursierGradientFlowDynamics2022c"></d-cite> even in a regression setting.
