@@ -120,13 +120,16 @@ Therefore, $\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\te
 
 </details>
 
+<br>
+<br>
+
 Since one training sample removal can be understood as setting $\epsilon=-\frac{1}{n}$, we can predict the corresponding test loss difference by $-\frac{1}{n}\mathcal{I_{\; remove, loss}} \;(\mathcal{z}, \mathcal{z}_{\text{test}})$. By comparing the predicted test loss difference and the actual test loss difference by leave-one-out retraining, we can verify the accuracy of the proposed influence scores, as shown in the figure below.
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/1.png" class="img-fluid" %}
 
 Based on their experiments, we can empirically say that the proposed influence function performs well on the tasks which satisfy their underlying assumptions (the twice-differentiable and strictly convex assumption): In Fig(a) & Fig(b), under convex and convergent situations (Logistic Regression model & L-BGFS algorithm), the predicted loss difference and actual loss difference align well with each other. However, in Fig\(c\), under non-convex and non-convergent-guarantee situations(CNN model & SGD algorithm), the influence function could not make satisfying approximation.
 
-Although the Influence Functions seem provide a good estimation of the importance of each training sample, the **expensive computational cost** on estimating Hessian matrix and the **unstablility** under non-convex and non-convergent-guarantee situations are big issues for this data attribution method.
+Although the Influence Functions seem provide a good estimation of the importance of each training sample, the **expensive computational cost on estimating Hessian matrix and the **unstablility under non-convex and non-convergent-guarantee situations are big issues for this data attribution method**.
 
 
 ### Data Models <d-cite key="ilyas2022datamodels"></d-cite>
@@ -154,6 +157,10 @@ Source: Fig 5 in the paper "Datamodels: Predicting Predictions from Training Dat
 In their experiments using CIFAR-10, the authors reserved a specific subset of output pairs for evaluation. Here, $\alpha$ represents the subsampling fraction in relation to the training set size. For instance, in a training dataset with $|S| = 100$ data points, setting $\alpha = 0.2$ means each subset, $S_i$, comprises a fixed size of $|S_i| = 20$. They demonstrated that Datamodels effectively predict outcomes for unseen in-distribution test subsets. 
 In the above plots, the bottom-right panel illustrates data for three color-coded random target examples, showing a strong Spearman correlation ($r > 0.99$) between predicted and actual outputs.
 
+It's crucial to note that the displayed margins represent averages across 100 models trained on $S_i$. This underscores a limitation of linear datamodeling: 
+
+**achieving stability demands training a sufficient number of models for each subset. The figures from the original paper involves averaging over 100 models. When the true model output aren't averaged across a significant number of models, it becomes apparent that the linearity is affected (see the figure below).**
+
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/datamodel_our_exp.png" class="img-fluid"  %}
 
 Despite the simplicity and accuracy of datamodels in predictions, training them for specific examples in large-scale scenarios poses challenges. Imagine training datamodels for ImageNet's set of target examples, requiring training numerous models from scratch using ImageNet's 1000-class training dataset. **Ensuring stable prediction performance requires extensive computational resources, which is prohibitively expensive for modern foundation models**.
@@ -163,8 +170,7 @@ Inspired by Datamodeling framework and motivated to circumvent its expensive tra
 
 First, in this paper the authors further denote $\tau(z, S_i)$ as a data attribution method that assigns a real-valued score to each training input in $S_i$, indicating its importance to the model output $f_{\mathcal{A}}(z;S_i)$.
 
-The key concept of TRAK is to use first order Taylor expansion to approximate the trained model $\theta^{\*}(S)$, of an algorithm for a given training dataset, and then use random projections to reduce the dimensionality of the gradient. Each time, we sample a training subset $S_i$ of size $\alpha \times |S|$ from $S$,   
-and train a model $\theta^{\*}(S_i)$, and then use random projection to project the high-dimensional gradient matrix at $\theta^{\*}$ from $p$ to $k$ dimension where $k \ll p$. Ilyas et al. <d-cite key="park2023trak"></d-cite> denote the projected gradients to be $\phi_t$ and conclude that using a training subset $S_i$, The TRAK attribution scores for an example of interest $z$ is:
+The key concept of TRAK is to use first order Taylor expansion to approximate the trained model $\theta^{\*}(S)$, of an algorithm for a given training dataset, and then use random projections to reduce the dimensionality of the gradient. Each time, we sample a training subset $S_i$ of size $\alpha \times |S|$ from $S$, and train a model $\theta^{\*}(S_i)$, and then use random projection to project the high-dimensional gradient matrix at $\theta^{\*}$ from $p$ to $k$ dimension where $k \ll p$. Ilyas et al. <d-cite key="park2023trak"></d-cite> denote the projected gradients to be $\phi_t$ and conclude that using a training subset $S_i$, The TRAK attribution scores for an example of interest $z$ is:
 
 $$\tau(z, S_i) := \phi_{i}(z)^{T}(\Phi_{i}^{T}\Phi_{i})^{-1}\Phi_{i}^{T}\mathbf{Q_{i}}$$
 > $i$: the index of a training subset;  
@@ -175,7 +181,7 @@ $$\tau(z, S_i) := \phi_{i}(z)^{T}(\Phi_{i}^{T}\Phi_{i})^{-1}\Phi_{i}^{T}\mathbf{
 > $\phi_{i}(z) = \mathbf{P}^T \nabla_{\theta} f(z;\theta^{\*})$ a projected gradients from model $\theta^{*}(S_i)$ for target sample $z$;  
 > $\Phi_{i} = [\phi_1 \cdot\cdot\cdot \phi_{m}]$ stacked projected gradients for all training data $\{z_1,...z_m\}$;  
 
-Further, TRAK samples training subsets of fixed size factor $\alpha$ $N$ times, and ensembling over these $N$ independently trained models:
+Further, TRAK samples $N$ training subsets of fixed size factor $\alpha$, trains each of them independently, and ensembles over these $N$ models:
 $$\tau_{TRAK}(z, S) := \mathfrak{S}((\frac{1}{N} \sum_{i=1}^{N} \mathbf{Q}_{i}) \cdot (\frac{1}{N} \sum_{i=1}^{N} \phi_{i}(z)^{T}(\Phi_{i}^{T}\Phi_{i})^{-1}\Phi_{i}^{T}), \hat{\lambda})$$
 > $\mathfrak{S}(\cdot; \lambda)$ is the soft thresholding operator;  
 > $N$: total number of training subsets;  
@@ -240,17 +246,18 @@ where <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\hat{\lambda}$ is the soft thresholding parameter, and it's selected via cross-validation
 
 </details>
+<br>
+<br>
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/trak_exp_fig.png" class="img-fluid" %}
 *Caption: We trained 90 RestNet9 models independently on 90 randomly selected subsets of size factor 0.5 from $S$. Then we used TRAK to calculate influence score for the test dataset of CIFAR-10. These are two random samples that show the efficacy of TRAK. For the training images that have high TRAK scores, they are of the same category. While those of low TRAK scores are of different categories of the target image.*
 <br>
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/trak_scatter_plot.png" class="img-fluid" %}
-*Caption: Experimental results presented in the TRAK <d-cite key="park2023trak"></d-cite> paper*
 
 Ilyas et al. <d-cite key="park2023trak"></d-cite> conducted a study utilizing TRAK to attribute various classifiers on datasets such as CIFAR-2, CIFAR-10, QNLI, and ImageNet. Their findings demonstrated that TRAK achieves superior accuracy while utilizing significantly fewer models. 
 
-In replicating the experiments detailed in Ilyas et al. <d-cite key="park2023trak"></d-cite>, we encountered a notable drawback in the TRAK algorithm, we found that the TRAK algorithm is memory-expensive. It requires recording numerous model gradients for each test sample across models trained on different subsets, which is intractable for Modern Foundation Models. Furthermore, our investigation unveiled a limited linear correlation between TRAK scores and true model margins. This observation suggests that the predicted margins derived from TRAK do not serve as robust estimates of the model output and its ability of predicting model outputs is not on par with Datamodels.
+In replicating the experiments detailed in Ilyas et al. <d-cite key="park2023trak"></d-cite>, we encountered a notable drawback in the TRAK algorithm, we found that the TRAK algorithm is **memory-expensive**. It requires recording numerous model gradients for each test sample across models trained on different subsets, which is intractable for Modern Foundation Models. Furthermore, our investigation unveiled a **limited linear correlation** between TRAK scores and true model margins. This observation suggests that the predicted margins derived from TRAK do not serve as robust estimates of the model output and its ability of predicting model outputs is not on par with Datamodels.
 
 While TRAK offers an interpretable and computationally efficient way to analyze training data impact, its limitations cannot be overlooked. Further research is needed to propose better data attribution methods.
 
@@ -272,7 +279,7 @@ for each learning algorithm applied on a specific task. We apply matrix projecti
 <br>
 In the figure above, the authors PCA on the residual importance matrix (after projection, we remove the common importance allocation). The training samples corresponding to the TOP-K principal components (these principal component directions explain a significant amount of variance in one importance matrix but not the other) reflect the  distinguishing subpopulations that one learning algorithm prefers, but another learning algorithm pays little attention to. 
 
-**By visually checking these distinguishing subpolutations, we could speculate the semantic feature selection difference of two algorithms and then confirm it by applying the semantic feature transformations on test data and checking the model output difference.**
+By visually checking these distinguishing subpolutations, we could speculate **the semantic feature selection difference of two algorithms** and then confirm it by applying the semantic feature transformations on test data and checking the model output difference.
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_2.png" class="img-fluid" %}
 *Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"<d-cite key="shah2022modeldiff"></d-cite>*
@@ -292,7 +299,7 @@ Except for comparing learning algorithms, we can also leverage the importance sc
 *Source: From the randomly selected validation points provided by Ilyas et al. <d-cite key="park2023trak"></d-cite>, we found this data leakage example*
 <br>
 
-We can leverage such phenomenon to identify train-test leakage in different benchmark datasets. For example, in the second line of the figure, Harshay et al. identified significant data leakage on CIFAR10 dataset. Extending this data leakage detection technique to different datasets holds the potential to assist the ML community in curating datasets, thereby enhancing overall data quality.
+We can leverage such phenomenon to **identify train-test leakage in different benchmark datasets**. For example, in the second line of the figure, Harshay et al. identified significant data leakage on CIFAR10 dataset. Extending this data leakage detection technique to different datasets holds the potential to assist the ML community in curating datasets, thereby enhancing overall data quality.
 
 ### Prediction Brittleness Examination
 We can also use the data attribution methods to identify brittle predictions (i.e. the model outputs which are brittle to a few training samples removal) and estimate data counterfactual (i.e. the casual effect of removing a set of training samples on model outputs). 
@@ -304,7 +311,7 @@ Source: Fig 8 in the paper "Datamodels: Predicting Predictions from Training Dat
 
 Another application involves data counterfactual estimation. As illustrated in the figure above, after the training subset removal, the observed changes in actual model logits closely align with the predicted model logits changes estimated through data attribution methods. 
 
-These experiments demonstrate that the data attribution methods could serve as efficient and convincing tools to investigate the sensitivity and robustness of the learning algorithms.
+These experiments demonstrate that the data attribution methods could serve as efficient and convincing tools to **investigate the sensitivity and robustness of the learning algorithms**.
 
 
 ## Conclusion
