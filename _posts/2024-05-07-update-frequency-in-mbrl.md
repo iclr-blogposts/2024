@@ -59,7 +59,7 @@ _styles: >
 <!-- In reinforcement learning <d-cite key="Sutton1998"></d-cite>, an agent interacts with an environment, receiving a feedback, or reward, following each action it takes to transition between two states of the environment. The goal for the agent is to learn a policy, a mapping from states to actions, that maximizes the expected cumulative reward over successive interactions. -->
 There are two main approaches when designing a reinforcement learning (RL) <d-cite key="Sutton1998"></d-cite> algorithm: model-based or model-free. Model-based reinforcement learning (MBRL) algorithms <d-cite key="Moerland2021"></d-cite> first learn a model of the environment dynamics which, given a state of the environment and an action, predicts the next state of the environment. This model can then be used in place of the real environment to learn or decide how to act. Model-free algorithms avoid this step and directly try to learn a policy, a mapping from states to actions. Many algorithms combine the two approaches: one can for instance learn a model and then apply a model-free algorithm on the model instead of the real environment, which is known as Dyna-style algorithms <d-cite key="Sutton1991"></d-cite>. As model-based reinforcement algorithms can rely on the learned dynamics model instead of the real environment they are known to be more sample efficient than model-free algorithms (see for instance <d-cite key="Chua2018"></d-cite> or <d-cite key="Janner2019"></d-cite>) and thus to be a good choice when interactions with the environment are limited, which is often the case for real applications such as controlling engineering systems. We will use the term *agent* to refer to all the components of the model-based algorithm that are used to act on the system. In a Dyna-style algorithm, *agent* would thus refer to both the dynamics model and the policy learned with a model-free algorithm.
 
-We discuss here about one of the design choices of MBRL algorithms: the *update frequency* of the agent. Some algorithms update their agent after each step on the real system as in <d-cite key="Janner2019"></d-cite> while others update after thousands of steps as in <d-cite key="Matsushima2021"></d-cite> and <d-cite key="Lange2012"></d-cite>. Finally, the pure offline setting considers only one training of the agent from an initial dataset <d-cite key="Yu2020"></d-cite>.<d-footnote>We note that there are similar differences of the update frequency in the model-free literature. Model-free agents can also be updated between deployments but we decide to only focus here on model-based algorithms.</d-footnote>.
+We discuss here about one of the design choices of MBRL algorithms: the *update frequency* of the agent. Some algorithms update their agent after each step on the real system as in <d-cite key="Janner2019"></d-cite> while others update after thousands of steps as in <d-cite key="Matsushima2021"></d-cite> and <d-cite key="Lange2012"></d-cite>. Finally, the pure offline setting considers only one training of the agent from an initial dataset <d-cite key="Yu2020"></d-cite><d-footnote>We note that there are similar differences of the update frequency in the model-free literature. Model-free agents can also be updated between deployments but we decide to only focus here on model-based algorithms.</d-footnote>.
 <!-- There is often a trade-off between updating too frequently (where the target distribution changes rapidly) or too rarely (where the target distribution is kept fixed at moments). A basic manifestation of such tradeoff is the target network in *DQN*, which is only updated every once in a while to improve the stability and convergence of the underlying algorithm. </span> ~~There is often a trade-off between updating too frequently or too rarely and therefore the update frequency can have an impact on the performance of the agent **should we say a bit more here?**. Without real-life constraints, the update frequency can even be optimized dynamically to achieve the best performance <d-cite key="Lai2021"></d-cite>.~~ -->
 
 <!-- Real world REF where policy is not updated while being deployed. (Model-free paper by Levine, BTS, Wifi cannot update the solution on the hardware where the policy is deployed, Criteo?, DC Cooling). Check the BREMEN paper for references of deployment constraints. -->
@@ -195,6 +195,7 @@ To conclude, we believe this blog post to be valuable to researchers as we provi
 We provide here the configuration files we used to run the different experiments.
 
 * Update frequency of 1000 steps
+
 ```yaml
 # @package _group_
 env: "gym___HalfCheetah-v4"
@@ -228,6 +229,7 @@ sac_batch_size: 256
 ```
 
 * Update frequency of 5000 steps
+
 ```yaml
 # @package _group_
 env: "gym___HalfCheetah-v4"
@@ -261,6 +263,7 @@ sac_batch_size: 256
 ```
 
 * Update frequency of 10000 steps
+
 ```yaml
 # @package _group_
 env: "gym___HalfCheetah-v4"
