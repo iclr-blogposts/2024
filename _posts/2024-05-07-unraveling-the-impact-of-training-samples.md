@@ -129,7 +129,7 @@ Since one training sample removal can be understood as setting $\epsilon=-\frac{
 
 Based on their experiments, we can empirically say that the proposed influence function performs well on the tasks which satisfy their underlying assumptions (the twice-differentiable and strictly convex assumption): In Fig(a) & Fig(b), under convex and convergent situations (Logistic Regression model & L-BGFS algorithm), the predicted loss difference and actual loss difference align well with each other. However, in Fig\(c\), under non-convex and non-convergent-guarantee situations(CNN model & SGD algorithm), the influence function could not make satisfying approximation.
 
-Although the Influence Functions seem provide a good estimation of the importance of each training sample, the **expensive computational cost on estimating Hessian matrix and the **unstablility under non-convex and non-convergent-guarantee situations are big issues for this data attribution method**.
+Although the Influence Functions seem provide a good estimation of the importance of each training sample, the **expensive computational cost on estimating Hessian matrix and the unstablility under non-convex and non-convergent-guarantee situations are big issues for this data attribution method**.
 
 
 ### Data Models <d-cite key="ilyas2022datamodels"></d-cite>
