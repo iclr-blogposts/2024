@@ -1,4 +1,239 @@
-@article{Chiquier_Mao_Vondrick_2022,
+@inproceedings{shalev2009,
+  title     = {Stochastic methods for L1 regularized loss minimization},
+  author    = {Shalev-Shwartz, Shai and Tewari, Ambuj},
+  year      = 2009,
+  booktitle = {Proceedings of the 26th Annual International Conference on Machine Learning - ICML ’09},
+  publisher = {ACM Press},
+  address   = {Montreal, Quebec, Canada},
+  pages     = {1–8},
+  doi       = {10.1145/1553374.1553493},
+  isbn      = {978-1-60558-516-1},
+  url       = {http://portal.acm.org/citation.cfm?doid=1553374.1553493},
+  language  = {en}
+}
+@inproceedings{krizhevsky2012,
+  title     = {ImageNet Classification with Deep Convolutional Neural Networks},
+  author    = {Krizhevsky, Alex and Sutskever, Ilya and Hinton, Geoffrey E},
+  year      = 2012,
+  booktitle = {Advances in Neural Information Processing Systems},
+  publisher = {Curran Associates, Inc.},
+  volume    = 25,
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf},
+  editor    = {Pereira, F. and Burges, C. J. and Bottou, L. and Weinberger, K. Q.}
+}
+@article{hinton2012,
+  title   = {Deep Neural Networks for Acoustic Modeling in Speech Recognition},
+  author  = {Geoffrey Hinton and Li Deng and Dong Yu and George Dahl and Abdel-rahman Mohamed and Navdeep Jaitly and Andrew Senior and Vincent Vanhoucke and Patrick Nguyen and Tara Sainath and Brian Kingsbury},
+  year    = 2012,
+  journal = {Signal Processing Magazine}
+}
+@article{mikolov2013,
+  title        = {Efficient Estimation of Word Representations in Vector Space},
+  author       = {Mikolov, Tomas and Chen, Kai and Corrado, Greg and Dean, Jeffrey},
+  year         = 2013,
+  month        = sep,
+  publisher    = {arXiv},
+  number       = {arXiv:1301.3781},
+  url          = {http://arxiv.org/abs/1301.3781},
+  note         = {arXiv:1301.3781 [cs]},
+  abstractnote = {We propose two novel model architectures for computing continuous vector representations of words from very large data sets. The quality of these representations is measured in a word similarity task, and the results are compared to the previously best performing techniques based on different types of neural networks. We observe large improvements in accuracy at much lower computational cost, i.e. it takes less than a day to learn high quality word vectors from a 1.6 billion words data set. Furthermore, we show that these vectors provide state-of-the-art performance on our test set for measuring syntactic and semantic word similarities.}
+}
+@article{zeiler2013,
+  title      = {Visualizing and Understanding Convolutional Networks},
+  author     = {Matthew D. Zeiler and Rob Fergus},
+  year       = 2013,
+  journal    = {CoRR},
+  volume     = {abs/1311.2901},
+  url        = {http://arxiv.org/abs/1311.2901},
+  eprinttype = {arXiv},
+  eprint     = {1311.2901},
+  timestamp  = {Mon, 13 Aug 2018 16:48:37 +0200},
+  biburl     = {https://dblp.org/rec/journals/corr/ZeilerF13.bib},
+  bibsource  = {dblp computer science bibliography, https://dblp.org}
+}
+@book{szegedy2014,
+  title        = {Intriguing properties of neural networks},
+  author       = {Szegedy, Christian and Zaremba, Wojciech and Sutskever, Ilya and Bruna, Joan and Erhan, Dumitru and Goodfellow, Ian and Fergus, Rob},
+  year         = 2014,
+  month        = feb,
+  number       = {arXiv:1312.6199},
+  doi          = {10.48550/arXiv.1312.6199},
+  url          = {http://arxiv.org/abs/1312.6199},
+  note         = {arXiv:1312.6199 [cs] type: article},
+  abstractnote = {Deep neural networks are highly expressive models that have recently achieved state of the art performance on speech and visual recognition tasks. While their expressiveness is the reason they succeed, it also causes them to learn uninterpretable solutions that could have counter-intuitive properties. In this paper we report two such properties. First, we find that there is no distinction between individual high level units and random linear combinations of high level units, according to various methods of unit analysis. It suggests that it is the space, rather than the individual units, that contains of the semantic information in the high layers of neural networks. Second, we find that deep neural networks learn input-output mappings that are fairly discontinuous to a significant extend. We can cause the network to misclassify an image by applying a certain imperceptible perturbation, which is found by maximizing the network’s prediction error. In addition, the specific nature of these perturbations is not a random artifact of learning: the same perturbation can cause a different network, that was trained on a different subset of the dataset, to misclassify the same input.},
+  institution  = {arXiv}
+}
+@article{sutskever2014,
+  title        = {Sequence to Sequence Learning with Neural Networks},
+  author       = {Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V.},
+  year         = 2014,
+  month        = dec,
+  publisher    = {arXiv},
+  number       = {arXiv:1409.3215},
+  url          = {http://arxiv.org/abs/1409.3215},
+  note         = {arXiv:1409.3215 [cs]},
+  abstractnote = {Deep Neural Networks (DNNs) are powerful models that have achieved excellent performance on difficult learning tasks. Although DNNs work well whenever large labeled training sets are available, they cannot be used to map sequences to sequences. In this paper, we present a general end-to-end approach to sequence learning that makes minimal assumptions on the sequence structure. Our method uses a multilayered Long Short-Term Memory (LSTM) to map the input sequence to a vector of a fixed dimensionality, and then another deep LSTM to decode the target sequence from the vector. Our main result is that on an English to French translation task from the WMT’14 dataset, the translations produced by the LSTM achieve a BLEU score of 34.8 on the entire test set, where the LSTM’s BLEU score was penalized on out-of-vocabulary words. Additionally, the LSTM did not have difficulty on long sentences. For comparison, a phrase-based SMT system achieves a BLEU score of 33.3 on the same dataset. When we used the LSTM to rerank the 1000 hypotheses produced by the aforementioned SMT system, its BLEU score increases to 36.5, which is close to the previous best result on this task. The LSTM also learned sensible phrase and sentence representations that are sensitive to word order and are relatively invariant to the active and the passive voice. Finally, we found that reversing the order of the words in all source sentences (but not target sentences) improved the LSTM’s performance markedly, because doing so introduced many short term dependencies between the source and the target sentence which made the optimization problem easier.}
+}
+@misc{goodfellow2014,
+  title         = {Generative Adversarial Networks},
+  author        = {Ian J. Goodfellow and Jean Pouget-Abadie and Mehdi Mirza and Bing Xu and David Warde-Farley and Sherjil Ozair and Aaron Courville and Yoshua Bengio},
+  year          = 2014,
+  eprint        = {1406.2661},
+  archiveprefix = {arXiv},
+  primaryclass  = {stat.ML}
+}
+@article{goodfellow2015,
+  title        = {Explaining and Harnessing Adversarial Examples},
+  author       = {Goodfellow, Ian J. and Shlens, Jonathon and Szegedy, Christian},
+  year         = 2015,
+  month        = mar,
+  publisher    = {arXiv},
+  number       = {arXiv:1412.6572},
+  url          = {http://arxiv.org/abs/1412.6572},
+  note         = {arXiv:1412.6572 [cs, stat]},
+  abstractnote = {Several machine learning models, including neural networks, consistently misclassify adversarial examples---inputs formed by applying small but intentionally worst-case perturbations to examples from the dataset, such that the perturbed input results in the model outputting an incorrect answer with high confidence. Early attempts at explaining this phenomenon focused on nonlinearity and overfitting. We argue instead that the primary cause of neural networks’ vulnerability to adversarial perturbation is their linear nature. This explanation is supported by new quantitative results while giving the first explanation of the most intriguing fact about them: their generalization across architectures and training sets. Moreover, this view yields a simple and fast method of generating adversarial examples. Using this approach to provide examples for adversarial training, we reduce the test set error of a maxout network on the MNIST dataset.}
+}
+@inproceedings{sohl2015,
+  title        = {Deep Unsupervised Learning using Nonequilibrium Thermodynamics},
+  author       = {Sohl-Dickstein, Jascha and Weiss, Eric and Maheswaranathan, Niru and Ganguli, Surya},
+  year         = 2015,
+  month        = jun,
+  booktitle    = {Proceedings of the 32nd International Conference on Machine Learning},
+  publisher    = {PMLR},
+  pages        = {2256–2265},
+  issn         = {1938-7228},
+  url          = {https://proceedings.mlr.press/v37/sohl-dickstein15.html},
+  abstractnote = {A central problem in machine learning involves modeling complex data-sets using highly flexible families of probability distributions in which learning, sampling, inference, and evaluation are still analytically or computationally tractable. Here, we develop an approach that simultaneously achieves both flexibility and tractability. The essential idea, inspired by non-equilibrium statistical physics, is to systematically and slowly destroy structure in a data distribution through an iterative forward diffusion process. We then learn a reverse diffusion process that restores structure in data, yielding a highly flexible and tractable generative model of the data. This approach allows us to rapidly learn, sample from, and evaluate probabilities in deep generative models with thousands of layers or time steps, as well as to compute conditional and posterior probabilities under the learned model. We additionally release an open source reference implementation of the algorithm.},
+  language     = {en}
+}
+@inproceedings{oord2016,
+  title     = {WaveNet: A Generative Model for Raw Audio},
+  author    = {Aäron van den Oord and Sander Dieleman and Heiga Zen and Karen Simonyan and Oriol Vinyals and Alexander Graves and Nal Kalchbrenner and Andrew Senior and Koray Kavukcuoglu},
+  year      = 2016,
+  booktitle = {Arxiv},
+  url       = {https://arxiv.org/abs/1609.03499}
+}
+@article{vaswani2017,
+  title        = {Attention Is All You Need},
+  author       = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Lukasz and Polosukhin, Illia},
+  year         = 2017,
+  month        = dec,
+  publisher    = {arXiv},
+  number       = {arXiv:1706.03762},
+  url          = {http://arxiv.org/abs/1706.03762},
+  note         = {arXiv:1706.03762 [cs]},
+  abstractnote = {The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.}
+}
+@article{carlini2017,
+  title        = {Towards Evaluating the Robustness of Neural Networks},
+  author       = {Carlini, Nicholas and Wagner, David},
+  year         = 2017,
+  month        = mar,
+  publisher    = {arXiv},
+  number       = {arXiv:1608.04644},
+  url          = {http://arxiv.org/abs/1608.04644},
+  note         = {arXiv:1608.04644 [cs]},
+  abstractnote = {Neural networks provide state-of-the-art results for most machine learning tasks. Unfortunately, neural networks are vulnerable to adversarial examples: given an input $x$ and any target classification $t$, it is possible to find a new input $x’$ that is similar to $x$ but classified as $t$. This makes it difficult to apply neural networks in security-critical areas. Defensive distillation is a recently proposed approach that can take an arbitrary neural network, and increase its robustness, reducing the success rate of current attacks’ ability to find adversarial examples from $95%$ to $0.5%$. In this paper, we demonstrate that defensive distillation does not significantly increase the robustness of neural networks by introducing three new attack algorithms that are successful on both distilled and undistilled neural networks with $100%$ probability. Our attacks are tailored to three distance metrics used previously in the literature, and when compared to previous adversarial example generation algorithms, our attacks are often much more effective (and never worse). Furthermore, we propose using high-confidence adversarial examples in a simple transferability test we show can also be used to break defensive distillation. We hope our attacks will be used as a benchmark in future defense attempts to create neural networks that resist adversarial examples.}
+}
+@inproceedings{chen2017,
+  title        = {ZOO: Zeroth Order Optimization based Black-box Attacks to Deep Neural Networks without Training Substitute Models},
+  author       = {Chen, Pin-Yu and Zhang, Huan and Sharma, Yash and Yi, Jinfeng and Hsieh, Cho-Jui},
+  year         = 2017,
+  month        = nov,
+  booktitle    = {Proceedings of the 10th ACM Workshop on Artificial Intelligence and Security},
+  pages        = {15–26},
+  doi          = {10.1145/3128572.3140448},
+  url          = {http://arxiv.org/abs/1708.03999},
+  note         = {arXiv:1708.03999 [cs, stat]},
+  abstractnote = {Deep neural networks (DNNs) are one of the most prominent technologies of our time, as they achieve state-of-the-art performance in many machine learning tasks, including but not limited to image classification, text mining, and speech processing. However, recent research on DNNs has indicated ever-increasing concern on the robustness to adversarial examples, especially for security-critical tasks such as traffic sign identification for autonomous driving. Studies have unveiled the vulnerability of a well-trained DNN by demonstrating the ability of generating barely noticeable (to both human and machines) adversarial images that lead to misclassification. Furthermore, researchers have shown that these adversarial images are highly transferable by simply training and attacking a substitute model built upon the target model, known as a black-box attack to DNNs. Similar to the setting of training substitute models, in this paper we propose an effective black-box attack that also only has access to the input (images) and the output (confidence scores) of a targeted DNN. However, different from leveraging attack transferability from substitute models, we propose zeroth order optimization (ZOO) based attacks to directly estimate the gradients of the targeted DNN for generating adversarial examples. We use zeroth order stochastic coordinate descent along with dimension reduction, hierarchical attack and importance sampling techniques to efficiently attack black-box models. By exploiting zeroth order optimization, improved attacks to the targeted DNN can be accomplished, sparing the need for training substitute models and avoiding the loss in attack transferability. Experimental results on MNIST, CIFAR10 and ImageNet show that the proposed ZOO attack is as effective as the state-of-the-art white-box attack and significantly outperforms existing black-box attacks via substitute models.}
+}
+@article{liu2017,
+  title        = {Delving into Transferable Adversarial Examples and Black-box Attacks},
+  author       = {Liu, Yanpei and Chen, Xinyun and Liu, Chang and Song, Dawn},
+  year         = 2017,
+  month        = feb,
+  publisher    = {arXiv},
+  number       = {arXiv:1611.02770},
+  url          = {http://arxiv.org/abs/1611.02770},
+  note         = {arXiv:1611.02770 [cs]},
+  abstractnote = {An intriguing property of deep neural networks is the existence of adversarial examples, which can transfer among different architectures. These transferable adversarial examples may severely hinder deep neural network-based applications. Previous works mostly study the transferability using small scale datasets. In this work, we are the first to conduct an extensive study of the transferability over large models and a large scale dataset, and we are also the first to study the transferability of targeted adversarial examples with their target labels. We study both non-targeted and targeted adversarial examples, and show that while transferable non-targeted adversarial examples are easy to find, targeted adversarial examples generated using existing approaches almost never transfer with their target labels. Therefore, we propose novel ensemble-based approaches to generating transferable adversarial examples. Using such approaches, we observe a large proportion of targeted adversarial examples that are able to transfer with their target labels for the first time. We also present some geometric studies to help understanding the transferable adversarial examples. Finally, we show that the adversarial examples generated using ensemble-based approaches can successfully attack Clarifai.com, which is a black-box image classification system.}
+}
+@article{moosavi_dezfooli2017,
+  title        = {Universal adversarial perturbations},
+  author       = {Moosavi-Dezfooli, Seyed-Mohsen and Fawzi, Alhussein and Fawzi, Omar and Frossard, Pascal},
+  year         = 2017,
+  month        = mar,
+  publisher    = {arXiv},
+  number       = {arXiv:1610.08401},
+  url          = {http://arxiv.org/abs/1610.08401},
+  note         = {arXiv:1610.08401 [cs, stat]},
+  abstractnote = {Given a state-of-the-art deep neural network classifier, we show the existence of a universal (image-agnostic) and very small perturbation vector that causes natural images to be misclassified with high probability. We propose a systematic algorithm for computing universal perturbations, and show that state-of-the-art deep neural networks are highly vulnerable to such perturbations, albeit being quasi-imperceptible to the human eye. We further empirically analyze these universal perturbations and show, in particular, that they generalize very well across neural networks. The surprising existence of universal perturbations reveals important geometric correlations among the high-dimensional decision boundary of classifiers. It further outlines potential security breaches with the existence of single directions in the input space that adversaries can possibly exploit to break a classifier on most natural images.}
+}
+@misc{schonherr2018,
+  title         = {Adversarial Attacks Against Automatic Speech Recognition Systems via Psychoacoustic Hiding},
+  author        = {Lea Schönherr and Katharina Kohls and Steffen Zeiler and Thorsten Holz and Dorothea Kolossa},
+  year          = 2018,
+  eprint        = {1808.05665},
+  archiveprefix = {arXiv},
+  url           = {http://arxiv.org/abs/1808.05665},
+  primaryclass  = {cs.CR}
+}
+@book{guo2019,
+  title        = {Simple Black-box Adversarial Attacks},
+  author       = {Guo, Chuan and Gardner, Jacob R. and You, Yurong and Wilson, Andrew Gordon and Weinberger, Kilian Q.},
+  year         = 2019,
+  month        = aug,
+  number       = {arXiv:1905.07121},
+  doi          = {10.48550/arXiv.1905.07121},
+  url          = {http://arxiv.org/abs/1905.07121},
+  note         = {arXiv:1905.07121 [cs, stat] type: article},
+  abstractnote = {We propose an intriguingly simple method for the construction of adversarial images in the black-box setting. In constrast to the white-box scenario, constructing black-box adversarial images has the additional constraint on query budget, and efficient attacks remain an open problem to date. With only the mild assumption of continuous-valued confidence scores, our highly query-efficient algorithm utilizes the following simple iterative principle: we randomly sample a vector from a predefined orthonormal basis and either add or subtract it to the target image. Despite its simplicity, the proposed method can be used for both untargeted and targeted attacks -- resulting in previously unprecedented query efficiency in both settings. We demonstrate the efficacy and efficiency of our algorithm on several real world settings including the Google Cloud Vision API. We argue that our proposed algorithm should serve as a strong baseline for future black-box attacks, in particular because it is extremely fast and its implementation requires less than 20 lines of PyTorch code.},
+  institution  = {arXiv}
+}
+@inproceedings{ren2019,
+  title        = {FastSpeech: Fast, Robust and Controllable Text to Speech},
+  author       = {Ren, Yi and Ruan, Yangjun and Tan, Xu and Qin, Tao and Zhao, Sheng and Zhao, Zhou and Liu, Tie-Yan},
+  year         = 2019,
+  booktitle    = {Advances in Neural Information Processing Systems},
+  publisher    = {Curran Associates, Inc.},
+  volume       = 32,
+  url          = {https://papers.nips.cc/paper_files/paper/2019/hash/f63f65b503e22cb970527f23c9ad7db1-Abstract.html},
+  abstractnote = {Neural network based end-to-end text to speech (TTS) has significantly improved the quality of synthesized speech. Prominent methods (e.g., Tacotron 2) usually first generate mel-spectrogram from text, and then synthesize speech from the mel-spectrogram using vocoder such as WaveNet. Compared with traditional concatenative and statistical parametric approaches, neural network based end-to-end models suffer from slow inference speed, and the synthesized speech is usually not robust (i.e., some words are skipped or repeated) and lack of controllability (voice speed or prosody control). In this work, we propose a novel feed-forward network based on Transformer to generate mel-spectrogram in parallel for TTS. Specifically, we extract attention alignments from an encoder-decoder based teacher model for phoneme duration prediction, which is used by a length regulator to expand the source phoneme sequence to match the length of the target mel-spectrogram sequence for parallel mel-spectrogram generation. Experiments on the LJSpeech dataset show that our parallel model matches autoregressive models in terms of speech quality, nearly eliminates the problem of word skipping and repeating in particularly hard cases, and can adjust voice speed smoothly. Most importantly, compared with autoregressive Transformer TTS, our model speeds up mel-spectrogram generation by 270x and the end-to-end speech synthesis by 38x. Therefore, we call our model FastSpeech.}
+}
+@article{ho2020,
+  title        = {Denoising Diffusion Probabilistic Models},
+  author       = {Ho, Jonathan and Jain, Ajay and Abbeel, Pieter},
+  year         = 2020,
+  month        = dec,
+  publisher    = {arXiv},
+  number       = {arXiv:2006.11239},
+  url          = {http://arxiv.org/abs/2006.11239},
+  note         = {arXiv:2006.11239 [cs, stat]},
+  abstractnote = {We present high quality image synthesis results using diffusion probabilistic models, a class of latent variable models inspired by considerations from nonequilibrium thermodynamics. Our best results are obtained by training on a weighted variational bound designed according to a novel connection between diffusion probabilistic models and denoising score matching with Langevin dynamics, and our models naturally admit a progressive lossy decompression scheme that can be interpreted as a generalization of autoregressive decoding. On the unconditional CIFAR10 dataset, we obtain an Inception score of 9.46 and a state-of-the-art FID score of 3.17. On 256x256 LSUN, we obtain sample quality similar to ProgressiveGAN. Our implementation is available at https://github.com/hojonathanho/diffusion}
+}
+@inproceedings{brown2020,
+  title        = {Language Models are Few-Shot Learners},
+  author       = {Brown, Tom and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared D and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and Agarwal, Sandhini and Herbert-Voss, Ariel and Krueger, Gretchen and Henighan, Tom and Child, Rewon and Ramesh, Aditya and Ziegler, Daniel and Wu, Jeffrey and Winter, Clemens and Hesse, Chris and Chen, Mark and Sigler, Eric and Litwin, Mateusz and Gray, Scott and Chess, Benjamin and Clark, Jack and Berner, Christopher and McCandlish, Sam and Radford, Alec and Sutskever, Ilya and Amodei, Dario},
+  year         = 2020,
+  booktitle    = {Advances in Neural Information Processing Systems},
+  publisher    = {Curran Associates, Inc.},
+  volume       = 33,
+  pages        = {1877–1901},
+  url          = {https://papers.nips.cc/paper/2020/hash/1457c0d6bfcb4967418bfb8ac142f64a-Abstract.html},
+  abstractnote = {We demonstrate that scaling up language models greatly improves task-agnostic, few-shot performance, sometimes even becoming competitive with prior state-of-the-art fine-tuning approaches. Specifically, we train GPT-3, an autoregressive language model with 175 billion parameters, 10x more than any previous non-sparse language model, and test its performance in the few-shot setting.  For all tasks, GPT-3 is applied without any gradient updates or fine-tuning, with tasks and few-shot demonstrations specified purely via text interaction with the model.  GPT-3 achieves strong performance on many NLP datasets, including translation, question-answering, and cloze tasks. We also identify some datasets where GPT-3’s few-shot learning still struggles, as well as some datasets where GPT-3 faces methodological issues related to training on large web corpora.}
+}
+@article{li2020,
+  title        = {Practical No-box Adversarial Attacks against DNNs},
+  author       = {Li, Qizhang and Guo, Yiwen and Chen, Hao},
+  year         = 2020,
+  month        = dec,
+  publisher    = {arXiv},
+  number       = {arXiv:2012.02525},
+  url          = {http://arxiv.org/abs/2012.02525},
+  note         = {arXiv:2012.02525 [cs]},
+  abstractnote = {The study of adversarial vulnerabilities of deep neural networks (DNNs) has progressed rapidly. Existing attacks require either internal access (to the architecture, parameters, or training set of the victim model) or external access (to query the model). However, both the access may be infeasible or expensive in many scenarios. We investigate no-box adversarial examples, where the attacker can neither access the model information or the training set nor query the model. Instead, the attacker can only gather a small number of examples from the same problem domain as that of the victim model. Such a stronger threat model greatly expands the applicability of adversarial attacks. We propose three mechanisms for training with a very small dataset (on the order of tens of examples) and find that prototypical reconstruction is the most effective. Our experiments show that adversarial examples crafted on prototypical auto-encoding models transfer well to a variety of image classification and face verification models. On a commercial celebrity recognition system held by clarifai.com, our approach significantly diminishes the average prediction accuracy of the system to only 15.40%, which is on par with the attack that transfers adversarial examples from a pre-trained Arcface model.}
+}
+@article{chiquier2022,
   title        = {Real-Time Neural Voice Camouflage},
   author       = {Chiquier, Mia and Mao, Chengzhi and Vondrick, Carl},
   year         = 2022,
@@ -6,10 +241,11 @@
   publisher    = {arXiv},
   number       = {arXiv:2112.07076},
   url          = {http://arxiv.org/abs/2112.07076},
+  url          = {https://openreview.net/forum?id=qj1IZ-6TInc},
   note         = {arXiv:2112.07076 [cs, eess]},
   abstractnote = {Automatic speech recognition systems have created exciting possibilities for applications, however they also enable opportunities for systematic eavesdropping. We propose a method to camouflage a person’s voice over-the-air from these systems without inconveniencing the conversation between people in the room. Standard adversarial attacks are not effective in real-time streaming situations because the characteristics of the signal will have changed by the time the attack is executed. We introduce predictive attacks, which achieve real-time performance by forecasting the attack that will be the most effective in the future. Under real-time constraints, our method jams the established speech recognition system DeepSpeech 3.9x more than baselines as measured through word error rate, and 6.6x more as measured through character error rate. We furthermore demonstrate our approach is practically effective in realistic environments over physical distances.}
 }
-@article{O’Reilly_Bugler_Bhandari_Morrison_Pardo_2022,
+@article{oreilly2022,
   title    = {VoiceBlock: Privacy through Real-Time Adversarial Attacks with Audio-to-Audio Models},
   author   = {O’Reilly, Patrick and Bugler, Andreas and Bhandari, Keshav and Morrison, Max and Pardo, Bryan},
   year     = 2022,
@@ -18,5 +254,14 @@
   volume   = 35,
   pages    = {30058–30070},
   url      = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/c204d12afa0175285e5aac65188808b4-Abstract-Conference.html},
+  url      = {https://openreview.net/forum?id=8gQEmEgWAkc},
   language = {en}
+}
+@misc{ren2022,
+  title         = {FastSpeech 2: Fast and High-Quality End-to-End Text to Speech},
+  author        = {Yi Ren and Chenxu Hu and Xu Tan and Tao Qin and Sheng Zhao and Zhou Zhao and Tie-Yan Liu},
+  year          = 2022,
+  eprint        = {2006.04558},
+  archiveprefix = {arXiv},
+  primaryclass  = {eess.AS}
 }
