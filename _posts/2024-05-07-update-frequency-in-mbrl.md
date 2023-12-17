@@ -31,6 +31,8 @@ toc:
   - name: Making the update frequency more accessible
   - name: Comparisons with fixed update frequency
   - name: Ablation studies
+    subsections:
+    -name: Varying the update frequency in MBPO
   - name: Conclusion
   - name: Appendix
 
@@ -150,7 +152,7 @@ The BREMEN paper <d-cite key="Matsushima2021"></d-cite> has a benchmark comparin
 Comparisons of different update frequencies are very rare in the existing benchmarks and papers. Even without real-life constraints it would be valuable to know how sensitive the performance of a given algorithm is with respect to the update frequency. The issue for the authors is that this could be asked for many other hyperparameters and represent additional computational budget and time. However we often find ablations on the number of models (if the model is an ensemble), the rollout length, the number of gradient updates for the model-free policy, but very rarely on the update frequency. It is very likely that the agents that are good for small deployments would be bad for large deployments, a setting that would tend to be closer to the pure offline setting (for the same total budget of real system interactions). We perform such an ablation study using MBPO in the next section, showing that MBPO still shows good performance with many less deployments, which we believe to be a valuable knowledge to have about this algorithm.
 
 
-## Varying the update frequency in MBPO
+### Varying the update frequency in MBPO
     
 Using the MBPO implementation and the examples provided by MBRL-Lib <d-cite key="Pineda2021"></d-cite> we ran MBPO on Gym-Halfcheetah-v4 <d-cite key="Towers2023"></d-cite> with different update frequencies: updating the agent at each step (default implementation described above), each 1000 steps, each 5000 steps and each 10 000 steps.
     
