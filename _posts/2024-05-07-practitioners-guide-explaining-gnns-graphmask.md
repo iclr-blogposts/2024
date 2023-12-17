@@ -61,9 +61,10 @@ It is additionally unclear whether attention in GNNs can be used as a measure of
 GraphMask also compares well to other _perturbative_ methods that are specifically designed to explain GNN predictions, being less sensitive to small changes in the input and mostly outputting more faithful explanations than alternative methods <d-cite key="pmlr-v151-agarwal22b"></d-cite><d-cite key="abs-2203-09258"></d-cite>.
 
 GraphMask selects edges to include in the explanation using a _probe model_ that is trained to predict which edges in a graph are used by a trained GNN _target model_.
-In particular, the probe finds where updates passed along edges can be replaced with a "baseline" embedding containing minimal useful information without changing the output of the target model.
-Removing the edges is impossible, as GNNs can be unstable if trained on graphs with high-degree nodes but tested on graphs with much lower average degrees.
-The baseline message removes any benefit to the model of having the edge but without changing the input distribution.
+In particular, the probe finds where updates passed along edges can be replaced with a "baseline" embedding that contains minimal useful information, all without changing the output of the target model.
+It is important that the output changes minimally so that explanations are faithful; if removing some set of edges yields different behaviour, then the remaining do not faithfully explain the original behaviour.
+The baseline message is used because just removing the edges is impractical, as GNNs can be unstable if trained on graphs with high-degree nodes but tested on graphs with much lower average degrees.
+Instead, it removes any benefit to the model of having the edge but maintains the input distribution.
 
 The probe model is trained using the same data and splits used to train the target model.
 A single model is trained for all instances, rather than introducing a probe for each, as doing so could result in overfitting. 
@@ -89,21 +90,19 @@ The forward function is also [modified](https://github.com/MichSchli/GraphMask/b
 
 Once a new model has been instrumented with the necessary functions, it must be further integrated with the GraphMask codebase to run training and inference.
 The examples in the repository are good guides for what is required.
-The model should be included in the [list of available models](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/utils/experiment_utils.py#L37-L48), bearing in mind that the 'full model' is likely to include layers in addition to the GNN (for example, their [`SrlModel`](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/problems/srl/srl_model.py)).
+The model should be included in the [list of available models](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/utils/experiment_utils.py#L37-L48), bearing in mind that the 'full model' is likely to include layers in addition to the GNN (see their [`SrlModel`](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/problems/srl/srl_model.py)).
 The task must also be added to the [list of problems](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/utils/experiment_utils.py#L24-L35), and a corresponding [problem class](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/problems/srl/srl_problem.py) created.
 Once the model has been integrated, GraphMask is trained via the [`run_analysis.py`](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/run_analysis.py) script.
 Note that although the repository also includes code for [training GNNs](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/train_model.py), models can be trained using existing code outside of GraphMask.
 
 ### Training 
 
-After integrating a new model with the GraphMask repository, the existing code handles the training of the probe.
+After a new model is integrated with the GraphMask repository, the existing code handles the training of the probe.
 GraphMask can be used without understanding how the probe model is trained.
 Still, this knowledge will be helpful during hyperparameter optimisation and when dealing with difficulty fitting a probe, as we will discuss later.
 
 GraphMask is optimised according to two objectives: mask out as many edges as possible in the model while maintaining the model's behaviour.
 Jointly, these objectives mean that GraphMask produces a minimal explanation for the model's behaviour: an explanation containing only the edges used by the model to make some prediction. 
-The model's behaviour must stay the same.
-If removing some set of edges yields different behaviour, then the remaining do not faithfully explain the original behaviour.
 
 > As long as the prediction relying on the sparsified graph is the same as when using the original one, we can interpret masked messages as superfluous.
 > — Schlichtkrull et al., 2021 (page 5) 
@@ -147,8 +146,9 @@ In particular, the optimiser's attempted maximisation of the Lagrange multiplier
 To understand why maximising $\lambda$ works, first consider the implications if it were being minimised instead.
 We can interpret the scale of updates made by the optimiser in this situation.
 Intuitively, if updates are large (and so $\lambda$ is being minimised quickly), the implication is that the model divergence term is large, causing the loss to be high.
-Multiplying this large term by a small $\lambda$ is an easy way to minimise the loss; the implication also holds the other way.
-Now we return to maximising $\lambda$; here, the magnitude of the updates are the same, but in the opposite direction<d-footnote>The <a style="border-bottom: 1px solid var(--global-divider-color) !important;" href="https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/utils/torch_utils/lagrangian_optimization.py#L53">code</a> multiplies the gradients by $-1$ to achieve this. Note that $\lambda$ corresponds to <code class="highlighter-rouge language-plaintext">self.alpha</code>.</d-footnote>.
+Multiplying this large term by a small $\lambda$ is an easy way to minimise the loss.
+The implication also holds the other way.
+When maximising $\lambda$ the magnitude of the updates are the same, but in the opposite direction<d-footnote>The <a style="border-bottom: 1px solid var(--global-divider-color) !important;" href="https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/utils/torch_utils/lagrangian_optimization.py#L53">code</a> multiplies the gradients by $-1$ to achieve this. Note that $\lambda$ corresponds to <code class="highlighter-rouge language-plaintext">self.alpha</code>.</d-footnote>.
 If the updates are large, then the implication is still that the model divergence term is high, but now, rather than $\lambda$ getting smaller to reduce the impact on the loss, it is now getting larger to _increase_ the effect.
 The hope is that future optimisation updates will work to minimise the model divergence term, thereby imposing a soft version of the constraint.
 
@@ -162,17 +162,17 @@ This loss is calculated by taking the predictions of the target model using the 
 The code that implements this procedure can be found [here](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L182-L196).
 
 The loss function also contains a hyperparameter $\beta$, which is a tolerance level or [allowance](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L157) for any model divergence.
-The model is not penalised for any changing behaviour below this threshold, in keeping with the idea that aiming for completely faithful explanations is unrealistic (see Jacovi and Goldberg (2020) for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>).
+The model is not penalised for any changing behaviour below this threshold, in keeping with the idea that aiming for completely faithful explanations is unrealistic (Jacovi and Goldberg (2020) <d-cite key="jacovi-goldberg-2020-towards"></d-cite>).
 
 #### Undifferentiable unmasked edge penalty
 
-The LHS of the loss function increases as fewer edges are masked and is analogous to the $L_0$ norm.
+The LHS of the loss function decreases as more edges are masked, and is analogous to the $L_0$ norm.
 The $L_0$ norm is undifferentiable as it "is discontinuous and has zero derivatives almost everywhere" <d-cite key="schlichtkrull_interpreting_2021"></d-cite>.
-The authors address this using a Hard Concrete distribution introduced by Louizos et al. (2018) <d-cite key="louizos_learning_2018"></d-cite>, meaning that the loss function is now differentiable.
+The authors address this by substituting in the Hard Concrete distribution, introduced by Louizos et al. (2018) <d-cite key="louizos_learning_2018"></d-cite>, meaning that the loss function is now differentiable.
 In particular, the [calculated loss](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/utils/torch_utils/hard_concrete.py#L26) is equation 12 in that paper.
 
 Similarly to $\beta$, the edge penalty has a hyperparameter to control its relative importance in the loss function.
-This [penalty scaling hyperpameter](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L158) is not included in the loss function reproduced above, but can be increased if the user wishes to incentivise the probe training process to mask out more edges.
+This [penalty scaling hyperpameter](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L158) is not included in the equation reproduced above, but can be increased if the user wishes to incentivise the probe training process to mask out more edges.
 
 #### Training tricks
 
@@ -200,7 +200,7 @@ The authors therefore also compare the model's behaviour on its task pre- and po
 For question answering, the [GraphMask implementation](https://github.com/MichSchli/GraphMask/blob/153565a28655fdabd90f3d4c4ed539437b1c4d81/code/analysers/graphmask/graphmask_analyser.py#L172-L174) allows for a 5% deviation in accuracy on a validation set.
 
 We believe this method is too coarse-grained to measure whether model behaviour changes meaningfully.
-In our experiments<d-footnote>QA-GNN <d-cite key="yasunaga-etal-2021-qa"></d-cite> models trained on question answering with the WorldTree <d-cite key="jansen-etal-2018-worldtree"></d-cite> dataset.</d-footnote>, we found that this metric accepted GraphMask probes that changed the correctness of answers for up to 15% of questions.
+In our experiments<d-footnote>QA-GNN <d-cite key="yasunaga-etal-2021-qa"></d-cite> models trained with different random seeds on question answering with the WorldTree <d-cite key="jansen-etal-2018-worldtree"></d-cite> dataset.</d-footnote>, we found that this metric accepted GraphMask probes that changed the correctness of answers for up to 15% of questions.
 Here, the overall change in accuracy was under 5% as some questions that were previously answered incorrectly were now correct and vice-versa.
 This substantial change in model behaviour reduces the faithfulness of explanations for all questions, particularly those for which the model no longer, or newly, answered correctly.
 
@@ -235,8 +235,8 @@ In addition, the value of the Lagrange multiplier $\lambda$ can give insight int
 ## Interpreting explanations
 
 A trained and validated GraphMask probe outputs a layer-by-layer mask of which edges can be dropped without changing model behaviour — the explanation.
-For practical analysis of which edges were important overall, we recommend collapsing this mask and saying that an edge is important if selected in any layer, but it is also possible to attach more importance to edges used in more layers.
-This set of edges is a high recall, unknown precision prediction of the 'true' set of edges actually used by the model<d-footnote>It is not clear that a single set of edges exists that would constitute a 'true' explanation; see Jacovi and Goldberg (2020) for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>. Nevertheless, this is a useful abstraction.</d-footnote>.
+For practical analysis of which edges were important overall, we recommend collapsing this mask and saying that an edge is important if selected in any layer, but would also be possible to attach more importance to edges used in more layers.
+This set of edges is a high recall, unknown precision prediction of the 'true' set of edges actually used by the model<d-footnote>It is not clear that a single set of edges exists that would constitute a 'true' explanation; see Jacovi and Goldberg (2020) §7 for discussion <d-cite key="jacovi-goldberg-2020-towards"></d-cite>. Nevertheless, this is a useful abstraction.</d-footnote>.
 
 > Given an example graph $\mathcal{G}$, our method returns for each layer $k$ a subgraph $\mathcal{G}^{(k)}_S$
 > such that we can faithfully claim that no edges outside $\mathcal{G}^{(k)}_S$ influence the
