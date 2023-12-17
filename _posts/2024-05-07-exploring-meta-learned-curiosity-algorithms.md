@@ -36,7 +36,7 @@ toc:
     - name: Meta-Learned Components and their DAGs
     - name: Method
     - name: FAST
-    - name: ICCM
+    - name: CCIM
   - name: Experiments
     subsections:
     - name: Emperical Design
@@ -251,16 +251,16 @@ $$
 Note the first term in $$\mathcal{L}_b$$ is the same as $$\mathcal{L}_f$$. The intrinsic reward, i.e., the output of this program is given by,
 
 $$
-ri_t=\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-b_{\theta_2}(fr_{\theta_3}(s_t))\|.
+ri_t=\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-b_{\theta_2}(fr_{\theta_3}(s_t))\|_2.
 $$
 
 Looking at the equations, we can see that CCIM borrows ideas from the cycle-consistency seen in the Image-to-Image Translation literature. The cycle-consistency ensures that if you translate from space $$A$$ to space $$B$$, then given space $$B$$, you should be able to translate back to space $$A$$. To see how CCIM applies, let us turn our attention to $$\mathcal{L}_f$$'s equation. The $$fr_{\theta_3}$$ network applies a random embedding to state $$s_t$$. It then forwards this random embedding to the "next state". The $$b_{\theta_2}$$ network then takes this forwarded random embedding of state $$s_t$$ and undoes the forward transformation so that we end up again with just the random embedding of state, $$s_t$$. Now, the random embedding that $$fr_{\theta_3}$$ applied should match the random embedding that $$r_{\theta_1}$$ applied to the state $$s_t$$.
 
 In other words, once we apply a forward transformation to the random embedding of the state, we should be able to undo that transformation and end up where we started.
 
-Let us look at the second term in $$\mathcal{L}_b$$ given by $$\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. We see that we apply a forward and then a backward transformation to the random embedding of state $$s_{t+1}$$, so we should end up with the random embedding of state $$s_{t+1}$$. We then apply $$fr_{\theta_3}$$ to state $$s_t$$ and end up with the forwarded random embedding of state $$s_t$$, which should equal the random embedding of $$s_{t+1}$$.
+Let us look at the second term in $$\mathcal{L}_b$$ given by $$\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|_2$$. We see that we apply a forward and then a backward transformation to the random embedding of state $$s_{t+1}$$, so we should end up with the random embedding of state $$s_{t+1}$$. We then apply $$fr_{\theta_3}$$ to state $$s_t$$ and end up with the forwarded random embedding of state $$s_t$$, which should equal the random embedding of $$s_{t+1}$$.
 
-The intrinsic reward confuses us. Looking at the DAG of CCIM, we see that the output is given by the L2 distance between $$\mathcal{L}_f$$ and $$\mathcal{L}_b$$; hence, we initially thought the intrinsic reward was given by $$ \|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. The difference between this equations and the original intrinsic reward equation is that the backward model, $$b_{\theta_2}$$, is not applied to the $$fr_{\theta_3}(s_t)$$ term. Looking at the original formula of the intrinsic reward, we can see that it is just the difference between the random embedding of 
+The intrinsic reward confuses us. Looking at the DAG of CCIM, we see that the output is given by the L2 distance between $$\mathcal{L}_f$$ and $$\mathcal{L}_b$$; hence, we initially thought the intrinsic reward was given by $$ \|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. The difference between this equation and the original intrinsic reward equation is that the backward model, $$b_{\theta_2}$$, is not applied to the $$fr_{\theta_3}(s_t)$$ term. Looking at the original formula of the intrinsic reward, we can see that it is just the difference between the random embedding of 
 the current state and the next state<d-footnote>If we assume that the backward network can undo the forward transformation and the random embedding of random and forward model matches the random embedding of the random network.</d-footnote>, so it is not clear to us as to how the intrinsic reward will decrease as the agent explores.
 Not only that, but we also noticed unexpected behaviour in the loss function of the $$fr_{\theta_3}$$ network in our experiments. We then watched Alet et al.'s presentation of their paper to see where we went wrong, and we noticed in the presentation they swapped the labels for $$fr_{\theta_3}$$ and $$b_{\theta_2}$$ networks. 
 After reaching out to them about this discrepancy, they did confirm that the equations in the paper are correct, and the labels in the talk are wrong. So for our implementation, we used the equations as found in the paper.
@@ -328,6 +328,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 
 #### CCIM
 
+We start with the deep sea environment. The left of Figure 11 shows the sample standard deviation during training. We only show it for the first 10,000 steps because after that we notice the graphs it plateaus. We an see that RND and BYOL-Explore Lite produce the most onsistent agents in the deep sea environment. CCIM-slimmed produces more consistent agents than CCIM and PPO. Looking at the right of Figure 11 we can see the mean episode return across the 30 seeds with the 95% confidence intervals. RND, BYOL-Explore, and CCIM-slimmed all perform better than PPO. However, CCIM does performs roughly the same as PPO at the end of training. From our experiments we also noticed that intrinsic rewards increase and alternate between zero and one. The random and forward network's loss continued to increase during training as well.  
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -342,6 +343,11 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
     Figure 11. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
 
+Next we move onto the empty grid-world. Looking at the left Figure 12 we can see that all curiosity algorithms produce more consistent agents than PPO due to their sample 
+standard deviations being lower. CCIM and CCIM-slimmed both actually produce consistent agents than RND and PPO in this environment. The right of Figure 12 also indicate 
+that CCIM performed much better in the empty grid-world and was closer to the baselines. However in this environment we did once again notice the raw intrinsic reward 
+increased then plateaued and the loss of random forward network increased during training. It should also be noted the confidence intervals of all the RL algorithms overlap in the empty grid-world environment. 
+
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_std.png" class="img-fluid"  %}
@@ -354,6 +360,8 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 <div class="caption">
     Figure 12. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
+
+Next we decided to plot the heatmaps of CCIM and CCIM-slimmed and compare to PPO's heatmap in Figure 13. To make the heatmaps we looked at the best 15 seeds for each algorithm and kept track of the paths each seed took.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
