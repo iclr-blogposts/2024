@@ -32,7 +32,7 @@ toc:
   - name: Comparisons with fixed update frequency
   - name: Ablation studies
     subsections:
-    -name: Varying the update frequency in MBPO
+    - name: Varying the update frequency in MBPO
   - name: Conclusion
   - name: Appendix
 
