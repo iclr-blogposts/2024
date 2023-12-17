@@ -366,15 +366,6 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
     </div>
 </div>
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_byol_lite_30.png" class="img-fluid"  %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_rnd_30.png" class="img-fluid"  %}
-    </div>
-</div>
-
 <div class="caption">
     Figure 13. Heatmaps of the agents in empty grid-world.
 </div>
@@ -415,14 +406,6 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
     </div>
 </div>
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_byol_lite_30.png" class="img-fluid"  %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_rnd_30.png" class="img-fluid"  %}
-    </div>
-</div>
 
 <div class="caption">
     Figure 16. Heatmaps of the agents in empty grid-world.
