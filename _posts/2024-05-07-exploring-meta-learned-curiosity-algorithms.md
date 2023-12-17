@@ -280,10 +280,10 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_std.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_std.png" class="img-fluid" %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_CI.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_CI.png" class="img-fluid" %}
     </div>
 </div>
 
@@ -323,11 +323,34 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 </div>
 
 <div class="caption">
-    Figure 12. Heatmaps of the agents in empty grid-world.
+    Figure 13. Heatmaps of the agents in empty grid-world.
 </div>
 
 #### FAST
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_FAST_mean_seeds_std.png" class="img-fluid" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_FAST_mean_seeds_CI.png" class="img-fluid" %}
+    </div>
+</div>
 
+<div class="caption">
+    Figure 14. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
+</div>
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_std.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_CI.png" class="img-fluid"  %}
+    </div>
+</div>
+
+<div class="caption">
+    Figure 15. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
+</div>
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_fast_30.png" class="img-fluid"  %}
@@ -338,7 +361,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 </div>
 
 <div class="caption">
-    Figure 12. Heatmaps of the agents in empty grid-world.
+    Figure 16. Heatmaps of the agents in empty grid-world.
 </div>
 
 ## Discussion
