@@ -255,7 +255,7 @@ $$
 
 <p class="legend"> <em> There exists an equivalent convex formulation to the classical non-convex ReLU two-layer network training. That sounds like great news but it is really the case in practice? Let's find out together. </em></p>
 
-The code for this plot is available reproducible on this Jupyer [[notebook]]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}}) ([[HTML]]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})).
+The code for this plot is available reproducible on this __[Jupyter Notebook]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.ipynb' | relative_url}})__ (or in __[HTML]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})__).
 
 ## Overview and Motivation
 
