@@ -362,13 +362,14 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_ccim_slimmed_30.png" class="img-fluid"  %}
     </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
+    </div>
 </div>
-
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid" %}
 
 
 <div class="caption">
-    Figure 13. Heatmaps of the normal PPO agent (bottom), CCIM agent (top left), and CCIm-slimmed agent (top right) in empty grid-world.
+    Figure 13. Heatmaps of the normal PPO agent (right), CCIM agent (left), and CCIm-slimmed agent (middle) in empty grid-world.
 </div>
 
 #### FAST
@@ -409,7 +410,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 
 
 <div class="caption">
-    Figure 16. Heatmaps of the agents in empty grid-world.
+    Figure 16. Heatmaps of the FAST agent (left) and the normal PPO (right) in empty grid-world.
 </div>
 
 ## Discussion
