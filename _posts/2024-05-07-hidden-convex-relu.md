@@ -604,7 +604,7 @@ We train the non-convex network using gradient descent, and at each step, we con
 Training a 20-neuron network with gradient descent and using the same activation patterns to solve the convex equivalent. We plot for each step, the loss of the non-convex network and the optimal loss of the convex problem. We use <em>cvxpy</em> to define the problem and solve it using <em>ECOS</em>. The convex loss is always lower than the non-convex loss and that's expected, in the convex problem we are using the same neurons and trying to improve the loss without changing the activation. The convex loss at the start is quickly beaten by gradient descent, this means our initial choice of activation pattern was bad, and gradient descent continually improves them.
 </p>
 
-In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>Side note, we can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample. <d-cite key="wangConvexGeometryBackpropagation2021"></d-cite></d-footnote>
+In general, we cannot predict which patterns will be used by the neurons found by GD. Thus we cannot hope that the convex problem will give us an insight as it requires us to know the activation patterns. <d-footnote>We can however predict what (some of) the optimal solution will look like a spline interpolation on each training sample<d-cite key="wangConvexGeometryBackpropagation2021"></d-cite>.</d-footnote>
 
 In the next section, we focus on cases where the non-convex minima can be accurately described by convex problems.
 
