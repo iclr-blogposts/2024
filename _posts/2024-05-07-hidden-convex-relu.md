@@ -40,62 +40,6 @@ toc:
   - name: Conclusion
 
 _styles: >
-  /* see http://drz.ac/2013/01/17/latex-theorem-like-environments-for-the-web/ and http://felix11h.github.io/blog/mathjax-theorems */
-  .theorem {
-    display: block;
-    margin: 12px 0;
-    font-style: italic;
-  }
-  .theorem:before {
-    content: "Theorem.";
-    font-weight: bold;
-    font-style: normal;
-  }
-  .theorem[text]:before {
-    content: "Theorem (" attr(text) ") ";
-  }
-
-  .corollary {
-    display: block;
-    margin: 12px 0;
-    font-style: italic;
-  }
-  .corollary:before {
-    content: "Corollary.";
-    font-weight: bold;
-    font-style: normal;
-  }
-  .corollary[text]:before {
-  content: "Corollary (" attr(text) ") ";
-  }
-
-  .lemma {
-      display: block;
-      margin: 12px 0;
-      font-style: italic;
-  }
-  .lemma:before {
-      content: "Lemma.";
-      font-weight: bold;
-      font-style: normal;
-  }
-  .lemma[text]:before {
-    content: "Lemma (" attr(text) ") ";
-  }
-
-  .definition {
-    display: block;
-    margin: 12px 0;
-    font-style: italic;
-  }
-  .definition:before {
-    content: "Definition.";
-    font-weight: bold;
-    font-style: normal;
-  }
-  .definition[text]:before {
-    content: "Definition (" attr(text) ") ";
-  }
 
   .remark {
     display: block;
@@ -109,81 +53,6 @@ _styles: >
   }
   .remark[text]:before {
     content: "Remark (" attr(text) ") ";
-  }
-
-  .lemma[text]:before {
-    content: "Lemma (" attr(text) ") ";
-  }
-
-  .proof {
-      display: block;
-      font-style: normal;
-      margin: 0;
-  }
-  .proof:before {
-      content: "Proof.";
-      font-style: italic;
-  }
-  .proof:after {
-      content: "\25FC";
-      float:right;
-      font-size: 1.8rem;
-  }
-
-  .wrap-collapsible {
-    margin-bottom: 1.2rem 0;
-  }
-
-  input[type='checkbox'] {
-    display: none;
-  }
-
-  .lbl-toggle {
-    text-align: center;
-    padding: 0.6rem;
-    cursor: pointer;
-    border-radius: 7px;
-    transition: all 0.25s ease-out;
-  }
-
-  .lbl-toggle::before {
-    content: ' ';
-    display: inline-block;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 5px solid currentColor;
-    vertical-align: middle;
-    margin-right: .7rem;
-    transform: translateY(-2px);
-    transition: transform .2s ease-out;
-  }
-
-  .toggle:checked + .lbl-toggle::before {
-    transform: rotate(90deg) translateX(-3px);
-  }
-
-  .collapsible-content {
-    max-height: 0px;
-    overflow: hidden;
-    transition: max-height .25s ease-in-out;
-  }
-
-  .toggle:checked + .lbl-toggle + .collapsible-content {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .toggle:checked + .lbl-toggle {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .collapsible-content .content-inner {
-    /* background: rgba(250, 224, 66, .2); */
-    /* border-bottom: 1px solid rgba(250, 224, 66, .45); */
-    border-bottom-left-radius: 7px;
-    border-bottom-right-radius: 7px;
-    padding: .5rem 1rem;
   }
 
   .center {
@@ -216,19 +85,7 @@ _styles: >
 <!-- some latex shortcuts -->
 <div style="display: none">
 $$
-\def\argmin{\mathop{\mathrm{arg\,min}}}
-\def\xx{\pmb{x}}
-\def\HH{\pmb{H}}
-\def\bb{\pmb{b}}
-\def\EE{ \mathbb{E} }
 \def\RR{ \mathbb{R} }
-\def\lmax{L}
-\def\lmin{\mu}
-\def\defas{\stackrel{\text{def}}{=}}
-\definecolor{colormomentum}{RGB}{27, 158, 119}
-\definecolor{colorstepsize}{RGB}{217, 95, 2}
-\def\mom{ {\color{colormomentum}{m}} }
-\def\step{ {\color{colorstepsize}h} }
 
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\step}{\gamma}
@@ -628,7 +485,7 @@ In the next section, we focus on cases where the non-convex minima can be accura
 
 ### On large initialization scale
 
-The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. By default in popular libraries, _He initialization_ is used, it draws neurons from a normal distribution centered on 0 and with a variance in $$\frac{1/m}$$ with $$m$$ the number of neurons. However in the literature, there is a large choice to pick from.
+The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. By default in popular libraries, _He initialization_ is used, it draws neurons from a normal distribution centered on 0 and with a variance in $$\frac{1}{m}$$ with $$m$$ the number of neurons. However in the literature, there is a large choice to pick from.
 
 We say we're on a large scale when neurons do not move far from their initial value during descent. This typically happens when using large initial values for the parameters of each neuron.
 
@@ -648,7 +505,6 @@ Here, computing the convex optimal gives us a single neuron to fit the linear da
 
 <p class="remark"> A side effect of the large initialization is catastrophic overfitting i.e. there are very large variations between data points which will negatively impact test loss.
 </p>
-
 
 ### On very small initialization
 
