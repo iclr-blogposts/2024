@@ -70,7 +70,7 @@ _styles: >
 
 ## Introduction to Primacy Bias
 
-Primacy bias occurs when a model's training is damaged by overfitting to its first experiences. This can be caused by poor hyperparameter selection, the underlying dynamics of the system being modelled, or simply bad luck. 
+Primacy bias occurs when a model's training is damaged by overfitting to its first experiences. This can be caused by poor hyperparameter selection, the underlying dynamics of the system being studied, or simply bad luck. 
 
 In this post we explore the paper “Primacy Bias in Deep Reinforcement Learning” by Nikishin et al. and presented at ICML 2022. We will present primacy bias and how it applies to deep reinforcement learning (RL), discuss how the authors prevent primacy bias, and finish by experimenting with our own toy example of primacy bias.
 
@@ -78,7 +78,7 @@ Like many deep learning concepts, primacy bias takes inspiration from psychology
 
 ## Off Policy Deep Reinforcement Learning
 
-Nitkshi et al. discuss a specific type of model that is particularly sensitive to primacy bias: *off-policy deep reinforcement learning*. Here, the goal is to learn a model (*policy*) that makes good decisions in an interactive environment. The algorithm does this by switching between two modes:
+Nikishin et al. discuss a specific type of model that is particularly sensitive to primacy bias: *off-policy deep reinforcement learning*. Here, the goal is to learn a model (*policy*) that makes good decisions in an interactive environment. The algorithm does this by switching between two modes:
 
 1.  Exploration: use the current policy to interact with the environment and save memories to a dataset called the *replay buffer*.
 2.  Learning: sample from the replay buffer to perform gradient updates on the policy.
@@ -130,7 +130,7 @@ After 100 steps, the first observation will have been sampled on average 5.19 ti
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/sampling.jpeg" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/samples11.jpeg" class="img-fluid rounded z-depth-1" %}
     </div>
   <div class="caption" style="width: 30%">
     How often an example is sampled on average in a 100 step training loop.
@@ -165,7 +165,7 @@ Nitkshi et al. show that on average resets work well.
 1. Immediately after a reset there is a sudden drop in performance that quickly recovers.
 2. Resets never irreparably harm a model. At worse, the model returns to the pre-reset level (ex: cheetah-run), but sometimes it can perform substantially better (humanoid-run).
 
-These results are consistent across multiple algorithms and environments, including the continunous control Deep Mind Control Suite and the discrete Atari 100k benchmarks.
+These results are consistent across multiple algorithms and environments, including the continuous control Deep Mind Control Suite and the discrete Atari 100k benchmarks.
 
 <details open>
 <summary>Episode return overtime on a subset of DeepMind Control, with and without resets, using SAC algorithm. Averaged over 10 random seeds.</summary>
@@ -218,7 +218,7 @@ After seeing the success of resets, it is reasonable to wonder how weight resets
 
 
 
-### What's the catch?
+### What's The Catch?  
 
 While these results are impressive, they come at a cost. At minimum, increasing the replay ratio increases the compute time linearly. D'Oro et al 2023 [3] note that running the full dynamic control benchmark with a replay ratio of 32 takes 4 GPU days with a NVIDIA V100. Using a replay ratio of 16 on Atari 100K requires 5 GPU hours per run.
 
@@ -325,7 +325,7 @@ We hope that more examples of primacy bias continue to be discovered and studied
 
 Even as the theory continues to develop, there is little harm in attempting periodic weight resets with a high replay ratio to train off-policy RL agents.
 
-Finally, primacy bias might not always be a bad thing. If you decide to walk down an alley and the first thing you notice is how dark and unsafe it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
+Finally, primacy bias might not always be a bad thing. If you decide to take a new shortcut to work by walking down an alley and the first thing you notice is how dark and unsafe it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
 
 
 ## References (To be migrated to bibtex)
