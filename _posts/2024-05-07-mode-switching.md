@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: Behavioral Differences in Mode-Switching Exploration for Reinforcement Learning
-description: The exploration versus exploitation dilemma prevails as a fundamental  challenge of reinforcement learning (RL), whereby an agent must exploit  its knowledge of the environment to accrue the largest returns while  also needing to explore the environment to discover these large returns.  The vast majority of deep RL (DRL) algorithms manage this dilemma with a monolithic behavior policy that interleaves exploration actions  randomly throughout the more frequent exploitation actions. In 2022, researchers from Google DeepMind presented an initial study on  mode-switching exploration, by which an agent separates its exploitation  and exploration actions more coarsely throughout an episode by  intermittently and significantly changing its behavior policy. This  study was partly motivated by the exploration strategies of humans and  animals that exhibit similar behavior, and they showed how  mode-switching policies outperformed monolithic policies when trained on  hard-exploration Atari games. We supplement their work in this blog  post by showcasing some observed behavioral differences between  mode-switching and monolithic exploration on the Atari suite and  presenting illustrative examples of its benefits. This work aids  practitioners and researchers by providing practical guidance and  eliciting future research directions in mode-switching exploration.
+description: In 2022, researchers from Google DeepMind presented an initial study on  mode-switching exploration, by which an agent separates its exploitation  and exploration actions more coarsely throughout an episode by  intermittently and significantly changing its behavior policy. We supplement their work in this blog  post by showcasing some observed behavioral differences between  mode-switching and monolithic exploration on the Atari suite and  presenting illustrative examples of its benefits. This work aids  practitioners and researchers by providing practical guidance and  eliciting future research directions in mode-switching exploration.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -35,6 +35,8 @@ toc:
     subsections:
       - name: 2.1 Concentrated Terminal States
       - name: 2.2 Early Exploration
+      - name: 2.3 Concentrated Return
+      - name: 2.4 Post-Exploration Entropy
   - name: 3. Conclusion
 
 # Below is an example of injecting additional post-specific styles.
@@ -161,6 +163,50 @@ We perform an experiment to determine how quickly a policy takes a prespecified 
 We illustrate beginning exploration with a downwalk environment in which an agent attempts to first move to the middle column and then down the middle column until it falls off the grid (Figure 6). The agent begins in the second row in the middle column. We chose this environment because it is a crude approximation of the trajectory of agents that have learned a single policy and immediately move towards a goal state at the beginning of an episode. The switching and monolithic policies are the same as before, and switching produces much higher visitation counts across 1000 episodes at states further from the obvious exploitation trajectory. 
 
 Environments that may benefit from flexible early exploration are sparse reward environments that provide a single nonzero reward at the terminal state. Many game environments fall into this category, since a terminal reward of 1 can be provided for a win, -1 for a loss, and 0 for a draw. In such environments, agents usually need to learn at states near the sparse reward region before learning at states further away, also known as cascading <d-cite key="huan2016sequential"></d-cite>. After learning near the sparse reward region, the agent may need to reconsider earlier actions, and switching behavior natively allows for this type of exploration. Future work may consider the extent to which switching aids in relearning policies near the start state. 
+
+### 2.3 Concentrated Return
+
+In contrast to the investigation in the first experiment, exploitation actions are generally considered to be presumably optimal. Since agents aim to maximize the expected return in an environment, exploitation is often aimed accruing the most expected return. For example, the initial results of DQN <d-cite key="mnih2015human"></d-cite> and double DQN (DDQN) <d-cite key="van2016deep"></d-cite> decreased the exploration constant, thereby increasing exploitation, during testing runs to achieve higher scores and ultimately demonstrate superhuman performance on ATARI. In this subsection, we investigate the effect of the concentrated exploitation actions of switching policies on expected return. 
+
+We perform an experiment to determine the proportion of return that is concentrated during exploitation periods. Each reward during an episode is weighted by the proportion of exploitation actions during the past 10 time steps. The score for each episode is the exploitation proportion divided by the total rewards. Scores for each behavior policy and epoch are computed by averaging scores across all games. The results are shown in Figure 7. Quite quickly, exploitation steps contain a greater percentage of the return with switching policies than monolithic policies. This trend seems fairly constant after roughly 2M frames, with switching having roughly 95% of the return in exploitation steps and monolithic having roughly 90% of the return; from another point of view, exploration yields 5% of the return for switching and 10% of the return for monolithic policies. These results agree with Experiment 1, as switching modes will generally reach terminal states outside of exploitation mode (i.e. when in exploration mode in our case), and receive no more rewards. Since most of the rewards in our selected ATARI games are positive, this should result in lower return in exploitation mode. 
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_3_1.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_3_2.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Figure 7. (Left) Switching policies concentrate return in exploitation mode. Figure 8 (Right) Switching policies concentrate return in the beginning of episodes.
+</div>
+
+One notable case in which exploitation steps are concentrated is in resetting methods such as Go-Explore <d-cite key="ecoffet2019go"></d-cite> that reset to promising states at the beginning of the episode and explore from there. Promising states are usually defined as those that are involved in accruing the most reward. More generally, resetting methods aim to prevent derailment, whereby an agent is unable to return or is *derailed* from returning to promising states through its exploratory mechanisms, such as the random actions in epsilon-greedy exploration. Since our mode-switching agent begins in exploitation mode which aims to accrue the most return, we provide an illustrative example of how mode-switching policies incorporate aspects of resetting that are meant to prevent derailment.
+
+In Figure 8, we plot the proportion of return across the proportion of episode that is completed using data from the last training epoch. The results show that mode-switching concentrates its return more towards the beginning of each episode, most likely because its first exploit mode is much longer than that of a monolithic policy. Future work involves determining the extent to which beginning exploitation serves as a flexible alternative to resetting. If it is indeed viable, then mode-switching may be used to mimic resetting in settings that do not allow for manual resets such as model-free RL. 
+
+### 2.4 Post-Exploration Entropy
+
+The use of monolithic exploration policies such as epsilon-greedy will produce a behavior policy that is nearly on-policy when any exploration constants have been annealed. In contrast, the exploration periods of switching policies are meant to free the agent from its current exploitation policy and allow it to experience significantly different trajectories than usual. If the states in those trajectories are more diverse, then the exploitation actions at those states are more likely to have greater diversity as well due to random initialization of the policy and lack of learning at those states. In this experiment, we investigate the diversity of the action distribution after exploration periods. 
+
+We quantify the diversity of the realized action distribution in the time step immediately after each exploration period. The diversity is quantified by entropy that has higher values for more random data and vice versa. An action distribution is constructed for each mode and for each training epoch, and the entropies across games are averaged. The results are shown in Figure 9. The entropy of the action distribution for mode-switching policies is distinctly greater than that of monolithic policies. Like most of the previous results, this quantity only plateaus until roughly 2M frames have elapsed.
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_4_1.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_4_2.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Figure 9. (Left) Switching policies produce action distributions with higher entropy after exploration periods. Figure 10 (Right) Agent has random exploitation actions in states that are visited less frequently.
+</div>
+
+To illustrate this idea, we create a gridworld environment that provides the agent a reward of -1 for each time step that the agent is still on the grid; the agent's goal is to leave the grid as quickly as possible. The agent begins in the center of the grid and learns through discrete Q-learning. Distinct actions have separate colors in Figure 10. The agent learns that it is fastest to exit the grid by going left or right. Notably, the actions near the top and bottom of the grid are seemingly random, as the agent has not seen those states and learned from them as frequently as the others.
+
+The difference in the entropy of the action distributions suggests that more diverse areas of the state space are encountered after exploration modes with switching policies. This phenomenon is closely tied to the notion of *detachment* <d-cite key="ecoffet2019go"></d-cite>, whereby agents forget how to return to areas of high reward, perhaps by focusing too unimodally on one region of the state space. The concentrated behavior of mode-switching policies may provide enough consecutive exploration actions to explore a more diverse set of trajectories. Future work could investigate the ability of mode-switching policies to curb detachment on environments with multiple regions of the state space with high reward.
 
 # 3. Conclusion
 
