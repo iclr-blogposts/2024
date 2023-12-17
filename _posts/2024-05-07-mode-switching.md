@@ -211,14 +211,26 @@ The difference in the entropy of the action distributions suggests that more div
 
 ### 2.5 Top Exploitation Proportions
 
-Our final investigation involves solely the change in exploitation proportion under mode-switching policies. Since the probability of switching to explore mode is so low, there may be some episodes where it seldom happens if at all. This creates a distribution of exploit action proportions per episode that is more extreme than that of monolithic policies, yet it is still not as extreme as using a single mode throughout the entire episode. A new action noise called pink noise <d-cite key="eberhard2022pink"></d-cite> was introduced that achieved better performance than white and red noise that has similar properties: pink noise is more temporally-correlated than white but not as much as red noise. Here, we investigate the most extreme episodes in exploitation proportion.
+Our final investigation involves the change in exploitation proportion under mode-switching policies. Since the probability of switching to explore mode is so low, there may be some episodes where it seldom happens if at all. This creates a distribution of exploit action proportions per episode that is more extreme than that of monolithic policies, yet it is still not as extreme as using a single mode throughout the entire episode. An action noise called pink noise <d-cite key="eberhard2022pink"></d-cite> was recently introduced that achieved better performance than white and red noise, having similar interpolative characteristics: pink noise is more temporally-correlated than white noise but not as much as red noise. Here, we investigate the return of the most extreme episodes in exploitation proportion.
 
-We perform an experiment to compare the the return of the episodes with highest return between switching and monolithic policies. The returns of the top 5 of 100 episodes were recorded, and a ratio between the monolithic and switching policies was computed for each game. For each iteration, the ratios were averaged and plotted in Figure X.\par
-The results are shown in Figure X. There does not appear to be a clear trend aside that the ratio hovers mostly above 1.00, indicating that the top exploitation episodes of switching are better than those of monolithic policies. These results show that additional reward could be achieved through incorporating mode-switching policies.
+We perform an experiment to compare the the return of the episodes with highest exploitation proportions between switching and monolithic policies. The returns of the top 10 of 100 episodes were recorded and averaged, and a ratio between the averages between switching and monolithic policies was computed for each game and averaged again. The results are plotted in Figure 11. There does not appear to be a clear trend aside that the ratio hovers mostly above 1.00, indicating that the top exploitation episodes of switching policies accrue more return than those of monolithic policies. 
 
-The results are best illustrated through plotting the switching and monolithic exploitation percentages for 1000 episodes (10 games of epoch 25) as shown in Figure X+1.  The top Y exploitation episodes have more exploit than ANY monolithic episode. Therefore, the corresponding distribution is indeed more extreme.
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_5_1.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_5_2.png" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Figure 11. (Left) Switching policies have better return for episodes with largest exploit proportion. Figure 12 (Right) Switching policies have more extreme exploration and exploitation proportions per episode.
+</div>
 
-While the previous discussion has illustrated that some episodes exploit more and that those episodes generate more reward than the most exploitation monolithic policies, they don't specifically explain why training is superior; in particular, the slightly extra reward by those best policies isn't necessary for learning an optimal policy as long as all the necessary states are reached by a suboptimal policy. One possibility is the fact that it is training on a more diverse set of policies and must generalize or become robust to the diverse nature of mode-switching. Reinforcement learning algorithms are notorious at overfitting (cite procgen1) and the current exploratory policy may be one facet of a fully-robust agent (cite procgen2). Future work may investigate the extent to which generalization is improved upon using mode-switching. 
+The results are best illustrated through plotting the switching and monolithic exploration percentages for 1000 episodes (10 games of epoch 25) as shown in Figure 12.  The top 100 episodes with highest exploitation proportion appear to exploit more than *any* monolithic episode. Therefore, the corresponding distribution is indeed more extreme.
+
+While the previous discussion has illustrated that some mode-switching episodes exploit more and generate more return, they don't specifically explain why training with mode-switching is superior; in particular, the slightly greater return by those best policies is not necessary for learning an optimal policy as long as a similar state distribution is reached by a suboptimal policy. One possibility is the fact that mode-switching policies train on a more diverse set of behavior and must generalize to that diversity. Reinforcement learning algorithms are notorious at overfitting <d-cite key="cobbe2019quantifying,cobbe2020leveraging"></d-cite>, and future work may investigate the extent to which generalization is improved upon using mode-switching. 
+
 
 # 3. Conclusion
 
