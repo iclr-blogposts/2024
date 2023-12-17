@@ -156,9 +156,7 @@ In the above plots, the bottom-right panel illustrates data for three color-code
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/datamodel_our_exp.png" class="img-fluid"  %}
 
-It's crucial to note that the displayed margins represent averages across 100 models trained on $S_i$. This underscores a limitation of linear datamodeling: achieving stability demands training a sufficient number of models for each subset. The figures' interpretation involves averaging over 100 models. When the true margins aren't averaged across a significant number of models, it becomes apparent that the linearity of the test is affected.
-
-Despite the simplicity and accuracy of datamodels in predictions, training them for specific examples in large-scale scenarios poses challenges. Imagine training datamodels for ImageNet's set of target examples, requiring training numerous models from scratch using ImageNet's 1000-class training dataset. To ensure stable prediction performance, extensive averaging of models is necessary to attain accurate output predictions.
+Despite the simplicity and accuracy of datamodels in predictions, training them for specific examples in large-scale scenarios poses challenges. Imagine training datamodels for ImageNet's set of target examples, requiring training numerous models from scratch using ImageNet's 1000-class training dataset. **Ensuring stable prediction performance requires extensive computational resources, which is prohibitively expensive for modern foundation models**.
 
 ### TRAK <d-cite key="park2023trak"></d-cite>
 Inspired by Datamodeling framework and motivated to circumvent its expensive training cost, in ***TRAK:Attributing Model Behavior at Scale***, Ilyas et al. <d-cite key="park2023trak"></d-cite> propose a new data attribution framework, *Tracing with the Randomly-Projected After Kernel* (TRAK).
@@ -280,7 +278,7 @@ In the figure above, the authors PCA on the residual importance matrix (after pr
 <br>
 For example, in the figure above, they compared two models trained on LIVING17 dataset. The only difference between these two models is whether they are trained with or without standard data augmentations. By exploring the training sample importance matrix using the method mentioned above, they speculated that the model trained with data augmentation prefers using "web" to predict the class "spider" and using "yellow polka dots" to predict the class "salamander". Therefore, they added "web" or "yellow polka dots" texture to test samples and found out that only the prediction of the model with data augmentation changes a lot. This experiment verified the previous work that the data augmentation will enhance the texture bias.
 
-The ModelDiff shows that the data attribution methods can be key tools for understanding model behaviors and distinguishing the subtle differences of algorithms
+The ModelDiff shows that the data attribution methods can be key tools for understanding model behaviors and distinguishing the subtle differences of algorithms.
 
 ### Data Leakage Detection
 Except for comparing learning algorithms, we can also leverage the importance score to find training samples which are most relevant to the model prediction. By empirically observing the training samples with different importance magnitude, Harshay et al. <d-cite key="shah2022modeldiff"></d-cite>  find that the training samples with large importance magnitude consistently look similar to the test sample which also follows the intuition: *training samples most similar to the test sample are most relevant to the prediction* (see the first line of the figure).
