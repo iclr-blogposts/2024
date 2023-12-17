@@ -267,7 +267,7 @@ The deep sea environment is one the `bsuite` environments developed by Google De
 This is a $$ N \times N$$ grid environment that focuses on testing the exploration capabilities of an RL algorithm. The figure below shows the environment.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/deepsea.png" class="img-fluid" %}
 <div class="caption">
-    Figure 10. The Deep sea environment.
+    Figure 10. The Deep sea environment. Taken from <d-cite key="osband2020bsuite"></d-cite>.
 </div>
 The agent starts at the the top left corner and its goal is to reach the bottom right corner.
 At each time step the agent descends one row. The agent can either go left or right. There's a small penalty of going right which is $$ −0.01/N $$ while going left just gives a reward of zero. The agent receives a reward of 1 if it finds the treasure at the bottom right corner.
@@ -276,9 +276,32 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 ### Results
 
 #### CCIM
-{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/FAST_diagram.png" class="img-fluid" %}
+
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_std.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_CI.png" class="img-fluid"  %}
+    </div>
+</div>
+
 <div class="caption">
-    Figure 11. The average epi.
+    Figure 11. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_std.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_CI.png" class="img-fluid"  %}
+    </div>
+</div>
+
+<div class="caption">
+    Figure 12. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
 
 <div class="row mt-3">
