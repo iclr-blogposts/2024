@@ -25,7 +25,7 @@ authors:
 #       name: IAS, Princeton
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-Unraveling-The-Impact-of-Training-Samples.bib  
+bibliography: 2024-05-07-unraveling-the-impact-of-training-samples.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
@@ -129,7 +129,7 @@ Therefore, $\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\te
 
 Since one training sample romoval can be understood as setting $\epsilon=-\frac{1}{n}$, we can predict the corresponding test loss difference by $-\frac{1}{n}\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}})$. By comparing the predicted test loss difference and the actual test loss difference by leave-one-out retraining, we can verify the accuracy of the proposed influence scores, as shown in the figure below.
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/1.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/1.png" class="img-fluid" %}
 
 Based on their experiments, we can empirically say that the proposed influence function performs well on the tasks which satisfy their underlying assumptions (the twice-differentiable and strictly convex assumption): In Fig(a) & Fig(b), under convex and convergent situations (Logistic Regression model & L-BGFS algorithm), the predicted loss difference and actual loss difference align well with each other. However, in Fig\(c\), under non-convex and non-convergent-guarantee situations(CNN model & SGD algorithm), the influence function could not make satisfying approximation.
 
@@ -154,14 +154,14 @@ $$f_{\mathcal{A}}(z; S_{i}):= (\text{logit for correct class}) - (\text{highest 
 
 One Datamodel is specifically optimized to learn the data attribution of a fixed training dataset to a fixed but arbitrary example $z$. For a fixed sample of interest, we use $g_{w}$ to assign a learnable weight to each example in $S$. The sum of weights of all training example that's included in $S_{i}$ is trained to predict the model outputs on $z$. This is formulated as the dot product between a weight vector $w$ and an indicator vector where entry $k$ indicates the existence of the $k^{th}$ training datapoint in $S$. Therefore, for a set of target examples, we can train a datamodel for each of them and construct a collection of datamodels.  
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/2.png" class="img-fluid"  %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/2.png" class="img-fluid"  %}
 *Caption: Linear datamodels accurately predict true margins averaged across 100 models.
 Source: Fig 5 in the paper "Datamodels: Predicting Predictions from Training Data"*
 
 In their experiments using CIFAR-10, the authors reserved a specific subset of output pairs for evaluation. Here, $\alpha$ represents the subsampling fraction in relation to the training set size. For instance, in a training dataset with $|S| = 100$ data points, setting $\alpha = 0.2$ means each subset, $S_i$, comprises a fixed size of $|S_i| = 20$. They demonstrated that Datamodels effectively predict outcomes for unseen in-distribution test subsets. 
 In the above plots, the bottom-right panel illustrates data for three color-coded random target examples, showing a strong Spearman correlation ($r > 0.99$) between predicted and actual outputs.
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/datamodel_our_exp.png" class="img-fluid"  %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/datamodel_our_exp.png" class="img-fluid"  %}
 
 It's crucial to note that the displayed margins represent averages across 100 models trained on $S_i$. This underscores a limitation of linear datamodeling: achieving stability demands training a sufficient number of models for each subset. The figures' interpretation involves averaging over 100 models. When the true margins aren't averaged across a significant number of models, it becomes apparent that the linearity of the test is affected.
 
@@ -251,11 +251,11 @@ where <br>
 
 </details>
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/trak_exp_fig.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/trak_exp_fig.png" class="img-fluid" %}
 *Caption: We trained 90 RestNet9 models independently on 90 randomly selected subsets of size factor 0.5 from $S$. Then we used TRAK to calculate influence score for the test dataset of CIFAR-10. These are two random samples that show the efficacy of TRAK. For the training images that have high TRAK scores, they are of the same category. While those of low TRAK scores are of different categories of the target image.*
 <br>
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/trak_scatter_plot.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/trak_scatter_plot.png" class="img-fluid" %}
 *Caption: Experimental results presented in the TRAK <d-cite key="park2023trak"></d-cite> paper*
 
 Ilyas et al. <d-cite key="park2023trak"></d-cite> conducted a study utilizing TRAK to attribute various classifiers on datasets such as CIFAR-2, CIFAR-10, QNLI, and ImageNet. Their findings demonstrated that TRAK achieves superior accuracy while utilizing significantly fewer models. 
@@ -274,14 +274,14 @@ The paper ***ModelDiff: A Framework for Comparing Learning Algorithms*** <d-cite
 Therefore, we could get the importance matrix $\Theta^{\|train \| \times \|test\|}$
 for each learning algorithm applied on a specific task. We apply matrix projection and PCA techniques on the importance matrix $\Theta$ to explore the distinguishing difference between how two algorithms use training samples. The detailed pipeline of comparing learning algorithm is depicted in the following figure.
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/model_diff_1.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_1.png" class="img-fluid" %}
 *Source: Figure 2 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"*
 <br>
 In the figure above, the authors PCA on the residual importance matrix (after projection, we remove the common importance allocation). The training samples corresponding to the TOP-K principal components (these principal component directions explain a significant amount of variance in one importance matrix but not the other) reflect the  distinguishing subpopulations that one learning algorithm prefers, but another learning algorithm pays little attention to. 
 
 **By visually checking these distinguishing subpolutations, we could speculate the semantic feature selection difference of two algorithms and then confirm it by applying the semantic feature transformations on test data and checking the model output difference.**
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/model_diff_2.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_2.png" class="img-fluid" %}
 *Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"*
 <br>
 For example, in the figure above, they compared two models trained on LIVING17 dataset. The only difference between these two models is whether they are trained with or without standard data augmentations. By exploring the training sample importance matrix using the method mentioned above, they speculated that the model trained with data augmentation prefers using "web" to predict the class "spider" and using "yellow polka dots" to predict the class "salamander". Therefore, they added "web" or "yellow polka dots" texture to test samples and found out that only the prediction of the model with data augmentation changes a lot. This experiment verified the previous work that the data augmentation will enhance the texture bias.
@@ -291,11 +291,11 @@ The ModelDiff shows that the data attribution methods can be key tools for under
 ### Data Leakage Detection
 Except for comparing learning algorithms, we can also leverage the importance score to find training samples which are most relevant to the model prediction. By empirically observing the training samples with different importance magnitude, Harshay et al. <d-cite key="shah2022modeldiff"></d-cite>  find that the training samples with large importance magnitude consistently look similar to the test sample which also follows the intuition: *training samples most similar to the test sample are most relevant to the prediction* (see the first line of the figure).
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/model_diff_3.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_3.png" class="img-fluid" %}
 *Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"*
 <br>
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/cat_data_leakage.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/cat_data_leakage.png" class="img-fluid" %}
 *Source: From the randomly selected validation points provided by Ilyas et al. <d-cite key="park2023trak"></d-cite>, we found this data leakage example*
 <br>
 
@@ -306,7 +306,7 @@ We can also use the data attribution methods to identify brittle predictions (i.
 
 Specifically, we could leverage the sample importance scores to find the smallest training subset (defined as support set) such that removing them could flip the model prediction. By calculating the support set size for each test sample, we could know the brittleness of the model output with respect to the input. 
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/model_diff_4.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_4.png" class="img-fluid" %}
 
 Another application involves data counterfactual estimation. As illustrated in the figure above, after the training subset removal, the observed changes in actual model logits closely align with the predicted model logits changes estimated through data attribution methods. 
 
