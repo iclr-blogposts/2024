@@ -62,8 +62,16 @@ _styles: >
     text-align: center;
     font-size: 16px;
   }
+  .details{
+    border: 1px solid #000; /* Border style */
+    padding: 10px; /* Optional padding for content inside the frame */
+    background-color: #001F3F; /* Deep dark blue background color */
+    color: #FFFFFF; /* Text color, change to contrast with the background */
+  }
   .details summary{
-    color: orange;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
   }
   .details p{
     color:white;
