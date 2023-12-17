@@ -233,7 +233,7 @@ These are open questions. For weight resets to become widely used new heuristics
 
 ## Implementing Primacy Bias
 
-The best way to learn something is through practice. In this section we will present a minimum viable example of primacy bias and release the associated code as a notebook to GitHub.
+The best way to learn something is through practice. In this section we will present a minimum example of primacy bias with the associated code to be released as a notebook on GitHub.
 
 The biggest obstacle to studying primacy bias is the compute resources required. Training time scales linearly with replay ratio, and a high replay ratio is necessary to extract maximal information per sample and to recover after each reset. To work around this, we present an MVP: Minimum Viable Primacy (bias).
 
@@ -259,7 +259,7 @@ The agent attempts to cross the lake 10,000 times. To force primacy bias, we sho
 
 Each trial is considered expensive (our agent doesn't want to freeze). A good algorithm will maximize the number of successful crossings in the 10,000 attempts. Each attempt is saved to the replay buffer and any reset will fully reinitialize all weights.
 
-The advantage of this environment is that it is very fast. A trial of 10,000 crossings with a replay ratio of 1 completes in 10 seconds on a CPU.
+The advantage of this environment is that it is very fast. A trial of 10,000 crossings with a replay ratio of 1 completes in 10 seconds on a CPU. The disadvantage of this environment is that it's incredibly simple, and findings might not generalize to more complex problems.
 
 ### Results
 
@@ -321,11 +321,11 @@ As a final experiment, we vary model size. We compare a much smaller two layer D
 
 In this blogpost, we discuss primacy bias and its application to off-policy deep reinforcement learning. We highlight a subset of results and apply weight resets to a new problem. 
 
-We hope that more examples of primacy bias continue to be discovered and studied. Eventually, we would like to identify specific behaviors that are catastrophically memorized and create guiding principles to identify environments that are most at risk of primacy bias. Overtime, we hope this might unlock new applications of deep reinforcement learning.
+We hope that more examples of primacy bias continue to be discovered and studied. Eventually, we would like to identify specific behaviors that are catastrophically memorized and create guiding principles to identify environments that are most at risk of primacy bias. Overtime we hope this might unlock new applications of deep reinforcement learning.
 
 Even as the theory continues to develop, there is little harm in attempting periodic weight resets with a high replay ratio to train off-policy RL agents.
 
-Finally, primacy bias might not always be a bad thing. If you decide to walk down an alley and the first thing you notice is how dark and unsanitary it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
+Finally, primacy bias might not always be a bad thing. If you decide to walk down an alley and the first thing you notice is how dark and unsafe it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
 
 
 ## References (To be migrated to bibtex)
