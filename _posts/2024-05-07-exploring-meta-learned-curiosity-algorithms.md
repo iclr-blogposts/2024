@@ -39,8 +39,10 @@ toc:
     - name: ICCM
   - name: Experiments
     subsections:
+    - name: Emperical Design
     - name: Empty grid-world
     - name: Deep sea
+    - name: Results
   - name: Discussion
   - name: Conclusion
 ---
@@ -237,26 +239,44 @@ We can see that there are 3 neural networks: a random network, a random and forw
 ### Emperical Design
 
 
-In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase is derived from PureJaxRL, as presented by Lu et al. <d-cite key="lu2022discovered"></d-cite>. 
+In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase is derived from PureJaxRL<d-cite key="lu2022discovered"></d-cite>. 
 Specifically, we leverage PureJaxRL's Proximal Policy Optimization (PPO) implementation as our chosen reinforcement learning (RL) algorithm. The foundation of our 
 experiments is laid upon a JAX implementation of Minigrid's grid-world environment <d-cite key="MinigridMiniworld23"></d-cite>, which uses gymnax's API <d-cite key="gymnax2022github"></d-cite>. Additionally, we make use of gymnax's deep-sea environment implementation as well.
 
-Each RL agent undergoes training for 500,000 time steps across four vectorized environments, employing 30 seeds for each RL algorithm. To assess performances on the environments, we calculate the average episode return across seeds at the conclusion of training, supplementing it with a 95% confidence interval determined through the percentile bootstrapped method. Our objective extends beyond evaluating the efficacy of curiosity algorithms in these environments. We are equally invested in comprehending the behavioral nuances exhibited by these algorithms. Consequently, we visualize the sample standard deviation during training to depict the performance variations. This analysis aids in discerning which curiosity algorithm yields agents with the most consistent behaviour over the course of training.
+Each RL agent undergoes training for 500,000 time steps across four vectorized environments, employing 30 seeds for each RL algorithm.
+To assess performances on the environments, we calculate the average episode return across seeds at the end of training with a 95% confidence interval determined through the percentile bootstrapped method.
+We are not just interested in how well these curiosity algorithms perform but also in understanding the behaviour of these algorithms.
+We therefore also visualise the sample standard deviation during training to see the performance variations. This assists us in seeing how consistent the behaviour is for each curiosity algorithm.
+
+Now since we are not testing the reward combiner found it is not clear how we should combine the external reward and the intrinsic reward. We treat both the external reward and the intrinsic reward as episodic and therefore we can use the following formula, $$ \hat{r} = r_t + \lambda ri_t $$, where $$\lambda$$ is some weight factor. 
 
 ### Empty grid-world
 
+The empty grid-world is a very simple environment. As mentioned earlier the agent's task is to reach the goal position. The size is $$16\times 16$$ and the maximum number of steps is 1024.
+In our implementation the agent starts at the bottom left corner and has to reach the top right corner. The reward that agent recieves if it finds the goal is `1 - 0.9 * (step_count / max_steps)`. The gif shows a RL agent exploring the environment to reach the goal.
+
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/anim_BYOL_0.gif" class="img-fluid" %}
 <div class="caption">
-    Figure 10. The empty grid-world environment.
+The empty grid-world environment.
 </div>
 
 ### Deep sea
 
+The deep sea environment is one the `bsuite` environments developed by Google Deepmind <d-cite key="osband2020bsuite"></d-cite>.
+This is a $$ N \times N$$ grid environment that focuses on testing the exploration capabilities of an RL algorithm. The figure below shows the environment.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/deepsea.png" class="img-fluid" %}
 <div class="caption">
-    Figure 11. The Deep sea environment.
+    Figure 10. The Deep sea environment.
 </div>
+The agent starts at the the top left corner and its goal is to reach the bottom right corner.
+At each time step the agent descends one row. The agent can either go left or right. There's a small penalty of going right which is $$ −0.01/N $$ while going left just gives a reward of zero. The agent receives a reward of 1 if it finds the treasure at the bottom right corner.
+The max number of steps in the environment is $$N$$. Therefore, the optimal policy is to go right at every time step ignoring the greedy action. In our experiments we set $$N=10$$.
 
+### Results
+
+#### CCIM
+
+#### FAST
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
