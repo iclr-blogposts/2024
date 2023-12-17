@@ -38,7 +38,7 @@ toc:
   - name: Weight Resets
     subsections:
     - name: Do Resets Work?
-    - name: What's The Catch?  
+    - name: "What’s The Catch?" 
   - name: Implementing Primacy Bias
     subsections:
     - name: 2x2 Switching Frozen Lake
@@ -72,7 +72,7 @@ _styles: >
 
 Primacy bias occurs when a model's training is damaged by overfitting to its first experiences. This can be caused by poor hyperparameter selection, the underlying dynamics of the system being studied, or simply bad luck. 
 
-In this post we explore the paper “Primacy Bias in Deep Reinforcement Learning” by Nikishin et al. and presented at ICML 2022. We will present primacy bias and how it applies to deep reinforcement learning (RL), discuss how the authors prevent primacy bias, and finish by experimenting with our own toy example of primacy bias.
+In this post we explore the paper “Primacy Bias in Deep Reinforcement Learning” by Nikishin et al. and presented at ICML 2022. We will present primacy bias and how it applies to deep reinforcement learning, discuss how the authors prevent primacy bias, and finish by experimenting with our own toy example of primacy bias.
 
 Like many deep learning concepts, primacy bias takes inspiration from psychology [4]. For example, you might have a friend who “doesn’t like math” because they had a bad experience in primary school. Now, they avoid the subject despite having an aptitude for it. It turns out that for humans and machines, first impressions matter more than they should. This is primacy bias.
 
@@ -86,16 +86,16 @@ Nikishin et al. discuss a specific type of model that is particularly sensitive 
 In human terms, step 1 is the algorithm living its day-to-day life. At the end of the day, it goes to sleep, and overnight the algorithm's lifetime of experiences are referenced to update its beliefs (step 2).
 
 ### Why overcomplicate things?
-For those without an RL background, this might seem needlessly complicated. Why can’t we simply explore with a random policy and then fit a model all at once?
+For those without a reinforcement learning background, this might seem needlessly complicated. Why can’t we simply explore with a random policy and then fit a model all at once?
 
-Sometimes this is done [5] but the quality of the memories in the replay buffer relate to the quality of the policy that gathered the experience. Consider an agent learning to play chess. A random policy might have enough data to learn how to play the start of the game very effectively, but it will never learn how to chase an opponent’s king around an empty board. If a policy isn’t smart enough to get the agent out of the ‘early' game, it will never collect experiences to learn the ‘mid’ or ‘late' games.
+Althought this is sometimes done [5], the quality of the memories in the replay buffer is proportionate to the quality of the policy that gathered the experience. Consider an agent learning to play chess. A random policy might have enough data to learn how to play the start of the game effectively, but it will never learn how to chase an opponent’s king around an empty board. If a policy isn’t smart enough to get the agent out of the ‘early' game, it will never collect experiences to learn the ‘mid’ or ‘late' games.
 
 
 ## Selecting a Replay Ratio
 
 The *replay ratio* is the total number of gradient updates per environment interaction. If the number of experiences is fixed, then modifying the replay ratio is equivalent to changing the number of training epochs in a typical deep learning problem.
 
-Most researchers know the importance of training for a sufficient number of epochs. Training for more epochs is preferred and methods such as early stopping, weight regularization, and dropout layers can mitigate the risk of overfitting. At worst, if at validation time your model is overfit, you can retrain the model from scratch.
+Most researchers know the importance of training for a sufficient number of epochs. Training for more epochs is preferred and methods such as early stopping, weight regularization, and dropout layers can mitigate the risk of overfitting. At worst, if you end up with an overfit model then you can retrain it from scratch.
 
 In deep reinforcement learning, the replay ratio is typically set to one. Unfortunately, finding the correct replay ratio is difficult. We want the agent to learn as much as possible but there is a path-dependency that is hard to ignore. If the policy becomes overfit early it will have less meaningful interactions with the environment, creating negative feedback. If you don’t catch overfitting in your Poker Bot until it loses a couple tournaments, then you might have spent a lot of money for a dataset on how to lose poker hands.
 
@@ -121,10 +121,10 @@ To avoid primacy bias, Nikishi et al. propose the following solution: freely inc
 
 To think about this concretely, consider a 100 step training loop. At each step we:
 
-1.  Gather 1 observation
-2.  Add it to the replay buffer
-3.  Select a random sample from the replay buffer
-4.  Perform a gradient update to the model with the sample
+1.  Gather 1 observation.
+2.  Add it to the replay buffer.
+3.  Select a random sample from the replay buffer.
+4.  Perform a gradient update to the model with the sample.
 
 After 100 steps, the first observation will have been sampled on average 5.19 times. The 50th observation will have been sampled 0.71 times, and the 99th observation will have been sampled on average 0.01 times. This can be summarized in a plot. 
 
@@ -142,8 +142,8 @@ Some solutions to mitigate this include recency weighting [9] or using prioritiz
 
 In practice, weight resets are a bit more complicated. Ideally, we retrain the model from scratch after each observation. Unfortunately this isn’t realistic (on my computer). This leaves us with two decisions:
 
-1.  Select a reset frequency
-2.  Decide what to reset
+1.  Select a reset frequency.
+2.  Decide what to reset.
 
 Resetting often will prevent primacy bias but this requires a high replay ratio. This trade-off is discussed in detail in the follow up work "Sample-Efficient Reinforcement Learning by Breaking the Replay Ratio Barrier", [3] published in 2023. In particular, a heatmap is shared showing the trade-off between data and computation budget on a dynamic motion control problem:
 
@@ -165,7 +165,7 @@ Nitkshi et al. show that on average resets work well.
 1. Immediately after a reset there is a sudden drop in performance that quickly recovers.
 2. Resets never irreparably harm a model. At worse, the model returns to the pre-reset level (ex: cheetah-run), but sometimes it can perform substantially better (humanoid-run).
 
-These results are consistent across multiple algorithms and environments, including the continuous control Deep Mind Control Suite and the discrete Atari 100k benchmarks.
+These results are consistent across multiple algorithms and environments, including the continuous control Deep Mind Control Suite and the discrete Atari 100k benchmarks. 
 
 <details open>
 <summary>Episode return overtime on a subset of DeepMind Control, with and without resets, using SAC algorithm. Averaged over 10 random seeds.</summary>
@@ -222,13 +222,16 @@ After seeing the success of resets, it is reasonable to wonder how weight resets
 
 While these results are impressive, they come at a cost. At minimum, increasing the replay ratio increases the compute time linearly. D'Oro et al 2023 [3] note that running the full dynamic control benchmark with a replay ratio of 32 takes 4 GPU days with a NVIDIA V100. Using a replay ratio of 16 on Atari 100K requires 5 GPU hours per run.
 
-Additionally, implementing weight resets requires a sneaky amount of design decisions, such as:
+Additionally, implementing weight resets requires a sneaky number of design decisions. The results from the paper show reset rules specifically chosen for each environment and algorithm.
+
+Some of these considerations include:
 
 1.  How often should you reset? Every step is ‘ideal’ but it is also ideal to get results this year.
 2.  What is the optimal replay ratio to maximally learn per sample and sustain the reset frequency?
 3.  What exactly should I reset? Full model? Last layer?
 
-These are open questions. For weight resets to become widely used new heuristics and best practices will need to develop. The answers may depend on both the network architecture and the underlying system dynamics. Trying to imagine the precise behaviours induced by primacy bias on Atari/Deep Mind Control can be difficult.
+These are open questions. For weight resets to become widely used new heuristics and best practices will need to develop. The answers may depend on both the network architecture and the underlying system dynamics. Trying to imagine the precise behaviours induced by primacy bias on Atari and Deep Mind Control can be difficult.
+
 
 
 ## Implementing Primacy Bias
@@ -237,7 +240,7 @@ The best way to learn something is through practice. In this section we will pre
 
 The biggest obstacle to studying primacy bias is the compute resources required. Training time scales linearly with replay ratio, and a high replay ratio is necessary to extract maximal information per sample and to recover after each reset. To work around this, we present an MVP: Minimum Viable Primacy (bias).
 
-We use a modified version of the Frozen Lake environment, provided by Farama Gymnasium [6] we a DQN model (the first model to popularize a replay buffer) [7] based on the CleanRL implementation [8].
+We use a modified version of the Frozen Lake environment provided by Farama Gymnasium [6] with a DQN model (the first model to popularize a replay buffer) [7] based on the CleanRL implementation [8].
 
 
 ### 2x2 Switching Frozen Lake
@@ -323,7 +326,7 @@ In this blogpost, we discuss primacy bias and its application to off-policy deep
 
 We hope that more examples of primacy bias continue to be discovered and studied. Eventually, we would like to identify specific behaviors that are catastrophically memorized and create guiding principles to identify environments that are most at risk of primacy bias. Overtime we hope this might unlock new applications of deep reinforcement learning.
 
-Even as the theory continues to develop, there is little harm in attempting periodic weight resets with a high replay ratio to train off-policy RL agents.
+Even as the theory continues to develop, there is little harm in attempting periodic weight resets with a high replay ratio to train off-policy reinforcement learning agents.
 
 Finally, primacy bias might not always be a bad thing. If you decide to take a new shortcut to work by walking down an alley and the first thing you notice is how dark and unsafe it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
 
