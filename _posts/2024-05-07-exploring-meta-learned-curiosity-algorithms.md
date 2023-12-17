@@ -96,7 +96,7 @@ The inner loop addresses a single task, while the outer loop deals with the dist
 <div class="caption">
     Figure 3. An illustration of meta-learning. Taken from <d-cite key="huisman2021survey"></d-cite>.
 </div>
-Moving into the intersection of meta-learning and reinforcement learning (RL) is meta-RL, where the agent learns how to reinforce learn <d-cite key="beck2023survey"></d-cite>. In meta-RL, the agent aims to maximise the sum of rewards from a distribution of MDPs.
+Moving into the intersection of meta-learning and reinforcement learning (RL) is meta-RL, where the agent learns how to reinforcement learn <d-cite key="beck2023survey"></d-cite>. In meta-RL, the agent aims to maximise the sum of rewards from a distribution of MDPs.
 
 In basic RL, we have an algorithm $$f$$ that outputs a policy, mapping states to actions. However, in meta-RL, our algorithm has meta-parameters $$\theta$$ that outputs $$f$$, and $$f$$ then produces a policy when faced with a new MDP.
 
@@ -117,7 +117,7 @@ $$
 
 where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network.
 We normalise $$r_i$$ by dividing it by the running estimate of the standard deviations of
-the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments and times. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
+the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
 <div class="caption">
@@ -143,7 +143,7 @@ Since the RL agent and the predictor both make use of the online network's encod
 
 ## Meta-learning curiosity algorithms
 
-Alet et al. <d-cite key="alet2020metalearning"></d-cite> view curiosity as a mechanism that is found by evolution. As a result they turn to meta-learning to discover newcuriosity algorithms.
+Alet et al. <d-cite key="alet2020metalearning"></d-cite> view curiosity as a mechanism that is found through natural selection. As a result they turn to meta-learning to discover new curiosity algorithms.
 In this case the outer loop searches over the curiosity algorithm space while the inner loop performs the standard RL procedure. The figure below illustrates this process.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/mlc.png" class="img-fluid" %}
@@ -156,13 +156,13 @@ The first component, $$\mathcal{I}$$, calculates the intrinsic reward given the 
 
 ### Meta-Learned Components and their DAGs
 
-As mention earlier the Alet et al. focused on meta-learning pieces of code or rather meta-learning in a space of programs or operations. The programs and operations are represented in domain-specific language (DSL). The DSL used to find component $$\chi$$ consisted of operations such as arithmetic, Min, Max and more. 
+As mention earlier Alet et al. focused on meta-learning pieces of code or rather meta-learning in a space of programs or operations. The programs and operations are represented in domain-specific language (DSL). The DSL used to find component $$\chi$$ consisted of operations such as arithmetic, Min, Max and more. 
 While the DSL used to find component $$\mathcal{I}$$ consisted of programs such as neural networks complete with gradient-descent mechanisms, L2 distance calculation, and ensembles of neural networks and more. Component $$\mathcal{I}$$'s DSL can describe many other hand-designed curiosity algorithms in literature, such as RND. 
 
 The components $$\mathcal{I}$$ and $$\chi$$ are represented as Directed Acyclic Graphs (DAGs). The DAGs consist of the following types of modules:
 - Input modules: These are the inputs we put in each component of module $$\mathcal{C}$$. 
-- Parameter and Buffer modules: This module either consists of the weights of a neural network which can be updated via back-propagation or a First In, First Out queues that output a finite list of the most recent $$k$$ inputs. 
-- Functional modules: This type module calculate the output given some input.
+- Parameter and Buffer modules: This module either consists of the weights of a neural network which can be updated via back-propagation or First In, First Out queues that output a finite list of the most recent $$k$$ inputs. 
+- Functional modules: This type of module calculates the output given some input.
 - Update modules: These modules can add real-valued outputs to the loss function of the neural network or add variables to buffers.
 
 The DAGs also have an output node which is a single node and the output of this node is the output of the entire program. To make these ideas more concrete, let us look the DAG that describes RND.
@@ -172,14 +172,14 @@ The DAGs also have an output node which is a single node and the output of this 
     Figure 7. The DAG of RND. Taken from <d-cite key="alet2020metalearning"></d-cite>.
 </div>
 
-The blue rectangles represent the input modules, and we can see from the inputs are states from the environment. 
+The blue rectangles represent the input modules, and we can see from the figure that the inputs are states from the environment. 
 The parameter modules are the gray rectangles and these are the parameters of the target network and the predictor network.
 Note that the target network's parameters are given by $$\theta$${1} and the predictor network's parameter's are given by $$\theta$${2}.
 The functional modules are the white rectangles and these are the neural networks. The update module is the pink rectangle which is the loss function.
 
 The output node is the green rectangle and is the L2 distance between the output of predictor network and the target network. This is the loss function described in the RND section. Note that $$\theta$${2} rectangle has a pink border and a pink arrow this indicates that it can be updated via back-propagation. While $$\theta$${1} rectangle has black border and a black arrow indicating the parameters are not updated via back-propagation. Also note that the functional module that makes use of those parameters has the word "Detach" indicating the gradient information is not flowing back. Recall that $$\theta$${1} represents the parameters of the target network, which remain fixed, and $$\theta$${2} represents the parameters of the predictor network, which are updated during training.
 
-Now a very important idea is that the DAGs have polymorphically types inputs and outputs. There are four types:
+Now a very important idea is that the DAGs have polymorphic types for the inputs and outputs. There are four types:
 - $$\mathbb{R}$$, the real numbers.
 - $$\mathbb{S}$$, the state space of the environment.
 - $$\mathbb{A}$$, the action space of the environment. 
@@ -190,7 +190,7 @@ If $$\mathbb{S}$$ is just an array of numbers then target network and the predic
 
 ### Method
 
-We now turn our attention to how component $$\mathcal{I}$$ was searched for. Alet et al. decided to focus on environment that has sparse reward which is an image-based grid world. In this environment the agent is tasked with finding the goal position and only obtains a reward if it finds the goal position. This is environment has sparse reward as the agent only receives feedback one it finds the goal position. They limited the number of operations that component $$\mathcal{I}$$ could perform to 7 so that the search space remains manageable, and we can still interpret the algorithm. They focused on finding a component $$\mathcal{I}$$ that optimises the number of distinct cells visited. From the search 13 of the top 16 components found where variants of FAST and 3 of them were variants of CCIM. We will cover FAST and CCIM in the upcoming sections.
+We now turn our attention to how component $$\mathcal{I}$$ was searched for. Alet et al. decided to focus on environment that has sparse reward which is an image-based grid world. In this environment the agent is tasked with finding the goal position and only obtains a reward if it finds the goal position. This is environment has sparse reward as the agent only receives feedback once it finds the goal position. They limited the number of operations that component $$\mathcal{I}$$ could perform to 7 so that the search space remains manageable, and we can still interpret the algorithm. They focused on finding a component $$\mathcal{I}$$ that optimises the number of distinct cells visited. From the search 13 of the top 16 components found where variants of FAST and 3 of them were variants of CCIM. We will cover FAST and CCIM in the upcoming sections.
 
 For the component $$\chi$$ they focused on the Lunar Lander environment as it has a strong external reward signal. The algorithm used to output the intrinsic reward was a variant of RND. The main difference was that instead of single neural network for the predicator network an ensemble is used. This algorithm came from a preliminary set of algorithms that all resemble RND. The best reward combiner found was,
 
@@ -228,7 +228,7 @@ We hypothesize that this algorithm may not perform well in environments where th
 
 ### CCIM
 
-CCIM took us quite a well to understand and process. Let us first go through its DAG below.
+CCIM took us quite a while to understand and process. Let us first go through its DAG below.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/CCIM_diagram.png" class="img-fluid" %}
 <div class="caption">
     Figure 9. The DAG of CCIM. Taken from <d-cite key="alet2020metalearning"></d-cite>.
@@ -268,10 +268,10 @@ After reaching out to them about this discrepancy, they did confirm that the equ
 #### CCIM-slimmed
 
 Through our communication with them, Alet et al. recommended we try ablations of CCIM and they suggested the following slimmed-down version of CCIM:
-- Network $$r_{theta_1}$$ remains unchanged and its parameters stay fixed.
+- Network $$r_{\theta_1}$$ remains unchanged and its parameters stay fixed.
 - Network $$fr_{\theta_3}$$ changes to just being a forward network, $$f_{\theta_3}$$. 
-- The loss function of the $$f_{\theta_3}$$ is now $$\mathcal{L}_f=\|f_{\theta_3}(r_{theta_1}(s_t))-r_{theta_1}(s_{t+1})\|_2^2$$.
-- Network $$b_{\theta_2}$$'s loss function, $$\mathcal{L}_b$$, also changes. $$\mathcal{L}_b=\|b_{\theta_2}(r_{theta_1}(s_{t+1}))-r_{theta_1}(s_{t})\|_2^2$$.
+- The loss function of the $$f_{\theta_3}$$ is now $$\mathcal{L}_f=\|f_{\theta_3}(r_{\theta_1}(s_t))-r_{\theta_1}(s_{t+1})\|_2^2$$.
+- Network $$b_{\theta_2}$$'s loss function, $$\mathcal{L}_b$$, also changes. $$\mathcal{L}_b=\|b_{\theta_2}(r_{\theta_1}(s_{t+1}))-r_{\theta_1}(s_{t})\|_2^2$$.
 - The intrinsic reward is now $$\mathcal{L}_f+\mathcal{L}_b$$.
 
 This slimmed down version of CCIM was much easier to implement. Since the sum of the loss functions also act as the intrinsic reward it is clearer to us as to how the intrinsic rewards will decrease as the agent explores. As agent explores both the forward and backward networks become better at predicting what the random embedding of the next state and previous state will be, respectively.
@@ -291,7 +291,8 @@ To assess performances on the environments, we calculate the average episode ret
 We are not just interested in how well these curiosity algorithms perform but also in understanding the behaviour of these algorithms.
 We therefore also visualise the sample standard deviation during training to see the performance variations. This assists us in seeing how consistent the behaviour is for each curiosity algorithm.
 
-Now since we are not testing the reward combiner found it is not clear how we should combine the external reward and the intrinsic reward. We treat both the external reward and the intrinsic reward as episodic and therefore we can use the following formula, $$ \hat{r} = r_t + \lambda ri_t $$, where $$\lambda$$ is some weight factor. 
+Now since we are not testing the reward combiner found, it is not clear how we should combine the external reward and the intrinsic reward. We treat both the external 
+reward and the intrinsic reward as episodic and therefore we can use the following formula, $$ \hat{r} = r_t + \lambda ri_t $$, where $$\lambda$$ is some weight factor. 
 These are the optimal values we found for $$\lambda$$ for each curiosity algorithm:
 
 - FAST: $$\lambda = 0.003$$.
@@ -314,7 +315,8 @@ The empty grid-world environment.
 
 ### Deep sea
 
-The deep sea environment is one the `bsuite` environments developed by Google Deepmind <d-cite key="osband2020bsuite"></d-cite>.
+The deep sea environment is one of the `bsuite` environments developed by Google
+Deepmind <d-cite key="osband2020bsuite"></d-cite>.
 This is a $$ N \times N$$ grid environment that focuses on testing the exploration capabilities of an RL algorithm. The figure below shows the environment.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/deepsea.png" class="img-fluid" %}
 <div class="caption">
@@ -381,6 +383,8 @@ Next we decided to plot the heatmaps of CCIM and CCIM-slimmed and compare to PPO
 </div>
 
 #### FAST
+
+Let us now turn our attention to how FAST performed. We again start with deep sea environment. The left of Figure 14 indicates to us that FAST does produce more consistent agents than PPO however how baselines have a lower sample standard deviation. We again plot the sample deviation for the first 10,000 steps as we notice no significant difference after 10,000. Figure 14 right side shows that FAST, like CCIM, also does poor on this environment relative to our baselines.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
