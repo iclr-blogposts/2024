@@ -188,7 +188,7 @@ that maintain the shape of a Gaussian throughout the entire process. Hence, the
 conditional probability paths can be described by a variable transformation
 $$\phi_t(x \mid x_1) = \sigma_t(x_1)x + \mu_t(x_1)$$. The time-dependent functions
 $$\sigma_t$$ and $$\mu_t$$ are chosen such that $$\sigma_0(x_1) = 1$$ and $$\sigma_1 =
-\sigma\_{\text{min}}$$ (chosen sufficiently small), as well as $$\mu_0(x_1) = 0$$
+\sigma_\text{min}$$ (chosen sufficiently small), as well as $$\mu_0(x_1) = 0$$
 and $$\mu_1(x_1)=x_1$$. The corresponding probability path can be written as
 
 $$
