@@ -332,9 +332,9 @@ Consider a network with a single ReLU neuron. We plot its output against two dat
 
 #### Multiplicative non-convexity
 
-If we ignore ReLU for a moment, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables together: $w_1 ~ \alpha_1$. However, this non-convexity can be ignored for positive outputs by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ is a summary variable for $w_1 \alpha_1$ and then mapping back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs and minima are the same for positive outputs and so they are equivalent because they have the same expressivity in that case.
+Putting ReLU aside briefly, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables together: $w_1 ~ \alpha_1$. However, this non-convexity can be ignored by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ take the role of the product $w_1 \alpha_1$. We can solve the minimisation problem with only $$u_1$$ and then map it back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs matches. The global minima are the same as they have the same expressivity, we'll say the two problem are equivalent.
 
-Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity in general as $$\alpha_1$$ can be negative (to produce negative outputs)! We split the role of a non-convex variable into two non-negative ones: $$u_1 - v_1$$. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
+Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity in general as $$\alpha_1$$ can be negative (to produce negative outputs)! We split the role of a non-convex variable into two: $$u_1$$ and $$v_1$$. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
 
 <p>
 \begin{equation*}
@@ -342,7 +342,9 @@ Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u
 \end{equation*}
 </p>
 
-This is indeed a convex objective, with convex constraints (non-negativity). At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to a negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
+This is indeed a convex objective. At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to a negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
+
+With a bit of effort, the two problem share the same global minima as we can easily map back and forth without altering the loss.
 
 #### Activation
 
