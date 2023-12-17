@@ -145,7 +145,7 @@ In practice, weight resets are a bit more complicated. Ideally, we retrain the m
 1.  Select a reset frequency.
 2.  Decide what to reset.
 
-Resetting often will prevent primacy bias but this requires a high replay ratio. This trade-off is discussed in detail in the follow up work "Sample-Efficient Reinforcement Learning by Breaking the Replay Ratio Barrier", [3] published in 2023. In particular, a heatmap is shared showing the trade-off between data and computation budget on a dynamic motion control problem:
+Resetting often will prevent primacy bias but this requires a high replay ratio. This trade-off is discussed in detail in the follow up work "Sample-Efficient Reinforcement Learning by Breaking the Replay Ratio Barrier" [3] published at ICLR in 2023. In particular, a heatmap is shared showing the trade-off between data and computation budget on a dynamic motion control problem:
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
