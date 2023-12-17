@@ -234,7 +234,14 @@ We can see that there are 3 neural networks: a random network, a random and forw
 
 ## Experiments
 
-We now discuss the experimental details to explore our FAST and CCIM. Our codebase based of PureJaxRL <d-cite key="lu2022discovered"></d-cite>.
+### Emperical Design
+
+
+In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase is derived from PureJaxRL, as presented by Lu et al. <d-cite key="lu2022discovered"></d-cite>. 
+Specifically, we leverage PureJaxRL's Proximal Policy Optimization (PPO) implementation as our chosen reinforcement learning (RL) algorithm. The foundation of our 
+experiments is laid upon a JAX implementation of Minigrid's grid-world environment <d-cite key="MinigridMiniworld23"></d-cite>, which uses gymnax's API <d-cite key="gymnax2022github"></d-cite>. Additionally, we make use of gymnax's deep-sea environment implementation as well.
+
+Each RL agent undergoes training for 500,000 time steps across four vectorized environments, employing 30 seeds for each RL algorithm. To assess performances on the environments, we calculate the average episode return across seeds at the conclusion of training, supplementing it with a 95% confidence interval determined through the percentile bootstrapped method. Our objective extends beyond evaluating the efficacy of curiosity algorithms in these environments. We are equally invested in comprehending the behavioral nuances exhibited by these algorithms. Consequently, we visualize the sample standard deviation during training to depict the performance variations. This analysis aids in discerning which curiosity algorithm yields agents with the most consistent behavior over the course of training.
 
 ### Empty grid-world
 
@@ -258,9 +265,19 @@ We now discuss the experimental details to explore our FAST and CCIM. Our codeba
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
     </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_rnd_30.png" class="img-fluid"  %}
+    </div>
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_fast_30.png" class="img-fluid"  %}
     </div>
+</div>
+
+<div class="caption">
+    Figure 12. Heatmaps of the agents in empty grid-world.
 </div>
 
 ## Discussion
