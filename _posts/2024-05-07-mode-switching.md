@@ -32,17 +32,10 @@ toc:
       - name: 1.2 Switching Basics
       - name: 1.3 Motivation
   - name: 2. Experiments
-  - name: 3. Conclusion
-  - name: Images and Figures
     subsections:
-    - name: Interactive Figures
-  - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
+      - name: 2.1 Concentrated Terminal States
+      - name: 2.2 Early Exploration
+  - name: 3. Conclusion
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -66,7 +59,7 @@ _styles: >
 
 ## 1. Introduction
 
-Imagine learning to ride a bicycle for the first time. This process requires the testing of numerous actions such as steering the handlebars to change direction, shifting weight to maintain balance, and applying pedaling power to move forward. To achieve any satisfaction, a complex series of these actions must be taken for a substantial amount of time. However, a dilemma emerges: a plethora of other tasks such as eating, sleeping, and working may result in more immediate satisfaction (e.g. lowered hunger, better rest, bigger paycheck), which may tempt the learner to abandon the task of learning to ride a bicycle. Furthermore, if enough bicycle-riding progress is not learned at the end of a day, it may be necessary to repeat some of the learning process throughout the following day.
+Imagine learning to ride a bicycle for the first time. This process requires the testing of numerous actions such as steering the handlebars to change direction, shifting weight to maintain balance, and applying pedaling power to move forward. To achieve any satisfaction, a complex series of these actions must be taken for a substantial amount of time. However, a dilemma emerges: a plethora of other tasks such as eating, sleeping, and working may result in more immediate satisfaction (e.g. lowered hunger, better rest, bigger paycheck), which may tempt the learner to abandon the task of learning to ride a bicycle. Furthermore, if enough bicycle-riding progress is not learned by the end of a day, it may be necessary to repeat some of the learning process throughout the following day.
 
 One frivolous strategy (Figure 1, option 1) to overcome the dilemma is to interleave a few random actions on the bicycle among the remaining tasks of the day. This strategy is painfully slow, as the learning process will be stretched across a great length of time before achieving any satisfaction. Furthermore, this strategy may interrupt and reduce the satisfaction of the other daily tasks. The more intuitive strategy (Figure 1, option 2) is to dedicate significant portions of the day to explore the possible bicycle-riding actions. The benefits of this approach include testing the interactions between distinct actions, isolating different facets of the task for quick mastery, and preventing boredom and abandonment of the task entirely. Also -- let's face it -- who wants to wake up in the middle of the night to turn the bicycle handlebar twice before going back to bed? 
 
@@ -81,405 +74,95 @@ This introduction section continues with a brief discussion of topics related to
 
 ### 1.1 Switching Distinctions
 
-Mode-switching behavior policies (which we now shorten to *switching policies*) were explicitly introduced in the initial study by DeepMind <d-cite key="pislar2021should"></d-cite>, and we focus on briefly contrasting switching policies with monolithic policies and the previous exploration literature in this subsection. The below chart illustrates the pivotal difference between switching and monolithic policies: at the beginning of each time step, the agent may use a variety of information available to determine its behavior mode for the current time step and output a behavior policy to determine an action. A key distinction is that the switching policies can drastically change between time steps, as the modes can aim to accomplish very different tasks (e.g. exploration, exploitation, mastery, novelty). As the graphic illustrates, switching is such a general addition to an algorithm that it was not formally defined in the initial study. 
+Mode-switching behavior policies (which we will sometimes shorten to *switching policies*) were explicitly introduced in the initial study by DeepMind <d-cite key="pislar2021should"></d-cite>, and we focus on briefly contrasting switching policies with monolithic policies and the previous exploration literature in this subsection. Figure 2 illustrates the pivotal difference between switching and monolithic policies: at the beginning of each time step, the agent may use a variety of information available to determine its behavior mode for the current time step and then output a behavior policy to determine the action. A key distinction is that the switching policies can drastically change between time steps, as the modes can aim to accomplish very different tasks (e.g. exploration, exploitation, mastery, novelty). As the graphic illustrates, switching is such a general addition to an algorithm that it was not exhaustively defined in the initial study. 
 
-Mode **periods** are defined as a sequence of time steps in a single mode. At the finest granularity, *step-level* periods only last one step in length; the primary example is epsilon-greedy exploration because it switches its behavior policy between explore and exploit mode at the level of one time step <d-cite key="mnih2015human"></d-cite>. At the other extreme, *experiment-level* periods encompass the entire training duration, possibly to be used in offline RL (ORL) algorithms <d-cite key="kumar2020conservative,dabney2018implicit,janner2021offline"></d-cite>. A finer granularity is *episode-level* periods, where a single behavior policy is chosen for one entire episode at a time, such as for diversifying the stochasticity of a policy throughout training <d-cite key="kapturowski2018recurrent"></d-cite>. The switching policies analyzed in this blog post produce *intra-episodic* periods at a granularity between step-level periods and experiment-level periods. Intra-episodic periods generally occur at least a few times during an episode and last for more than a few time steps. The practice and study of interpolating between extremes has occured in areas such as n-step returns <d-cite key="sutton2018reinforcement"></d-cite> and colored noise <d-cite key="eberhard2022pink"></d-cite> with notable success, making the study of intra-episodic mode periods even more enticing. 
+{% include figure.html path="assets/img/2024-05-07-mode-switching/box.png" class="img-fluid" %}
+<div class="caption">
+    Figure 2. Introduction of mode-switching behavior to standard agent-environment RL interaction.
+</div>
 
-The question investigated by the mode-switching study is *when* to switch modes. This blog post only considers two possible modes, exploration and exploitation, so the question reduces to determining *when to explore*. Other questions have been asked regarding exploration such as *how much* to explore that analyzes the proportion of exploration actions taken over the entire course of training. This question encompasses the annealing of exploration hyperparameters including epsilon from epsilon-greedy policies <d-cite key="mnih2015human"></d-cite> and the entropy bonus from softmax policies <d-cite key="silver2016mastering"></d-cite>. Another question is *how* to explore that includes randomly <d-cite key="ecoffet2019go"></d-cite>, optimistically <d-cite key="sutton2018reinforcement"></d-cite>, and intrinsically <d-cite key="burda2018exploration"></d-cite>. These two questions are separate from the question of *when* to explore, as they usually consider a smooth change in the behavior policy after each time step; switching policies incorporate a much more rigid change in the behavior policy, meriting a separate analysis. 
+Mode **periods** are defined as a sequence of time steps in a single mode. At the finest granularity, *step-level* periods only last one step in length; the primary example is epsilon-greedy exploration because it switches its behavior policy between explore and exploit mode at the level of one time step <d-cite key="mnih2015human"></d-cite>. At the other extreme, *experiment-level* periods encompass the entire training duration, possibly to be used in offline RL (ORL) algorithms <d-cite key="kumar2020conservative,dabney2018implicit,janner2021offline"></d-cite>. A finer granularity is *episode-level*, in which a single behavior policy is chosen for one entire episode at a time, such as when diversifying the stochasticity of a policy throughout training <d-cite key="kapturowski2018recurrent"></d-cite>. The switching policies analyzed in this blog post produce *intra-episodic* periods at a granularity between step-level periods and episode-level periods. Intra-episodic periods generally occur at least a few times during an episode and last for more than a few time steps. The practice and study of interpolating between extremes has occured in areas such as n-step returns <d-cite key="sutton2018reinforcement"></d-cite> and colored noise <d-cite key="eberhard2022pink"></d-cite> with notable success, making the study of intra-episodic mode periods even more enticing. 
+
+The question investigated by the mode-switching study is when to switch modes. This blog post and the initial study only perform experiments with two possible modes, exploration and exploitation, so the question of *when to switch* reduces to determining *when to explore*. Other questions have been asked regarding exploration such as *how much* to explore that analyzes the proportion of exploration actions taken over the entire course of training. This question encompasses the annealing of exploration hyperparameters including epsilon from epsilon-greedy policies <d-cite key="mnih2015human"></d-cite> and the entropy bonus from softmax policies <d-cite key="silver2016mastering"></d-cite>. Another related question is *how* to explore that includes randomly <d-cite key="ecoffet2019go"></d-cite>, optimistically <d-cite key="sutton2018reinforcement"></d-cite>, and intrinsically <d-cite key="burda2018exploration"></d-cite>. These two questions are separate from the question of *when* to explore, as they usually consider a smooth change in the behavior policy after each time step; switching policies incorporate a much more rigid change in the behavior policy, meriting a separate analysis. 
 
 ### 1.2 Switching Basics
 
-The preceding subsection narrowed our focus to determining when to explore using intra-episodic mode periods. We now discuss the most relevation literature and discuss the fundamentals of implementation. Go-Explore <d-cite key="ecoffet2019go"></d-cite> is a resetting algorithm that resets to previously-encountered promising states after completion of an episode before exploring randomly. However, this algorithm implements only one switch from resetting to exploration over the course of an episode. Temporally-extended epsilon-greedy exploration <d-cite key="dabney2020temporally"></d-cite> generalizes epsilon-greedy exploration by drawing from a distribution the length of time an exploration action should last. This method of switching is intra-episodic and generally is performed multiple times per episode. 
+The preceding subsection narrowed our focus to determining when to explore using intra-episodic mode periods. We now discuss the most relevant literature and discuss the fundamentals of mode-switching implementation. Go-Explore <d-cite key="ecoffet2019go"></d-cite> is a resetting algorithm that resets to previously-encountered promising states after completion of an episode before exploring randomly. However, this algorithm implements only one switch from resetting to exploration over the course of an episode. Temporally-extended epsilon-greedy exploration <d-cite key="dabney2020temporally"></d-cite> generalizes epsilon-greedy exploration by drawing from a distribution the length of time an exploration action should last. This method of switching is intra-episodic and generally is performed multiple times per episode. The original mode-switching work by DeepMind extends the above and other work in many dimensions and may soon be viewed as the seminal work on mode-switching behavior policies; we discuss the most fundamental dimensions of mode-switching architectures below. 
 
-The original mode-switching work by DeepMind extends the above and other work in many dimensions and may soon be viewed as the seminal work on mode-switching behavior policies. The **starting mode** is the mode of the algorithm on the first time step, usually exploitation or greedy mode. The set of **behavior modes** (e.g. explore and exploit) must be defined and usually will exhibit diverse differences in the associated policies. The switching **trigger** is the mechanism that prompts the agent to switch modes and is perhaps the most interesting consideration of switching policies. Informed triggers incorporate aspects of the state, action, and reward signals such as the difference between the expected and realized reward, and they may be actuated after crossing a prespecified threshold. Blind triggers act independently of these signals and can be actuated after a certain number of steps are taken in the current mode or actuated randomly at each time step with a prespecified probability. A **bandit** meta-controller <d-cite key="schaul2019adapting"></d-cite> may be used to choose the switching hyperparameters (e.g. termination probability, mode length, informed threshold) at the beginning of each episode to prevent additional hyperparameter tuning. Finally, **homeostasis** <d-cite key="turrigiano2004homeostatic"></d-cite> can be added when using trigger thresholds (e.g. for informed triggers) to adapt the switching threshold to a target rate, again for ease of hyperparameter tuning.Note that these dimensions are so richly diverse that the previous discussion will need to suffice for this blog post to maintain any notion of brevity, and we summarize these aspects of mode-switching in Table 1.
+The **starting mode** is the mode of the algorithm on the first time step, usually exploitation or greedy mode. The **set of behavior modes** (e.g. explore and exploit) must contain at least two modes and usually will exhibit diverse differences in the associated policies. The switching **trigger** is the mechanism that prompts the agent to switch modes and is perhaps the most interesting consideration of switching policies. Informed triggers incorporate aspects of the state, action, and reward signals such as the difference between the expected and realized reward, and they may be actuated after crossing a prespecified threshold. Blind triggers act independently of these signals and can be actuated after a certain number of steps are taken in the current mode or actuated randomly at each time step with a prespecified probability. A **bandit meta-controller** <d-cite key="schaul2019adapting"></d-cite> may be used to choose the switching hyperparameters (e.g. termination probability, mode length, informed threshold) at the beginning of each episode to maximize episodic return and prevent additional hyperparameter tuning. Finally, **homeostasis** <d-cite key="turrigiano2004homeostatic"></d-cite> can be added when using trigger thresholds (e.g. for informed triggers), which adapts the switching threshold to a target rate across the course of training, again for ease of hyperparameter tuning. Note that these dimensions are so richly diverse that we end the associated discussion to maintain any notion of brevity, and we summarize these facets of mode-switching in Table 1.
 
 | ------------- |-------------|
-| Mode-Switching Aspect        | Description           | 
+| Mode-Switching Facet        | Description           | 
 | ------------- |-------------| 
 | Starting Mode      | Mode upon first time step at episode start | 
 | Behavior Mode Set     | Diverse set of modes with associated policies      |  
-| Trigger | Mechanism that tells agent when to switch modes      |   
-| Bandit Meta-Controller | Adapts switching hyperparameters to maximize episode return      | 
+| Trigger | Mechanism that informs agent when to switch modes      |   
+| Bandit Meta-Controller | Adapts switching hyperparameters to maximize episodic return      | 
 | Homeostasis | Adapts switching threshold to achieve a target rate     | 
 | ------------- |-------------|
 
 
 <div class="caption">
-    Table 1. Various aspects of mode-switching policies. Content taken from <d-cite key="pislar2021should"></d-cite>.
+    Table 1. Various facets of mode-switching policies. Content taken from <d-cite key="pislar2021should"></d-cite>.
 </div>
 
 ### 1.3 Motivation
 
-The authors of the initial study on mode-switching behavior policies performed experiments solely on seven hard-exploration ATARI games. The focus of the study was showing the increase in score on these games when using mode-switching behavior policies versus monolithic behavior policies. One area of future work pointed out by the reviewers is to increase the understanding of these less-studied policies. For example, the meta review [meta review](https://openreview.net/forum?id=dEwfxt14bca&noteId=C0cPgElgV7P) of the paper
+The authors of the initial study on mode-switching behavior policies performed experiments solely on seven hard-exploration ATARI games. The focus of the study was showing the increase in score on these games when using mode-switching behavior policies versus monolithic behavior policies. One area of future work pointed out by the reviewers is to increase the understanding of these less-studied policies. For example, the [meta review](https://openreview.net/forum?id=dEwfxt14bca&noteId=C0cPgElgV7P) of the paper stated that an illustrative task may help provide intuition of the method. The [first reviewer](https://openreview.net/forum?id=dEwfxt14bca&noteId=Fjc2fBjmhwZ) noted how the paper could be greatly improved through demonstrating specific benefits of the method on certain tasks. [Reviewer 2](https://openreview.net/forum?id=dEwfxt14bca&noteId=e3xcQZnyuyt) stated how discussing observed differences on the different domains may be useful. The [third reviewer](https://openreview.net/forum?id=dEwfxt14bca&noteId=Qcv_GiwGPhr) mentioned how the paper could be strengthened by developing guidelines for practical use. The [last reviewer](https://openreview.net/forum?id=dEwfxt14bca&noteId=W6v6g6zFQHi) stated that it would be helpful to more thoroughly compare mode-switching policies to monolithic policies for the sake of highlighting their superiority.
 
+We extend the initial study on mode-switching policies and progress towards further understanding of these methods in this blog post through additional experiments. The following experiments each discuss an observed behavioral difference in mode-switching policies versus monolithic policies. We focus on behavioral differences in this work, as they are observable in the environment and are not unique to the architecture of certain agents <d-cite key="osband2019behaviour"></d-cite>. Our experiments are performed on 10 commonly-used ATARI games <d-cite key="agarwal2022reincarnating"></d-cite>, and we also provide another illustrative task or chart for each experiment to further enhance understanding. One highlight of this work is showcasing how mode-switching behavior policies not only influence exploration but also significantly influence exploitation. Our work serves as a first step in empirically delineating the differences mode-switching policies and monolithic policies for the use of practitioners and researchers alike.
 
 # 2. Experiments
 
-# 3. Conclusion
+This section begins with a discussion on the experimental setup before delving into five experiments that highlight observational differences in mode-switching and monolithic behavior policies. We perform experiments on 10 commonly-used <d-cite key="agarwal2022reincarnating"></d-cite>  Atari games: Asterix, Breakout, Space Invaders, Seaquest, Q*Bert, Beam Rider, Enduro, MsPacman, Bowling, and River Raid. Environments follow the standard ATARI protocols <d-cite key="machado2018revisiting"></d-cite> of incorporating sticky actions and only providing a terminal signal when all lives are lost. We run a Stable-Baselines3 DQN policy <d-cite key="raffin2021stable"></d-cite> for 25 epochs of 100K time steps each, for a total of 2.5M time steps or 10M frames. The DQN policy explores 10% of the time after being linearly annealed from 100% after 250K time steps. Then we evaluated a mode-switching and monolithic policy that used the trained DQN policy's exploitation actions when in exploit mode. Evaluations were made for 100 episodes for each game and epoch. The monolithic policy was epsilon-greedy with 10% exploration rate. This mode-switching policy randomly switches to uniform random explore mode 0.7% of the time and randomly chooses an explore mode length from the set [5, 10, 15, 20, 25] with probabilities [0.05, 0.20, 0.50, 0.20, 0.05]. Through testing, we determined that this switching policy explored at a nearly identical rate to the monolithic policy (10%). The complete details of the agent and environments are concisely outlined in the ((anonymized github)).
 
-This blog post highlighted five observational differences between mode-switching and monolithic behavior policies on ATARI and other illustrative tasks. The analysis showcased the flexibility of mode-switching policies, such as the ability to explore earlier in episodes and exploit at a notably higher proportion. As the original study of mode-switching behavior by DeepMind was primarily concerned with performance, the experiments in this blog post supplement the study by providing a better understanding of the strengths and weaknesses of mode-switching exploration. Due to the vast challenges in RL, we envision that mode-switching policies will need to be tailored to specific environments to achieve the greatest performance gains over monolithic policies. Pending a wealth of future studies, we believe that mode-switching has the potential to become the default behavioral policy to be used by researchers and practitioners alike. 
+We briefly cite difficulties and possible confounding factors in our experimental design to aid other researchers in future studies on this topic. First, the DQN policy was trained using a monolithic behavior policy, and monolithic policies had slightly higher evaluation scores. Additional studies may use exploitation actions from a policy trained with mode-switching behavior for comparison. Second, many of our experiments aim to evaluate the effect of exploration or exploitation actions on some aspect of agent behavior. Due to delayed gratification in RL, the credit assignment problem <d-cite key="pignatelli2023survey"></d-cite> persists and confounds the association of actions to behaviors. To attempt to mitigate some confounding factors of this problem, we weight the behavior score of the agent at an arbitrary time step by the proportion of exploration (or exploitation) actions in the past few time steps; for example, in Experiment 1, we weight the effect of exploration actions on yielding a terminal state by calculating the proportion of exploration actions within 10 steps of yielding the terminal state. Then, we average the proportions across 100 evaluation episodes to compute a final score for a single epoch for a single game. Lastly, we only claim to have made observations about the behavioral differences, and we do not claim to have produced statistically significant results; we leave this analysis to future work. 
 
-## Images and Figures
+### 2.1 Concentrated Terminal States
 
-Its generally a better idea to avoid linking to images hosted elsewhere - links can break and you
-might face losing important information in your blog post.
-To include images in your submission in this way, you must do something like the following:
+Exploration actions are generally considered to be suboptimal and are incorporated to learn about the state space rather than accrue the most return. Many environments contain regions of the state space that simply do not need more exploration, such as critical states <d-cite key="kumar2022should"></d-cite> that require directed behavior for meaningful progress. For instance, a self-driving car needing to merge onto a highway is in a critical state, as it has few behaviors that will keep it driving correctly. In these critical states, poor or random actions may cause the agent to reach a terminal state more quickly than desired. We investigate if terminal states are more concentrated after an exploration period of a switching policy due to the many (possibly suboptimal) exploration actions taken in succession.
 
-```markdown
-{% raw %}{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}{% endraw %}
-```
-
-which results in the following image:
-
-{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}
-
-To ensure that there are no namespace conflicts, you must save your asset to your unique directory
-`/assets/img/2024-05-07-[SUBMISSION NAME]` within your submission.
-
-Please avoid using the direct markdown method of embedding images; they may not be properly resized.
-Some more complex ways to load images (note the different styles of the shapes/shadows):
+Our first experiment determines the proportion of terminal states encountered after an exploration period. Each terminal state is given an associated score equal to the proportion of exploration actions during the past 10 time steps. Final scores for each behavior policy and epoch are computed by averaging the scores of each terminal state across all 100 evaluation episodes and each game. The results are shown in Figure 3. Switching behavior produced terminal states that more closely followed exploration actions. Furthermore, the effect was more pronounced as the policies improved, most likely due to the increased disparity of optimality between exploitation and exploration actions which is more detrimental to switching policies that explore multiple times in succession. Note how the scores for monolithic policies are near 0.10 on average, which is the expected proportion of exploration actions per episode and therefore suggests that exploration actions had little effect. These results demonstrate that switching policies may be able to concentrate terminal states to specific areas of the state space.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/9.jpg" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_1_1.png" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_1_2.png" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all.
+    Figure 3. (Left) Terminal states are more concentrated after switching exploration modes. Figure 4 (Right) Switching policies perform better on cliffwalk environments.
 </div>
+
+We showcase a quick illustrative example of the ability of switching policies to concentrate terminal states more uniformly in a cliffwalk environment (Figure 4). The agent begins in the middle column and top row of an 11x101 grid. All squares aside from those in the middle column are terminal. When the exploitation policy is to move only downward and the behavior policies are the same as above, the agent incorporating a switching behavior policy reaches states further down the cliffwalk at a higher rate per episode. By concentrating the terminal states more in exploitation mode, the exploitation modes are longer, which allows the agent to reach states further in cliffwalk scenarios.     
+
+Environments that incorporate checkpoint states that agents must traverse to make substantial progress may benefit from switching policies that concentrate exploration periods away from the checkpoints. For example, the game of Montezuma's revenge <d-cite key="ecoffet2019go"></d-cite> sometimes requires that the agent retrieves a key before advancing through a door, and the agent may achieve faster learning by concentrating exploration actions away from states near the key after that action is learned. One notable and emerging area of RL research that may benefit from concentrating terminal states is safe RL <d-cite key="gu2022review"></d-cite>. In safe RL, certain safety constraints are required during the learning and deployment process. In some situations, the safety constraints are closely aligned with terminal states (e.g. aerospace <d-cite key="ravaioli2022safe"></d-cite>), and concentrating exploratory actions away from terminal states may aid in achieving those safety constraints. 
+
+### 2.2 Early Exploration
+
+Monolithic policies uniformly take exploration action throughout an episode, and as a result, the exploration steps are less concentrated than those of switching policies. While the expected number of exploration steps may be the same per episode in monolithic policies, certain situations may require more concentrated exploration during the beginning of episodes. For example, the build orders in StarCraft II  <d-cite key="vinyals2019grandmaster"></d-cite> significantly influence the possible future strategies, making exploration crucial throughout the beginning time steps. Early suboptimal actions have also been manually implemented to achieve certain effects: passive actions are taken in ATARI games to prevent memorization of trajectories, and 30 random actions were taken in Go at the beginning of games during training to force agents to analyze more diverse data <d-cite key="silver2016mastering"></d-cite>. We investigate the flexibility of switching policies to concentrate exploration actions in the beginning of episodes.
+
+We perform an experiment to determine how quickly a policy takes a prespecified number of exploration actions. Specifically, we compute the average number of time steps it takes for a policy to take at least $x$ total exploration actions across its top 10 of 100 fastest episodes, and we repeat this process for $x \in \{1, 2, 3, \ldots, 20\}$. We compare the top 10 fastest episodes because we are only interested in gauging the flexibility of switching behavior of being able to achieve this specific facet of exploration (beginning exploration) during a small percentage of episodes and not for each episode. Note that this experiment did not need to utilize the ATARI signals, so we averaged the results again over each game. The results are shown in Figure 5. It is clear that some episodes contain many more exploration actions concentrated in the beginning with switching policies. This makes sense intuitively, as only one switch needs to occur early in an episode with a switching policy for many exploratory actions to be taken immediately afterwards. The difference increases roughly linearly as for greater number of necessary exploration actions and shows that switching natively produces more episodes with exploration concentrated in the beginning. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/8.jpg" class="img-fluid z-depth-2" %}
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_2_1.png" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/10.jpg" class="img-fluid z-depth-2" %}
+        {% include figure.html path="assets/img/2024-05-07-mode-switching/exp_2_2.png" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
-
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/11.jpg" class="img-fluid"  %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/12.jpg" class="img-fluid" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid" %}
-    </div>
+<div class="caption">
+    Figure 5. (Left) Switching policies can explore more frequently earlier in the episode. Figure 6 (Right) Switching policies have better exploration near the start state on downwalk environments.
 </div>
 
-### Interactive Figures
+We illustrate beginning exploration with a downwalk environment in which an agent attempts to first move to the middle column and then down the middle column until it falls off the grid (Figure 6). The agent begins in the second row in the middle column. We chose this environment because it is a crude approximation of the trajectory of agents that have learned a single policy and immediately move towards a goal state at the beginning of an episode. The switching and monolithic policies are the same as before, and switching produces much higher visitation counts across 1000 episodes at states further from the obvious exploitation trajectory. 
 
-Here's how you could embed interactive figures that have been exported as HTML files.
-Note that we will be using plotly for this demo, but anything built off of HTML should work
-(**no extra javascript is allowed!**).
-All that's required is for you to export your figure into HTML format, and make sure that the file
-exists in the `assets/html/[SUBMISSION NAME]/` directory in this repository's root directory.
-To embed it into any page, simply insert the following code anywhere into your page.
+Environments that may benefit from flexible early exploration are sparse reward environments that provide a single nonzero reward at the terminal state. Many game environments fall into this category, since a terminal reward of 1 can be provided for a win, -1 for a loss, and 0 for a draw. In such environments, agents usually need to learn at states near the sparse reward region before learning at states further away, also known as cascading <d-cite key="huan2016sequential"></d-cite>. After learning near the sparse reward region, the agent may need to reconsider earlier actions, and switching behavior natively allows for this type of exploration. Future work may consider the extent to which switching aids in relearning policies near the start state. 
 
-```markdown
-{% raw %}{% include [FIGURE_NAME].html %}{% endraw %} 
-```
+# 3. Conclusion
 
-For example, the following code can be used to generate the figure underneath it.
+This blog post highlighted five observational differences between mode-switching and monolithic behavior policies on ATARI and other illustrative tasks. The analysis showcased the flexibility of mode-switching policies, such as the ability to explore earlier in episodes and exploit at a notably higher rate. As the original study of mode-switching behavior by DeepMind was primarily concerned with performance, the experiments in this blog post supplement the study by providing a better understanding of the strengths and weaknesses of mode-switching exploration. Due to the vast challenges in RL, we envision that mode-switching policies will need to be tailored to specific environments to achieve the greatest performance gains over monolithic policies. Pending a wealth of future studies, we believe that mode-switching has the potential to become the default behavioral policy to be used by researchers and practitioners alike. 
 
-```python
-import pandas as pd
-import plotly.express as px
-
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/earthquakes-23k.csv')
-
-fig = px.density_mapbox(
-    df, lat='Latitude', lon='Longitude', z='Magnitude', radius=10,
-    center=dict(lat=0, lon=180), zoom=0, mapbox_style="stamen-terrain")
-fig.show()
-
-fig.write_html('./assets/html/2024-05-07-distill-example/plotly_demo_1.html')
-```
-
-And then include it with the following:
-
-```html
-{% raw %}<div class="l-page">
-  <iframe src="{{ 'assets/html/2024-05-07-distill-example/plotly_demo_1.html' | relative_url }}" frameborder='0' scrolling='no' height="600px" width="100%"></iframe>
-</div>{% endraw %}
-```
-
-Voila!
-
-<div class="l-page">
-  <iframe src="{{ 'assets/html/2024-05-07-distill-example/plotly_demo_1.html' | relative_url }}" frameborder='0' scrolling='no' height="600px" width="100%"></iframe>
-</div>
-
-## Citations
-
-Citations are then used in the article body with the `<d-cite>` tag.
-The key attribute is a reference to the id provided in the bibliography.
-The key attribute can take multiple ids, separated by commas.
-
-The citation is presented inline like this: <d-cite key="gregor2015draw"></d-cite> (a number that displays more information on hover).
-If you have an appendix, a bibliography is automatically created and populated in it.
-
-Distill chose a numerical inline citation style to improve readability of citation dense articles and because many of the benefits of longer citations are obviated by displaying more information on hover.
-However, we consider it good style to mention author last names if you discuss something at length and it fits into the flow well — the authors are human and it’s nice for them to have the community associate them with their work.
-
-***
-
-## Footnotes
-
-Just wrap the text you would like to show up in a footnote in a `<d-footnote>` tag.
-The number of the footnote will be automatically generated.<d-footnote>This will become a hoverable footnote.</d-footnote>
-
-***
-
-## Code Blocks
-
-This theme implements a built-in Jekyll feature, the use of Rouge, for syntax highlighting.
-It supports more than 100 languages.
-This example is in C++.
-All you have to do is wrap your code in a liquid tag:
-
-{% raw  %}
-{% highlight c++ linenos %}  <br/> code code code <br/> {% endhighlight %}
-{% endraw %}
-
-The keyword `linenos` triggers display of line numbers. You can try toggling it on or off yourself below:
-
-{% highlight c++ %}
-
-int main(int argc, char const \*argv[])
-{
-string myString;
-
-    cout << "input a string: ";
-    getline(cin, myString);
-    int length = myString.length();
-
-    char charArray = new char * [length];
-
-    charArray = myString;
-    for(int i = 0; i < length; ++i){
-        cout << charArray[i] << " ";
-    }
-
-    return 0;
-}
-
-{% endhighlight %}
-
-***
-
-## Diagrams
-
-This theme supports generating various diagrams from a text description using [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} plugin.
-Below, we generate a few examples of such diagrams using languages such as [mermaid](https://mermaid-js.github.io/mermaid/){:target="\_blank"}, [plantuml](https://plantuml.com/){:target="\_blank"}, [vega-lite](https://vega.github.io/vega-lite/){:target="\_blank"}, etc.
-
-**Note:** different diagram-generation packages require external dependencies to be installed on your machine.
-Also, be mindful of that because of diagram generation the first time you build your Jekyll website after adding new diagrams will be SLOW.
-For any other details, please refer to [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} README.
-
-**Note:** This is not supported for local rendering! 
-
-The diagram below was generated by the following code:
-
-{% raw %}
-```
-{% mermaid %}
-sequenceDiagram
-    participant John
-    participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-{% endmermaid %}
-```
-{% endraw %}
-
-{% mermaid %}
-sequenceDiagram
-participant John
-participant Alice
-Alice->>John: Hello John, how are you?
-John-->>Alice: Great!
-{% endmermaid %}
-
-***
-
-## Tweets
-
-An example of displaying a tweet:
-{% twitter https://twitter.com/rubygems/status/518821243320287232 %}
-
-An example of pulling from a timeline:
-{% twitter https://twitter.com/jekyllrb maxwidth=500 limit=3 %}
-
-For more details on using the plugin visit: [jekyll-twitter-plugin](https://github.com/rob-murray/jekyll-twitter-plugin)
-
-***
-
-## Blockquotes
-
-<blockquote>
-    We do not grow absolutely, chronologically. We grow sometimes in one dimension, and not in another, unevenly. We grow partially. We are relative. We are mature in one realm, childish in another.
-    —Anais Nin
-</blockquote>
-
-***
-
-
-## Layouts
-
-The main text column is referred to as the body.
-It is the assumed layout of any direct descendants of the `d-article` element.
-
-<div class="fake-img l-body">
-  <p>.l-body</p>
-</div>
-
-For images you want to display a little larger, try `.l-page`:
-
-<div class="fake-img l-page">
-  <p>.l-page</p>
-</div>
-
-All of these have an outset variant if you want to poke out from the body text a little bit.
-For instance:
-
-<div class="fake-img l-body-outset">
-  <p>.l-body-outset</p>
-</div>
-
-<div class="fake-img l-page-outset">
-  <p>.l-page-outset</p>
-</div>
-
-Occasionally you’ll want to use the full browser width.
-For this, use `.l-screen`.
-You can also inset the element a little from the edge of the browser by using the inset variant.
-
-<div class="fake-img l-screen">
-  <p>.l-screen</p>
-</div>
-<div class="fake-img l-screen-inset">
-  <p>.l-screen-inset</p>
-</div>
-
-The final layout is for marginalia, asides, and footnotes.
-It does not interrupt the normal flow of `.l-body`-sized text except on mobile screen sizes.
-
-<div class="fake-img l-gutter">
-  <p>.l-gutter</p>
-</div>
-
-***
-
-## Other Typography?
-
-Emphasis, aka italics, with *asterisks* (`*asterisks*`) or _underscores_ (`_underscores_`).
-
-Strong emphasis, aka bold, with **asterisks** or __underscores__.
-
-Combined emphasis with **asterisks and _underscores_**.
-
-Strikethrough uses two tildes. ~~Scratch this.~~
-
-1. First ordered list item
-2. Another item
-⋅⋅* Unordered sub-list. 
-1. Actual numbers don't matter, just that it's a number
-⋅⋅1. Ordered sub-list
-4. And another item.
-
-⋅⋅⋅You can have properly indented paragraphs within list items. Notice the blank line above, and the leading spaces (at least one, but we'll use three here to also align the raw Markdown).
-
-⋅⋅⋅To have a line break without a paragraph, you will need to use two trailing spaces.⋅⋅
-⋅⋅⋅Note that this line is separate, but within the same paragraph.⋅⋅
-⋅⋅⋅(This is contrary to the typical GFM line break behavior, where trailing spaces are not required.)
-
-* Unordered lists can use asterisks
-- Or minuses
-+ Or pluses
-
-[I'm an inline-style link](https://www.google.com)
-
-[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
-
-[I'm a reference-style link][Arbitrary case-insensitive reference text]
-
-[I'm a relative reference to a repository file](../blob/master/LICENSE)
-
-[You can use numbers for reference-style link definitions][1]
-
-Or leave it empty and use the [link text itself].
-
-URLs and URLs in angle brackets will automatically get turned into links. 
-http://www.example.com or <http://www.example.com> and sometimes 
-example.com (but not on Github, for example).
-
-Some text to show that the reference links can follow later.
-
-[arbitrary case-insensitive reference text]: https://www.mozilla.org
-[1]: http://slashdot.org
-[link text itself]: http://www.reddit.com
-
-Here's our logo (hover to see the title text):
-
-Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-Reference-style: 
-![alt text][logo]
-
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
-
-Inline `code` has `back-ticks around` it.
-
-```javascript
-var s = "JavaScript syntax highlighting";
-alert(s);
-```
- 
-```python
-s = "Python syntax highlighting"
-print(s)
-```
- 
-```
-No language indicated, so no syntax highlighting. 
-But let's throw in a <b>tag</b>.
-```
-
-Colons can be used to align columns.
-
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-There must be at least 3 dashes separating each header cell.
-The outer pipes (|) are optional, and you don't need to make the 
-raw Markdown line up prettily. You can also use inline Markdown.
-
-Markdown | Less | Pretty
---- | --- | ---
-*Still* | `renders` | **nicely**
-1 | 2 | 3
-
-> Blockquotes are very handy in email to emulate reply text.
-> This line is part of the same quote.
-
-Quote break.
-
-> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote. 
-
-
-Here's a line for us to start with.
-
-This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
-
-This line is also a separate paragraph, but...
-This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
