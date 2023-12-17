@@ -19,7 +19,7 @@ authors:
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-hidden-convex-relu.bib  
 
-#TODO make sure that TOC names match the actual section names
+#TODO make sure that TOC names match the actual section names - they do
 toc:
   - name: Overview and Motivation
     subsections:
@@ -27,15 +27,16 @@ toc:
     - name: Research context
   - name: Convex Reformulation
     subsections:
-    - name: Multiplicative non-convexity
+    - name: Small example walkthrough
     - name: Specifics about equivalence
-    - name: Extensions
+    - name: Activation patterns
+    - name: Extensions of the convex reformulation to other settings
   - name: Can we Forget the Non-Convex Problem?
     subsections:
-    - name: A word on performance
-    - name: Gradient Descent in the non-convex problem
-    - name: On large initialisation
-    - name: On very small initialisation
+    - name: Solving the convex problem efficiently is hard
+    - name: Activation patterns are not a constant in the non-convex problem
+    - name: On large initialization scale
+    - name: On very small initialization
   - name: Conclusion
 
 _styles: >
@@ -251,8 +252,9 @@ $$
 
 
 <p class="legend">
-   
-a few words
+ 
+<em> Solving a non-convex problem is notably more tricky than solving a convex one, both in theory and in practice. There exist a convex equivalent to the classical ReLU two-layer network training, but not without its tricks either.</em>
+
 
 </p>
 
@@ -270,8 +272,8 @@ Our problem of interest will be the training of a simple two-layer neural networ
 
 <p class="framed">
     <b class="underline">Two-Layer ReLU Network Training</b><br>
-    <b>Data:</b> $n$ samples of the form: input \(\pmb{x}_j \in \RR^d\) + label \(y_j \in \RR\), $j=1,..,n$<br/> 
-    <b>Model:</b> $m$ neurons in the hidden layer: First layer \(\pmb{w}_i \in \RR^d\), second layer \(\alpha_i \in \RR\), $i=1,..,m$<br>
+    <b>Data points:</b> $n$ inputs \(\pmb{x}_j \in \RR^d\) and label \(y_j \in \RR\), $j=1,..,n$<br/> 
+    <b>Model:</b> $m$ neurons: First layer \(\pmb{w}_i \in \RR^d\), second layer \(\alpha_i \in \RR\), $i=1,..,m$<br>
     <b>Hyper-parameters:</b> step-size \(\step > 0\), regularization strength \(\lambda\geq 0\) <br>
     <b>Loss to be minimized:</b>
     \begin{equation}
@@ -313,6 +315,8 @@ To sum up, the convex reformulation approach described in this post contrasts it
 
 ## Convex reformulation
 
+### Small example walkthrough
+
 Consider a network with a single ReLU neuron. We plot its output against two data points $(x_1,y_1)$ and $(x_2,y_2)$. We have that this one-neuron neural net's output is $$\max(0, x ~ w_1) \alpha_1$$ with $$w_1$$ the first layer's weight and $$\alpha_1$$ the second layer's weight. Even if we only wanted to optimize the first layer (below we fix $\alpha_1=1$ without loss of expressivity as the target outputs $y_1,y_2$ are both positive), we would have a non-convex function to optimize because of ReLU's non-linearity.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside.png" class="img-fluid" %}
@@ -327,13 +331,13 @@ Consider a network with a single ReLU neuron. We plot its output against two dat
 \end{equation}
 </p>
 
-__Multiplicative non-convexity.__
+#### Multiplicative non-convexity
 
 If we ignore ReLU for a moment, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables. However, this non-convexity can be ignored for positive outputs by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ is a summary variable for $w_1 \alpha_1$ and then mapping back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs and minima are the same for positive outputs and so they are equivalent because they have the same expressivity in that case.
 
 Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity in general as $$\alpha_1$$ can be negative (to produce negative outputs) ! Here the convex equivalent problem requires two variables $$u_1$$ and $$v_1$$ to represent a neuron with a positive second layer and a neuron with a negative second layer and form a loss function $$(u_1,v_1)\mapsto(\max(0, x_1 u_1) - \max(0, x_1 v_1) - y_1)^2 + \lambda (\vert u_1 \vert + \vert v_1 \vert)$$ for *non-negative* values of $u_1$ and $v_1$. This is indeed a convex objective, with convex constraints (non-negativity).  At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to a negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
 
-__Activation.__
+#### Activation
 
 As noticed previously, the activation of data points plays a big role in the loss. Assuming that we only need a positive neuron, the considered loss is:
 
@@ -366,7 +370,7 @@ then the obtained problem is convex and has a unique solution. The formula can b
 If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optimum of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minimum.
 
 
-__Equivalent Convex problem.__
+#### Equivalent Convex problem
 
 Now, let us see how we can fit two data points, *i.e.* having both data points activated. To do so, we have to gather the two activation patterns, each activated by  a separate neuron:
 
@@ -401,7 +405,7 @@ Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (becaus
 
 to get the optimal *global* solution to the problem of fitting two data points with a single-layer ReLU network. In order to reformulate the non-convex problem into this convex one, we had to introduce (at least) 2 neurons; otherwise, it would have been impossible to reach the *global* minimizer which is our object of study here, since we want to be as expressive as possible.
 
-__General Case.__
+#### General Case
 
 Let us consider a general (non-convex) two-layer ReLU network with an input of size $d$, an output of size $1$ and a hidden layer of size $m$. With $n$ data points, the full loss is 
 <p>
@@ -476,11 +480,11 @@ is equivalent to the non-convex problem. Solving it will give the global optima.
 
 We pictured a usual local minimum for gradient descent in the specific case of having more neurons than existing patterns. In practice (more data in higher dimension) there are much fewer neurons than possible activations, however, there are many situations in which neurons will lead to the same activation patterns. We can merge (simply summing neurons together to get a new one) neurons that are in the same activation pattern without changing either the output or the loss (regularization might decrease). The fact that having more than one neuron in one pattern does not decrease the loss is at the core of the proof.
 
-### Activation Patterns
+### Activation patterns
 
 The equivalence proof is heavily based on ReLU, specifically that a ReLU unit divides the input space into two regions: one where it will output zero, and the other where it is the identity. If you consider a finite set of samples and a single ReLU, it will activate and deactivate some samples: this is called an activation pattern. A diagonal matrix $$\pmb{D}_i \in \{0,1\}^{n \times n}$$ describes one activation pattern. There is a finite amount of such possible patterns, exponential in the dimension of the data.
 
-__Two-Dimensional Data.__
+#### Two-Dimensional Data
 
 In the previous part, we considered data to be one-dimensional, in this case, there are only two possible activation patterns. Let's now consider two-dimensional data. To do so in the simplest way possible, we will consider regular one-dimensional data and a dimension filled with $$1$$s. This will effectively give the neural network a _bias_ to use without modifying the formulas.
 
