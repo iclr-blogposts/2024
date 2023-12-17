@@ -363,8 +363,20 @@ increased then plateaued and the loss of random forward network increased during
     Figure 12. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
 
-Next we decided to plot the heatmaps of CCIM and CCIM-slimmed and compare to PPO's heatmap in Figure 13. To make the heatmaps we looked at the best 15 seeds for each algorithm and kept track of the paths each seed took.
+Next we decided to plot the RND, BYOL-Explore Lite, normal PPO, CCIM and CCIM-slimmed heatmaps in Figure 13 and 14. To make the heatmaps we looked at the best 15 seeds for each algorithm and kept track of the paths each seed took. Comparing Figure 13 and Figure 14, we can see that the CCIM and CCIM-slimmed covered more of the map than RND and BYOL-Explore Lite.
 
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_rnd_30.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_byol_lite_30.png" class="img-fluid"  %}
+    </div>
+</div>
+<div class="caption">
+    Figure 13. Heatmaps of the BYOL-Explore Lite agent (left) and the RND agent (right) in empty grid-world.
+</div>
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_ccim_30.png" class="img-fluid"  %}
@@ -379,13 +391,15 @@ Next we decided to plot the heatmaps of CCIM and CCIM-slimmed and compare to PPO
 
 
 <div class="caption">
-    Figure 13. Heatmaps of the CCIM agent (left), CCIm-slimmed agent (middle), and normal PPO agent (right) in empty grid-world.
+    Figure 14. Heatmaps of the CCIM agent (left), CCIm-slimmed agent (middle), and the normal PPO agent (right) in empty grid-world.
 </div>
+
+
 
 #### FAST
 
 Let us now turn our attention to how FAST performed. We again start with deep sea environment. The left of Figure 14 indicates to us that FAST does produce more consistent agents than PPO however how baselines have a lower sample standard deviation. We again plot the sample deviation for the first 10,000 steps as we notice no significant difference after 10,000.
-Figure 14 right side shows that FAST, like CCIM, also does poor on this environment relative to our baselines. The intrinsic reward of the FAST agents also increased during training.
+Figure 15 right side shows that FAST, like CCIM, also does poor on this environment relative to our baselines. The intrinsic reward of the FAST agents also increased during training.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -397,7 +411,7 @@ Figure 14 right side shows that FAST, like CCIM, also does poor on this environm
 </div>
 
 <div class="caption">
-    Figure 14. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
+    Figure 15. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
 
 FAST's performance in the empty grid-world improves as it is comparable to our baselines now despite its intrinsic rewards also increasing over time. Again like in CCIM's results we notice that the confidence intervals overlap in the empty-grid world.
@@ -410,9 +424,10 @@ FAST's performance in the empty grid-world improves as it is comparable to our b
     </div>
 </div>
 <div class="caption">
-    Figure 15. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
+    Figure 16. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
 
+We again plot the heatmap of FAST and compare it to PPO's heatmap using the best 15 seeds. And if we compare the left of Figure 17 we can see that FAST also covered more of the grid-world than BYOL-Explore Lite and RND.
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_fast_30.png" class="img-fluid"  %}
@@ -421,27 +436,29 @@ FAST's performance in the empty grid-world improves as it is comparable to our b
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
     </div>
 </div>
-
-We again plot the heatmap of FAST and compare it to PPO's heatmap using the best 15 seeds.
-
 <div class="caption">
-    Figure 16. Heatmaps of the FAST agent (left) and the normal PPO (right) in empty grid-world.
+    Figure 17. Heatmaps of the FAST agent (left) and the normal PPO (right) in empty grid-world.
 </div>
+
 
 ## Discussion
 
 Alet et al. provided a unique approach to meta-learning. The performance of CCIM and FAST in the empty grid-world then did not surprise us as that was environment used to search for the algorithms. Note in Figure 16 we notice that the 15 best seeds of FAST covered more of the map, i.e., most of the seeds took different parts to the goal. 
-However for CCIM and CCIm-slimmed heatmaps only slightly covered more of the map then PPO. One major concern we still have is how the intrinsic rewards for FAST and CCIM increased during training for both environments used in our experiments<d-footnote>The intrinsic reward for CCIM-slimmed decreased during training.</d-footnote>. Even with the reward combiner we still believe this could cause an issue like it did with the deep sea environment. Recall that the reward combiner has the following formula, 
+However for CCIM and CCIm-slimmed heatmaps only slightly covered more of the map then PPO. from sample standard deviation plots FAST and CCIM-slimmed both produce more 
+consistent agents than PPO. CCIM however is only able to do this in the empty grid-world environment. It should be noted that by looking at the heat maps that 
+CCIM-slimmed, CCIM, and FAST both covered more of the map than our baselines which makes sense given Alet et al. looked for curiosity that optimise the number of distinct cells visited when searching for the curiosity algorithms.
+
+One major concern we still have is how the intrinsic rewards for FAST and CCIM increased during training for both environments used in our experiments<d-footnote>The intrinsic rewards for CCIM-slimmed decreased during training.</d-footnote>. Even with the reward combiner we still believe this could cause an issue like it did with the deep sea environment. Recall that the reward combiner has the following formula, 
 
 $$
 \hat{r}_t = \frac{(1+ri_t-t/T)\cdot ri_t+ r_t\cdot t/T}{1+ri_t}.
 $$
 
-Now as $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithm
+Now if $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithms that the intrinsic reward decreases as the agent becomes more familiar with its environment. We believe that this is why CCIM-slimmed performed better than CCIM and FAST in the deep sea environment.
 
 In future work we think it will be interesting to repeat this experiment using the deep sea environment to find the curiosity algorithms that output the intrinsic reward. 
-We think it would also be interesting to find a reward combiner using variant of FAST or CCIM, actually we wonder why variant of FAST or CCIM was used to find the reward combiner. Recall that a variant of RND was used to find the reward combiner. 
+We think it would also be interesting to find a reward combiner using variant of FAST or CCIM, actually we wonder why variant of FAST or CCIM was used to find the reward combiner. Recall that a variant of RND was used to find the reward combiner. We would like to increase the number of seeds used to reduce the confidence intervals since we are using JAX in simple environments then the increase in the number of seeds should not be much of an issue.
 
 ## Conclusion
 
-Summarize the key points discussed in the blog post and conclude with any final thoughts or reflections.
+In this blog post we studied two curiosity algorithms that were meta-learned namely FAST and CCIM. We conducted our experiments using the empty grid-world environment and the deep sea environment. FAST and CCIM both 
