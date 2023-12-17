@@ -87,13 +87,6 @@ The intuition behind the influence function is by looking at the difference of t
 
 $$\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\text{test},\hat\theta_{\epsilon,z})}{d\epsilon}\Bigg|_{\epsilon=0}\approx-\nabla_\theta L(z_{\text{test}},\hat\theta)^\top H_{\hat\theta}^{-1}\nabla_\theta L(z,\hat\theta)$$
 
-$$\mathcal{I}_{\text{perturbation,loss}}(z,z_{\text{test}}):=\frac{d^2L(z_\text{test},\hat\theta_{\epsilon,z_\delta,-z})}{d\epsilon d\delta}\Bigg|_{\epsilon=0,\delta=0}\approx-\nabla_\theta L(z_{\text{test}},\hat\theta)^\top H_{\hat\theta}^{-1}\nabla_z\nabla_\theta L(z,\hat\theta)$$
-
->$\hat\theta_{\epsilon,z}:=\arg\min \frac{1}{n}\sum_{i=1}^nL(z_i,\theta)+\epsilon L(z,\theta)$;
-$\hat\theta_{\epsilon,z_\delta,-z}:=\arg\min \frac{1}{n}\sum_{i=1}^nL(z_i,\theta)+\epsilon L(z_\delta,\theta)-\epsilon L(z,\theta)$;
-$z$: one training sample; $z_{\text{test}}$: one test sample;
-$z_\delta$: the training sample with small perturbation; 
-$H_{\hat\theta}^{-1}:=\frac{1}{n}\sum\nabla_\theta^2L(z_i,\hat\theta)$ is the Hessian matrix.
 
 <details class="proof-expand">
 <summary>Show Proof</summary>
@@ -177,7 +170,7 @@ and train a model $\theta^{\*}(S_i)$, and then use random projection to project 
 
 $$\tau(z, S_i) := \phi_{i}(z)^{T}(\Phi_{i}^{T}\Phi_{i})^{-1}\Phi_{i}^{T}\mathbf{Q_{i}}$$
 > $i$: the index of a training subset;  
-> $\mathbf{Q}_{i}:=diag(1 - p_t^\*)$ = $diag(\{(1 + exp(y_t \cdot f(z;\theta^{\*})))^{-1}\})$ where  $p_t^\*$ is the predicted correct-class probability at $\theta^{\*}$;
+> $\mathbf{Q}_{i}:=diag(1 - p_t^\*)$ = $diag(\{(1 + exp(y_t \cdot f(z;\theta^{\*})))^{-1}\})$ where  $p_t^\*$ is the predicted correct-class probability at $\theta^{\*}$; <br>
 > $t$: the index of a training sample in $S$;  
 > $\mathbf{P}$: Random projection matrix that each entry is sample from a standard Gaussian distribution: $\mathbf{P}\sim \mathcal{N} (0, 1)^{p \times k}$ for $k \ll p$;  
 
