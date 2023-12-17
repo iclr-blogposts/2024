@@ -255,6 +255,8 @@ $$
 
 <p class="legend"> <em> Solving a non-convex problem is notably more tricky than solving a convex one, both in theory and in practice. There exist a convex equivalent to the classical ReLU two-layer network training, but not without its tricks either.</em></p>
 
+The code for this plot is available reproducible on this Jupyer [[notebook]]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}}) ([[HTML]]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})).
+
 ## Overview and Motivation
 
 50 years ago, two-layer networks with non-linear activations were known to be universal approximators, however, they did not catch on as they were hard to train. The recent years have been marked by deeper networks running on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimization problem of tuning the weights (and bias) of the connections until the model is accurate enough. Best models usually require the tuning of billions of such parameters and very large datasets. The training, in turn, requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
