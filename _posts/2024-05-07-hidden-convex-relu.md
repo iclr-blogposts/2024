@@ -253,7 +253,7 @@ $$
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser_movie.gif" class="img-fluid" %}
 
 
-<p class="legend"> <em> Solving a non-convex problem is notably more tricky than solving a convex one, both in theory and in practice. There exist a convex equivalent to the classical ReLU two-layer network training, but not without its tricks either.</em></p>
+<p class="legend"> <em> There exists an equivalent convex formulation to the classical non-convex ReLU two-layer network training. That sounds like great news but it is really the case in practice? Let's find out together. </em></p>
 
 The code for this plot is available reproducible on this Jupyer [[notebook]]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}}) ([[HTML]]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})).
 
