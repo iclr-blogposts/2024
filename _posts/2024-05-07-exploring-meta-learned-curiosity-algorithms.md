@@ -239,7 +239,7 @@ $$ r_{\theta_1}$$, the backward network as $$b_{\theta_2}$$ and the random and f
 Let us look at the loss function of the $$b_{\theta_2}$$ and $$ fr_{\theta_3}$$. The loss function of $$b_{\theta_2}$$ is given by,
 
 $$
-\mathcal{L}_b=\|b_{\theta_2}(fr_{\theta_3}(s_t))-r_{\theta_1}\|_2+\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{theta_3}(s_t)\|,
+\mathcal{L}_b=\|b_{\theta_2}(fr_{\theta_3}(s_t))-r_{\theta_1}\|_2+\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{theta_3}(s_t)\|_2,
 $$
 
 and the loss function for $$fr_{\theta_3}$$ is
@@ -251,7 +251,7 @@ $$
 Note the first term in $$\mathcal{L}_b$$ is the same as $$\mathcal{L}_f$$. The intrinsic reward, i.e., the output of this program is given by,
 
 $$
-ri_t=\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-b_{theta_2}(fr_{theta_3}(s_t))\|.
+ri_t=\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-b_{\theta_2}(fr_{\theta_3}(s_t))\|.
 $$
 
 Looking at the equations, we can see that CCIM borrows ideas from the cycle-consistency seen in the Image-to-Image Translation literature. The cycle-consistency ensures that if you translate from space $$A$$ to space $$B$$, then given space $$B$$, you should be able to translate back to space $$A$$. To see how CCIM applies, let us turn our attention to $$\mathcal{L}_f$$'s equation. The $$fr_{\theta_3}$$ network applies a random embedding to state $$s_t$$. It then forwards this random embedding to the "next state". The $$b_{\theta_2}$$ network then takes this forwarded random embedding of state $$s_t$$ and undoes the forward transformation so that we end up again with just the random embedding of state, $$s_t$$. Now, the random embedding that $$fr_{\theta_3}$$ applied should match the random embedding that $$r_{\theta_1}$$ applied to the state $$s_t$$.
@@ -260,25 +260,23 @@ In other words, once we apply a forward transformation to the random embedding o
 
 Let us look at the second term in $$\mathcal{L}_b$$ given by $$\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. We see that we apply a forward and then a backward transformation to the random embedding of state $$s_{t+1}$$, so we should end up with the random embedding of state $$s_{t+1}$$. We then apply $$fr_{\theta_3}$$ to state $$s_t$$ and end up with the forwarded random embedding of state $$s_t$$, which should equal the random embedding of $$s_{t+1}$$.
 
-The intrinsic reward confuses us. Looking at the DAG of CCIM, we see that the output is given by the L2 distance between $$\mathcal{L}_f$$ and $$\mathcal{L}_b$$; hence, we initially thought the intrinsic reward was given by $$ \|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. The difference between these two equations is that the backward model, $$b_{\theta_2}$$, is not applied to the $$fr_{\theta_3}(s_t)$$ term. Hence, the intrinsic reward is just the difference between the random embedding of 
-the current state and the next state<d-footnote>If we assume that $$b_{\theta_2}$$ can undo the forward transformation and the random embedding of $$fr_{\theta_3} matches the random embedding of $$r_{theta_1}$$ .</d-footnote>, so it is not clear to us as to how the intrinsic reward will decreaseas the agent explores.
+The intrinsic reward confuses us. Looking at the DAG of CCIM, we see that the output is given by the L2 distance between $$\mathcal{L}_f$$ and $$\mathcal{L}_b$$; hence, we initially thought the intrinsic reward was given by $$ \|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. The difference between this equations and the original intrinsic reward equation is that the backward model, $$b_{\theta_2}$$, is not applied to the $$fr_{\theta_3}(s_t)$$ term. Looking at the original formula of the intrinsic reward, we can see that it is just the difference between the random embedding of 
+the current state and the next state<d-footnote>If we assume that the backward network can undo the forward transformation and the random embedding of random and forward model matches the random embedding of $$r_{theta_1}$$ .</d-footnote>, so it is not clear to us as to how the intrinsic reward will decrease as the agent explores.
 Not only that, but we also noticed unexpected behaviour in the loss function of the $$fr_{\theta_3}$$ network in our experiments. We then watched Alet et al.'s presentation of their paper to see where we went wrong, and we noticed in the presentation they swapped the labels for $$fr_{\theta_3}$$ and $$b_{\theta_2}$$ networks. 
 After reaching out to them about this discrepancy, they did confirm that the equations in the paper are correct, and the labels in the talk are wrong. So for our implementation, we used the equations as found in the paper.
 
 #### CCIM-slimmed
 
-Through our communication with them Alet et al. recommended we try ablations of CCIM and they suggested the following slimmed-down version of CCIM:
+Through our communication with them, Alet et al. recommended we try ablations of CCIM and they suggested the following slimmed-down version of CCIM:
 - Network $$r_{theta_1}$$ remains unchanged and its parameters stay fixed.
 - Network $$fr_{\theta_3}$$ changes to just being a forward network, $$f_{\theta_3}$$. 
-- The loss function of the $$f_{\theta_3}$$ is now $$\mathcal{L}_f=\|f_{\theta_3}(r_{theta_1}(s_t))-r_{theta_1}(s_{t+1})\|$$.
-- Network $$b_{\theta_2}$$'s loss function, $$\mathcal{L}_b$$, also changes. $$\mathcal{L}_b=\|b_{\theta_2}(r_{theta_1}(s_{t+1}))-r_{theta_1}(s_{t})\|$$.
+- The loss function of the $$f_{\theta_3}$$ is now $$\mathcal{L}_f=\|f_{\theta_3}(r_{theta_1}(s_t))-r_{theta_1}(s_{t+1})\|_2^2$$.
+- Network $$b_{\theta_2}$$'s loss function, $$\mathcal{L}_b$$, also changes. $$\mathcal{L}_b=\|b_{\theta_2}(r_{theta_1}(s_{t+1}))-r_{theta_1}(s_{t})\|_2^2$$.
 - The intrinsic reward is now $$\mathcal{L}_f+\mathcal{L}_b$$.
 
-This slimmed down version of CCIM was much easier to implement. Since the sum of the loss functions also act as the intrinsic reward it is clearer to us as to how the intrinsic rewards will decrease as the agent explores. As agent explores both the forward and backward networks become better at predicting what the random embedding of the next state and previous state will be respectively.
+This slimmed down version of CCIM was much easier to implement. Since the sum of the loss functions also act as the intrinsic reward it is clearer to us as to how the intrinsic rewards will decrease as the agent explores. As agent explores both the forward and backward networks become better at predicting what the random embedding of the next state and previous state will be, respectively.
 
 ## Experiments
-
-We compare each meta-learned curiosity algorithm to a non-curious agent (normal PPO) and our baselines. 
 
 ### Emperical Design
 
@@ -366,8 +364,11 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
     </div>
 </div>
 
+{% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid" %}
+
+
 <div class="caption">
-    Figure 13. Heatmaps of the agents in empty grid-world.
+    Figure 13. Heatmaps of the normal PPO agent (bottom), CCIM agent (top left), and CCIm-slimmed agent (top right) in empty grid-world.
 </div>
 
 #### FAST
