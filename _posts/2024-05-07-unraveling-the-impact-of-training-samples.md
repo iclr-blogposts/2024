@@ -156,7 +156,7 @@ One Datamodel is specifically optimized to learn the data attribution of a fixed
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/2.png" class="img-fluid"  %}
 *Caption: Linear datamodels accurately predict true margins averaged across 100 models.
-Source: Fig 5 in the paper "Datamodels: Predicting Predictions from Training Data"*
+Source: Fig 5 in the paper "Datamodels: Predicting Predictions from Training Data" <d-cite key="shah2022modeldiff"></d-cite>*
 
 In their experiments using CIFAR-10, the authors reserved a specific subset of output pairs for evaluation. Here, $\alpha$ represents the subsampling fraction in relation to the training set size. For instance, in a training dataset with $|S| = 100$ data points, setting $\alpha = 0.2$ means each subset, $S_i$, comprises a fixed size of $|S_i| = 20$. They demonstrated that Datamodels effectively predict outcomes for unseen in-distribution test subsets. 
 In the above plots, the bottom-right panel illustrates data for three color-coded random target examples, showing a strong Spearman correlation ($r > 0.99$) between predicted and actual outputs.
@@ -275,14 +275,14 @@ Therefore, we could get the importance matrix $\Theta^{\|train \| \times \|test\
 for each learning algorithm applied on a specific task. We apply matrix projection and PCA techniques on the importance matrix $\Theta$ to explore the distinguishing difference between how two algorithms use training samples. The detailed pipeline of comparing learning algorithm is depicted in the following figure.
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_1.png" class="img-fluid" %}
-*Source: Figure 2 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"*
+*Source: Figure 2 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms" <d-cite key="shah2022modeldiff"></d-cite>*
 <br>
 In the figure above, the authors PCA on the residual importance matrix (after projection, we remove the common importance allocation). The training samples corresponding to the TOP-K principal components (these principal component directions explain a significant amount of variance in one importance matrix but not the other) reflect the  distinguishing subpopulations that one learning algorithm prefers, but another learning algorithm pays little attention to. 
 
 **By visually checking these distinguishing subpolutations, we could speculate the semantic feature selection difference of two algorithms and then confirm it by applying the semantic feature transformations on test data and checking the model output difference.**
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_2.png" class="img-fluid" %}
-*Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"*
+*Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"<d-cite key="shah2022modeldiff"></d-cite>*
 <br>
 For example, in the figure above, they compared two models trained on LIVING17 dataset. The only difference between these two models is whether they are trained with or without standard data augmentations. By exploring the training sample importance matrix using the method mentioned above, they speculated that the model trained with data augmentation prefers using "web" to predict the class "spider" and using "yellow polka dots" to predict the class "salamander". Therefore, they added "web" or "yellow polka dots" texture to test samples and found out that only the prediction of the model with data augmentation changes a lot. This experiment verified the previous work that the data augmentation will enhance the texture bias.
 
@@ -292,7 +292,7 @@ The ModelDiff shows that the data attribution methods can be key tools for under
 Except for comparing learning algorithms, we can also leverage the importance score to find training samples which are most relevant to the model prediction. By empirically observing the training samples with different importance magnitude, Harshay et al. <d-cite key="shah2022modeldiff"></d-cite>  find that the training samples with large importance magnitude consistently look similar to the test sample which also follows the intuition: *training samples most similar to the test sample are most relevant to the prediction* (see the first line of the figure).
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_3.png" class="img-fluid" %}
-*Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms"*
+*Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms" <d-cite key="shah2022modeldiff"></d-cite>*
 <br>
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/cat_data_leakage.png" class="img-fluid" %}
