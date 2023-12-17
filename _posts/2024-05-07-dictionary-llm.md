@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: 
-  One-Hour Survey of Large Language Models: Quick Mastery of New Techniques, Concepts, and Case Studies
+  One-Hour Survey of Large Language Models&#58; Quick Mastery of New Techniques, Concepts, and Case Studies
 description: 
   The rapid advancements in large language models (LLMs) have given rise to numerous technical terms, which can be overwhelming for researchers. Therefore, there is an urgent need to sort and summarize these terms for the LLM technology research community. To cater to this need, we proposed a blog named  &quot;Dictionary LLM&quot;, which organizes and explains the existing terminologies of LLMs, providing a convenient reference for researchers. This dictionary helps them quickly understand the basic concepts of LLMs and delve deeper into the technology related to large models. The &quot;Dictionary LLM&quot; is essential for keeping up with the rapid developments in this dynamic field, ensuring that researchers and practitioners have access to the latest terminology and concepts.
 date: 2024-05-07
