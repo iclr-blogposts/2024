@@ -322,7 +322,7 @@ This is a $$ N \times N$$ grid environment that focuses on testing the explorati
 <div class="caption">
     Figure 10. The Deep sea environment. Taken from <d-cite key="osband2020bsuite"></d-cite>.
 </div>
-The agent starts at the the top left corner and its goal is to reach the bottom right corner.
+The agent starts at the top left corner and its goal is to reach the bottom right corner.
 At each time step the agent descends one row. The agent can either go left or right. There's a small penalty of going right which is $$ −0.01/N $$ while going left just gives a reward of zero. The agent receives a reward of 1 if it finds the treasure at the bottom right corner.
 The max number of steps in the environment is $$N$$. Therefore, the optimal policy is to go right at every time step ignoring the greedy action. In our experiments we set $$N=10$$.
 
@@ -330,7 +330,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 
 #### CCIM
 
-We start with the deep sea environment. The left of Figure 11 shows the sample standard deviation during training. We only show it for the first 10,000 steps because after that we notice the graphs it plateaus. We an see that RND and BYOL-Explore Lite produce the most onsistent agents in the deep sea environment. CCIM-slimmed produces more consistent agents than CCIM and PPO. Looking at the right of Figure 11 we can see the mean episode return across the 30 seeds with the 95% confidence intervals. RND, BYOL-Explore, and CCIM-slimmed all perform better than PPO. However, CCIM does performs roughly the same as PPO at the end of training. From our experiments we also noticed that intrinsic rewards increase and alternate between zero and one. The random and forward network's loss continued to increase during training as well.  
+We start with the deep sea environment. The left of Figure 11 shows the sample standard deviation during training. We only show it for the first 10,000 steps because after that we notice the graphs it plateaus. We an see that RND and BYOL-Explore Lite produce the most consistent agents in the deep sea environment. And CCIM-slimmed produces more consistent agents than CCIM and PPO. Looking at the right of Figure 11 we can see the mean episode return across the 30 seeds with the 95% confidence intervals. RND, BYOL-Explore, and CCIM-slimmed all perform better than PPO. However, CCIM does performs roughly the same as PPO at the end of training. From our experiments we also noticed that intrinsic rewards produced by CCIM increase and then plateau. The CCIM random and forward network's loss continued to increase during training as well.  
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -363,7 +363,8 @@ increased then plateaued and the loss of random forward network increased during
     Figure 12. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
 
-Next we decided to plot the RND, BYOL-Explore Lite, normal PPO, CCIM and CCIM-slimmed heatmaps in Figure 13 and 14. To make the heatmaps we looked at the best 15 seeds for each algorithm and kept track of the paths each seed took. Comparing Figure 13 and Figure 14, we can see that the CCIM and CCIM-slimmed covered more of the map than RND and BYOL-Explore Lite.
+Next we decided to plot the RND, BYOL-Explore Lite, normal PPO, CCIM and CCIM-slimmed heatmaps in Figure 13 and 14. To make the heatmaps we looked at the best 15 seeds for 
+each algorithm and kept track of the paths each seed took. Looking at Figure 13 and Figure 14, we can see that the CCIM and CCIM-slimmed covered more of the map than RND and BYOL-Explore Lite. However, only covered slightly more of the map than PPO.
 
 
 <div class="row mt-3">
@@ -375,7 +376,7 @@ Next we decided to plot the RND, BYOL-Explore Lite, normal PPO, CCIM and CCIM-sl
     </div>
 </div>
 <div class="caption">
-    Figure 13. Heatmaps of the BYOL-Explore Lite agent (left) and the RND agent (right) in empty grid-world.
+    Figure 13. Heatmaps of the RND agent (left) and the BYOL-Explore Lite agent (right) in empty grid-world.
 </div>
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -398,8 +399,9 @@ Next we decided to plot the RND, BYOL-Explore Lite, normal PPO, CCIM and CCIM-sl
 
 #### FAST
 
-Let us now turn our attention to how FAST performed. We again start with deep sea environment. The left of Figure 14 indicates to us that FAST does produce more consistent agents than PPO however how baselines have a lower sample standard deviation. We again plot the sample deviation for the first 10,000 steps as we notice no significant difference after 10,000.
-Figure 15 right side shows that FAST, like CCIM, also does poor on this environment relative to our baselines. The intrinsic reward of the FAST agents also increased during training.
+Let us now turn our attention to how FAST performed. We begin with the deep sea environment. The left side of Figure 14 indicates that FAST produces more consistent agents than PPO; however, our baselines exhibit a lower sample standard deviation. To further explore this, we plot the sample deviation for the first 10,000 steps, as we observe no significant difference beyond this point.
+
+On the right side of Figure 15, we see that FAST, similar to CCIM, performs poorly on this environment compared to our baselines. Notably, during training we noticed the intrinsic reward of the FAST agents also increased during training.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -414,7 +416,7 @@ Figure 15 right side shows that FAST, like CCIM, also does poor on this environm
     Figure 15. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
 
-FAST's performance in the empty grid-world improves as it is comparable to our baselines now despite its intrinsic rewards also increasing over time. Again like in CCIM's results we notice that the confidence intervals overlap in the empty-grid world.
+FAST's performance in the empty grid-world is better than its performance in the deep sea environment; it is now comparable to our baselines despite its intrinsic rewards also increasing over time. Once again, similar to CCIM's results, we observe overlapping confidence intervals in the empty grid-world.
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_std.png" class="img-fluid"  %}
@@ -427,7 +429,8 @@ FAST's performance in the empty grid-world improves as it is comparable to our b
     Figure 16. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
 
-We again plot the heatmap of FAST and compare it to PPO's heatmap using the best 15 seeds. And if we compare the left of Figure 17 we can see that FAST also covered more of the grid-world than BYOL-Explore Lite and RND.
+We once again plot the heatmap of FAST and compare it to PPO's heatmap using the best 15 seeds. When comparing Figure 17 (left) with both Figure 17 (right) and Figure 13, we observe that FAST covered more of the grid-world than PPO, BYOL-Explore Lite, and RND.
+
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_fast_30.png" class="img-fluid"  %}
@@ -457,11 +460,13 @@ $$
 Now if $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithms that the intrinsic reward decreases as the agent becomes more familiar with its environment. We believe that this is why CCIM-slimmed performed better than CCIM and FAST in the deep sea environment.
 
 In future work we think it will be interesting to repeat this experiment using the deep sea environment to find the curiosity algorithms that output the intrinsic reward. 
-We think it would also be interesting to find a reward combiner using variant of FAST or CCIM, actually we wonder why variant of FAST or CCIM was used to find the reward combiner. Recall that a variant of RND was used to find the reward combiner. We would like to increase the number of seeds used to reduce the confidence intervals since we are using JAX in simple environments then the increase in the number of seeds should not be much of an issue.
+Additionally, exploring the use of a variant of FAST or CCIM to find a reward combiner is also of interest to us. We wonder why a variant of FAST or CCIM wasn't employed for this purpose, recall that a variant of RND was used to find the reward combiner. We would like to increase the number of seeds used to reduce the confidence intervals since we are training end-to-end in JAX in simple environments then the increase in the number of seeds should not be much of an issue.
 
 ## Conclusion
 
 In this blog post, we studied two meta-learned curiosity algorithms, namely FAST and CCIM. We compared them to a non-curious agent and our baselines for the curiosity algorithms: RND and BYOL-Explore. Our experiments were conducted using both the empty grid-world environment and the deep-sea environment.
+
 FAST and CCIM both performed well in the empty grid-world, covering more of the map than the baselines when examining their heatmaps. This aligns with our expectations since this was the environment used to search for the curiosity algorithms. However, in the deep-sea environment, both algorithms did not perform well compared to the baselines. Conversely, CCIM-slimmed, a streamlined version of CCIM, showed performance comparable to the baselines.
 We suspect that this is because the intrinsic reward decreased as the agent explored more. This behavior was not observed in FAST and CCIM, which we believe is not ideal and consider it the main flaw of these algorithms.
+
 The approach of meta-learning curiosity algorithms is novel, and we believe there's interesting work that can be done following the same approach as Alet et al., trying it with different environments to search for curiosity algorithms such as the deep-sea environment. Another avenue is using the meta-learned curiosity algorithms to search for the reward combiner.
