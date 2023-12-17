@@ -62,8 +62,11 @@ _styles: >
     text-align: center;
     font-size: 16px;
   }
-  .proof-expand {
-    color: white;
+  .details summary{
+    color: orange;
+  }
+  .details p{
+    color:white;
   }
 ---
 
@@ -88,9 +91,9 @@ The intuition behind the influence function is by looking at the difference of t
 $$\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\text{test},\hat\theta_{\epsilon,z})}{d\epsilon}\Bigg|_{\epsilon=0}\approx-\nabla_\theta L(z_{\text{test}},\hat\theta)^\top H_{\hat\theta}^{-1}\nabla_\theta L(z,\hat\theta)$$
 
 
-<details class="proof-expand">
+<details class="details">
 <summary>Show algorithm step by step</summary>
-
+<p>
 Given the assumption we made, our algorithm can find the optimal $\hat\theta$ which minimizes the empirical risk and also guarantees the existence of the positive definite Hessian matrix:
 
 $$R(\theta):=\frac{1}{n}\sum L(z_i,\theta), \ \ \hat\theta=\arg\min_\theta R(\theta)$$
@@ -117,7 +120,7 @@ $$\Delta_\epsilon\approx -\nabla^2 R(\hat\theta)^{-1} \nabla L(z,\hat\theta)\eps
 <br>
 Therefore, $\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\text{test},\hat\theta_{\epsilon,z})}{d\epsilon}\Bigg|_{\epsilon=0}
 =\frac{dL(z_\text{test},\hat\theta_{\epsilon,z})}{d\hat\theta_{\epsilon,z}}\frac{d \hat\theta_{\epsilon,z}}{d\epsilon}\Bigg|_{\epsilon=0}\approx-\nabla_\theta L(z_{\text{test}},\hat\theta)^\top H_{\hat\theta}^{-1}\nabla_\theta L(z,\hat\theta)$
-
+</p>
 </details>
 
 <br>
@@ -187,8 +190,9 @@ $$\tau_{TRAK}(z, S) := \mathfrak{S}((\frac{1}{N} \sum_{i=1}^{N} \mathbf{Q}_{i}) 
 > $m$: total number of training samples in $S$;   
 > $\hat{\lambda}$ is the soft thresholding parameter, and it's selected via cross-validation
 
-<details class="proof-expand">
+<details class="details">
 <summary>Show algorithm step by step</summary>
+<p>
 Before introducing the implementation steps, Ilyas et al. <d-cite key="park2023trak"></d-cite> first use binary logistic regression as a case study to  to illustrate the benefits of computing data attribution scores in cases where a classification learning algorithm can be framed as straightforward logistic regression. We consider a training set of $n$ samples:
 $$S = \{z_1,\cdot\cdot\cdot,z_n: z_t = (x_t \in \mathbb{R}^d, b_t \in \mathbb{R}, y_t \in \{-1, 1\}) \}$$
 where <br>
@@ -243,7 +247,7 @@ $$\tau_{TRAK}(z, S) := \mathfrak{S}((\frac{1}{N} \sum_{i=1}^{N} \mathbf{Q}_{i}) 
 where <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathfrak{S}(\cdot; \lambda)$ is the soft thresholding operator;  <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\hat{\lambda}$ is the soft thresholding parameter, and it's selected via cross-validation
-
+</p>
 </details>
 <br>
 <br>
