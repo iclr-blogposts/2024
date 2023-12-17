@@ -227,22 +227,66 @@ We hypothesize that this algorithm may not perform well in environments where th
 
 
 ### CCIM
+
 CCIM took us quite a well to understand and process. Let us first go through its DAG below.
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/CCIM_diagram.png" class="img-fluid" %}
 <div class="caption">
     Figure 9. The DAG of CCIM. Taken from <d-cite key="alet2020metalearning"></d-cite>.
 </div>
 
-We can see that there are 3 neural networks: a random network, a random and forward network and a backward network. The parameters $$\theta$${1} are the parameters of the random network, $$\theta$${2} are the parameters of the backward network, and $$\theta$${3} are the parameters of the random and forward network. Looking at the black border of $$\theta$${1}'s rectangle we can see that the random network's parameters stay fixed during training like in RND.
+We can see that there are 3 neural networks: a random network, a random and forward network, and a backward network. The parameters $$\theta$${1} are the parameters of the random network, $$\theta$${2} are the parameters of the backward network, and $$\theta$${3} are the parameters of the random and forward network. Looking at the black border of $$\theta$${1}'s rectangle we can see that the random network's parameters stay fixed during training like in RND. Let us denote the random network as
+$$ r_{\theta_1}$$, the backward network as $$b_{\theta_2}$$ and the random and forward model as $$ fr_{\theta_3}$$.
+Let us look at the loss function of the $$b_{\theta_2}$$ and $$ fr_{\theta_3}$$. The loss function of $$b_{\theta_2}$$ is given by,
+
+$$
+\mathcal{L}_b=\|b_{\theta_2}(fr_{\theta_3}(s_t))-r_{\theta_1}\|_2+\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{theta_3}(s_t)\|,
+$$
+
+and the loss function for $$fr_{\theta_3}$$ is
+
+$$
+\mathcal{L}_f=\|b_{\theta_2}(fr_{\theta_3}(s_t))-r_{\theta_1}\|_2.
+$$
+
+Note the first term in $$\mathcal{L}_b$$ is the same as $$\mathcal{L}_f$$. The intrinsic reward, i.e., the output of this program is given by,
+
+$$
+ri_t=\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-b_{theta_2}(fr_{theta_3}(s_t))\|.
+$$
+
+Looking at the equations, we can see that CCIM borrows ideas from the cycle-consistency seen in the Image-to-Image Translation literature. The cycle-consistency ensures that if you translate from space $$A$$ to space $$B$$, then given space $$B$$, you should be able to translate back to space $$A$$. To see how CCIM applies, let us turn our attention to $$\mathcal{L}_f$$'s equation. The $$fr_{\theta_3}$$ network applies a random embedding to state $$s_t$$. It then forwards this random embedding to the "next state". The $$b_{\theta_2}$$ network then takes this forwarded random embedding of state $$s_t$$ and undoes the forward transformation so that we end up again with just the random embedding of state, $$s_t$$. Now, the random embedding that $$fr_{\theta_3}$$ applied should match the random embedding that $$r_{\theta_1}$$ applied to the state $$s_t$$.
+
+In other words, once we apply a forward transformation to the random embedding of the state, we should be able to undo that transformation and end up where we started.
+
+Let us look at the second term in $$\mathcal{L}_b$$ given by $$\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. We see that we apply a forward and then a backward transformation to the random embedding of state $$s_{t+1}$$, so we should end up with the random embedding of state $$s_{t+1}$$. We then apply $$fr_{\theta_3}$$ to state $$s_t$$ and end up with the forwarded random embedding of state $$s_t$$, which should equal the random embedding of $$s_{t+1}$$.
+
+The intrinsic reward confuses us. Looking at the DAG of CCIM, we see that the output is given by the L2 distance between $$\mathcal{L}_f$$ and $$\mathcal{L}_b$$; hence, we initially thought the intrinsic reward was given by $$ \|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. The difference between these two equations is that the backward model, $$b_{\theta_2}$$, is not applied to the $$fr_{\theta_3}(s_t)$$ term. Hence, the intrinsic reward is just the difference between the random embedding of 
+the current state and the next state<d-footnote>If we assume that $$b_{\theta_2}$$ can undo the forward transformation and the random embedding of $$fr_{\theta_3} matches the random embedding of $$r_{theta_1}$$ .</d-footnote>, so it is not clear to us as to how the intrinsic reward will decreaseas the agent explores.
+Not only that, but we also noticed unexpected behaviour in the loss function of the $$fr_{\theta_3}$$ network in our experiments. We then watched Alet et al.'s presentation of their paper to see where we went wrong, and we noticed in the presentation they swapped the labels for $$fr_{\theta_3}$$ and $$b_{\theta_2}$$ networks. 
+After reaching out to them about this discrepancy, they did confirm that the equations in the paper are correct, and the labels in the talk are wrong. So for our implementation, we used the equations as found in the paper.
+
+#### CCIM-slimmed
+
+Through our communication with them Alet et al. recommended we try ablations of CCIM and they suggested the following slimmed-down version of CCIM:
+- Network $$r_{theta_1}$$ remains unchanged and its parameters stay fixed.
+- Network $$fr_{\theta_3}$$ changes to just being a forward network, $$f_{\theta_3}$$. 
+- The loss function of the $$f_{\theta_3}$$ is now $$\mathcal{L}_f=\|f_{\theta_3}(r_{theta_1}(s_t))-r_{theta_1}(s_{t+1})\|$$.
+- Network $$b_{\theta_2}$$'s loss function, $$\mathcal{L}_b$$, also changes. $$\mathcal{L}_b=\|b_{\theta_2}(r_{theta_1}(s_{t+1}))-r_{theta_1}(s_{t})\|$$.
+- The intrinsic reward is now $$\mathcal{L}_f+\mathcal{L}_b$$.
+
+This slimmed down version of CCIM was much easier to implement. Since the sum of the loss functions also act as the intrinsic reward it is clearer to us as to how the intrinsic rewards will decrease as the agent explores. As agent explores both the forward and backward networks become better at predicting what the random embedding of the next state and previous state will be respectively.
 
 ## Experiments
+
+We compare each meta-learned curiosity algorithm to a non-curious agent (normal PPO) and our baselines. 
 
 ### Emperical Design
 
 
 In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase is derived from PureJaxRL<d-cite key="lu2022discovered"></d-cite>. 
-Specifically, we leverage PureJaxRL's Proximal Policy Optimization (PPO) implementation as our chosen reinforcement learning (RL) algorithm. The foundation of our 
-experiments is laid upon a JAX implementation of Minigrid's grid-world environment <d-cite key="MinigridMiniworld23"></d-cite>, which uses gymnax's API <d-cite key="gymnax2022github"></d-cite>. Additionally, we make use of gymnax's deep-sea environment implementation as well.
+Specifically, we leverage PureJaxRL's Proximal Policy Optimization (PPO) implementation as our chosen reinforcement learning (RL) algorithm. 
+We compare each meta-learned curiosity algorithm to a non-curious agent (normal PPO) and our baselines.
+The foundation of our experiments is laid upon a JAX implementation of Minigrid's grid-world environment <d-cite key="MinigridMiniworld23"></d-cite>, which uses gymnax's API <d-cite key="gymnax2022github"></d-cite>. Additionally, we make use of gymnax's deep-sea environment implementation as well.
 
 Each RL agent undergoes training for 500,000 time steps across four vectorized environments, employing 30 seeds for each RL algorithm.
 To assess performances on the environments, we calculate the average episode return across seeds at the end of training with a 95% confidence interval determined through the percentile bootstrapped method.
@@ -250,6 +294,15 @@ We are not just interested in how well these curiosity algorithms perform but al
 We therefore also visualise the sample standard deviation during training to see the performance variations. This assists us in seeing how consistent the behaviour is for each curiosity algorithm.
 
 Now since we are not testing the reward combiner found it is not clear how we should combine the external reward and the intrinsic reward. We treat both the external reward and the intrinsic reward as episodic and therefore we can use the following formula, $$ \hat{r} = r_t + \lambda ri_t $$, where $$\lambda$$ is some weight factor. 
+These are the optimal values we found for $$\lambda$$ for each curiosity algorithm:
+
+- FAST: $$\lambda = 0.003$$.
+- CCIM-slimmed: $$\lambda = 0.17$$.
+- CCIM: $$\lambda = 0.003$$.
+- BYOL-Explore Lite: $$\lambda = 0.006$$
+- RND: $$\lambda = 0.2$$.
+
+Next we describe the environments we use in more detail.
 
 ### Empty grid-world
 
@@ -309,16 +362,16 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_ccim_30.png" class="img-fluid"  %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_ccim_slimmed_30.png" class="img-fluid"  %}
     </div>
 </div>
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_ccim_slimmed_30.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_byol_lite_30.png" class="img-fluid"  %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_rnd_30.png" class="img-fluid"  %}
     </div>
 </div>
 
@@ -342,10 +395,10 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 </div>
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_std.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_std.png" class="img-fluid"  %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_CCIM_mean_seeds_CI.png" class="img-fluid"  %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_CI.png" class="img-fluid"  %}
     </div>
 </div>
 
@@ -359,6 +412,15 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
     </div>
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_dis_ppo_30.png" class="img-fluid"  %}
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_byol_lite_30.png" class="img-fluid"  %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_rnd_30.png" class="img-fluid"  %}
     </div>
 </div>
 
