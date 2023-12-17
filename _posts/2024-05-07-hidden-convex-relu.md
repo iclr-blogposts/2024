@@ -263,7 +263,7 @@ The code for _this plot_ is available and reproducible on this __[Jupyter Notebo
 
 Deep learning is not without faults. Even though the test performance can surpass those of many machine learning models, it is very hard to know what the network has learned because of its black-box nature. Interpretability in neural networks is important because it may lead us to simpler models that are cheaper to run, are more robust to small changes in the input, and are easier to adapt to specific tasks. It is also one of the criteria for future trustworthy AI systems for many countries and regulations.
 
-To figure out what a neural network learns, we will focus in this post on the training of a shallow ReLU network using vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
+To figure out what a neural network learns, we will focus in this post on the training of a shallow ReLU network by vanilla gradient descent, using the full batch of data at each step, in a regression setting. More precisely, we will investigate how the construction of a convex equivalent to the non-convex training problem can enlighten us on how neurons evolve during the training phase, with a specific focus on the activation of the ReLU functions and their consequences. 
 
 ### Problem and notation
 
@@ -288,7 +288,7 @@ Even the simplest ReLU models have non-trivial non-convexity as depicted in the 
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
-<p class="legend">Loss landscape of a network with two parameters, one for each ReLU neuron, and two data points. Since the labels are positive, we fix the second layer $\alpha_1, \alpha_2$ to 1 to plot the loss in 2D without a loss of generality. The data points $(x_1, y_1) = (-1, 1)$ and $(x_2, y_2) = (1, 2)$ are fixed. The black lines represent the loss for only one neuron (since the other is equal to 0). The red lines are the only path of parameters for which the loss is constant, they represent the parameters for which the neuron fits exactly one data point and is deactivated for the other and thus suffers a loss of $(y_1)^2$ for the red line on the left, and $(y_2)^2$ for the other. The exact formula to compute each point of the loss landscape is:
+<p class="legend">Loss landscape of a network with two parameters, one for each ReLU neuron, and two data points: $(x_1, y_1) = (-1, 1)$ and $(x_2, y_2) = (1, 2)$ are fixed. Since all labels are positive, we fix the second layer $\alpha_1, \alpha_2$ to 1 to plot the loss in 2D without a loss of generality. The black lines represent the loss for only one neuron (since the other is equal to 0). The red lines are the only path of parameters for which the loss is constant, they represent the parameters for which the neuron fits exactly one data point and is deactivated for the other and thus suffers a loss of $(y_1)^2$ for the red line on the left, and $(y_2)^2$ for the other. The exact formula to compute each point of the loss landscape is:
 
 \begin{equation*}
 \begin{split}
