@@ -120,7 +120,7 @@ Therefore, $\mathcal{I}_{\text{removal,loss}}(z,z_{\text{test}}):=\frac{dL(z_\te
 
 </details>
 
-Since one training sample romoval can be understood as setting $\epsilon=-\frac{1}{n}$, we can predict the corresponding test loss difference by $-\frac{1}{n}\mathcal{I}_{removal,loss}(z,z_{test})$. By comparing the predicted test loss difference and the actual test loss difference by leave-one-out retraining, we can verify the accuracy of the proposed influence scores, as shown in the figure below.
+Since one training sample romoval can be understood as setting $\epsilon=-\frac{1}{n}$, we can predict the corresponding test loss difference by $-\frac{1}{n}\mathcal{I_{remove, loss}} \;(\mathcal{z}, \mathcal{z}_{\text{test}})$. By comparing the predicted test loss difference and the actual test loss difference by leave-one-out retraining, we can verify the accuracy of the proposed influence scores, as shown in the figure below.
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/1.png" class="img-fluid" %}
 
