@@ -422,3 +422,7 @@ After pre-training or adaptation tuning, a major approach to using LLMs is to de
 4. Outcome: The AI, guided by CoT prompts, demonstrates an improved ability to methodically solve complex math problems, providing step-by-step explanations that enhance understanding and learning for students. This approach leads to more coherent and logically structured problem-solving compared to direct answer generation.
 
 **Related Works:** More information can be seen in Wei et al.<d-cite key="wei2022chain"></d-cite>, Li et al.<d-cite key="li2022advance"></d-cite>, and Kojima et al.<d-cite key="kojima2022large"></d-cite>
+
+
+
+   
