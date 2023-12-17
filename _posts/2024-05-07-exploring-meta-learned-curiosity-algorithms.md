@@ -369,7 +369,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 
 
 <div class="caption">
-    Figure 13. Heatmaps of the normal PPO agent (right), CCIM agent (left), and CCIm-slimmed agent (middle) in empty grid-world.
+    Figure 13. Heatmaps of the CCIM agent (left), CCIm-slimmed agent (middle), and normal PPO agent (right) in empty grid-world.
 </div>
 
 #### FAST
