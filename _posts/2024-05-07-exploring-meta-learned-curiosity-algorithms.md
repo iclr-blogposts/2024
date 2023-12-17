@@ -461,4 +461,7 @@ We think it would also be interesting to find a reward combiner using variant of
 
 ## Conclusion
 
-In this blog post we studied two curiosity algorithms that were meta-learned namely FAST and CCIM. We conducted our experiments using the empty grid-world environment and the deep sea environment. FAST and CCIM both 
+In this blog post, we studied two meta-learned curiosity algorithms, namely FAST and CCIM. We compared them to a non-curious agent and our baselines for the curiosity algorithms: RND and BYOL-Explore. Our experiments were conducted using both the empty grid-world environment and the deep-sea environment.
+FAST and CCIM both performed well in the empty grid-world, covering more of the map than the baselines when examining their heatmaps. This aligns with our expectations since this was the environment used to search for the curiosity algorithms. However, in the deep-sea environment, both algorithms did not perform well compared to the baselines. Conversely, CCIM-slimmed, a streamlined version of CCIM, showed performance comparable to the baselines.
+We suspect that this is because the intrinsic reward decreased as the agent explored more. This behavior was not observed in FAST and CCIM, which we believe is not ideal and consider it the main flaw of these algorithms.
+The approach of meta-learning curiosity algorithms is novel, and we believe there's interesting work that can be done following the same approach as Alet et al., trying it with different environments to search for curiosity algorithms such as the deep-sea environment. Another avenue is using the meta-learned curiosity algorithms to search for the reward combiner.
