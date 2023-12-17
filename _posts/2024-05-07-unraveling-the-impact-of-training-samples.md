@@ -156,7 +156,7 @@ One Datamodel is specifically optimized to learn the data attribution of a fixed
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/2.png" class="img-fluid"  %}
 *Caption: Linear datamodels accurately predict true margins averaged across 100 models.
-Source: Fig 5 in the paper "Datamodels: Predicting Predictions from Training Data" <d-cite key="shah2022modeldiff"></d-cite>*
+Source: Fig 5 in the paper "Datamodels: Predicting Predictions from Training Data" <d-cite key="ilyas2022datamodels"></d-cite>*
 
 In their experiments using CIFAR-10, the authors reserved a specific subset of output pairs for evaluation. Here, $\alpha$ represents the subsampling fraction in relation to the training set size. For instance, in a training dataset with $|S| = 100$ data points, setting $\alpha = 0.2$ means each subset, $S_i$, comprises a fixed size of $|S_i| = 20$. They demonstrated that Datamodels effectively predict outcomes for unseen in-distribution test subsets. 
 In the above plots, the bottom-right panel illustrates data for three color-coded random target examples, showing a strong Spearman correlation ($r > 0.99$) between predicted and actual outputs.
