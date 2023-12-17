@@ -430,7 +430,17 @@ We again plot the heatmap of FAST and compare it to PPO's heatmap using the best
 
 ## Discussion
 
-more random info
+Alet et al. provided a unique approach to meta-learning. The performance of CCIM and FAST in the empty grid-world then did not surprise us as that was environment used to search for the algorithms. Note in Figure 16 we notice that the 15 best seeds of FAST covered more of the map, i.e., most of the seeds took different parts to the goal. 
+However for CCIM and CCIm-slimmed heatmaps only slightly covered more of the map then PPO. One major concern we still have is how the intrinsic rewards for FAST and CCIM increased during training for both environments used in our experiments<d-footnote>The intrinsic reward for CCIM-slimmed decreased during training.</d-footnote>. Even with the reward combiner we still believe this could cause an issue like it did with the deep sea environment. Recall that the reward combiner has the following formula, 
+
+$$
+\hat{r}_t = \frac{(1+ri_t-t/T)\cdot ri_t+ r_t\cdot t/T}{1+ri_t}.
+$$
+
+Now as $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithm
+
+In future work we think it will be interesting to repeat this experiment using the deep sea environment to find the curiosity algorithms that output the intrinsic reward. 
+We think it would also be interesting to find a reward combiner using variant of FAST or CCIM, actually we wonder why variant of FAST or CCIM was used to find the reward combiner. Recall that a variant of RND was used to find the reward combiner. 
 
 ## Conclusion
 
