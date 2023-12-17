@@ -199,7 +199,7 @@ $$
 $$
 
 Here $$r_t$$ is the external reward, $$t$$ is the current time-step, $$T$$ is the maximum steps possible in the episode, and $$ri_t$$ is the intrinsic reward. 
-However, in this blog post we decided not to focus on the reward combiner $$\chi$$ but instead focus on FAST and CCIM.<d-footnote>This decision arises because we felt our exploration of it was not exhaustive enough.</d-footnote>.
+However, in this blog post we decided not to focus on the reward combiner $$\chi$$ but instead focus on FAST and CCIM.<d-footnote>This decision arises because we felt our exploration of the reward combiner was not exhaustive enough.</d-footnote>.
 
 
 
@@ -283,7 +283,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_std.png" class="img-fluid" %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_CCIM_mean_seeds_CI.png" class="img-fluid" %}
+        {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_ccim_mean_seeds_CI.png" class="img-fluid" %}
     </div>
 </div>
 
@@ -327,6 +327,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 </div>
 
 #### FAST
+
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/DeepSea-bsuite_FAST_mean_seeds_std.png" class="img-fluid" %}
@@ -351,6 +352,7 @@ The max number of steps in the environment is $$N$$. Therefore, the optimal poli
 <div class="caption">
     Figure 15. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
+
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/heatmap_fast_30.png" class="img-fluid"  %}
