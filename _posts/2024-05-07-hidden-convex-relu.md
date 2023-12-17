@@ -240,6 +240,7 @@ $$
 \definecolor{cvred}{RGB}{230, 29, 0}
 \definecolor{cred}{RGB}{230, 159, 0}
 \definecolor{cblue}{RGB}{51, 102, 253}
+\definecolor{cgreen}{RGB}{0, 158, 115}
 \def\czero{ {\color{cred}{0}} }
 \definecolor{cvblue}{RGB}{86, 180, 233}
 \def\cone{ {\color{cvblue}{1}} }
@@ -496,7 +497,7 @@ The equivalence proof is heavily based on ReLU, specifically that a ReLU unit di
 
 In the previous part, we considered data to be one-dimensional, in this case, there are only two possible activation patterns. Let's now consider two-dimensional data. To do so in the simplest way possible, we will consider regular one-dimensional data and a dimension filled with $$1$$s. This will effectively give the neural network a _bias_ to use without modifying the formulas.
 
-We consider two data points: $$\color{cvred}{\pmb{x_1}} = (0.2, 1)$$ and $$\color{cvred}{\pmb{x_2}} = (1, 1)$$, each associated with their label $$y_1 = 1$$ and $$y_2 = 1$$. We plot the output of one ReLU unit. We initialize our neuron at $$\pmb{w}_1 = (0.3, 0.15)$$, $$\alpha_1 = 1$$. Therefore we have that
+We consider two data points: $$\color{cvred}{\pmb{x_1}} = (-0.2, 1)$$ and $$\color{cvred}{\pmb{x_2}} = (1, 1)$$, each associated with their label $$y_1 = 0.5$$ and $$y_2 = 1$$. We plot the output of one ReLU unit. We initialize our neuron at $$\pmb{w}_1 = (0.3, 0.15)$$, $$\alpha_1 = 1$$. Therefore we have that
 
 <p>
 \begin{align}
@@ -505,8 +506,7 @@ We consider two data points: $$\color{cvred}{\pmb{x_1}} = (0.2, 1)$$ and $$\colo
 \end{align}
 </p>
 
-The activation pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$.
-
+The activation pattern is $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$. There are only three other possible activation pattern, activating both data points: $$\pmb{D}_1=\left(\begin{smallmatrix} 1 & 0 \\ 0 & 1 \end{smallmatrix}\right)$$, activating only the first one with $$\pmb{D}_1=\left(\begin{smallmatrix} 1 & 0 \\ 0 & 0 \end{smallmatrix}\right)$$ and of course activating no data point with a zero matrix.
 
 One point of interest is the data for which the ReLU will be 0. This is where the output changes its slope: $$a_1 = -\frac{w_1^1}{w_1^2}$$ where $$w_1^i$$ is the i-th coordinate of $$\pmb{w}_i$$. Here, $$a_1 = 0.5$$. We call this the _activation point_ of the neuron $$\pmb{w}_1$$.
 
@@ -518,11 +518,11 @@ We plot the $$\color{cblue}{\text{output}}$$ of the network in the function of t
 
 __Illustration__.
 
-In the animation below, we train this network using classic gradient descent on the two data points $$\pmb{x}_1$$ and $$\pmb{x}_2$$, represented by the red crosses. We plot its output in blue for every possible data point (omitting the second dimension as it is always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame corresponds to one step of full-batch gradient descent with a small learning rate. We mark the activation point of the neuron with a green triangle, pointing toward which side the neuron activates. The green triangle's height is the slope of the ReLU's output, equal to $$u_1^1 = w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
+In the animation below, we train this network using classic gradient descent on the two data points $$\color{cvred}{\pmb{x}_1}$$ and $$\color{cvred}{\pmb{x}_2}$$, represented by the red crosses. We plot its $$\color{cblue}{\text{output}}$$ in blue for every possible data point (omitting the second dimension as it is always 1 in this example, playing the role of the bias), and we plot in red the label associated with the two data points. Each frame corresponds to one step of full-batch gradient descent with a small learning rate. We mark the $$\color{cgreen}{\text{activation point}}$$ of the neuron with a green triangle, pointing toward the side the neuron activates. The green triangle's height is the slope of the ReLU's output, equal to $$u_1^1 = w_1^1 \alpha_1$$, allowing us to visualize how important one neuron is for the output of the network.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/firstgif_movie.gif" class="img-fluid" %}
 
-<p class="legend">Training a single neuron network with gradient descent until it exactly fits two data points. It starts by fitting the only point it activates, \(\color{cvred}{\pmb{x}_2}\). As training progresses, the activation point represented by a green triangle shifts position. As soon as the activation point reaches \(\color{cvred}{\pmb{x}_1}\), it activates it and starts fitting both points at the same time. Its activation pattern is now \(\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)\)</p>
+<p class="legend">Training a single neuron network with gradient descent until it exactly fits two data points. It starts by fitting the only point it activates, \(\color{cvred}{\pmb{x}_2}\). As training progresses, the activation point represented by a green triangle shifts position. As soon as the activation point reaches \(\color{cvred}{\pmb{x}_1}\), it activates it and starts fitting both points at the same time. Its activation pattern shifts from \(\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)\) to \(\left(\begin{smallmatrix} \cone & 0 \\ 0 & \cone \end{smallmatrix}\right)\) and stays the same until convergence.</p>
 
 Adding more neurons will not create additional activation patterns, adding more data points will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. 
 
@@ -530,7 +530,7 @@ Adding more neurons will not create additional activation patterns, adding more 
 
 <p class="legend">Plotting individual output and activation points of each of these ten possible ReLU neurons in blue. Those are the 10 (20 with negative ones) neurons that need to be considered to get the global optima using the convex equivalent. When moving the activation point between two data points, the activation pattern does not change.</p>
 
-<p class="remark"> In higher dimensions we cannot visualize the activation patterns as easily, but we can understand that as dimensionality increases, more patterns are possible as it's easier to separate different data points.</p>
+<p class="remark"> Notice that it is not possible to only activate the data points in the middle. However if we increase the data's dimension, this becomes possible. In higher dimensions we cannot visualize the activation patterns as easily, but we can understand that as dimensionality increases, more patterns are possible as it's easier to separate different data points.</p>
 
 <div style="display: none">
 {<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
@@ -573,7 +573,11 @@ There has been some work focused on solving the convex problem quickly<d-cite ke
 
 _Performance on popular dataset for a single layer network<d-cite key="mishkinFastConvexOptimization2022a"></d-cite>._
 
+For small datasets and networks, convex solvers are fast, do not require any tuning to get convergence is easy. On the other hand, you have to correctly tune the learning rate to reach a stable solution in reasonable time with gradient descent.
+
+<p class="remark">
 A convex equivalent of deeper networks exists but exacerbates existing problems. The only way to make it possible is to optimize layer by layer. This is still a work in progress and needs further improvements to beat the usual methods in accuracy and speed.
+</p>
 
 ### Activation patterns are not a constant in the non-convex problem
 
@@ -640,8 +644,9 @@ If you take orthogonal data and a small scale, the behavior is very predictable<
 
 ## Conclusion
 
-The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minimum found by gradient descent in the non-convex setting. However, finding the global optima is impossible in practice, and approximations are still costly. There is no evident link between feature learning in the non-convex and the convex reformulation.
+The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minimum found by gradient descent in the non-convex setting. However, finding the global optima is impossible in practice, and approximations are still costly. While there is no evident link between feature learning in the non-convex and the convex reformulation, many settings allow for a direct equivalence and the whole convex toolkit for proofs.
 
-As we conclude, the tension between the computational demands of cutting-edge models and the necessity for interpretability becomes apparent. Unveiling the intricacies of training offers a glimpse into simpler, more transparent models, fostering adaptability and responsiveness in the evolving landscape of artificial intelligence. This duality of complexity and clarity underscores the ongoing quest for a more responsible and effective future in machine learning.
+The convex reformulation will probably hugely benefit from dedicated software as it has been the case for gradient descent in deep networks, and will offer a no-tuning alternative to costly stochastic gradient descent.
 
 Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minimum.
+
