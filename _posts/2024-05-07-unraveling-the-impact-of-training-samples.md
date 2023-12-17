@@ -43,12 +43,6 @@ toc:
     - name: Data Leakage Detection
     - name: Prediction Brittleness Examination
   - name : Conclusion
-  # - name: Footnotes
-  # - name: Code Blocks
-  # - name: Diagrams
-  # - name: Tweets
-  # - name: Layouts
-  # - name: Other Typography?
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -78,7 +72,8 @@ How do we quantify the true influence of datasets? What role does the influence 
 
 This blog post revisits several proposed **Data Attribution Methods** which aim to quantitatively measure the importance of each training sample with respect to the model's output. The blog post also demonstrates the utility of the data attribution methods by providing some usage examples, e.g. [understanding the difference of learning algorithms](#learning-algorithm-comparison), checking [data leakage](#data-leakage-detection), and analyzing the [model robustness ](#prediction-brittleness-examination).
 
-{% include figure.html path="assets/img/2024-05-07-Unraveling-The-Impact-of-Training-Samples/animation.gif" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/animation.gif" class="img-fluid" %}
+
 *Motivation of data attribution. For a given target, we want to quantify the influence of each of the training samples. Therefore, it's more interpretable for us to understand model decisions and bias.*
 
 ## Data Attribution Methods
