@@ -384,7 +384,8 @@ Next we decided to plot the heatmaps of CCIM and CCIM-slimmed and compare to PPO
 
 #### FAST
 
-Let us now turn our attention to how FAST performed. We again start with deep sea environment. The left of Figure 14 indicates to us that FAST does produce more consistent agents than PPO however how baselines have a lower sample standard deviation. We again plot the sample deviation for the first 10,000 steps as we notice no significant difference after 10,000. Figure 14 right side shows that FAST, like CCIM, also does poor on this environment relative to our baselines.
+Let us now turn our attention to how FAST performed. We again start with deep sea environment. The left of Figure 14 indicates to us that FAST does produce more consistent agents than PPO however how baselines have a lower sample standard deviation. We again plot the sample deviation for the first 10,000 steps as we notice no significant difference after 10,000.
+Figure 14 right side shows that FAST, like CCIM, also does poor on this environment relative to our baselines. The intrinsic reward of the FAST agents also increased during training.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -398,6 +399,8 @@ Let us now turn our attention to how FAST performed. We again start with deep se
 <div class="caption">
     Figure 14. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
+
+FAST's performance in the empty grid-world improves as it is comparable to our baselines now despite its intrinsic rewards also increasing over time. Again like in CCIM's results we notice that the confidence intervals overlap in the empty-grid world.
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_std.png" class="img-fluid"  %}
@@ -406,7 +409,6 @@ Let us now turn our attention to how FAST performed. We again start with deep se
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_CI.png" class="img-fluid"  %}
     </div>
 </div>
-
 <div class="caption">
     Figure 15. The sample standard deviation during training (left) and the average episode return (right) in empty grid-world environment.
 </div>
@@ -420,6 +422,7 @@ Let us now turn our attention to how FAST performed. We again start with deep se
     </div>
 </div>
 
+We again plot the heatmap of FAST and compare it to PPO's heatmap using the best 15 seeds.
 
 <div class="caption">
     Figure 16. Heatmaps of the FAST agent (left) and the normal PPO (right) in empty grid-world.
