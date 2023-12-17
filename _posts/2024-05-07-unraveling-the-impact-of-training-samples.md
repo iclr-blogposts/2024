@@ -301,6 +301,7 @@ We can also use the data attribution methods to identify brittle predictions (i.
 Specifically, we could leverage the sample importance scores to find the smallest training subset (defined as support set) such that removing them could flip the model prediction. By calculating the support set size for each test sample, we could know the brittleness of the model output with respect to the input. 
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_4.png" class="img-fluid" %}
+Source: Fig 8 in the paper "Datamodels: Predicting Predictions from Training Data" <d-cite key="ilyas2022datamodels"></d-cite>*
 
 Another application involves data counterfactual estimation. As illustrated in the figure above, after the training subset removal, the observed changes in actual model logits closely align with the predicted model logits changes estimated through data attribution methods. 
 
