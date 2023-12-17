@@ -253,9 +253,9 @@ $$
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/teaser_movie.gif" class="img-fluid" %}
 
 
-<p class="legend"> <em> There exists an equivalent convex formulation to the classical non-convex ReLU two-layer network training. That sounds like great news but it is really the case in practice? Let's find out together. </em></p>
+<p class="legend"> <em> There exists an equivalent convex formulation to the classical non-convex ReLU two-layer network training. That sounds like great news but is it really the case in practice? Let's find out together. </em></p>
 
-The code for this plot is available reproducible on this __[Jupyter Notebook]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.ipynb' | relative_url}})__ (or in __[HTML]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})__).
+The code for _this plot_ is available and reproducible on this __[Jupyter Notebook]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.ipynb' | relative_url}})__ (or in __[HTML]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})__).
 
 ## Overview and Motivation
 
@@ -653,6 +653,6 @@ If you take orthogonal data and a small scale, the behavior is very predictable<
 
 The main takeaway is that the best network for a given dataset can be found exactly by solving a convex problem. The convex problem can describe every local minimum found by gradient descent in the non-convex setting. However, finding the global optima is impossible in practice, and approximations are still costly. While there is no evident link between feature learning in the non-convex and the convex reformulation, many settings allow for a direct equivalence and the whole convex toolkit for proofs.
 
-The convex reformulation will probably hugely benefit from dedicated software as has been the case for gradient descent in deep networks, and will offer a no-tuning alternative to costly stochastic gradient descent. In smaller settings, it allows to quickly find all the possible local minima which are so important in machine learning.
+The convex reformulation will hugely benefit from dedicated software as has been the case for gradient descent in deep networks. Only then will it offer a no-tuning alternative to costly stochastic gradient descent. In smaller settings, it already allows to quickly find all the possible local minima which are so important in machine learning.
 
 Despite advancements in understanding the optimization landscape of neural networks, a significant gap persists in reconciling theory with practical challenges, notably because of early stopping. In real-world scenarios, networks often cease learning before reaching a local minimum and this has direct impact (for example in large scale initialization) but there is limited results.
