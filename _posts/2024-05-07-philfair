@@ -1,4 +1,12 @@
+---
 
+layout: distill
+title: Sample Blog Post
+description: Corbett-Davies et al. outline neatly the existing approaches to ML fairness and propose a utlity-maximization alternative. I argue that every approach is flawed, and that a reflective equilibrium, incorporating approaches Crobett-Davies et al. argue against, might be a good alternative.
+date: 2023-12-17
+future: true
+htmlwidgets: true
+---
 > Socrates: You say that the capacity to get good things is virtue?
 > 
 > Meno: I do.
