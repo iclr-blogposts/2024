@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: What Are You Trying To Say? A Deep Dive Into LLM Generation and Decoding
-description: In the context of open-ended generation with large language models (LLMs), decoding methods are the algorithms responsible for turning a model's output logits into text that a human can read. Typically, the final layer of an LLM induces a probability distribution over the model's vocabulary, and the decoding method dictates how to generate a sequence of tokens from that distribution, choosing one token after another until the EOS token is produced or a maximum length is satisfied. While the decoding method may at first glance seem like a minor implementation detail, it is actually a complex and indispensible component of any system that needs to generate fluent, relevant, and meaningful text. Unfortunately, current SoTA decoding methods are still limited to trading off a subset of those desired qualities against others. In this blog post, we survey a broad body of literature on generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their relative strengths and weaknesses, we provide a thorough round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy, distill the most critical remaining open problems, and suggest promising directions for additional investigation.
+description: We survey a broad body of literature on generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their strengths and weaknesses, we provide a thorough round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -18,24 +18,51 @@ authors:
   - name: Anonymous
 
 # must be the exact same name as your blogpost
-bibliography: 2024-05-07-decoding-methods.bib  
+bibliography: 2024-05-07-llm-decoding-methods.bib  
 
 # Add a table of contents to your post.
 #   - make sure that TOC names match the actual section names
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Equations
-  - name: Images and Figures
+  - name: Why does decoding matter
+  - name: Very brief preliminaries
+  - name: Deterministic vs. stochastic approaches
+  - name: Deterministic
     subsections:
-    - name: Interactive Figures
-  - name: Citations
-  - name: Footnotes
-  - name: Code Blocks
-  - name: Diagrams
-  - name: Tweets
-  - name: Layouts
-  - name: Other Typography?
+    - name: Greedy decoding
+    - name: Beam search
+    - name: Problems with deterministic methods
+      subsections:
+      - name: The repetitiveness problem
+      - name: The degeneracy problem
+    - name: Problems with beam search in particular
+      subsections:
+      - name: The length problem
+      - name: The beam search curse
+      - name: Recap greedy vs. beam search
+    - name: An illustrative example
+  - name: Stochastic
+    subsections:
+    - name: Naive sampling
+    - name: Temperature
+    - name: Top-k sampling
+    - name: Top-p (nucleus) sampling
+    - name: Problems with stochastic methods
+      subsections:
+      - name: The decoherence problem
+      - name: The consistency problem
+    - name: An illustrative example
+  - name: Variants, hybrids, and alternatives
+    subsections:
+    - name: Variants of beam search
+      subsections:
+      - name: Modifying the search part to explore more, exploit less
+      - name: Modifying the score part with post-hoc reranking
+      - name: Modifying the score part with reinforcement learning
+    - name: Combining deterministic and stochastic methods
+  - name: Summary and taxonomy 
+
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -57,394 +84,277 @@ _styles: >
   }
 ---
 
+# Why does decoding matter?
+Here are three short pieces of text. They were all generated from the exact same language model using the exact same parameters and supplied with the exact same prompt:
 
-## TODO
-This blog post needs to be filled in. Below, we retain the example blog post, which will be replaced later.
+> **Prompt**:<br>`My friend just opened a gourmet restaurant exclusively for squirrels in Central Park. They`
+<br>
+> **Generation (greedy decoding)**:<br>` were so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy. I was so happy`
+<br>
+> **Generation (beam search, b=5)**:<br>` have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels`
+<br>
+>**Generation (top-k decoding, k=50)**:<br>`'re the only squirrels in the world. It's just hard to get a good laugh at all those things. One of the coolest things about squirrels is that they're not only funny, but they're also completely badass. The new owners of the Squirrels' Restaurant — and the owner of other Squirrels restaurants in the area — are named the "Rottweiler Lady." (`
+<br><br>
+*Generations are from GPT-2. All generations are truncated to 100 total tokens.*
 
----
+The reason these generations are so dramatically different from one another is because they were created using different **decoding methods**. That is the subject of this blog post.
 
+In the context of open-ended generation with large language models (LLMs), decoding methods are the algorithms responsible for turning a model's output logits into text that a human can read. Typically, the final layer of an LLM induces a probability distribution over the model's vocabulary, and the decoding method dictates how to generate a sequence of tokens from that distribution, choosing one token after another until the `EOS` token is produced or a maximum length is satisfied. While the decoding method may at first glance seem like a minor implementation detail, it is actually a complex and critical system for generating fluent, relevant, and meaningful text. Unfortunately, current SoTA decoding methods are limited to trading off a subset of those desired qualities for the others. 
 
-Note: please use the table of contents as defined in the front matter rather than the traditional markdown styling.
+In this blog post, we survey a broad body of literature on generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their strengths and weaknesses, we provide a round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy.
 
-## Equations
+# Very brief preliminaries
 
-This theme supports rendering beautiful math in inline and display modes using [MathJax 3](https://www.mathjax.org/) engine.
-You just need to surround your math expression with `$$`, like `$$ E = mc^2 $$`.
-If you leave it inside a paragraph, it will produce an inline expression, just like $$ E = mc^2 $$.
-
-To use display mode, again surround your expression with `$$` and place it as a separate paragraph.
-Here is an example:
+For a given prompt $\mathbf{x}$, the probability of a particular $n$-token generated sequence $\mathbf{y}$ under an LLM parameterized by $\theta$ is
 
 $$
-\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+\begin{align}
+
+P_{\theta}(\mathbf{y}|\mathbf{x}) &= \prod_{t=1}^n P_{\theta}({y}_{t}|\mathbf{y}_{1:t-1},\mathbf{x})
+
+\end{align}
 $$
 
-Note that MathJax 3 is [a major re-write of MathJax](https://docs.mathjax.org/en/latest/upgrading/whats-new-3.0.html) 
-that brought a significant improvement to the loading and rendering speed, which is now 
-[on par with KaTeX](http://www.intmath.com/cg5/katex-mathjax-comparison.php).
+In other words, the probabilities of each token conditioned on the previous tokens are multiplied together to obtain the total probability of the sequence. The fact that each term in this product is a different (conditional) probability distribution means that the probabilities are all "locally normalized," and the fact that $y_t$ is conditioned not just on $\mathbf{x}$ but also on previous generated tokens $\mathbf{y_{1:t-1}}$ leads to something called "exposure bias." Don't worry, we will discuss both of effects in detail later on!
 
+One more bit of notational housekeeping: in practice, we often work with log-probabilities, hence sums over log-probabilities may be used interchangeably with products over probabilities in this post.
 
-## Images and Figures
+# Deterministic vs. stochastic approaches
 
-Its generally a better idea to avoid linking to images hosted elsewhere - links can break and you
-might face losing important information in your blog post.
-To include images in your submission in this way, you must do something like the following:
+Decoding strategies can be very roughly divided into deterministic and stochastic approaches:
 
-```markdown
-{% raw %}{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}{% endraw %}
-```
+- **Greedy decoding** and **beam search** are the canonical deterministic methods
+- **Top-k** and **top-p** are the canonical stochastic methods
 
-which results in the following image:
+What we're calling "deterministic" approaches here are sometimes referred to as "maximization" or "maximum a posteriori (MAP)" approaches. They are designed to maximize the posterior probability—aka the softmax'd logits that the language model outputs—either per-token (greedy decoding) or in aggregate across a whole generated sequence (beam search). In contrast, stochastic methods involve *sampling* from these probability distributions, so they tend to have more diversity but also more noise.
 
-{% include figure.html path="assets/img/2024-05-07-distill-example/iclr.png" class="img-fluid" %}
+Let's familiarize ourselves with the canonical approaches and get a feel for their failure modes.
 
-To ensure that there are no namespace conflicts, you must save your asset to your unique directory
-`/assets/img/2024-05-07-[SUBMISSION NAME]` within your submission.
+# Deterministic
 
-Please avoid using the direct markdown method of embedding images; they may not be properly resized.
-Some more complex ways to load images (note the different styles of the shapes/shadows):
+## Greedy decoding
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/9.jpg" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all.
-</div>
+The naive approach to decoding is to select the token with the highest probability at each time-step. This **greedy decoding** strategy is simply argmax-ing the probability of the next token $y_t$ at every time-step $t$.
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/8.jpg" class="img-fluid z-depth-2" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/10.jpg" class="img-fluid z-depth-2" %}
-    </div>
-</div>
+$$
+\begin{align}
 
-<div class="row mt-3">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/11.jpg" class="img-fluid"  %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/12.jpg" class="img-fluid" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-distill-example/7.jpg" class="img-fluid" %}
-    </div>
-</div>
+P_{\theta}(y_t|\mathbf{y}_{1:t-1}, \mathbf{x}) &= \frac{P_{\theta}(\mathbf{y}_{1:t-1}, \mathbf{x}|y_t)P_{\theta}(y_t)}{P_{\theta}(\mathbf{y}_{1:t-1}, \mathbf{x})} \\
 
-### Interactive Figures
+\text{posterior} &= \frac{\text{likelihood} \times \text{prior}}{\text{marginalized likelihood}}
 
-Here's how you could embed interactive figures that have been exported as HTML files.
-Note that we will be using plotly for this demo, but anything built off of HTML should work
-(**no extra javascript is allowed!**).
-All that's required is for you to export your figure into HTML format, and make sure that the file
-exists in the `assets/html/[SUBMISSION NAME]/` directory in this repository's root directory.
-To embed it into any page, simply insert the following code anywhere into your page.
+\end{align}
+$$
 
-```markdown
-{% raw %}{% include [FIGURE_NAME].html %}{% endraw %} 
-```
+Greedy decoding is fast and simple, and a perfectly reasonable way to handle single-token generations where there is one obviously correct answer (for example, in a classification task). Unfortunately, it yields abysmal results in more open-ended generation tasks. Greedily decoded sequences tend to be, at best, short and bland, and, at worst, endless repeating loops of simple words or phrases—see Generation 1 in the example at the beginning of this blog post. 
 
-For example, the following code can be used to generate the figure underneath it.
+## Beam search
 
-```python
-import pandas as pd
-import plotly.express as px
+Within the subfield of neural machine translation (NMT), a slightly more niche shortcoming of greedy decoding spurred the development of a different deterministic method called **beam search** <d-cite key="sutskever2014sequence"></d-cite>.
 
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/earthquakes-23k.csv')
+Here's the motivating problem: when translating a sentence from one language to another, the word-to-word translation and the sequence-to-sequence translations are usually quite different.
 
-fig = px.density_mapbox(
-    df, lat='Latitude', lon='Longitude', z='Magnitude', radius=10,
-    center=dict(lat=0, lon=180), zoom=0, mapbox_style="stamen-terrain")
-fig.show()
+Here is an easy way to visualize this:
 
-fig.write_html('./assets/html/2024-05-07-distill-example/plotly_demo_1.html')
-```
+{% include figure.html path="assets/img/2024-05-07-llm-decoding-methods/greek_translate.gif" class="img-fluid" %}
 
-And then include it with the following:
+Watch how Google changes its translation as the sentence progresses. When the input is just "I," the output is the most literal Greek translation, "ego." When it's "I think," it changes to "nomizo," the first person singular conjugation of the verb "think." The final phrase ends up using almost entirely different words than the partial translations along the way. This is simply a facet of how language works; the meaning of the whole is not just the sum of the literal meanings of its parts.
 
-```html
-{% raw %}<div class="l-page">
-  <iframe src="{{ 'assets/html/2024-05-07-distill-example/plotly_demo_1.html' | relative_url }}" frameborder='0' scrolling='no' height="600px" width="100%"></iframe>
-</div>{% endraw %}
-```
+Since greedy decoding selects the next token based on a local probability optimum without consideration for the collective likelihood of the sequence, it tends to be short-sighted. It can miss out on more probable sequences by prematurely zeroing in on the most likely partial sequence so far.
 
-Voila!
+In beam search, multiple potential paths (called "hypotheses" in the NMT context) are explored before the best sequence is selected based on the total likelihood of the generation as a whole. Since the cost of an exhaustive search would be exponential in the sequence length, in practice all but the top $b$ most likely hypotheses are pruned at each time-step to keep things tractable, where $b$ is a fixed hyperparameter called the beam width. As such, beam search is not guaranteed to provide a global optimum, but it nevertheless tends to perform better than greedy search in NMT.
 
-<div class="l-page">
-  <iframe src="{{ 'assets/html/2024-05-07-distill-example/plotly_demo_1.html' | relative_url }}" frameborder='0' scrolling='no' height="600px" width="100%"></iframe>
-</div>
+{% include figure.html path="assets/img/2024-05-07-llm-decoding-methods/beam_search_ai2.png" class="img-fluid" %}
+*Source: https://blog.allenai.org/a-guide-to-language-model-sampling-in-allennlp-3b1239274bc3*
 
-## Citations
+*n.b. To clarify a common point of confusion: the beam width $b$ does not mean we're picking $b$ new nodes to explore at each decoding step, it means we're maintaining a constantly updated "leaderboard" of the best $b$ nodes so far. In other words, the top $b$ are the ones with the highest total probability of the partial generation so far, not just the highest probability of the next token.* 
 
-Citations are then used in the article body with the `<d-cite>` tag.
-The key attribute is a reference to the id provided in the bibliography.
-The key attribute can take multiple ids, separated by commas.
+Note that beam search with a beam width of 1 is equivalent to greedy decoding.
 
-The citation is presented inline like this: <d-cite key="gregor2015draw"></d-cite> (a number that displays more information on hover).
-If you have an appendix, a bibliography is automatically created and populated in it.
+## Problems with deterministic methods
 
-Distill chose a numerical inline citation style to improve readability of citation dense articles and because many of the benefits of longer citations are obviated by displaying more information on hover.
-However, we consider it good style to mention author last names if you discuss something at length and it fits into the flow well — the authors are human and it’s nice for them to have the community associate them with their work.
+Outside of NMT, beam search doesn't necessarily outperform greedy decoding. Classic beam search generally helps in situations where the **locally optimal greedy choices are not globally optimal, with translation being a natural example of this phenomenon. However, other major issues with greedy decoding also manifest in beam search. We'll discuss these issues next.
+
+### The repetitiveness problem
+
+By selecting the most likely token at each time-step, greedy decoding favors the most common words and phrases, including boilerplate language ("the," "a," etc). This is sometimes referred to as a type of **label bias** problem since the model is biased towards things it has seen often in training. 
+
+More formally, looking at Equations 1 and 2, we see that naively argmax-ing the posterior can give us generations dominated by tokens with very high priors. This issue is present in beam search as well, where the global maximum approximated by the search algorithm tends to be a simple generic phrase. In both cases, the high likelihood of these words and phrases causes them to be repeated again and again in the generation.
+
+### The degeneracy problem
+
+As a corollary to the repetitiveness problem, deterministic methods struggle to maintain longer-term coherency and tend to get stuck in infinite loops. As discussed above, the maximization procedure selects the most likely sentence…and then selects it again. The more times it repeats the sentence, the more conditioned it is to keep repeating it. There is no mechanism to force it out of this local optimum, so it stays there forever.
+
+## Problems with beam search in particular
+
+While beam search is intended to solve some of the issues of greedy decoding, it comes with its own set of challenges.
+
+### The length problem
+
+Recall that the total probability of the sequence equals all of the conditional probabilities of the next word at each time-step multiplied together (or, equivalently, the negative log probabilities summed together). Since probabilities are by definition less than or equal to one, the probability of a longer sequence is generally lower than the probability of a shorter one. In fact, a well-known empirical finding with beam search in NMT is that the global maximum is often the empty hypothesis <d-cite key="stahlberg2019nmt"></d-cite>. In order to fairly compare the likelihood of sentences of different lengths, we need to alter our beam search slightly.
+
+There are a few tricks employed to alleviate the length problem. Standard length normalization <d-cite key="Jean2015MontrealNM"></d-cite><d-cite key="koehn-knowles-2017-six"></d-cite><d-cite key="wu2016googles"></d-cite> involves dividing the sum of the log probabilities of the sequence by the length of the sequence, in a sense calculating entropy-per-token averaged across the sequence:
+
+$$
+\sum_{t=1}^n \log P(y_{t}|\mathbf{y}_{1:t-1}) \rightarrow \frac{\sum_{t=1}^n \log P(y_{t}|\mathbf{y}_{1:t-1})}{n}
+$$
+
+A different but related approach <d-cite key="He2016ImprovedNM"></d-cite><d-cite key="meister2021beam"></d-cite> is to add a word reward (of tunable strength $\lambda$) to bias generation towards longer sentences:
+
+$$
+\sum_{t=1}^n \log P(y_{t}|\mathbf{y}_{1:t-1}) \rightarrow \sum_{t=1}^n \log P(y_{t}|\mathbf{y}_{1:t-1})+\lambda{n}
+$$
+
+These heuristics are admittedly ad-hoc and some require tuning the hyperparameters they introduce (e.g. $\lambda$ for word reward models, other parameters for the Google model's length correction) based on beam size <d-cite key="stahlberg2019nmt"></d-cite>.
+
+### The beam search curse
+
+For a partial sequence "prefix" $$\mathbf{y}_{1:t-1}$$,
+let us call $P(y_{t}|\mathbf{y}_{1:t-1} )$ the "suffix distribution" and note that it must sum to one (summing over all possible "suffixes" $y_t$). In this sense, we sometimes say that we are dealing with **locally normalized** distributions, meaning that the probability distribution of the next token is normalized at every time-step in the generation. 
+
+The problem with local normalization is that paths involving completely wrong turns can still accumulate higher total sequence-level probabilities and win out against paths that stayed on-track, so to speak. If the model overestimated the likelihood of $$ \mathbf{y}_{1:t-1} $$, 
+the distribution $$ P(y_{t}|\mathbf{y}_{1:t-1}) $$ does not reflect this, because the suffix probabilities are normalized relative to each other, not counterfactuals from a better overall decoding path. A prefix with low probability may have a suffix distribution with low *entropy* (meaning the probability distribution is sharply peaked on one or two tokens), leading to a two-token generation with a high total probability, even though the prefix was definitely a "wrong turn" and this path was not what we want. 
+
+The problem is exacerbated by the label bias problem mentioned earlier, in which the model is biased towards words and sequences that are more common in the training data. For example, if the low probability prefix is part of a very common bigram in the training data, the locally normalized distribution will concentrate high probability on the completion of that bigram. In fact, it has actually been shown that beam search is particularly prone to selecting a low probability first token and then generating high-probability copies of training data from there <d-cite key="pmlr-v97-cohen19a"></d-cite>.
+
+In theory, pruning should help with the beam search curse because we can prune the low probability wrong turns and nip them in the bud without exploring any further down the wrong paths. Indeed, this is why it has been empirically observed <d-cite key="koehn-knowles-2017-six"></d-cite><d-cite key="yang-etal-2018-breaking"></d-cite><d-cite key="pmlr-v97-cohen19a"></d-cite> that increasing the beam width above ~5-10 degrades performance. Thus, despite increasing the volume of search space covered, reduced pruning can actually lead to worse generations! This paradoxical effect has been dubbed the "beam search curse."
+
+## Recap: greedy vs. beam search
+
+We have brought up some rather subtle points, so it's worth taking a moment to make sure we understand them. We'd particularly like to highlight how the failure modes all interact with each other in sometimes unexpected ways. To recap:
+
+- Beam search can be better than greedy search because it is able to find higher total probability sequences in situations where global maximum of sequences $\neq$ sequence of locally maximum tokens.
+- But if beam search is *too* good at finding the global maximum of sequences (i.e. if the beam width is too large, leading to better search), performance actually degrades. It turns out that the global maximum is usually not actually a "good" sequence. This is due to a variety of reasons:
+    - A sequence can have high total probability even if one of the early token probabilities was so low that it should have ruled this path out entirely. We can attribute this to a combination of the local normalization problem (probabilities at each time-step are only normalized relative to each other, so you can get big probabilities even though the previous step was low probability) and the label bias / copies problem (the model is biased towards reproducing the most common words and phrases from its training set).
+    - The length problem: longer sequence have more chances to accumulate low probability tokens and thus will have lower total probability on average, so beam search without normalization favors short sequences and even empty strings. But normalization is tricky and poorly defined.
+
+## An illustrative example
+
+> **Prompt**: `My friend just opened a gourmet restaurant exclusively for squirrels in Central Park. They`
+<br>
+**Generation (greedy)**: `were so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy` 
+<br>
+**Generation (beam search, b=1)**: `were so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy`
+<br> 
+> **Generation (beam search, b=5)**: `have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels in their kitchen. They have a lot of squirrels`
+<br>
+> **Generation (beam search, b=100)**:  `love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels. They love squirrels`
+>
+
+# Stochastic
+
+## Naive sampling
+
+Instead of argmax-ing the posterior probability distribution, what if we sample from it? That should help with the repetition and degeneracy issues we saw, since the randomness helps bump us out of local optima so we don't get stuck in infinitely repeating loops. Then again, too much randomness can make the generation…well, random. This is exactly what we see with naive sampling methods. 
+
+Why does this happen? Surely our probability mass is mostly concentrated on a few reasonable tokens, assuming the model is good? The problem is **the unreliable tail** <d-cite key="holtzman2020curious"></d-cite>, i.e. the very long tail of the probability distribution. Individually, they hold negligible probability mass, but collectively, they are overrepresented. A naive sampling decoding method will sample from this tail more often than it should. And as with all token-by-token decoding methods, mistakes also compound; once an irrelevant token is sampled, the generation is more likely to continue going off the rails.
+
+## Temperature
+
+Inspired by thermodynamics, the concept of temperature provides a mechanism for altering the entropy of the probability distribution. In methods that sample with temperature, the logits are divided by the temperature (a scalar) before the softmax operation, which has the effect of sharpening the distribution for small values of $T$ ($<1$) or making it flatter and more uniform for large values of $T$ ($>1)$. Thus "cold" temperatures lead to lower entropy and give us more deterministic decodings while "hot" temperatures lead to higher entropy and give us more diversity, creativity, and randomness.
+
+## Top-k sampling
+
+In top-k sampling <d-cite key="fan2018hierarchical"></d-cite><d-cite key="holtzman2018learning"></d-cite>, we first prune the probability distribution to the top $k$ most likely tokens at each generation step and then sample from this truncated distribution. Top-k lets us have our cake and eat it too, in a sense; we get a stochastic procedure while still only selecting from a narrow subset of reasonable options for the next token. 
+
+The value of $k$ is a hyperparameter (example of a typical value: 50). In practice, temperature is also used as another hyperparameter to further modulate the trade-off between greedy and sampling approaches. The combination of top-k and temperature with well-chosen values leads to generally impressive open-ended text generation and is the most commonly used decoding method outside of NMT applications. 
+
+## Top-p (nucleus) sampling
+
+However, an issue with top-k sampling is that it is a fixed parameter for each decoding steps. For some steps, the probability mass might be concentrated on one or two tokens, while for more ambiguous or open-ended completions, the probability mass might be spread out over a hundred or more. Using too large a value of $k$ will lead to inaccuracies in situations where there is one clear right answer, and using too small a value of $k$ will prune out valid decoding paths prematurely.
+
+Nucleus sampling <d-cite key="holtzman2020curious"></d-cite>, also known as "top-p," replaces the fixed $k$ with a fixed $p$; instead of sampling the top-k tokens, we sample a subset of tokens whose cumulative probability is greater than some threshold $p$.
+
+For example, let's say $p$=0.95 and one of the tokens has a hugely disproportionate amount of probability: $0.99$. Then nucleus sampling will just greedy decode. But if there is one with probability $0.5$ and one with probability $0.3$ and one with probability $0.15$, it will choose from those three. And so on. You can imagine this procedure as sorting the tokens by probability and then going down the list until you've hit your threshold, then sampling from those.
+
+## Problems with stochastic methods
+
+### The decoherence problem
+
+While top-k and top-p sampling generates more diverse and interesting text, this diversity often comes at the cost of coherence and relevance. The outputs can include off-topic, irrelevant, or nonsensical phrases, as the sampling allows for some lower probability choices to be made. And, recalling our discussion of the local normalization problem, we once again see how a single low probability choice can send the generation off the rails irrecoverably. In the case of beam search, local normalization often leads to finding globally optimal sequences that are simply copies of text commonly found in the training set. In stochastic methods, where sampling occurs per-token, it often leads to text that is locally consistent but globally incoherent, rambling, or lexically confusing.
+
+### The consistency problem
+
+By definition, non-deterministic methods do not consistently yield the same output for different inputs, which can be a problem for applications requiring consistency, quality assurance, reproducibility, or safety control.
+
+## An illustrative example
+
+> **Prompt**: `My friend just opened a gourmet restaurant exclusively for squirrels in Central Park. They`
+<br>
+> **Generation (top-k, k=10, T=0.7)**: `'re the only squirrels in the world. It's just like a big, big, big, big, big squirrel. You're just looking at the squirrels, and then you're like, 'What the hell?' and then you realize, 'Oh, no.' It's just a squirrel, and it's just like a big, big, big squirrel. You just don't know what's going on`
+<br>
+> **Generation (top-k, k=50, T=0.1)**: `'re so cute and they're so cute. I'm so happy I'm going to be able to eat them all. I'm so happy I'm going to be able to eat them all. I'm so happy I'm going to be able to eat them all. I'm so happy I'm going to be able to eat them all. I'm so happy I'm going to be able to eat`
+<br>
+> **Generation (top-k, k=50, T=1)**: `'re the only squirrel-loving restaurants in town." The website explains it all: "The name "fishes" are named after the birds that fly in the skies above Manhattan. A number of different species from the family include the golden beak and the eagle, which are similar in shape and size to pheasants or fowls. There are different species in many states in New`
+<br>
+> **Generation (top-p, p=0.5, T=0.7)**: `'re not really squirrels, but they're all kind of cute. I've been to a lot of restaurants, and I've never seen anything like this. It's a little bit like a family vacation. It's a little bit like a family vacation. It's a little bit like a family vacation. It's a little bit like a family vacation. It's a little bit like a family vacation. It`
+<br>
+> **Generation (top-p, p=0.9, T=0.7)**: `had some really good squirrels and they were all very cute." "It's very scary," said Kelly. "It's such a huge city. It's a little bit scary but it's just amazing. It's really scary." A few hours later, on the afternoon of July 28, 2018, a group of family and friends went to the bathroom and found a bunch of squirrels on`
+<br>
+> **Generation (top-p, p=0.9, T=0.1)**: `were so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy. I'm so happy`
+<br>
+> **Generation (top-p, p=0.99, T=0.7)**: `had some really good squirrel meat and a lot of squirrels. So I've always had a great time, but I think that I have to wait a bit longer. "More information on your local store can be found on our 2008 SEO guide.` 
+
+# Variants, hybrids, and alternatives
+
+Next, we will cover a swathe of other methods that alter, combine, or fully discard the canonical methods discussed previously. For this section of the blog post, we are going wide rather than deep.
+
+## Variants of beam search
+
+### Modifying the search part to explore more, exploit less
+
+Beam search is only useful if it discovers meaningfully different candidate decodings to compare. If all paths converge to approximately the same sequence, it is a waste of computing resources and we might as well do greedy decoding. As such, there are many variants focused on altering the search part of beam search to force it to explore more diverse potential paths. Here are a few prominent ones:
+
+**Diverse beam search** <d-cite key="vijayakumar2018diverse"></d-cite> divides the "beam budget" into groups and enforces diversity between groups through an extra loss term term corresponding to group dissimilarity. Dissimilarity can be based on exact matches or some kind of sentence-level embedding comparison. **Sibling beam search** <d-cite key="li2016simple"></d-cite> penalizes hypotheses that are siblings (same parent). In **beam blocking** <d-cite key="paulus2017deep"></d-cite> <d-cite key="klein-etal-2017-opennmt"></d-cite>, previously generated n-grams can't be used again. This fixes token and phrase level repetitions but can cause issues because sometimes you naturally *do* need to repeat words in a sentences. In **iterative beam search** <d-cite key="kulikov2019importance"></d-cite>, beam search is performed in multiple passes, each time ignoring any hypotheses that were previously seen.
+
+A related group of work called **constrained beam search** (for example **grid beam search** <d-cite key="hokamp-liu-2017-lexically"></d-cite> imposes structural requirements that beam search candidates must adhere to, such as containing a list of words or not containing any words that are banned.
+
+### Modifying the score part with post-hoc reranking
+
+Arguably the bigger and more fundamental issue with beam search is that total probability is a poor proxy for the quality of a sequence <d-cite key="koehn-knowles-2017-six"></d-cite> <d-cite key="edunov-etal-2018-classical"></d-cite> <d-cite key="stahlberg2019nmt"></d-cite> <d-cite key="eikema-aziz-2020-map"></d-cite>, as the maximally probable generations tend to be far from the best generations for a variety of reasons discussed earlier.
+
+In light of this, several works started employing **N-best reranking** methods <d-cite key="holtzman2018learning"></d-cite> <d-cite key="scialom2020discriminative"></d-cite> <d-cite key="lee-etal-2021-discriminative"></d-cite> <d-cite key="bhattacharyya-etal-2021-energy"></d-cite> <d-cite key="fernandes-etal-2022-quality"></d-cite> to rerank beam search candidates according to some other sentence-level utility function instead of total probability. Candidates are generally scored by separately trained discriminator networks or oracle rankers. One benefit of this is that the trained rerankers are exposed to the model's output during training, unlike the LLM itself, which is only exposed to the training data. This mismatch between the training distribution and the generated distribution is sometimes called the **exposure bias** problem.
+
+A subset of these reranking methods use a utility function that compares candidates to some reference. For example, in Minimum Bayes Risk (MBR) decoding <d-cite key="eikema-aziz-2020-map"></d-cite><d-cite key="zhang2022rmbr"></d-cite>, the idea is to seek a consensus translation that is closest on average to other best candidates. Thus the score for each candidate is the expected utility (similarity) with all other candidates.
+
+### Modifying the score part with reinforcement learning
+
+Several works use an auxiliary sequence-level RL loss term to finetune LLMs. The goal of these methods is to steer the language model towards better generations according to some metric. Most if not all existing methods score generations with a separately learned reward model that predicts the performance on some external evaluation metric. For example, early works use reward models trained to predict scores from ROUGE for summarization <d-cite key="ranzato2016sequence"></d-cite> <d-cite key="paulus2017deep"></d-cite> <d-cite key="wu2018learning"></d-cite> or BLEU for translation <d-cite key="wu2016googles"></d-cite> <d-cite key="NguyenDB17"></d-cite> or other custom metrics for other tasks  <d-cite key="Tambwekar18"></d-cite> <d-cite key="mudgal2023controlled"></d-cite>. Of particular note recently are RL methods based on predicted human feedback as reward aka RLHF (ADD REFS: Ziegler et al., 2019; Stiennon et al., 2020; Ouyang et al., 2022; Perez et al., 2022; Bai et al., 2022; others).
+
+## Combining deterministic and stochastic methods
+
+In **stochastic beam search** <d-cite key="stochasticbeam"></d-cite>, the log-probabilities are perturbed with Gumbel distributed random noise before sequences are selected with beam search.
+
+In the **sample-and-rank** method <d-cite key="adiwardana2020humanlike"></d-cite>, the authors use a very simple approach: sentences are generated by sampling from the distribution (with or without temperature) at each time-step, and the "best" candidate is defined to be the one with the highest total probability. This can be viewed as a sort of Monte Carlo alternative to beam search.
+
+In **nucleus search** <d-cite key="shaham-levy-2022-get"></d-cite>, beam search is combined with top-p sampling. The authors present two versions of nucleus search: p-exact and dynamic beam. p-exact search is just top-p pruning applied at every level of the beam search. Dynamic beam search is a bit more subtle; like p-exact, it applies top-p pruning at every level, but it dynamically changes the value of $p$ based on the entropy of the candidate's probability distribution.
+
+Along similar lines is **factual-nucleus sampling** <d-cite key="lee2023factuality"></d-cite>, which is essentially a type of adaptive nucleus sampling that sets $p$ based on where in the sentence a token is located. The hypothesis is that randomness is more harmful to factuality when used in latter part of a sentence, because whatever is said in the latter part needs to be factual with respect to premise established in first part. Thus the value of $p$ for the token at step $t$ is is $p_t = \max\{\omega,p\lambda^{t-1}\}$ where p is the standard nucleus probability, $\lambda$ is a decay factor, and $\omega$ is a lower bound for the decay (otherwise p could decay to the point that you have greedy decoding).
+
+In **penalized sampling** <d-cite key="keskar2019ctrl"></d-cite>, the distribution is modified to include a penalty for repeated tokens.
+
+# Summary and taxonomy of decoding methods
+
+We have reviewed the canonical decoding methods as well as a wide survey of less established ideas. Let's see if we can distill what we've covered into a basic taxonomy that can help us see the underlying structure of the decoding problem more clearly. To summarize:
+
+- Decoding/text generation methods produce sequences of tokens from the conditional probability distributions produced at each time-step by the LLM.
+- Some methods try to maximize a sequence-level metric, which requires a search algorithm (since the space of all possible sequences is larger than the number of atoms in the observable Universe), while others are more myopic, and focus on maximizing a metric per-time-step.
+- The metric is most commonly the probability of the token or sequence under the model, but some methods use an external utility function (e.g. a trained reward model such as in RLHF) as the sequence-level metric instead of total probability.
+- Some methods are stochastic (sample from distributions) while others are deterministic (always select peak of distributions). Stochastic methods provide diversity and a mechanism for avoiding infinite repetition loops, but struggle with long-range coherence due to their lack of global perspective.
+- Many methods apply transformations to the distributions before sampling or selecting from them, such as truncation, temperature, noise injection, etc. Modifying these hyperparameters modifies the delicate trade-off between stochastic and deterministic properties.
+- A few methods are dynamic, varying decoding parameters with time.
+
+|  | Sample tokens? | Search + evaluate sequences? | Search method | Evaluation method | Distribution at each time-step |
+| --- | --- | --- | --- | --- | --- |
+| Greedy | No | No | na | na | Pruned to top 1 |
+| Top-k | Yes | No | na | na | Pruned to top k |
+| Top-p | Yes | No | na | na | Pruned to top p |
+| Beam search | No | Yes | Exact within beam | Total probability | Pruned to top b |
+| Nucleus search | No | Yes | Exact within beam | Total probability | Pruned to top p (where p may or may not be adaptive) |
+| Factual nucleus | Yes | No | Exact within beam | Total probability | Pruned to top p (where p is dynamic) |
+| Stochastic beam search | No | Yes | Exact with beam | Total probability | Raw distribution injected with noise; pruned to top b |
+| Sample-and-rank | Yes | Yes | Monte Carlo | Total probability | na/agnostic |
+| RLHF | Potentially | Potentially | na/agnostic                                                                                      | Predicted human feedback | na/agnostic |
 
 ***
 
-## Footnotes
-
-Just wrap the text you would like to show up in a footnote in a `<d-footnote>` tag.
-The number of the footnote will be automatically generated.<d-footnote>This will become a hoverable footnote.</d-footnote>
-
-***
-
-## Code Blocks
-
-This theme implements a built-in Jekyll feature, the use of Rouge, for syntax highlighting.
-It supports more than 100 languages.
-This example is in C++.
-All you have to do is wrap your code in a liquid tag:
-
-{% raw  %}
-{% highlight c++ linenos %}  <br/> code code code <br/> {% endhighlight %}
-{% endraw %}
-
-The keyword `linenos` triggers display of line numbers. You can try toggling it on or off yourself below:
-
-{% highlight c++ %}
-
-int main(int argc, char const \*argv[])
-{
-string myString;
-
-    cout << "input a string: ";
-    getline(cin, myString);
-    int length = myString.length();
-
-    char charArray = new char * [length];
-
-    charArray = myString;
-    for(int i = 0; i < length; ++i){
-        cout << charArray[i] << " ";
-    }
-
-    return 0;
-}
-
-{% endhighlight %}
-
-***
-
-## Diagrams
-
-This theme supports generating various diagrams from a text description using [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} plugin.
-Below, we generate a few examples of such diagrams using languages such as [mermaid](https://mermaid-js.github.io/mermaid/){:target="\_blank"}, [plantuml](https://plantuml.com/){:target="\_blank"}, [vega-lite](https://vega.github.io/vega-lite/){:target="\_blank"}, etc.
-
-**Note:** different diagram-generation packages require external dependencies to be installed on your machine.
-Also, be mindful of that because of diagram generation the first time you build your Jekyll website after adding new diagrams will be SLOW.
-For any other details, please refer to [jekyll-diagrams](https://github.com/zhustec/jekyll-diagrams){:target="\_blank"} README.
-
-**Note:** This is not supported for local rendering! 
-
-The diagram below was generated by the following code:
-
-{% raw %}
-```
-{% mermaid %}
-sequenceDiagram
-    participant John
-    participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-{% endmermaid %}
-```
-{% endraw %}
-
-{% mermaid %}
-sequenceDiagram
-participant John
-participant Alice
-Alice->>John: Hello John, how are you?
-John-->>Alice: Great!
-{% endmermaid %}
-
-***
-
-## Tweets
-
-An example of displaying a tweet:
-{% twitter https://twitter.com/rubygems/status/518821243320287232 %}
-
-An example of pulling from a timeline:
-{% twitter https://twitter.com/jekyllrb maxwidth=500 limit=3 %}
-
-For more details on using the plugin visit: [jekyll-twitter-plugin](https://github.com/rob-murray/jekyll-twitter-plugin)
-
-***
-
-## Blockquotes
-
-<blockquote>
-    We do not grow absolutely, chronologically. We grow sometimes in one dimension, and not in another, unevenly. We grow partially. We are relative. We are mature in one realm, childish in another.
-    —Anais Nin
-</blockquote>
-
-***
-
-
-## Layouts
-
-The main text column is referred to as the body.
-It is the assumed layout of any direct descendants of the `d-article` element.
-
-<div class="fake-img l-body">
-  <p>.l-body</p>
-</div>
-
-For images you want to display a little larger, try `.l-page`:
-
-<div class="fake-img l-page">
-  <p>.l-page</p>
-</div>
-
-All of these have an outset variant if you want to poke out from the body text a little bit.
-For instance:
-
-<div class="fake-img l-body-outset">
-  <p>.l-body-outset</p>
-</div>
-
-<div class="fake-img l-page-outset">
-  <p>.l-page-outset</p>
-</div>
-
-Occasionally you’ll want to use the full browser width.
-For this, use `.l-screen`.
-You can also inset the element a little from the edge of the browser by using the inset variant.
-
-<div class="fake-img l-screen">
-  <p>.l-screen</p>
-</div>
-<div class="fake-img l-screen-inset">
-  <p>.l-screen-inset</p>
-</div>
-
-The final layout is for marginalia, asides, and footnotes.
-It does not interrupt the normal flow of `.l-body`-sized text except on mobile screen sizes.
-
-<div class="fake-img l-gutter">
-  <p>.l-gutter</p>
-</div>
-
-***
-
-## Other Typography?
-
-Emphasis, aka italics, with *asterisks* (`*asterisks*`) or _underscores_ (`_underscores_`).
-
-Strong emphasis, aka bold, with **asterisks** or __underscores__.
-
-Combined emphasis with **asterisks and _underscores_**.
-
-Strikethrough uses two tildes. ~~Scratch this.~~
-
-1. First ordered list item
-2. Another item
-⋅⋅* Unordered sub-list. 
-1. Actual numbers don't matter, just that it's a number
-⋅⋅1. Ordered sub-list
-4. And another item.
-
-⋅⋅⋅You can have properly indented paragraphs within list items. Notice the blank line above, and the leading spaces (at least one, but we'll use three here to also align the raw Markdown).
-
-⋅⋅⋅To have a line break without a paragraph, you will need to use two trailing spaces.⋅⋅
-⋅⋅⋅Note that this line is separate, but within the same paragraph.⋅⋅
-⋅⋅⋅(This is contrary to the typical GFM line break behavior, where trailing spaces are not required.)
-
-* Unordered lists can use asterisks
-- Or minuses
-+ Or pluses
-
-[I'm an inline-style link](https://www.google.com)
-
-[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
-
-[I'm a reference-style link][Arbitrary case-insensitive reference text]
-
-[I'm a relative reference to a repository file](../blob/master/LICENSE)
-
-[You can use numbers for reference-style link definitions][1]
-
-Or leave it empty and use the [link text itself].
-
-URLs and URLs in angle brackets will automatically get turned into links. 
-http://www.example.com or <http://www.example.com> and sometimes 
-example.com (but not on Github, for example).
-
-Some text to show that the reference links can follow later.
-
-[arbitrary case-insensitive reference text]: https://www.mozilla.org
-[1]: http://slashdot.org
-[link text itself]: http://www.reddit.com
-
-Here's our logo (hover to see the title text):
-
-Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-Reference-style: 
-![alt text][logo]
-
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
-
-Inline `code` has `back-ticks around` it.
-
-```javascript
-var s = "JavaScript syntax highlighting";
-alert(s);
-```
- 
-```python
-s = "Python syntax highlighting"
-print(s)
-```
- 
-```
-No language indicated, so no syntax highlighting. 
-But let's throw in a <b>tag</b>.
-```
-
-Colons can be used to align columns.
-
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-There must be at least 3 dashes separating each header cell.
-The outer pipes (|) are optional, and you don't need to make the 
-raw Markdown line up prettily. You can also use inline Markdown.
-
-Markdown | Less | Pretty
---- | --- | ---
-*Still* | `renders` | **nicely**
-1 | 2 | 3
-
-> Blockquotes are very handy in email to emulate reply text.
-> This line is part of the same quote.
-
-Quote break.
-
-> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote. 
-
-
-Here's a line for us to start with.
-
-This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
-
-This line is also a separate paragraph, but...
-This line is only separated by a single newline, so it's a separate line in the *same paragraph*.

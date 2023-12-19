@@ -1,7 +1,396 @@
-@article{gregor2015draw,
-  title={DRAW: A recurrent neural network for image generation},
-  author={Gregor, Karol and Danihelka, Ivo and Graves, Alex and Rezende, Danilo Jimenez and Wierstra, Daan},
-  journal={arXiv preprint, arXiv:1502.04623},
+@article{sutskever2014sequence,
+      title={Sequence to Sequence Learning with Neural Networks}, 
+      author={Ilya Sutskever and Oriol Vinyals and Quoc V. Le},
+      year={2014},
+      eprint={1409.3215},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@article{stahlberg2019nmt,
+      title={On NMT Search Errors and Model Errors: Cat Got Your Tongue?}, 
+      author={Felix Stahlberg and Bill Byrne},
+      year={2019},
+      eprint={1908.10090},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{Jean2015MontrealNM,
+  title={Montreal Neural Machine Translation Systems for WMT’15},
+  author={S{\'e}bastien Jean and Orhan Firat and Kyunghyun Cho and Roland Memisevic and Yoshua Bengio},
+  booktitle={WMT@EMNLP},
   year={2015},
-  url={https://arxiv.org/pdf/1502.04623.pdf}
+  url={https://api.semanticscholar.org/CorpusID:359451}
+}
+
+@misc{wu2016googles,
+      title={Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation}, 
+      author={Yonghui Wu and Mike Schuster and Zhifeng Chen and Quoc V. Le and Mohammad Norouzi and Wolfgang Macherey and Maxim Krikun and Yuan Cao and Qin Gao and Klaus Macherey and Jeff Klingner and Apurva Shah and Melvin Johnson and Xiaobing Liu and Łukasz Kaiser and Stephan Gouws and Yoshikiyo Kato and Taku Kudo and Hideto Kazawa and Keith Stevens and George Kurian and Nishant Patil and Wei Wang and Cliff Young and Jason Smith and Jason Riesa and Alex Rudnick and Oriol Vinyals and Greg Corrado and Macduff Hughes and Jeffrey Dean},
+      year={2016},
+      eprint={1609.08144},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{He2016ImprovedNM,
+  title={Improved Neural Machine Translation with SMT Features},
+  author={W. He and Zhongjun He and Hua Wu and Haifeng Wang},
+  booktitle={AAAI Conference on Artificial Intelligence},
+  year={2016},
+  url={https://api.semanticscholar.org/CorpusID:38084627}
+}
+
+@misc{meister2021beam,
+      title={If beam search is the answer, what was the question?}, 
+      author={Clara Meister and Tim Vieira and Ryan Cotterell},
+      year={2021},
+      eprint={2010.02650},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+
+@InProceedings{pmlr-v97-cohen19a,
+  title = 	 {Empirical Analysis of Beam Search Performance Degradation in Neural Sequence Models},
+  author =       {Cohen, Eldan and Beck, Christopher},
+  booktitle = 	 {Proceedings of the 36th International Conference on Machine Learning},
+  pages = 	 {1290--1299},
+  year = 	 {2019},
+  editor = 	 {Chaudhuri, Kamalika and Salakhutdinov, Ruslan},
+  volume = 	 {97},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {09--15 Jun},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v97/cohen19a/cohen19a.pdf},
+  url = 	 {https://proceedings.mlr.press/v97/cohen19a.html},
+  abstract = 	 {Beam search is the most popular inference algorithm for decoding neural sequence models. Unlike greedy search, beam search allows for non-greedy local decisions that can potentially lead to a sequence with a higher overall probability. However, work on a number of applications has found that the quality of the highest probability hypothesis found by beam search degrades with large beam widths. We perform an empirical study of the behavior of beam search across three sequence synthesis tasks. We find that increasing the beam width leads to sequences that are disproportionately based on early, very low probability tokens that are followed by a sequence of tokens with higher (conditional) probability. We show that, empirically, such sequences are more likely to have a lower evaluation score than lower probability sequences without this pattern. Using the notion of search discrepancies from heuristic search, we hypothesize that large discrepancies are the cause of the performance degradation. We show that this hypothesis generalizes the previous ones in machine translation and image captioning. To validate our hypothesis, we show that constraining beam search to avoid large discrepancies eliminates the performance degradation.}
+}
+
+@misc{holtzman2020curious,
+      title={The Curious Case of Neural Text Degeneration}, 
+      author={Ari Holtzman and Jan Buys and Li Du and Maxwell Forbes and Yejin Choi},
+      year={2020},
+      eprint={1904.09751},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{fan2018hierarchical,
+      title={Hierarchical Neural Story Generation}, 
+      author={Angela Fan and Mike Lewis and Yann Dauphin},
+      year={2018},
+      eprint={1805.04833},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{holtzman2018learning,
+      title={Learning to Write with Cooperative Discriminators}, 
+      author={Ari Holtzman and Jan Buys and Maxwell Forbes and Antoine Bosselut and David Golub and Yejin Choi},
+      year={2018},
+      eprint={1805.06087},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{koehn-knowles-2017-six,
+    title = "Six Challenges for Neural Machine Translation",
+    author = "Koehn, Philipp  and
+      Knowles, Rebecca",
+    editor = "Luong, Thang  and
+      Birch, Alexandra  and
+      Neubig, Graham  and
+      Finch, Andrew",
+    booktitle = "Proceedings of the First Workshop on Neural Machine Translation",
+    month = aug,
+    year = "2017",
+    address = "Vancouver",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W17-3204",
+    doi = "10.18653/v1/W17-3204",
+    pages = "28--39",
+    abstract = "We explore six challenges for neural machine translation: domain mismatch, amount of training data, rare words, long sentences, word alignment, and beam search. We show both deficiencies and improvements over the quality of phrase-based statistical machine translation.",
+}
+
+@inproceedings{yang-etal-2018-breaking,
+    title = "Breaking the Beam Search Curse: A Study of (Re-)Scoring Methods and Stopping Criteria for Neural Machine Translation",
+    author = "Yang, Yilin  and
+      Huang, Liang  and
+      Ma, Mingbo",
+    editor = "Riloff, Ellen  and
+      Chiang, David  and
+      Hockenmaier, Julia  and
+      Tsujii, Jun{'}ichi",
+    booktitle = "Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing",
+    month = oct # "-" # nov,
+    year = "2018",
+    address = "Brussels, Belgium",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/D18-1342",
+    doi = "10.18653/v1/D18-1342",
+    pages = "3054--3059",
+    abstract = "Beam search is widely used in neural machine translation, and usually improves translation quality compared to greedy search. It has been widely observed that, however, beam sizes larger than 5 hurt translation quality. We explain why this happens, and propose several methods to address this problem. Furthermore, we discuss the optimal stopping criteria for these methods. Results show that our hyperparameter-free methods outperform the widely-used hyperparameter-free heuristic of length normalization by +2.0 BLEU, and achieve the best results among all methods on Chinese-to-English translation.",
+}
+@misc{vijayakumar2018diverse,
+      title={Diverse Beam Search: Decoding Diverse Solutions from Neural Sequence Models}, 
+      author={Ashwin K Vijayakumar and Michael Cogswell and Ramprasath R. Selvaraju and Qing Sun and Stefan Lee and David Crandall and Dhruv Batra},
+      year={2018},
+      eprint={1610.02424},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI}
+}
+
+@misc{li2016simple,
+      title={A Simple, Fast Diverse Decoding Algorithm for Neural Generation}, 
+      author={Jiwei Li and Will Monroe and Dan Jurafsky},
+      year={2016},
+      eprint={1611.08562},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{paulus2017deep,
+      title={A Deep Reinforced Model for Abstractive Summarization}, 
+      author={Romain Paulus and Caiming Xiong and Richard Socher},
+      year={2017},
+      eprint={1705.04304},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{klein-etal-2017-opennmt,
+    title = "{O}pen{NMT}: Open-Source Toolkit for Neural Machine Translation",
+    author = "Klein, Guillaume  and
+      Kim, Yoon  and
+      Deng, Yuntian  and
+      Senellart, Jean  and
+      Rush, Alexander",
+    editor = "Bansal, Mohit  and
+      Ji, Heng",
+    booktitle = "Proceedings of {ACL} 2017, System Demonstrations",
+    month = jul,
+    year = "2017",
+    address = "Vancouver, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P17-4012",
+    pages = "67--72",
+}
+
+@misc{kulikov2019importance,
+      title={Importance of Search and Evaluation Strategies in Neural Dialogue Modeling}, 
+      author={Ilia Kulikov and Alexander H. Miller and Kyunghyun Cho and Jason Weston},
+      year={2019},
+      eprint={1811.00907},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{hokamp-liu-2017-lexically,
+    title = "Lexically Constrained Decoding for Sequence Generation Using Grid Beam Search",
+    author = "Hokamp, Chris  and
+      Liu, Qun",
+    editor = "Barzilay, Regina  and
+      Kan, Min-Yen",
+    booktitle = "Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2017",
+    address = "Vancouver, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P17-1141",
+    doi = "10.18653/v1/P17-1141",
+    pages = "1535--1546",
+    abstract = "We present Grid Beam Search (GBS), an algorithm which extends beam search to allow the inclusion of pre-specified lexical constraints. The algorithm can be used with any model which generates sequences token by token. Lexical constraints take the form of phrases or words that must be present in the output sequence. This is a very general way to incorporate auxillary knowledge into a model{'}s output without requiring any modification of the parameters or training data. We demonstrate the feasibility and flexibility of Lexically Constrained Decoding by conducting experiments on Neural Interactive-Predictive Translation, as well as Domain Adaptation for Neural Machine Translation. Experiments show that GBS can provide large improvements in translation quality in interactive scenarios, and that, even without any user input, GBS can be used to achieve significant gains in performance in domain adaptation scenarios.",
+}
+
+@misc{scialom2020discriminative,
+      title={Discriminative Adversarial Search for Abstractive Summarization}, 
+      author={Thomas Scialom and Paul-Alexis Dray and Sylvain Lamprier and Benjamin Piwowarski and Jacopo Staiano},
+      year={2020},
+      eprint={2002.10375},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{lee-etal-2021-discriminative,
+    title = "Discriminative Reranking for Neural Machine Translation",
+    author = "Lee, Ann  and
+      Auli, Michael  and
+      Ranzato, Marc{'}Aurelio",
+    editor = "Zong, Chengqing  and
+      Xia, Fei  and
+      Li, Wenjie  and
+      Navigli, Roberto",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.563",
+    doi = "10.18653/v1/2021.acl-long.563",
+    pages = "7250--7264",
+    abstract = "Reranking models enable the integration of rich features to select a better output hypothesis within an n-best list or lattice. These models have a long history in NLP, and we revisit discriminative reranking for modern neural machine translation models by training a large transformer architecture. This takes as input both the source sentence as well as a list of hypotheses to output a ranked list. The reranker is trained to predict the observed distribution of a desired metric, e.g. BLEU, over the n-best list. Since such a discriminator contains hundreds of millions of parameters, we improve its generalization using pre-training and data augmentation techniques. Experiments on four WMT directions show that our discriminative reranking approach is effective and complementary to existing generative reranking approaches, yielding improvements of up to 4 BLEU over the beam search output.",
+}
+
+@inproceedings{fernandes-etal-2022-quality,
+    title = "Quality-Aware Decoding for Neural Machine Translation",
+    author = "Fernandes, Patrick  and
+      Farinhas, Ant{\'o}nio  and
+      Rei, Ricardo  and
+      C. de Souza, Jos{\'e} G.  and
+      Ogayo, Perez  and
+      Neubig, Graham  and
+      Martins, Andre",
+    editor = "Carpuat, Marine  and
+      de Marneffe, Marie-Catherine  and
+      Meza Ruiz, Ivan Vladimir",
+    booktitle = "Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies",
+    month = jul,
+    year = "2022",
+    address = "Seattle, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.naacl-main.100",
+    doi = "10.18653/v1/2022.naacl-main.100",
+    pages = "1396--1412",
+    abstract = "Despite the progress in machine translation quality estimation and evaluation in the last years, decoding in neural machine translation (NMT) is mostly oblivious to this and centers around finding the most probable translation according to the model (MAP decoding), approximated with beam search. In this paper, we bring together these two lines of research and propose \textit{quality-aware decoding} for NMT, by leveraging recent breakthroughs in reference-free and reference-based MT evaluation through various inference methods like $N$-best reranking and minimum Bayes risk decoding. We perform an extensive comparison of various possible candidate generation and ranking methods across four datasets and two model classes and find that quality-aware decoding consistently outperforms MAP-based decoding according both to state-of-the-art automatic metrics (COMET and BLEURT) and to human assessments.",
+}
+
+@inproceedings{eikema-aziz-2020-map,
+    title = "Is {MAP} Decoding All You Need? The Inadequacy of the Mode in Neural Machine Translation",
+    author = "Eikema, Bryan  and
+      Aziz, Wilker",
+    editor = "Scott, Donia  and
+      Bel, Nuria  and
+      Zong, Chengqing",
+    booktitle = "Proceedings of the 28th International Conference on Computational Linguistics",
+    month = dec,
+    year = "2020",
+    address = "Barcelona, Spain (Online)",
+    publisher = "International Committee on Computational Linguistics",
+    url = "https://aclanthology.org/2020.coling-main.398",
+    doi = "10.18653/v1/2020.coling-main.398",
+    pages = "4506--4520",
+    abstract = "Recent studies have revealed a number of pathologies of neural machine translation (NMT) systems. Hypotheses explaining these mostly suggest there is something fundamentally wrong with NMT as a model or its training algorithm, maximum likelihood estimation (MLE). Most of this evidence was gathered using maximum a posteriori (MAP) decoding, a decision rule aimed at identifying the highest-scoring translation, i.e. the mode. We argue that the evidence corroborates the inadequacy of MAP decoding more than casts doubt on the model and its training algorithm. In this work, we show that translation distributions do reproduce various statistics of the data well, but that beam search strays from such statistics. We show that some of the known pathologies and biases of NMT are due to MAP decoding and not to NMT{'}s statistical assumptions nor MLE. In particular, we show that the most likely translations under the model accumulate so little probability mass that the mode can be considered essentially arbitrary. We therefore advocate for the use of decision rules that take into account the translation distribution holistically. We show that an approximation to minimum Bayes risk decoding gives competitive results confirming that NMT models do capture important aspects of translation well in expectation.",
+}
+
+@misc{zhang2022rmbr,
+      title={RMBR: A Regularized Minimum Bayes Risk Reranking Framework for Machine Translation}, 
+      author={Yidan Zhang and Yu Wan and Dayiheng Liu and Baosong Yang and Zhenan He},
+      year={2022},
+      eprint={2203.00201},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{ranzato2016sequence,
+      title={Sequence Level Training with Recurrent Neural Networks}, 
+      author={Marc'Aurelio Ranzato and Sumit Chopra and Michael Auli and Wojciech Zaremba},
+      year={2016},
+      eprint={1511.06732},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+@misc{wu2018learning,
+      title={Learning to Extract Coherent Summary via Deep Reinforcement Learning}, 
+      author={Yuxiang Wu and Baotian Hu},
+      year={2018},
+      eprint={1804.07036},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+@article{NguyenDB17,
+  author       = {Khanh Nguyen and
+                  Hal Daum{\'{e}} III and
+                  Jordan L. Boyd{-}Graber},
+  title        = {Reinforcement Learning for Bandit Neural Machine Translation with
+                  Simulated Human Feedback},
+  journal      = {CoRR},
+  volume       = {abs/1707.07402},
+  year         = {2017},
+  url          = {http://arxiv.org/abs/1707.07402},
+  eprinttype    = {arXiv},
+  eprint       = {1707.07402},
+  timestamp    = {Mon, 13 Aug 2018 16:46:10 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/NguyenDB17.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{Tambwekar18,
+  author       = {Pradyumna Tambwekar and
+                  Murtaza Dhuliawala and
+                  Animesh Mehta and
+                  Lara J. Martin and
+                  Brent Harrison and
+                  Mark O. Riedl},
+  title        = {Controllable Neural Story Generation via Reinforcement Learning},
+  journal      = {CoRR},
+  volume       = {abs/1809.10736},
+  year         = {2018},
+  url          = {http://arxiv.org/abs/1809.10736},
+  eprinttype    = {arXiv},
+  eprint       = {1809.10736},
+  timestamp    = {Tue, 21 Nov 2023 07:54:03 +0100},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1809-10736.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@misc{mudgal2023controlled,
+      title={Controlled Decoding from Language Models}, 
+      author={Sidharth Mudgal and Jong Lee and Harish Ganapathy and YaGuang Li and Tao Wang and Yanping Huang and Zhifeng Chen and Heng-Tze Cheng and Michael Collins and Trevor Strohman and Jilin Chen and Alex Beutel and Ahmad Beirami},
+      year={2023},
+      eprint={2310.17022},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{stochasticbeam,
+      title={Stochastic Beam Search},
+      url={https://blog.allenai.org/a-guide-to-language-model-sampling-in-allennlp-3b1239274bc3}
+}
+
+@misc{adiwardana2020humanlike,
+      title={Towards a Human-like Open-Domain Chatbot}, 
+      author={Daniel Adiwardana and Minh-Thang Luong and David R. So and Jamie Hall and Noah Fiedel and Romal Thoppilan and Zi Yang and Apoorv Kulshreshtha and Gaurav Nemade and Yifeng Lu and Quoc V. Le},
+      year={2020},
+      eprint={2001.09977},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{shaham-levy-2022-get,
+    title = "What Do You Get When You Cross Beam Search with Nucleus Sampling?",
+    author = "Shaham, Uri  and
+      Levy, Omer",
+    editor = "Tafreshi, Shabnam  and
+      Sedoc, Jo{\~a}o  and
+      Rogers, Anna  and
+      Drozd, Aleksandr  and
+      Rumshisky, Anna  and
+      Akula, Arjun",
+    booktitle = "Proceedings of the Third Workshop on Insights from Negative Results in NLP",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.insights-1.5",
+    doi = "10.18653/v1/2022.insights-1.5",
+    pages = "38--45",
+    abstract = "We combine beam search with the probabilistic pruning technique of nucleus sampling to create two deterministic nucleus search algorithms for natural language generation. The first algorithm, p-exact search, locally prunes the next-token distribution and performs an exact search over the remaining space. The second algorithm, dynamic beam search, shrinks and expands the beam size according to the entropy of the candidate{'}s probability distribution. Despite the probabilistic intuition behind nucleus search, experiments on machine translation and summarization benchmarks show that both algorithms reach the same performance levels as standard beam search.",
+}
+
+@misc{lee2023factuality,
+      title={Factuality Enhanced Language Models for Open-Ended Text Generation}, 
+      author={Nayeon Lee and Wei Ping and Peng Xu and Mostofa Patwary and Pascale Fung and Mohammad Shoeybi and Bryan Catanzaro},
+      year={2023},
+      eprint={2206.04624},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{keskar2019ctrl,
+      title={CTRL: A Conditional Transformer Language Model for Controllable Generation}, 
+      author={Nitish Shirish Keskar and Bryan McCann and Lav R. Varshney and Caiming Xiong and Richard Socher},
+      year={2019},
+      eprint={1909.05858},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
