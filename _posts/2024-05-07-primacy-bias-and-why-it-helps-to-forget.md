@@ -31,7 +31,7 @@ toc:
   - name: Introduction to Primacy Bias
   - name: Off Policy Deep Reinforcement Learning
     subsections:
-    - name: Why overcomplicate things?  
+    - name: Are we Overcomplicating?  
   - name: Selecting a Replay Ratio
     subsections:
     - name: Heavy Priming 
@@ -85,7 +85,7 @@ Nikishin et al. discuss a specific type of model that is particularly sensitive 
 
 In human terms, step 1 is the algorithm living its day-to-day life. At the end of the day, it goes to sleep, and overnight the algorithm's lifetime of experiences are referenced to update its beliefs (step 2).
 
-### Why overcomplicate things?
+### Are we Overcomplicating?
 For those without a reinforcement learning background, this might seem needlessly complicated. Why can’t we simply explore with a random policy and then fit a model all at once?
 
 Althought this is sometimes done [5], the quality of the memories in the replay buffer is proportionate to the quality of the policy that gathered the experience. Consider an agent learning to play chess. A random policy might have enough data to learn how to play the start of the game effectively, but it will never learn how to chase an opponent’s king around an empty board. If a policy isn’t smart enough to get the agent out of the ‘early' game, it will never collect experiences to learn the ‘mid’ or ‘late' games.
