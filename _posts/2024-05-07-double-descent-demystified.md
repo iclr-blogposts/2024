@@ -272,9 +272,7 @@ $$
 \begin{align*}
 \hat{y}_{test,over} - y_{test}^* &= \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E)\\
 &\quad \quad + \quad \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^*\\
-% \label{eq:overparameterized_error}\\
 \hat{y}_{test,under} - y_{test}^* &= \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E).
-% \label{eq:underparameterized_error}
 \end{align*}
 $$
 
