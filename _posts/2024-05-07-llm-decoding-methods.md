@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: What Are You Trying To Say? A Deep Dive Into LLM Generation and Decoding
-description: We survey a broad body of literature on generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their strengths and weaknesses, we provide a thorough round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy.
+description: We survey a broad body of literature on decoding and generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their strengths and weaknesses, we provide a round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -25,7 +25,7 @@ bibliography: 2024-05-07-llm-decoding-methods.bib
 #     for hyperlinks within the post to work correctly. 
 #   - please use this format rather than manually creating a markdown table of contents.
 toc:
-  - name: Why does decoding matter
+  - name: Why does decoding matter?
   - name: Very brief preliminaries
   - name: Deterministic vs. stochastic approaches
   - name: Deterministic
@@ -97,9 +97,9 @@ Here are three short pieces of text. They were all generated from the exact same
 <br><br>
 *Generations are from GPT-2. All generations are truncated to 100 total tokens.*
 
-The reason these generations are so dramatically different from one another is because they were created using different **decoding methods**. That is the subject of this blog post.
+The reason these generations are so dramatically different from one another is that they were created using different **decoding methods**. That is the subject of this blog post.
 
-In the context of open-ended generation with large language models (LLMs), decoding methods are the algorithms responsible for turning a model's output logits into text that a human can read. Typically, the final layer of an LLM induces a probability distribution over the model's vocabulary, and the decoding method dictates how to generate a sequence of tokens from that distribution, choosing one token after another until the `EOS` token is produced or a maximum length is satisfied. While the decoding method may at first glance seem like a minor implementation detail, it is actually a complex and critical system for generating fluent, relevant, and meaningful text. Unfortunately, current SoTA decoding methods are limited to trading off a subset of those desired qualities for the others. 
+In the context of open-ended generation with large language models (LLMs), decoding methods are the decision rules and algorithms responsible for turning a model's output logits into text that a human can read. Typically, the final layer of an LLM induces a probability distribution over the model's vocabulary, and the decoding method dictates how to generate a sequence of tokens from that distribution, choosing one token after another until the `EOS` token is produced or a maximum length is satisfied. While the decoding method may at first glance seem like a minor implementation detail, it is actually a complex and critical system for generating fluent, relevant, interesting, and meaningful text. Unfortunately, current SoTA decoding methods are limited to trading off a subset of those desired qualities for the others. 
 
 In this blog post, we survey a broad body of literature on generation methods for LLMs. After reviewing the canonical approaches and digging deeper into their strengths and weaknesses, we provide a round-up of more recent and exploratory research proposals. Finally, we synthesize these research threads into a taxonomy.
 
@@ -150,7 +150,7 @@ Greedy decoding is fast and simple, and a perfectly reasonable way to handle sin
 
 ## Beam search
 
-Within the subfield of neural machine translation (NMT), a slightly more niche shortcoming of greedy decoding spurred the development of a different deterministic method called **beam search** <d-cite key="sutskever2014sequence"></d-cite>.
+Within the subfield of neural machine translation (NMT), a significant shortcoming of greedy decoding spurred the development of a different deterministic method called **beam search** <d-cite key="sutskever2014sequence"></d-cite>.
 
 Here's the motivating problem: when translating a sentence from one language to another, the word-to-word translation and the sequence-to-sequence translations are usually quite different.
 
@@ -173,17 +173,15 @@ Note that beam search with a beam width of 1 is equivalent to greedy decoding.
 
 ## Problems with deterministic methods
 
-Outside of NMT, beam search doesn't necessarily outperform greedy decoding. Classic beam search generally helps in situations where the **locally optimal greedy choices are not globally optimal, with translation being a natural example of this phenomenon. However, other major issues with greedy decoding also manifest in beam search. We'll discuss these issues next.
+Outside of NMT, beam search doesn't necessarily outperform greedy decoding. Classic beam search generally helps in situations where the locally optimal greedy choices are not globally optimal, with translation being a natural example of this phenomenon. However, other major issues with greedy decoding also manifest in beam search. We'll discuss these issues next.
 
 ### The repetitiveness problem
 
-By selecting the most likely token at each time-step, greedy decoding favors the most common words and phrases, including boilerplate language ("the," "a," etc). This is sometimes referred to as a type of **label bias** problem since the model is biased towards things it has seen often in training. 
-
-More formally, looking at Equations 1 and 2, we see that naively argmax-ing the posterior can give us generations dominated by tokens with very high priors. This issue is present in beam search as well, where the global maximum approximated by the search algorithm tends to be a simple generic phrase. In both cases, the high likelihood of these words and phrases causes them to be repeated again and again in the generation.
+By selecting the most likely token at each time-step, greedy decoding favors the most common words and phrases, including boilerplate language ("the," "a," etc). This is sometimes referred to as a type of **label bias** problem since the model is biased towards things it has seen often in training. More formally, looking at Equations 1 and 2, we see that naively argmax-ing the posterior can give us generations dominated by tokens with very high priors <d-cite key="Welleck2019NeuralTG"></d-cite>. This issue is present in beam search as well, where the global maximum approximated by the search algorithm tends to be a simple generic phrase—see Generation 2 in the example at the beginning of this blog post. In both cases, the high likelihood of these words and phrases causes them to be repeated again and again <d-cite key="Dinan2019TheSC"></d-cite><d-cite key="holtzman2020curious"></d-cite>.
 
 ### The degeneracy problem
 
-As a corollary to the repetitiveness problem, deterministic methods struggle to maintain longer-term coherency and tend to get stuck in infinite loops. As discussed above, the maximization procedure selects the most likely sentence…and then selects it again. The more times it repeats the sentence, the more conditioned it is to keep repeating it. There is no mechanism to force it out of this local optimum, so it stays there forever.
+As a corollary to the repetitiveness problem, deterministic methods tend to get stuck in infinite loops. As discussed above, the maximization procedure selects the most likely sentence…and then selects it again. The more times it repeats the sentence, the more conditioned it is to keep repeating it <d-cite key="holtzman2020curious"></d-cite>. There is no mechanism to force it out of this local optimum, so it stays there forever.
 
 ## Problems with beam search in particular
 
@@ -223,8 +221,9 @@ In theory, pruning should help with the beam search curse because we can prune t
 
 We have brought up some rather subtle points, so it's worth taking a moment to make sure we understand them. We'd particularly like to highlight how the failure modes all interact with each other in sometimes unexpected ways. To recap:
 
-- Beam search can be better than greedy search because it is able to find higher total probability sequences in situations where global maximum of sequences $\neq$ sequence of locally maximum tokens.
-- But if beam search is *too* good at finding the global maximum of sequences (i.e. if the beam width is too large, leading to better search), performance actually degrades. It turns out that the global maximum is usually not actually a "good" sequence. This is due to a variety of reasons:
+- Beam search can perform better than greedy search, especially in NMT, because it is able to find higher total probability sequences in situations where global maximum of sequences $\neq$ sequence of locally maximum tokens.
+- But if beam search is *too* good at finding the global maximum of sequences (i.e. if the beam width is too large, leading to better search), performance seems to actually degrade. It turns out that the global maximum is often not a "good" sequence. This may be due to a variety of reasons:
+
     - A sequence can have high total probability even if one of the early token probabilities was so low that it should have ruled this path out entirely. We can attribute this to a combination of the local normalization problem (probabilities at each time-step are only normalized relative to each other, so you can get big probabilities even though the previous step was low probability) and the label bias / copies problem (the model is biased towards reproducing the most common words and phrases from its training set).
     - The length problem: longer sequence have more chances to accumulate low probability tokens and thus will have lower total probability on average, so beam search without normalization favors short sequences and even empty strings. But normalization is tricky and poorly defined.
 
@@ -247,7 +246,7 @@ We have brought up some rather subtle points, so it's worth taking a moment to m
 
 Instead of argmax-ing the posterior probability distribution, what if we sample from it? That should help with the repetition and degeneracy issues we saw, since the randomness helps bump us out of local optima so we don't get stuck in infinitely repeating loops. Then again, too much randomness can make the generation…well, random. This is exactly what we see with naive sampling methods. 
 
-Why does this happen? Surely our probability mass is mostly concentrated on a few reasonable tokens, assuming the model is good? The problem is **the unreliable tail** <d-cite key="holtzman2020curious"></d-cite>, i.e. the very long tail of the probability distribution. Individually, they hold negligible probability mass, but collectively, they are overrepresented. A naive sampling decoding method will sample from this tail more often than it should. And as with all token-by-token decoding methods, mistakes also compound; once an irrelevant token is sampled, the generation is more likely to continue going off the rails.
+Why does this happen? Surely our probability mass is mostly concentrated on a few reasonable tokens, assuming the model is good? The problem is **the unreliable tail** <d-cite key="holtzman2020curious"></d-cite>, i.e. the tokens in the very long tail of the probability distribution. Individually, they hold negligible probability mass, but collectively, they are overrepresented. A naive sampling decoding method will sample from this tail more often than it should. And as with all token-by-token decoding methods, mistakes compound; once an irrelevant token is sampled, the generation is more likely to continue going off the rails.
 
 ## Temperature
 
@@ -305,21 +304,21 @@ Next, we will cover a swathe of other methods that alter, combine, or fully disc
 
 Beam search is only useful if it discovers meaningfully different candidate decodings to compare. If all paths converge to approximately the same sequence, it is a waste of computing resources and we might as well do greedy decoding. As such, there are many variants focused on altering the search part of beam search to force it to explore more diverse potential paths. Here are a few prominent ones:
 
-**Diverse beam search** <d-cite key="vijayakumar2018diverse"></d-cite> divides the "beam budget" into groups and enforces diversity between groups through an extra loss term term corresponding to group dissimilarity. Dissimilarity can be based on exact matches or some kind of sentence-level embedding comparison. **Sibling beam search** <d-cite key="li2016simple"></d-cite> penalizes hypotheses that are siblings (same parent). In **beam blocking** <d-cite key="paulus2017deep"></d-cite> <d-cite key="klein-etal-2017-opennmt"></d-cite>, previously generated n-grams can't be used again. This fixes token and phrase level repetitions but can cause issues because sometimes you naturally *do* need to repeat words in a sentences. In **iterative beam search** <d-cite key="kulikov2019importance"></d-cite>, beam search is performed in multiple passes, each time ignoring any hypotheses that were previously seen.
+**Diverse beam search** <d-cite key="vijayakumar2018diverse"></d-cite> divides the "beam budget" into groups and enforces diversity between groups through an extra loss term term corresponding to group dissimilarity. Dissimilarity can be based on exact matches or some kind of sentence-level embedding comparison. **Sibling beam search** <d-cite key="li2016simple"></d-cite> penalizes hypotheses that are siblings (same parent). In **beam blocking** <d-cite key="paulus2017deep"></d-cite><d-cite key="klein-etal-2017-opennmt"></d-cite>, previously generated n-grams can't be used again. This fixes token and phrase level repetitions but can cause issues because sometimes you naturally *do* need to repeat words in a sentences. In **iterative beam search** <d-cite key="kulikov2019importance"></d-cite>, beam search is performed in multiple passes, each time ignoring any hypotheses that were previously seen.
 
-A related group of work called **constrained beam search** (for example **grid beam search** <d-cite key="hokamp-liu-2017-lexically"></d-cite> imposes structural requirements that beam search candidates must adhere to, such as containing a list of words or not containing any words that are banned.
+A related group of work called **constrained beam search** (for example **grid beam search** <d-cite key="hokamp-liu-2017-lexically"></d-cite>) imposes structural requirements that beam search candidates must adhere to, such as containing a list of words or not containing any words that are banned.
 
 ### Modifying the score part with post-hoc reranking
 
-Arguably the bigger and more fundamental issue with beam search is that total probability is a poor proxy for the quality of a sequence <d-cite key="koehn-knowles-2017-six"></d-cite> <d-cite key="edunov-etal-2018-classical"></d-cite> <d-cite key="stahlberg2019nmt"></d-cite> <d-cite key="eikema-aziz-2020-map"></d-cite>, as the maximally probable generations tend to be far from the best generations for a variety of reasons discussed earlier.
+Arguably the bigger and more fundamental issue with beam search is that total probability is a poor proxy for the quality of a sequence <d-cite key="koehn-knowles-2017-six"></d-cite><d-cite key="edunov-etal-2018-classical"></d-cite><d-cite key="stahlberg2019nmt"></d-cite><d-cite key="eikema-aziz-2020-map"></d-cite>, as the maximally probable generations tend to be far from the best generations for a variety of reasons discussed earlier.
 
-In light of this, several works started employing **N-best reranking** methods <d-cite key="holtzman2018learning"></d-cite> <d-cite key="scialom2020discriminative"></d-cite> <d-cite key="lee-etal-2021-discriminative"></d-cite> <d-cite key="bhattacharyya-etal-2021-energy"></d-cite> <d-cite key="fernandes-etal-2022-quality"></d-cite> to rerank beam search candidates according to some other sentence-level utility function instead of total probability. Candidates are generally scored by separately trained discriminator networks or oracle rankers. One benefit of this is that the trained rerankers are exposed to the model's output during training, unlike the LLM itself, which is only exposed to the training data. This mismatch between the training distribution and the generated distribution is sometimes called the **exposure bias** problem.
+In light of this, several works have employed **N-best reranking** methods <d-cite key="holtzman2018learning"></d-cite><d-cite key="scialom2020discriminative"></d-cite><d-cite key="lee-etal-2021-discriminative"></d-cite><d-cite key="bhattacharyya-etal-2021-energy"></d-cite><d-cite key="fernandes-etal-2022-quality"></d-cite> to rerank beam search candidates according to some other sentence-level utility function instead of total probability. Candidates are generally scored by separately trained discriminator networks or oracle rankers. One benefit of this is that the trained rerankers are exposed to the model's output during training, unlike the LLM itself, which is only exposed to the training data. This mismatch between the training distribution and the generated distribution is sometimes called the **exposure bias** problem.
 
 A subset of these reranking methods use a utility function that compares candidates to some reference. For example, in Minimum Bayes Risk (MBR) decoding <d-cite key="eikema-aziz-2020-map"></d-cite><d-cite key="zhang2022rmbr"></d-cite>, the idea is to seek a consensus translation that is closest on average to other best candidates. Thus the score for each candidate is the expected utility (similarity) with all other candidates.
 
 ### Modifying the score part with reinforcement learning
 
-Several works use an auxiliary sequence-level RL loss term to finetune LLMs. The goal of these methods is to steer the language model towards better generations according to some metric. Most if not all existing methods score generations with a separately learned reward model that predicts the performance on some external evaluation metric. For example, early works use reward models trained to predict scores from ROUGE for summarization <d-cite key="ranzato2016sequence"></d-cite> <d-cite key="paulus2017deep"></d-cite> <d-cite key="wu2018learning"></d-cite> or BLEU for translation <d-cite key="wu2016googles"></d-cite> <d-cite key="NguyenDB17"></d-cite> or other custom metrics for other tasks  <d-cite key="Tambwekar18"></d-cite> <d-cite key="mudgal2023controlled"></d-cite>. Of particular note recently are RL methods based on predicted human feedback as reward aka RLHF (ADD REFS: Ziegler et al., 2019; Stiennon et al., 2020; Ouyang et al., 2022; Perez et al., 2022; Bai et al., 2022; others).
+Several works use an auxiliary sequence-level RL loss term to finetune LLMs. The goal of these methods is to steer the language model towards better generations according to some metric. Most if not all existing methods score generations with a separately learned reward model that predicts the performance on some external evaluation metric. For example, early works use reward models trained to predict scores from ROUGE for summarization <d-cite key="ranzato2016sequence"></d-cite><d-cite key="paulus2017deep"></d-cite><d-cite key="wu2018learning"></d-cite> or BLEU for translation <d-cite key="wu2016googles"></d-cite><d-cite key="NguyenDB17"></d-cite> or other custom metrics for other tasks  <d-cite key="Tambwekar18"></d-cite><d-cite key="mudgal2023controlled"></d-cite>. Of particular note recently are RL methods based on predicted human feedback as reward aka RLHF <d-cite key="Ziegler2019FineTuningLM"></d-cite><d-cite key="Stiennon2020LearningTS"></d-cite><d-cite key="Ouyang2022TrainingLM"></d-cite><d-cite key="bai2022training"></d-cite>.
 
 ## Combining deterministic and stochastic methods
 
@@ -337,7 +336,7 @@ In **penalized sampling** <d-cite key="keskar2019ctrl"></d-cite>, the distributi
 
 We have reviewed the canonical decoding methods as well as a wide survey of less established ideas. Let's see if we can distill what we've covered into a basic taxonomy that can help us see the underlying structure of the decoding problem more clearly. To summarize:
 
-- Decoding/text generation methods produce sequences of tokens from the conditional probability distributions produced at each time-step by the LLM.
+- Decoding/text generation methods produce sequences of tokens from the conditional probability distributions defined at each time-step by the LLM.
 - Some methods try to maximize a sequence-level metric, which requires a search algorithm (since the space of all possible sequences is larger than the number of atoms in the observable Universe), while others are more myopic, and focus on maximizing a metric per-time-step.
 - The metric is most commonly the probability of the token or sequence under the model, but some methods use an external utility function (e.g. a trained reward model such as in RLHF) as the sequence-level metric instead of total probability.
 - Some methods are stochastic (sample from distributions) while others are deterministic (always select peak of distributions). Stochastic methods provide diversity and a mechanism for avoiding infinite repetition loops, but struggle with long-range coherence due to their lack of global perspective.
