@@ -158,7 +158,7 @@ Within the subfield of neural machine translation (NMT), a particular shortcomin
 
 Here's the motivating problem: when translating a sentence from one language to another, the word-to-word translation and the sequence-to-sequence translations are usually quite different.
 
-Here is an easy way to visualize this:
+To visualize this, consider the following translation:
 
 {% include figure.html path="assets/img/2024-05-07-llm-decoding-methods/greek_translate.gif" class="img-fluid" %}
 

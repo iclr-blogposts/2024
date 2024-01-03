@@ -394,3 +394,146 @@
       archivePrefix={arXiv},
       primaryClass={cs.CL}
 }
+
+@inproceedings{koehn-knowles-2017-six,
+    title = "Six Challenges for Neural Machine Translation",
+    author = "Koehn, Philipp  and
+      Knowles, Rebecca",
+    editor = "Luong, Thang  and
+      Birch, Alexandra  and
+      Neubig, Graham  and
+      Finch, Andrew",
+    booktitle = "Proceedings of the First Workshop on Neural Machine Translation",
+    month = aug,
+    year = "2017",
+    address = "Vancouver",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/W17-3204",
+    doi = "10.18653/v1/W17-3204",
+    pages = "28--39",
+    abstract = "We explore six challenges for neural machine translation: domain mismatch, amount of training data, rare words, long sentences, word alignment, and beam search. We show both deficiencies and improvements over the quality of phrase-based statistical machine translation.",
+}
+
+@inproceedings{eikema-aziz-2020-map,
+    title = "Is {MAP} Decoding All You Need? The Inadequacy of the Mode in Neural Machine Translation",
+    author = "Eikema, Bryan  and
+      Aziz, Wilker",
+    editor = "Scott, Donia  and
+      Bel, Nuria  and
+      Zong, Chengqing",
+    booktitle = "Proceedings of the 28th International Conference on Computational Linguistics",
+    month = dec,
+    year = "2020",
+    address = "Barcelona, Spain (Online)",
+    publisher = "International Committee on Computational Linguistics",
+    url = "https://aclanthology.org/2020.coling-main.398",
+    doi = "10.18653/v1/2020.coling-main.398",
+    pages = "4506--4520",
+    abstract = "Recent studies have revealed a number of pathologies of neural machine translation (NMT) systems. Hypotheses explaining these mostly suggest there is something fundamentally wrong with NMT as a model or its training algorithm, maximum likelihood estimation (MLE). Most of this evidence was gathered using maximum a posteriori (MAP) decoding, a decision rule aimed at identifying the highest-scoring translation, i.e. the mode. We argue that the evidence corroborates the inadequacy of MAP decoding more than casts doubt on the model and its training algorithm. In this work, we show that translation distributions do reproduce various statistics of the data well, but that beam search strays from such statistics. We show that some of the known pathologies and biases of NMT are due to MAP decoding and not to NMT{'}s statistical assumptions nor MLE. In particular, we show that the most likely translations under the model accumulate so little probability mass that the mode can be considered essentially arbitrary. We therefore advocate for the use of decision rules that take into account the translation distribution holistically. We show that an approximation to minimum Bayes risk decoding gives competitive results confirming that NMT models do capture important aspects of translation well in expectation.",
+}
+
+@inproceedings{edunov-etal-2018-classical,
+    title = "Classical Structured Prediction Losses for Sequence to Sequence Learning",
+    author = "Edunov, Sergey  and
+      Ott, Myle  and
+      Auli, Michael  and
+      Grangier, David  and
+      Ranzato, Marc{'}Aurelio",
+    editor = "Walker, Marilyn  and
+      Ji, Heng  and
+      Stent, Amanda",
+    booktitle = "Proceedings of the 2018 Conference of the North {A}merican Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers)",
+    month = jun,
+    year = "2018",
+    address = "New Orleans, Louisiana",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/N18-1033",
+    doi = "10.18653/v1/N18-1033",
+    pages = "355--364",
+    abstract = "There has been much recent work on training neural attention models at the sequence-level using either reinforcement learning-style methods or by optimizing the beam. In this paper, we survey a range of classical objective functions that have been widely used to train linear models for structured prediction and apply them to neural sequence to sequence models. Our experiments show that these losses can perform surprisingly well by slightly outperforming beam search optimization in a like for like setup. We also report new state of the art results on both IWSLT{'}14 German-English translation as well as Gigaword abstractive summarization. On the large WMT{'}14 English-French task, sequence-level training achieves 41.5 BLEU which is on par with the state of the art.",
+}
+
+@inproceedings{bhattacharyya-etal-2021-energy,
+    title = "Energy-Based Reranking: Improving Neural Machine Translation Using Energy-Based Models",
+    author = "Bhattacharyya, Sumanta  and
+      Rooshenas, Amirmohammad  and
+      Naskar, Subhajit  and
+      Sun, Simeng  and
+      Iyyer, Mohit  and
+      McCallum, Andrew",
+    editor = "Zong, Chengqing  and
+      Xia, Fei  and
+      Li, Wenjie  and
+      Navigli, Roberto",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.349",
+    doi = "10.18653/v1/2021.acl-long.349",
+    pages = "4528--4537",
+    abstract = "The discrepancy between maximum likelihood estimation (MLE) and task measures such as BLEU score has been studied before for autoregressive neural machine translation (NMT) and resulted in alternative training algorithms (Ranzato et al., 2016; Norouzi et al., 2016; Shen et al., 2016; Wu et al., 2018). However, MLE training remains the de facto approach for autoregressive NMT because of its computational efficiency and stability. Despite this mismatch between the training objective and task measure, we notice that the samples drawn from an MLE-based trained NMT support the desired distribution {--} there are samples with much higher BLEU score comparing to the beam decoding output. To benefit from this observation, we train an energy-based model to mimic the behavior of the task measure (i.e., the energy-based model assigns lower energy to samples with higher BLEU score), which is resulted in a re-ranking algorithm based on the samples drawn from NMT: energy-based re-ranking (EBR). We use both marginal energy models (over target sentence) and joint energy models (over both source and target sentences). Our EBR with the joint energy model consistently improves the performance of the Transformer-based NMT: +3.7 BLEU points on IWSLT{'}14 German-English, +3.37 BELU points on Sinhala-English, +1.4 BLEU points on WMT{'}16 English-German tasks.",
+}
+
+@misc{bai2022training,
+      title={Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback}, 
+      author={Yuntao Bai and Andy Jones and Kamal Ndousse and Amanda Askell and Anna Chen and Nova DasSarma and Dawn Drain and Stanislav Fort and Deep Ganguli and Tom Henighan and Nicholas Joseph and Saurav Kadavath and Jackson Kernion and Tom Conerly and Sheer El-Showk and Nelson Elhage and Zac Hatfield-Dodds and Danny Hernandez and Tristan Hume and Scott Johnston and Shauna Kravec and Liane Lovitt and Neel Nanda and Catherine Olsson and Dario Amodei and Tom Brown and Jack Clark and Sam McCandlish and Chris Olah and Ben Mann and Jared Kaplan},
+      year={2022},
+      eprint={2204.05862},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@article{Ouyang2022TrainingLM,
+  title={Training language models to follow instructions with human feedback},
+  author={Long Ouyang and Jeff Wu and Xu Jiang and Diogo Almeida and Carroll L. Wainwright and Pamela Mishkin and Chong Zhang and Sandhini Agarwal and Katarina Slama and Alex Ray and John Schulman and Jacob Hilton and Fraser Kelton and Luke E. Miller and Maddie Simens and Amanda Askell and Peter Welinder and Paul Francis Christiano and Jan Leike and Ryan J. Lowe},
+  journal={ArXiv},
+  year={2022},
+  volume={abs/2203.02155},
+  url={https://api.semanticscholar.org/CorpusID:246426909}
+}
+
+@article{Stiennon2020LearningTS,
+  title={Learning to summarize from human feedback},
+  author={Nisan Stiennon and Long Ouyang and Jeff Wu and Daniel M. Ziegler and Ryan J. Lowe and Chelsea Voss and Alec Radford and Dario Amodei and Paul Christiano},
+  journal={ArXiv},
+  year={2020},
+  volume={abs/2009.01325},
+  url={https://api.semanticscholar.org/CorpusID:221665105}
+}
+
+@article{Ziegler2019FineTuningLM,
+  title={Fine-Tuning Language Models from Human Preferences},
+  author={Daniel M. Ziegler and Nisan Stiennon and Jeff Wu and Tom B. Brown and Alec Radford and Dario Amodei and Paul Christiano and Geoffrey Irving},
+  journal={ArXiv},
+  year={2019},
+  volume={abs/1909.08593},
+  url={https://api.semanticscholar.org/CorpusID:202660943}
+}
+
+@article{Welleck2019NeuralTG,
+  title={Neural Text Generation with Unlikelihood Training},
+  author={Sean Welleck and Ilia Kulikov and Stephen Roller and Emily Dinan and Kyunghyun Cho and Jason Weston},
+  journal={ArXiv},
+  year={2019},
+  volume={abs/1908.04319},
+  url={https://api.semanticscholar.org/CorpusID:199551982}
+}
+
+@article{Dinan2019TheSC,
+  title={The Second Conversational Intelligence Challenge (ConvAI2)},
+  author={Emily Dinan and Varvara Logacheva and Valentin Malykh and Alexander H. Miller and Kurt Shuster and Jack Urbanek and Douwe Kiela and Arthur Szlam and Iulian Serban and Ryan Lowe and Shrimai Prabhumoye and Alan W. Black and Alexander I. Rudnicky and Jason Williams and Joelle Pineau and Mikhail S. Burtsev and Jason Weston},
+  journal={ArXiv},
+  year={2019},
+  volume={abs/1902.00098},
+  url={https://api.semanticscholar.org/CorpusID:59553505}
+}
+
+@inproceedings{Leviathan2022FastIF,
+  title={Fast Inference from Transformers via Speculative Decoding},
+  author={Yaniv Leviathan and Matan Kalman and Yossi Matias},
+  booktitle={International Conference on Machine Learning},
+  year={2022},
+  url={https://api.semanticscholar.org/CorpusID:254096365}
+}
