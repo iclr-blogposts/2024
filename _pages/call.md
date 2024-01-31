@@ -59,7 +59,7 @@ The review is dual-anonymous assuming good faith from both submitters and review
 - **Submission  deadline**: December 17th 00:00GMT, 2023 (any modifications to your blog post, via a pull request on github).
 &nbsp;
 
-- **Notification of acceptance**: January 30th, 2023
+- **Notification of acceptance**: ~~January 30th, 2024~~ UPDATED: February 15th, 2024
 &nbsp;
 
 - **Camera-ready merge**: March 15th, 2024

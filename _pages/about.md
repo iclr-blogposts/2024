@@ -44,7 +44,7 @@ Due to the large diversity of topics that can be discussed in a blog post, we de
 
 **Submission deadline**: December 17th 00:00GMT, 2023 (any modifications to your blog post, via a pull request on GitHub).
 
-**Decision Notification**: January 30th, 2024
+**Decision Notification**: ~~January 30th, 2024~~ UPDATED: February 15th, 2024
 
 **Camera-ready merge**: March 15th, 2024
 
