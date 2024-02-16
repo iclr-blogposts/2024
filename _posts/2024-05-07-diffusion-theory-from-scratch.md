@@ -5,17 +5,11 @@ description: "Diffusion Model, a new generative model family, has taken the worl
 date: 2024-05-07
 htmlwidgets: true
 
-# Anonymize when submitting
 authors:
-  - name: Anonymous
+  - name: Ayan Das
+    url: "https://ayandas.me/"
     affiliations:
-        name: Anonymous
-
-# authors:
-#   - name: Ayan Das
-#     url: "https://ayandas.me/"
-#     affiliations:
-#       name: "University of Surrey UK, MediaTek Research UK"
+      name: "University of Surrey UK, MediaTek Research UK"
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-diffusion-theory-from-scratch.bib  
