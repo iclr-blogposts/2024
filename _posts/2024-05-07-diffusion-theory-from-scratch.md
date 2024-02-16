@@ -9,7 +9,7 @@ authors:
   - name: Ayan Das
     url: "https://ayandas.me/"
     affiliations:
-      name: "University of Surrey UK, MediaTek Research UK"
+      name: "MediaTek Research UK, University of Surrey UK"
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-diffusion-theory-from-scratch.bib  
