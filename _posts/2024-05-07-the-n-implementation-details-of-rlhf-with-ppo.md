@@ -8,9 +8,22 @@ future: true
 htmlwidgets: true
 
 # Anonymize when submitting
-authors:
-  - name: Anonymous
+# authors:
+#  - name: Anonymous
 
+
+authors:
+   - name: Shengyi Costa Huang
+     affiliations: 
+       name: Hugging Face
+   - name: Tianlin Liu
+     affiliations:
+       name: University of Basel
+   - name: Leandro von Werra
+     affiliations:
+       name: Hugging Face
+       
+       
 # authors:
 #   - name: Albert Einstein
 #     url: "https://en.wikipedia.org/wiki/Albert_Einstein"
@@ -79,8 +92,14 @@ This work is just for educational / learning purposes. For advanced users requir
 - Finally, we conclude our work with limitations and discussions.
 
 
-Our (anonymized) reproduction codebase is available at [*https://anonymous.4open.science/r/lm-human-preference-details-temp-8CDD*](https://anonymous.4open.science/r/lm-human-preference-details-temp-8CDD)
+<!--Our (anonymized) reproduction codebase is available at [*https://anonymous.4open.science/r/lm-human-preference-details-temp-8CDD*](https://anonymous.4open.science/r/lm-human-preference-details-temp-8CDD)
+-->
 
+Here are the important links:
+
+- 💾 [Our reproduction codebase](https://github.com/vwxyzjn/lm-human-preference-details)
+- 🤗 [Demo of RLHF model comparison](https://huggingface.co/spaces/lm-human-preference-details/rlhf-demo)
+- 🐝 [All w&b training logs](https://wandb.ai/openrlbenchmark/lm_human_preference_details)
 
 # Matching Learning Curves
 
