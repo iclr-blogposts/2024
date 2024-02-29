@@ -10,10 +10,10 @@ future: true
 htmlwidgets: true
 
 authors:
-  - name: Anonymous
-    url: "https://linkedin.com/in/anon"
+  - name: Michael Panchenko
+    url: "https://transferlab.ai/authors/michael-panchenko"
     affiliations:
-      name: Anon
+      name: appliedAI initiative GmbH
 
 bibliography: 2024-05-07-rlhf-without-rl.bib
 
