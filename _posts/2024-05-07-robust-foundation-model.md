@@ -14,10 +14,14 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: Anonymous
-    url: Anonymous URL
+  - name: Jingfeng Zhang
+    url: https://zjfheart.github.io/
     affiliations:
-      name: Anonymous affiliation
+      name: The University of Auckland & RIKEN Center for Advanced Intelligence Project
+  - name: Xilie Xu
+    url: https://godxuxilie.github.io/
+    affiliations:
+      name: National University of Singapore
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-robust-foundation-model.bib  
