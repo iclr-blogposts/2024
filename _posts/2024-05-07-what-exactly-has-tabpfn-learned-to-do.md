@@ -6,23 +6,11 @@ date: 2024-05-07
 future: true
 htmlwidgets: true
 
-# Anonymize when submitting
 authors:
-   - name: Anonymous
-
-#authors:
-#  - name: Albert Einstein
-#    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
-#    affiliations:
-#      name: IAS, Princeton
-#  - name: Boris Podolsky
-#    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-#    affiliations:
-#      name: IAS, Princeton
-#  - name: Nathan Rosen
-#    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-#    affiliations:
-#      name: IAS, Princeton
+  - name: Calvin McCarter
+    url: "https://calvinmccarter.com/"
+    affiliations:
+      name: BigHat Biosciences
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-what-exactly-has-tabpfn-learned-to-do.bib  
@@ -66,6 +54,7 @@ TabPFN <d-cite key="hollmann2023tabpfn"></d-cite> is a deep learning model pretr
 Since then, it has attracted attention both for its high predictive performance on small dataset benchmarks and for its unique meta-learning approach.
 This meta-learning approach, which builds upon earlier work on prior-data fitted networks (PFN) <d-cite key="muller2022transformers"></d-cite>, requires only synthetically-generating data: structural causal models (SCMs) <d-cite key="pearl2009causality"></d-cite> are randomly generated, then training datasets are sampled from each SCM.
 On fresh classification tasks, no training (i.e. weight updating) is needed; instead, training data is given as context to TabPFN, a Transformer <d-cite key="vaswani2017attention"></d-cite> model with self-attention among training samples and cross-attention from test samples to training samples.
+TabPFN can be optionally used with ensembling, wherein the forward pass is repeated with random permutations of features and class labels, and with power transformation applied to random subsets of features.
 Subsequent works have reproduced its classification performance on other tabular benchmarks <d-cite key="mcelfresh2023neural"></d-cite>, and analyzed its theoretical foundations <d-cite key="nagler2023statistical"></d-cite>.
 
 At the same time, TabPFN has received criticism from within the applied ML community, around concerns that its "one large neural network is all you need" approach is fundamentally flawed and that its performance on public benchmarks may be due to overfitting.
@@ -145,7 +134,10 @@ In each plot, we show the training data, their corresponding Voronoi diagrams, a
 We see that, without ensembling, TabPFN performs quite poorly, partitioning the input space in a non-sensical manner.
 The results markedly improve when we use 32 ensembles.
 Particularly for the randomly-spaced training points, the model predictions clearly resemble the Voronoi diagram, suggesting that (ensembled) TabPFN has meta-learned to perform 1-nearest-neighbor classification in the setting where each class has a single training sample.
+
 On the other hand, that this behavior relies upon ensembling suggests that the base TabPFN model could be further improved.
+In the original paper, Hollmann et al. <d-cite key="hollmann2023tabpfn"></d-cite> express the hope that a future better version of TabPFN would not need to rely upon ensembling for permutation invariance, by having internalized that behavior through better architecture and training.
+The aforementioned observed behavior suggests that ensembling improves performance not only by (approximately) enforcing permutation invariance, but also by producing lower variance estimators; if so, the base model could also be trained to do the latter directly.
 
 <div class="row mt-3">
 {% include figure.html path="assets/img/2024-05-07-what-exactly-has-tabpfn-learned-to-do/voronois.png" class="img-fluid" %}
