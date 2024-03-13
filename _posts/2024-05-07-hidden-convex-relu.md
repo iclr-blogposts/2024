@@ -21,17 +21,17 @@ bibliography: 2024-05-07-hidden-convex-relu.bib
 
 #TODO make sure that TOC names match the actual section names - they do
 toc:
-  - name: Overview and Motivation
+  - name: I. Overview and Motivation
     subsections:
     - name: Problem and notation
     - name: Research context
-  - name: Convex Reformulation
+  - name: II. Convex Reformulation
     subsections:
     - name: Small example walkthrough
     - name: Specifics about equivalence
     - name: Activation patterns
     - name: Extensions of the convex reformulation to other settings
-  - name: Can we Forget the Non-Convex Problem?
+  - name: III. Can we Forget the Non-Convex Problem?
     subsections:
     - name: Solving the convex problem efficiently is hard
     - name: Activation patterns are not a constant in the non-convex problem
@@ -116,7 +116,7 @@ $$
 
 The code for _this plot_ is available and reproducible on this __[Jupyter Notebook]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.ipynb' | relative_url}})__ (or in __[HTML]({{'assets/html/2024-05-07-hidden-convex-relu/hidden-convex-relu.html' | relative_url}})__).
 
-## Overview and Motivation
+## I. Overview and Motivation
 
 50 years ago, two-layer networks with non-linear activations were known to be universal approximators, however, they did not catch on as they were hard to train. The recent years have been marked by deeper networks running on dedicated hardware with very large datasets. Those networks have since been at the top of the benchmark in many applications including self-driving and text generation. The pragmatic method to train such models is to run stochastic gradient descent on the non-convex optimization problem, which is concretely tuning the weights (and bias) until the model is accurate enough. The best models usually require billions of parameters and very large datasets. The training, in turn, requires millions of dollars of hardware and electricity to run gradient descent and train a single model. 
 
@@ -127,6 +127,8 @@ To figure out what a neural network learns, we will focus in this post on the tr
 ### Problem and notation
 
 Our problem of interest will be the training of a simple two-layer neural network with ReLU activation. We focus on a classical regression problem with a mean squared error loss and we will also add a weight decay term (whose importance will be underlined later). This leads to the following full-batch gradient method (note that we make a slight abuse of notation by denoting by $\nabla$ the output of the derivative of the parameters, obtained, for instance, by backpropagation).
+
+Because there is only two layers, we will integrate the biases of the neuron directly into the data by adding a dimension filled with ones. This simplify the equations and makes sense for looking at ReLU activation patterns, which we will define later on.
 
 <p class="framed">
     <b class="underline">Two-Layer ReLU Network Training</b><br>
@@ -175,7 +177,7 @@ Other convex approaches are limited to an infinite amount of neurons, or to opti
 
 To sum up, the convex reformulation approach described in this post contrasts itself from what precedes by presenting results for a shallow network with __finite width layers__, starting from one neuron and incorporating __regularization__ in a __regression__ setting with frequently used __ReLU__ activation.
 
-## Convex reformulation
+## II. Convex reformulation
 
 ### Small example walkthrough
 
@@ -327,14 +329,17 @@ where $$\pmb{D}_i$$ are the activation matrix/pattern as described above. For ea
 From a solution of the problem, the *convex neurons* $$u_i$$ can be mapped to the *non-convex neurons* $$(w_i, \alpha_i)$$ by
 <p>
 \begin{align*}
-(w_i, \alpha_i) &= (\frac{u_i}{\sqrt{u_i}}, \sqrt{u_i}) & \text{   if $u_i$ is positive}\\
-(w_i, \alpha_i) &= (\frac{v_i}{\sqrt{v_i}}, - \sqrt{v_i}) & \text{   if $u_i$ is zero}\\
+(w_i, \alpha_i) &= (\frac{u_i}{\sqrt{\| u_i \|_2}}, \sqrt{\| u_i \|_2}) & \text{   if $u_i$ is non-zero}\\
+(w_i, \alpha_i) &= (\frac{v_i}{\sqrt{\| v_i \|_2}}, -\sqrt{\| v_i \|_2}) & \text{   if $v_i$ is non-zero}
 \end{align*}
 </p>
 
+We get the same mapping as in the 1D case except the direction of the neuron ($u_i$) is now a vector in $\R^d$
+
 
 Here, we fixed the number of neurons and the corresponding activations. 
-A few questions are thus left unanswered: what is the number of different activations and how many neurons should we consider for both convex and non-convex problems?
+
+A few questions are thus left unanswered: how many different activation patterns need to be considered, and how many neurons should we consider for both convex and non-convex problems?
 
 ### Specifics about equivalence
 
@@ -451,7 +456,7 @@ Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\l
 
 Batch Normalization (BN) is a key process that adjusts a batch of data to have a mean of zero and a standard deviation of one, using two trainable parameters. In the convex equivalent, we replace $$\pmb{D}_i \pmb{X}$$ with $$\pmb{U}_i$$. This $$\pmb{U}_i$$ is the first matrix in the Singular Value Decomposition (SVD) of $$\pmb{D}_i \pmb{X} = \pmb{U}_i \pmb{\Sigma}_i \pmb{V}_i$$ <d-cite key="ergenDemystifyingBatchNormalization2021"></d-cite>. If the output is a vector, rather than a scalar, the regularization changes to require a nuclear norm in the convex equivalent <d-cite key="sahinerVectoroutputReLUNeural2020"></d-cite>. Three-layer networks also have a convex equivalent using all possible combinations of two activation matrices. Moreover, parallel networks are also linked to a convex problem <d-cite key="wangParallelDeepNeural2022"></d-cite>. Lastly, in Wasserstein Generative Adversarial Network (WGAN) problems, the adversarial games played by two-layer discriminators are identified as instances of convex-concave games <d-cite key="sahinerHiddenConvexityWasserstein2021"></d-cite>.
 
-## Can We Forget the Non-Convex Problem?
+## III. Can We Forget the Non-Convex Problem?
 
 ### Solving the convex problem efficiently is hard
 
