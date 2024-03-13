@@ -303,7 +303,7 @@ Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (becaus
 
 to get the optimal *global* solution to the problem of fitting two data points with a single-layer ReLU network. In order to reformulate the non-convex problem into this convex one, we had to introduce (at least) 2 neurons; otherwise, it would have been impossible to reach the *global* minimizer which is our object of study here, since we want to be as expressive as possible.
 
-<p class="remark">This very simple mapping from convex solution to non-convex neurons is why we will call the convex variables <em>convex neurons</em>.</p>
+<p class="remark">This very simple mapping from convex solution to non-convex neurons, and one can expect similar trajectories during gradient descent. We will call convex neurons the set of parameters that correspond to a neuron in the original, non-convex problem.</p>
 
 #### General Case
 
@@ -340,7 +340,7 @@ A few questions are thus left unanswered: what is the number of different activa
 
 Two problems are considered equivalent when their global optima can be seamlessly mapped back and forth.
 
-As seen before, there are only two activation patterns in the one-dimensional case, but close to $$2^n$$ when the data dimension is higher. If we consider all the possible activation patterns, the unique solution of the convex problem corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on data points).
+As seen before, there are only two possible activation patterns in the one-dimensional case (a single neuron can either activate all the positive data point and none of the negative, or the opposite), but close to $$2^n$$ when the data dimension is higher. If we consider all the possible activation patterns, the unique solution of the convex problem corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on data points).
 
 If we only consider a subset of all patterns, the convex problem corresponds to a local optimum of the non-convex network. Indeed, it is not as expressive as before. This would either correspond to a non-convex network with not enough neurons, or with too many neurons concentrated in the same regions.
 
@@ -505,7 +505,7 @@ In the next section, we focus on cases where the non-convex minima can be accura
 
 ### On large initialization scale
 
-The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. By default in popular libraries, _He initialization_ is used, it draws neurons from a normal distribution centered on 0 and with a variance in $$\frac{1}{m}$$ with $$m$$ the number of neurons. However in the literature, there is a large choice to pick from.
+The initialization scale of the network is the absolute size of the neurons' parameters. To get a change in the scale, we can simply multiply every parameter by a scalar. The initial value of the neuron is a large topic in machine learning as it has a large influence on the quality of the local minimum. By default in popular libraries, _He initialization_ <d-cite key="he2015delving"></d-cite> is used, it draws neurons from a normal distribution centered on 0 and with a variance in $$\frac{1}{m}$$ with $$m$$ the number of neurons. However in the literature, there is a large choice to pick from.
 
 We say we're on a large scale when neurons do not move far from their initial value during descent. This typically happens when using large initial values for the parameters of each neuron.
 

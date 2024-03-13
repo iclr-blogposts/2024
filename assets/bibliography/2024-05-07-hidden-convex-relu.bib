@@ -1,3 +1,11 @@
+@inproceedings{he2015delving,
+  title={Delving deep into rectifiers: Surpassing human-level performance on imagenet classification},
+  author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+  booktitle={Proceedings of the IEEE international conference on computer vision},
+  pages={1026--1034},
+  year={2015}
+}
+
 @inproceedings{allen-zhuConvergenceTheoryDeep2019a,
   title = {A Convergence Theory for Deep Learning via Over-Parameterization},
   booktitle = {Proceedings of the 36th International Conference on Machine Learning},
@@ -9,8 +17,7 @@
   issn = {2640-3498},
   urldate = {2023-11-23},
   abstract = {Deep neural networks (DNNs) have demonstrated dominating performance in many fields; since AlexNet, networks used in practice are going wider and deeper. On the theoretical side, a long line of works have been focusing on why we can train neural networks when there is only one hidden layer. The theory of multi-layer networks remains unsettled. In this work, we prove simple algorithms such as stochastic gradient descent (SGD) can find Global Minima on the training objective of DNNs in Polynomial Time. We only make two assumptions: the inputs do not degenerate and the network is over-parameterized. The latter means the number of hidden neurons is sufficiently large: polynomial in L, the number of DNN layers and in n, the number of training samples. As concrete examples, starting from randomly initialized weights, we show that SGD attains 100\% training accuracy in classification tasks, or minimizes regression loss in linear convergence speed eps ~ e\^\{-T\}, with running time polynomial in n and L. Our theory applies to the widely-used but non-smooth ReLU activation, and to any smooth and possibly non-convex loss functions. In terms of network architectures, our theory at least applies to fully-connected neural networks, convolutional neural networks (CNN), and residual neural networks (ResNet).},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/J5AT5RQZ/Allen-Zhu et al. - 2019 - A Convergence Theory for Deep Learning via Over-Pa.pdf}
+  langid = {english}
 }
 
 @inproceedings{allen-zhuConvergenceTheoryDeep2019b,
@@ -20,16 +27,14 @@
   year = {2019},
   pages = {242--252},
   publisher = {PMLR},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/3ZNHUKFP/Allen-Zhu et al. - 2019 - A convergence theory for deep learning via over-pa.pdf}
+  urldate = {2023-12-17}
 }
 
 @article{bachBreakingCurseDimensionality,
   title = {Breaking the Curse of Dimensionality with Convex Neural Networks},
   author = {Bach, Francis},
   abstract = {We consider neural networks with a single hidden layer and non-decreasing positively homogeneous activation functions like the rectified linear units. By letting the number of hidden units grow unbounded and using classical non-Euclidean regularization tools on the output weights, they lead to a convex optimization problem and we provide a detailed theoretical analysis of their generalization performance, with a study of both the approximation and the estimation errors. We show in particular that they are adaptive to unknown underlying linear structures, such as the dependence on the projection of the input variables onto a low-dimensional subspace. Moreover, when using sparsity-inducing norms on the input weights, we show that high-dimensional non-linear variable selection may be achieved, without any strong assumption regarding the data and with a total number of variables potentially exponential in the number of observations. However, solving this convex optimization problem in infinite dimensions is only possible if the non-convex subproblem of addition of a new unit can be solved efficiently. We provide a simple geometric interpretation for our choice of activation functions and describe simple conditions for convex relaxations of the finite-dimensional non-convex subproblem to achieve the same generalization error bounds, even when constant-factor approximations cannot be found. We were not able to find strong enough convex relaxations to obtain provably polynomialtime algorithms and leave open the existence or non-existence of such tractable algorithms with non-exponential sample complexities.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/KJTXML6Y/Bach - Breaking the Curse of Dimensionality with Convex N.pdf}
+  langid = {english}
 }
 
 @article{bachBreakingCurseDimensionality2017,
@@ -41,8 +46,7 @@
   number = {1},
   pages = {629--681},
   publisher = {JMLR. org},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/2XJ9PNDJ/Bach - 2017 - Breaking the curse of dimensionality with convex n.pdf}
+  urldate = {2023-12-17}
 }
 
 @misc{baiEfficientGlobalOptimization2022,
@@ -59,8 +63,7 @@
   abstract = {The non-convexity of the artificial neural network (ANN) training landscape brings inherent optimization difficulties. While the traditional back-propagation stochastic gradient descent (SGD) algorithm and its variants are effective in certain cases, they can become stuck at spurious local minima and are sensitive to initializations and hyperparameters. Recent work has shown that the training of an ANN with ReLU activations can be reformulated as a convex program, bringing hope to globally optimizing interpretable ANNs. However, naively solving the convex training formulation has an exponential complexity, and even an approximation heuristic requires cubic time. In this work, we characterize the quality of this approximation and develop two efficient algorithms that train ANNs with global convergence guarantees. The first algorithm is based on the alternating direction method of multiplier (ADMM). It solves both the exact convex formulation and the approximate counterpart. Linear global convergence is achieved, and the initial several iterations often yield a solution with high prediction accuracy. When solving the approximate formulation, the per-iteration time complexity is quadratic. The second algorithm, based on the ``sampled convex programs'' theory, is simpler to implement. It solves unconstrained convex formulations and converges to an approximately globally optimal classifier. The non-convexity of the ANN training landscape exacerbates when adversarial training is considered. We apply the robust convex optimization theory to convex training and develop convex formulations that train ANNs robust to adversarial inputs. Our analysis explicitly focuses on one-hidden-layer fully connected ANNs, but can extend to more sophisticated architectures.},
   archiveprefix = {arxiv},
   langid = {english},
-  keywords = {{68Q25, 82C32, 49M29, 46N10, 62M45},Computer Science - Machine Learning},
-  file = {/home/savar/Zotero/storage/R3P4Q44S/Bai et al. - 2022 - Efficient Global Optimization of Two-layer ReLU Ne.pdf}
+  keywords = {{68Q25, 82C32, 49M29, 46N10, 62M45},Computer Science - Machine Learning}
 }
 
 @article{baiEfficientGlobalOptimization2023,
@@ -76,16 +79,14 @@
   issn = {2577-0187},
   doi = {10.1137/21M1467134},
   urldate = {2023-12-17},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/5M8S99TG/Bai et al. - 2023 - Efficient Global Optimization of Two-Layer ReLU Ne.pdf}
+  langid = {english}
 }
 
 @article{berthierIncrementalLearningDiagonal,
   title = {Incremental Learning in Diagonal Linear Networks},
   author = {Berthier, Raphael},
   abstract = {Diagonal linear networks (DLNs) are a toy simplification of artificial neural networks; they consist in a quadratic reparametrization of linear regression inducing a sparse implicit regularization. In this paper, we describe the trajectory of the gradient flow of DLNs in the limit of small initialization. We show that incremental learning is effectively performed in the limit: coordinates are successively activated, while the iterate is the minimizer of the loss constrained to have support on the active coordinates only. This shows that the sparse implicit regularization of DLNs decreases with time. This work is restricted to the underparametrized regime with anti-correlated features for technical reasons.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/J9SSZK2Y/Berthier - Incremental Learning in Diagonal Linear Networks.pdf}
+  langid = {english}
 }
 
 @article{berthierIncrementalLearningDiagonal2023,
@@ -96,8 +97,7 @@
   volume = {24},
   number = {171},
   pages = {1--26},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/KHE74GYY/Berthier - 2023 - Incremental learning in diagonal linear networks.pdf}
+  urldate = {2023-12-17}
 }
 
 @misc{boursierGradientFlowDynamics2022b,
@@ -113,8 +113,7 @@
   urldate = {2023-05-15},
   abstract = {The training of neural networks by gradient descent methods is a cornerstone of the deep learning revolution. Yet, despite some recent progress, a complete theory explaining its success is still missing. This article presents, for orthogonal input vectors, a precise description of the gradient flow dynamics of training one-hidden layer ReLU neural networks for the mean squared error at small initialisation. In this setting, despite non-convexity, we show that the gradient flow converges to zero loss and characterise its implicit bias towards minimum variation norm. Furthermore, some interesting phenomena are highlighted: a quantitative description of the initial alignment phenomenon and a proof that the process follows a specific saddle to saddle dynamics.},
   archiveprefix = {arxiv},
-  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/savar/Zotero/storage/GFUYDNQG/Boursier et al. - 2022 - Gradient flow dynamics of shallow ReLU networks fo.pdf;/home/savar/Zotero/storage/BEF9KKY7/2206.html}
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning}
 }
 
 @article{boursierGradientFlowDynamics2022c,
@@ -124,8 +123,7 @@
   journal = {Advances in Neural Information Processing Systems},
   volume = {35},
   pages = {20105--20118},
-  urldate = {2023-12-15},
-  file = {/home/savar/Zotero/storage/B2M446XU/Boursier et al. - 2022 - Gradient flow dynamics of shallow relu networks fo.pdf}
+  urldate = {2023-12-15}
 }
 
 @article{boursierGradientFlowDynamics2022d,
@@ -135,8 +133,7 @@
   journal = {Advances in Neural Information Processing Systems},
   volume = {35},
   pages = {20105--20118},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/Y37NGM9A/Boursier et al. - 2022 - Gradient flow dynamics of shallow relu networks fo.pdf}
+  urldate = {2023-12-17}
 }
 
 @inproceedings{chizatGlobalConvergenceGradient2018,
@@ -146,8 +143,7 @@
   editor = {Bengio, Samy and Wallach, Hanna M. and Larochelle, Hugo and Grauman, Kristen and {Cesa-Bianchi}, Nicol{\`o} and Garnett, Roman},
   year = {2018},
   pages = {3040--3050},
-  urldate = {2023-03-27},
-  file = {/home/savar/Zotero/storage/KEDG8YKZ/Chizat and Bach - 2018 - On the Global Convergence of Gradient Descent for .pdf}
+  urldate = {2023-03-27}
 }
 
 @article{chizatGlobalConvergenceGradient2018a,
@@ -156,8 +152,7 @@
   year = {2018},
   journal = {Advances in neural information processing systems},
   volume = {31},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/255B6GNI/Chizat and Bach - 2018 - On the global convergence of gradient descent for .pdf}
+  urldate = {2023-12-17}
 }
 
 @article{chizatLazyTrainingDifferentiable2019,
@@ -166,8 +161,7 @@
   year = {2019},
   journal = {Advances in neural information processing systems},
   volume = {32},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/JILAQRL9/Chizat et al. - 2019 - On lazy training in differentiable programming.pdf}
+  urldate = {2023-12-17}
 }
 
 @misc{chizatLazyTrainingDifferentiable2020,
@@ -183,8 +177,7 @@
   abstract = {In a series of recent theoretical works, it was shown that strongly overparameterized neural networks trained with gradient-based methods could converge exponentially fast to zero training loss, with their parameters hardly varying. In this work, we show that this ``lazy training'' phenomenon is not specific to overparameterized neural networks, and is due to a choice of scaling, often implicit, that makes the model behave as its linearization around the initialization, thus yielding a model equivalent to learning with positive-definite kernels. Through a theoretical analysis, we exhibit various situations where this phenomenon arises in non-convex optimization and we provide bounds on the distance between the lazy and linearized optimization paths. Our numerical experiments bring a critical note, as we observe that the performance of commonly used non-linear deep convolutional neural networks in computer vision degrades when trained in the lazy regime. This makes it unlikely that ``lazy training'' is behind the many successes of neural networks in difficult high dimensional tasks.},
   archiveprefix = {arxiv},
   langid = {english},
-  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control},
-  file = {/home/savar/Zotero/storage/YFG26URY/Chizat et al. - 2020 - On Lazy Training in Differentiable Programming.pdf}
+  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control}
 }
 
 @article{coverGeometricalStatisticalProperties1965,
@@ -206,8 +199,7 @@
   month = sep,
   urldate = {2023-12-17},
   abstract = {One of the mysteries in the success of neural networks is randomly initialized first order methods like gradient descent can achieve zero training loss even though the objective function is non-convex and non-smooth. This paper demystifies this surprising phenomenon for two-layer fully connected ReLU activated neural networks. For an \$m\$ hidden node shallow neural network with ReLU activation and \$n\$ training data, we show as long as \$m\$ is large enough and no two inputs are parallel, randomly initialized gradient descent converges to a globally optimal solution at a linear convergence rate for the quadratic loss function. Our analysis relies on the following observation: over-parameterization and random initialization jointly restrict every weight vector to be close to its initialization for all iterations, which allows us to exploit a strong convexity-like property to show that gradient descent converges at a global linear rate to the global optimum. We believe these insights are also useful in analyzing deep models and other first order methods.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/DCQCP7PW/Du et al. - 2018 - Gradient Descent Provably Optimizes Over-parameter.pdf}
+  langid = {english}
 }
 
 @misc{duGradientDescentProvably2019,
@@ -223,8 +215,7 @@
   urldate = {2023-11-23},
   abstract = {One of the mysteries in the success of neural networks is randomly initialized first order methods like gradient descent can achieve zero training loss even though the objective function is non-convex and non-smooth. This paper demystifies this surprising phenomenon for two-layer fully connected ReLU activated neural networks. For an \$m\$ hidden node shallow neural network with ReLU activation and \$n\$ training data, we show as long as \$m\$ is large enough and no two inputs are parallel, randomly initialized gradient descent converges to a globally optimal solution at a linear convergence rate for the quadratic loss function. Our analysis relies on the following observation: over-parameterization and random initialization jointly restrict every weight vector to be close to its initialization for all iterations, which allows us to exploit a strong convexity-like property to show that gradient descent converges at a global linear rate to the global optimum. We believe these insights are also useful in analyzing deep models and other first order methods.},
   archiveprefix = {arxiv},
-  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning},
-  file = {/home/savar/Zotero/storage/ZJQ68Z8F/Du et al. - 2019 - Gradient Descent Provably Optimizes Over-parameter.pdf;/home/savar/Zotero/storage/Z49WVJF2/1810.html}
+  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning}
 }
 
 @inproceedings{ergenDemystifyingBatchNormalization2021,
@@ -236,8 +227,7 @@
   month = oct,
   urldate = {2023-12-14},
   abstract = {Batch Normalization (BN) is a commonly used technique to accelerate and stabilize training of deep neural networks. Despite its empirical success, a full theoretical understanding of BN is yet to be developed. In this work, we analyze BN through the lens of convex optimization. We introduce an analytic framework based on convex duality to obtain exact convex representations of weight-decay regularized ReLU networks with BN, which can be trained in polynomial-time. Our analyses also show that optimal layer weights can be obtained as simple closed-form formulas in the high-dimensional and/or overparameterized regimes. Furthermore, we find that Gradient Descent provides an algorithmic bias effect on the standard non-convex BN network, and we design an approach to explicitly encode this implicit regularization into the convex objective. Experiments with CIFAR image classification highlight the effectiveness of this explicit regularization for mimicking and substantially improving the performance of standard BN networks.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/TILGFXP6/Ergen et al. - 2021 - Demystifying Batch Normalization in ReLU Networks.pdf}
+  langid = {english}
 }
 
 @article{jacotNeuralTangentKernel2018,
@@ -247,8 +237,7 @@
   year = {2018},
   journal = {Advances in neural information processing systems},
   volume = {31},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/S76A3MW4/Jacot et al. - 2018 - Neural tangent kernel Convergence and generalizat.pdf}
+  urldate = {2023-12-17}
 }
 
 @misc{jacotNeuralTangentKernel2020a,
@@ -265,8 +254,7 @@
   urldate = {2023-11-23},
   abstract = {At initialization, artificial neural networks (ANNs) are equivalent to Gaussian processes in the infinite-width limit, thus connecting them to kernel methods. We prove that the evolution of an ANN during training can also be described by a kernel: during gradient descent on the parameters of an ANN, the network function \$f\_{\textbackslash}theta\$ (which maps input vectors to output vectors) follows the kernel gradient of the functional cost (which is convex, in contrast to the parameter cost) w.r.t. a new kernel: the Neural Tangent Kernel (NTK). This kernel is central to describe the generalization features of ANNs. While the NTK is random at initialization and varies during training, in the infinite-width limit it converges to an explicit limiting kernel and it stays constant during training. This makes it possible to study the training of ANNs in function space instead of parameter space. Convergence of the training can then be related to the positive-definiteness of the limiting NTK. We prove the positive-definiteness of the limiting NTK when the data is supported on the sphere and the non-linearity is non-polynomial. We then focus on the setting of least-squares regression and show that in the infinite-width limit, the network function \$f\_{\textbackslash}theta\$ follows a linear differential equation during training. The convergence is fastest along the largest kernel principal components of the input data with respect to the NTK, hence suggesting a theoretical motivation for early stopping. Finally we study the NTK numerically, observe its behavior for wide networks, and compare it to the infinite-width limit.},
   archiveprefix = {arxiv},
-  keywords = {Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,Mathematics - Probability,Statistics - Machine Learning},
-  file = {/home/savar/Zotero/storage/ZCALKGZJ/Jacot et al. - 2020 - Neural Tangent Kernel Convergence and Generalizat.pdf;/home/savar/Zotero/storage/R2WWHMT5/1806.html}
+  keywords = {Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,Mathematics - Probability,Statistics - Machine Learning}
 }
 
 @misc{marionLeveragingTwoTimescale2023,
@@ -281,8 +269,7 @@
   urldate = {2023-12-15},
   abstract = {We study the training dynamics of shallow neural networks, in a two-timescale regime in which the stepsizes for the inner layer are much smaller than those for the outer layer. In this regime, we prove convergence of the gradient flow to a global optimum of the non-convex optimization problem in a simple univariate setting. The number of neurons need not be asymptotically large for our result to hold, distinguishing our result from popular recent approaches such as the neural tangent kernel or mean-field regimes. Experimental illustration is provided, showing that the stochastic gradient descent behaves according to our description of the gradient flow and thus converges to a global optimum in the two-timescale regime, but can fail outside of this regime.},
   archiveprefix = {arxiv},
-  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning},
-  file = {/home/savar/Zotero/storage/YCJHIA35/Marion and Berthier - 2023 - Leveraging the two timescale regime to demonstrate.pdf;/home/savar/Zotero/storage/6AEBYHBX/2304.html}
+  keywords = {Computer Science - Machine Learning,Mathematics - Optimization and Control,Statistics - Machine Learning}
 }
 
 @misc{mishkinFastConvexOptimization2022a,
@@ -299,8 +286,7 @@
   abstract = {We develop fast algorithms and robust software for convex optimization of two-layer neural networks with ReLU activation functions. Our work leverages a convex reformulation of the standard weight-decay penalized training problem as a set of group- 1-regularized data-local models, where locality is enforced by polyhedral cone constraints. In the special case of zero-regularization, we show that this problem is exactly equivalent to unconstrained optimization of a convex ``gated ReLU'' network. For problems with nonzero regularization, we show that convex gated ReLU models obtain data-dependent approximation bounds for the ReLU training problem. To optimize the convex reformulations, we develop an accelerated proximal gradient method and a practical augmented Lagrangian solver. We show that these approaches are faster than standard training heuristics for the non-convex problem, such as SGD, and outperform commercial interior-point solvers. Experimentally, we verify our theoretical results, explore the group- 1 regularization path, and scale convex optimization for neural networks to image classification on MNIST and CIFAR-10.},
   archiveprefix = {arxiv},
   langid = {english},
-  keywords = {Computer Science - Machine Learning},
-  file = {/home/savar/Zotero/storage/XZP2XBNM/Mishkin et al. - 2022 - Fast Convex Optimization for Two-Layer ReLU Networ.pdf}
+  keywords = {Computer Science - Machine Learning}
 }
 
 @inproceedings{mishkinFastConvexOptimization2022b,
@@ -311,8 +297,7 @@
   year = {2022},
   pages = {15770--15816},
   publisher = {PMLR},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/XK3PCYP6/Mishkin et al. - 2022 - Fast convex optimization for two-layer relu networ.pdf}
+  urldate = {2023-12-17}
 }
 
 @inproceedings{pilanciNeuralNetworksAre2020,
@@ -327,8 +312,7 @@
   issn = {2640-3498},
   urldate = {2022-06-10},
   abstract = {We develop exact representations of training two-layer neural networks with rectified linear units (ReLUs) in terms of a single convex program with number of variables polynomial in the number of training samples and the number of hidden neurons. Our theory utilizes semi-infinite duality and minimum norm regularization. We show that ReLU networks trained with standard weight decay are equivalent to block \${\textbackslash}ell\_1\$ penalized convex models. Moreover, we show that certain standard convolutional linear networks are equivalent semi-definite programs which can be simplified to \${\textbackslash}ell\_1\$ regularized linear models in a polynomial sized discrete Fourier feature space},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/6RH8PNHW/Pilanci et Ergen - 2020 - Neural Networks are Convex Regularizers Exact Pol.pdf;/home/savar/Zotero/storage/E6U3JCEY/Pilanci et Ergen - 2020 - Neural Networks are Convex Regularizers Exact Pol.pdf}
+  langid = {english}
 }
 
 @inproceedings{sahinerHiddenConvexityWasserstein2021,
@@ -340,8 +324,7 @@
   month = oct,
   urldate = {2023-12-14},
   abstract = {Generative Adversarial Networks (GANs) are commonly used for modeling complex distributions of data. Both the generators and discriminators of GANs are often modeled by neural networks, posing a non-transparent optimization problem which is non-convex and non-concave over the generator and discriminator, respectively. Such networks are often heuristically optimized with gradient descent-ascent (GDA), but it is unclear whether the optimization problem contains any saddle points, or whether heuristic methods can find them in practice. In this work, we analyze the training of Wasserstein GANs with two-layer neural network discriminators through the lens of convex duality, and for a variety of generators expose the conditions under which Wasserstein GANs can be solved exactly with convex optimization approaches, or can be represented as convex-concave games. Using this convex duality interpretation, we further demonstrate the impact of different activation functions of the discriminator. Our observations are verified with numerical results demonstrating the power of the convex interpretation, with an application in progressive training of convex architectures corresponding to linear generators and quadratic-activation discriminators for CelebA image generation. The code for our experiments is available at https://github.com/ardasahiner/ProCoGAN.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/YTYHWSP9/Sahiner et al. - 2021 - Hidden Convexity of Wasserstein GANs Interpretabl.pdf}
+  langid = {english}
 }
 
 @inproceedings{sahinerVectoroutputReLUNeural2020,
@@ -353,8 +336,7 @@
   month = oct,
   urldate = {2023-12-14},
   abstract = {We describe the convex semi-infinite dual of the two-layer vector-output ReLU neural network training problem. This semi-infinite dual admits a finite dimensional representation, but its support is over a convex set which is difficult to characterize. In particular, we demonstrate that the non-convex neural network training problem is equivalent to a finite-dimensional convex copositive program. Our work is the first to identify this strong connection between the global optima of neural networks and those of copositive programs. We thus demonstrate how neural networks implicitly attempt to solve copositive programs via semi-nonnegative matrix factorization, and draw key insights from this formulation. We describe the first algorithms for provably finding the global minimum of the vector output neural network training problem, which are polynomial in the number of samples for a fixed data rank, yet exponential in the dimension. However, in the case of convolutional architectures, the computational complexity is exponential in only the filter size and polynomial in all other parameters. We describe the circumstances in which we can find the global optimum of this neural network training problem exactly with soft-thresholded SVD, and provide a copositive relaxation which is guaranteed to be exact for certain classes of problems, and which corresponds with the solution of Stochastic Gradient Descent in practice.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/E6SIXRVU/Sahiner et al. - 2020 - Vector-output ReLU Neural Network Problems are Cop.pdf}
+  langid = {english}
 }
 
 @inproceedings{sharifnassabBoundsOverParameterizationGuaranteed2019,
@@ -365,8 +347,7 @@
   month = sep,
   urldate = {2023-12-08},
   abstract = {We study the landscape of squared loss in neural networks with one-hidden layer and ReLU activation functions. Let \$m\$ and \$d\$ be the widths of hidden and input layers, respectively. We show that there exist poor local minima with positive curvature for some training sets of size \$n{\textbackslash}geq m+2d-2\$. By positive curvature of a local minimum, we mean that within a small neighborhood the loss function is strictly increasing in all directions. Consequently, for such training sets, there are initialization of weights from which there is no descent path to global optima. It is known that for \$n{\textbackslash}le m\$, there always exist descent paths to global optima from all initial weights. In this perspective, our results provide a somewhat sharp characterization of the over-parameterization required for "existence of descent paths" in the loss landscape.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/LY3ICPVJ/Sharifnassab et al. - 2019 - Bounds on Over-Parameterization for Guaranteed Exi.pdf}
+  langid = {english}
 }
 
 @inproceedings{wangConvexGeometryBackpropagation2021,
@@ -384,8 +365,7 @@
   booktitle = {International Conference on Learning Representations},
   author = {Wang, Yifei and Lacotte, Jonathan and Pilanci, Mert},
   year = {2021},
-  urldate = {2023-12-17},
-  file = {/home/savar/Zotero/storage/MNLSLMV4/Wang et al. - 2021 - The hidden convex optimization landscape of regula.pdf}
+  urldate = {2023-12-17}
 }
 
 @inproceedings{wangHiddenConvexOptimization2022,
@@ -395,8 +375,7 @@
   author = {Wang, Yifei and Lacotte, Jonathan and Pilanci, Mert},
   year = {2022},
   publisher = {OpenReview.net},
-  urldate = {2023-03-11},
-  file = {/home/savar/Zotero/storage/FJ85TBX9/Wang et al. - 2022 - The Hidden Convex Optimization Landscape of Two-La.pdf}
+  urldate = {2023-03-11}
 }
 
 @inproceedings{wangParallelDeepNeural2022,
@@ -407,6 +386,5 @@
   month = sep,
   urldate = {2023-12-14},
   abstract = {Training deep neural networks is a challenging non-convex optimization problem. Recent work has proven that the strong duality holds (which means zero duality gap) for regularized finite-width two-layer ReLU networks and consequently provided an equivalent convex training problem. However, extending this result to deeper networks remains to be an open problem. In this paper, we prove that the duality gap for deeper linear networks with vector outputs is non-zero. In contrast, we show that the zero duality gap can be obtained by stacking standard deep networks in parallel, which we call a parallel architecture, and modifying the regularization. Therefore, we prove the strong duality and existence of equivalent convex problems that enable globally optimal training of deep networks. As a by-product of our analysis, we demonstrate that the weight decay regularization on the network parameters explicitly encourages low-rank solutions via closed-form expressions. In addition, we show that strong duality holds for three-layer standard ReLU networks given rank-1 data matrices.},
-  langid = {english},
-  file = {/home/savar/Zotero/storage/HYCHZP2N/Wang et al. - 2022 - Parallel Deep Neural Networks Have Zero Duality Ga.pdf}
+  langid = {english}
 }
