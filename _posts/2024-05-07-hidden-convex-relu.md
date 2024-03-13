@@ -133,7 +133,7 @@ Our problem of interest will be the training of a simple two-layer neural networ
     <b>Hyper-parameters:</b> step-size \(\step > 0\), regularization \(\lambda\geq 0\) <br>
     <b>Loss to be minimized:</b>
     \begin{equation*}
-         \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \sum_{j=1}^n \bigg( \underbrace{\sum_{i=1}^m \max(0, \pmb{w}_i^\top \pmb{x}) \alpha_i}_{\text{Network's Output}} - y_j \bigg)^2 + \underbrace{\lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2}_{\text{Weight Decay}}
+         \mathcal{L}(\pmb{W}, \pmb{\alpha}) = \sum_{j=1}^n \bigg( \underbrace{\sum_{i=1}^m \max(0, \pmb{w}_i^\top \pmb{x}_j) \alpha_i}_{\text{Network's Output}} - y_j \bigg)^2 + \underbrace{\lambda \sum_{i=1}^m \| \pmb{w}_i \|^2_2 + \alpha_i^2}_{\text{Weight Decay}}
     \end{equation*}
     <b>(Full-batch) Gradient Descent:</b>
     \begin{equation*}
@@ -141,7 +141,7 @@ Our problem of interest will be the training of a simple two-layer neural networ
     \end{equation*}
 </p>
 
-Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ as a function of two neurons on one-dimensional data. We only optimize the first layer here. We can observe that half of the time, gradient descent will get stuck at a plateau as the gradient is zero along the red line. However, there always exists a path of non-increasing loss from initialization to the global minimum.
+Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ as a function of two neurons on one-dimensional data. We only optimize the first layer here so we have a total of two parameters to optimize. Despite the simple setup, a gradient descent starting from a random initialization can converge to three different values, two of them being bigger than zero. However, there always exists a path of non-increasing loss from initialization to the global minimum (as predicted by a <d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>).
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
 
@@ -155,7 +155,9 @@ Even the simplest ReLU models have non-trivial non-convexity as depicted in the 
 \end{equation*}
 </p>
 
-We will see in this blog post how to retrieve those two optimal neurons by building an equivalent convex problem.
+To avoid the local minima, one idea is to add constrains to the parameters. The constrained problem where $w_1$ has to be positive and $w_2$ has to be negative, that problem is then convex and a simple gradient descent will find the global minima of the original, unconstnrained problem. In the Hidden Convex paper, they find a more general way to build an equivalent convex problem to our ReLU shallow network training problem.
+
+In this blogpost we will first work out the intuition needed to understand why an equivalent, finite convex problem even exist. Then we will study the exact links between the problem in pratice and the convex problem, and go over the limits of such an approach both in theory and in practice.
 
 ### Research context
 
