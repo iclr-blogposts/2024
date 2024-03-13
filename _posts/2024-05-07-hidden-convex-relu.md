@@ -284,7 +284,7 @@ Now, let us see how we can fit two data points, *i.e.* having both data points a
 
 If we optimize this, the $$u_1$$ we find can be negative, and $$u_2$$ can be positive! If we map them back to the problem with ReLU, they wouldn't have the same activation: $$(\begin{smallmatrix} \czero & 0 \\ 0 & \czero \end{smallmatrix})$$.
 
-To overcome this problem, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022b"></d-cite>.</d-footnote>. If we translate mathematically the fact that the neuron $1$ activates $x_2$ and the neuron $2$ activates $x_1$, we obtain 
+To overcome this problem, we have to constrain the two variables so that (when mapped back) they keep the same activation, otherwise we might not be able to map them back easily<d-footnote>We can if there is no regularization \(\lambda=0\), otherwise an approximation can be computed<d-cite key="mishkinFastConvexOptimization2022b"></d-cite>.</d-footnote>. If we translate mathematically the fact that the neuron $1$ activates only activate $x_2$ and the neuron $2$ only activates $x_1$, we obtain these conditions: 
 <p>
 \begin{align*}
 u_1 x_1 &< 0 & u_2 x_1 &\geq 0. \\
@@ -292,7 +292,7 @@ u_1 x_2 &\geq 0 & u_2 x_2 &< 0. \\
 \end{align*}
 </p>
 
-Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem formed by the convex objective and the convex constraints detailed above. We obtain $$(u_1, u_2) = (1.95, -0.95)$$(it would be $(2, -1)$ without any regularization) and use the mapping:
+Those constraints translate to $$u_1 \geq 0, u_2 \leq 0$$ in our example (because $$x_1=-1, x_2=1$$). All that is left is to solve the convex problem formed by the convex objective and the convex constraints detailed above. We obtain $$(u_1, u_2) = (1.95, -0.95)$$ for $\lambda = 0.01$ (it would be $(2, -1)$ for $\lambda = 0$) and use the mapping:
 
 <p>
 \begin{align*}
