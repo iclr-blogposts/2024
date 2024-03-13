@@ -1,7 +1,17 @@
 ---
 layout: distill
-title: Behavioral Differences in Mode-Switching Exploration for Reinforcement Learning
-description: In 2022, researchers from Google DeepMind presented an initial study on  mode-switching exploration, by which an agent separates its exploitation  and exploration actions more coarsely throughout an episode by  intermittently and significantly changing its behavior policy. We supplement their work in this blog  post by showcasing some observed behavioral differences between  mode-switching and monolithic exploration on the Atari suite and  presenting illustrative examples of its benefits. This work aids  practitioners and researchers by providing practical guidance and  eliciting future research directions in mode-switching exploration.
+title: Behavioral Differences in Mode-Switching Exploration for 
+  Reinforcement Learning
+description: In 2022, researchers from Google DeepMind presented an initial 
+  study on  mode-switching exploration, by which an agent separates its 
+  exploitation  and exploration actions more coarsely throughout an episode 
+  by  intermittently and significantly changing its behavior policy. We 
+  supplement their work in this blog  post by showcasing some observed 
+  behavioral differences between  mode-switching and monolithic exploration 
+  on the Atari suite and  presenting illustrative examples of its benefits. 
+  This work aids  practitioners and researchers by providing practical 
+  guidance and  eliciting future research directions in mode-switching 
+  exploration.
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -11,12 +21,10 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: REDACTED
+  - name: Loren J Anderson
     url: 
-    affiliations: REDACTED
-  - name: REDACTED
-    url: 
-    affiliations: REDACTED
+    affiliations: 
+      name: USA Space Force
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-mode-switching.bib  
@@ -39,6 +47,8 @@ toc:
       - name: 2.4 Post-Exploration Entropy
       - name: 2.5 Top Exploitation Proportions
   - name: 3. Conclusion
+    subsections:
+      - name: Acknowledgements
 
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
@@ -62,16 +72,39 @@ _styles: >
 
 ## 1. Introduction
 
-Imagine learning to ride a bicycle for the first time. This process requires the testing of numerous actions such as steering the handlebars to change direction, shifting weight to maintain balance, and applying pedaling power to move forward. To achieve any satisfaction, a complex series of these actions must be taken for a substantial amount of time. However, a dilemma emerges: a plethora of other tasks such as eating, sleeping, and working may result in more immediate satisfaction (e.g. lowered hunger, better rest, bigger paycheck), which may tempt the learner to abandon the task of learning to ride a bicycle. Furthermore, if enough bicycle-riding progress is not learned by the end of a day, it may be necessary to repeat some of the learning process throughout the following day.
+Imagine learning to ride a bicycle for the first time. This task 
+requires the investigation of numerous actions such as steering the 
+handlebars to change direction, shifting weight to maintain balance, and 
+applying pedaling power to move forward. To achieve any satisfaction, a complex 
+sequence of these actions must be taken for a substantial amount of time. 
+However, a dilemma emerges: many other tasks such as eating, sleeping, and 
+working may result in more immediate satisfaction (e.g. lowered hunger, 
+better rest, bigger paycheck), which may tempt the learner to favor other 
+tasks. Furthermore, if enough satisfaction is not quickly achieved, the 
+learner may even abandon the task of learning to ride a bicycle altogether.
 
-One frivolous strategy (Figure 1, option 1) to overcome the dilemma is to interleave a few random actions on the bicycle among the remaining tasks of the day. This strategy is painfully slow, as the learning process will be stretched across a great length of time before achieving any satisfaction. Furthermore, this strategy may interrupt and reduce the satisfaction of the other daily tasks. The more intuitive strategy (Figure 1, option 2) is to dedicate significant portions of the day to explore the possible bicycle-riding actions. The benefits of this approach include testing the interactions between distinct actions, isolating different facets of the task for quick mastery, and preventing boredom and abandonment of the task entirely. Also -- let's face it -- who wants to wake up in the middle of the night to turn the bicycle handlebar twice before going back to bed? 
+One frivolous strategy (Figure 1, Option 1) to overcome this dilemma is to 
+interleave a few random actions on the bicycle throughout the remaining 
+tasks of the day. This strategy neglects the sequential nature of bicycle 
+riding and will achieve satisfaction very slowly, if at all. Furthermore, 
+this strategy may interrupt and reduce the satisfaction of the other daily 
+tasks. The more intuitive strategy (Figure 1, Option 2) is to dedicate 
+significant portions of the day to explore the possible actions of bicycle 
+riding. The benefits of this approach include testing the sequential 
+relationships between actions, isolating different facets of the 
+task for quick mastery, and providing an explicit cutoff point to shift 
+focus and accomplish other daily tasks. Also -- let's face it -- who wants to 
+wake up in the middle of the night to turn the bicycle handlebar twice 
+before going back to bed? 
 
 {% include figure.html path="assets/img/2024-05-07-mode-switching/bike.png" class="img-fluid" %}
 <div class="caption">
-    Figure 1. Difference between monolithic and mode-switching behavior policies. Example taken from <d-cite key="pislar2021should"></d-cite>.
+    Figure 1. Difference between monolithic and mode-switching behavior 
+policies. Example taken from <d-cite key="pislar2021should"></d-cite>.
 </div>
 
-The above bicycle-riding example elicits the main ideas of the paper *When Should Agents Explore?* <d-cite key="pislar2021should"></d-cite>, published by researchers from Google DeepMind at ICLR 2022, which is the central piece of literature discussed throughout this blog post. The first strategy presented in the preceding paragraph is known as a **monolithic** behavior policy that interleaves exploration actions (e.g. learning to ride a bicycle) among the more frequent exploitation actions (e.g. work, sleep) in a reinforcement learning (RL) environment. In contrast, the second strategy presented above is a **mode-switching** behavior policy, as it more coarsely separates exploration and exploitation actions by switching between disparate behavior modes throughout an episode. Mode-switching subsumes monolithic policies, but its increased complexity introduces a new question: *when to switch*. Similar aspects of mode-switching for diverse exploration have been observed in the exploratory behavior of humans and animals <d-cite key="power1999play,gershman2018deconstructing,gershman2018dopaminergic,ebitz2019tonic,costa2019subcortical,waltz2020differential"></d-cite>, which served as a notable motivation for this initial study by DeepMind.
+The above example elicits the main ideas of the paper *When Should Agents 
+Explore?* <d-cite key="pislar2021should"></d-cite>, published by researchers from Google DeepMind at ICLR 2022, which is the central piece of literature discussed throughout this blog post. The first strategy presented in the preceding paragraph is known as a **monolithic** behavior policy that interleaves exploration actions (e.g. learning to ride a bicycle) among the more frequent exploitation actions (e.g. work, sleep) in a reinforcement learning (RL) environment. In contrast, the second strategy presented above is a **mode-switching** behavior policy, as it more coarsely separates exploration and exploitation actions by switching between disparate behavior modes throughout an episode. Mode-switching subsumes monolithic policies, but its increased complexity introduces a new question: *when to switch*. Similar aspects of mode-switching for diverse exploration have been observed in the exploratory behavior of humans and animals <d-cite key="power1999play,gershman2018deconstructing,gershman2018dopaminergic,ebitz2019tonic,costa2019subcortical,waltz2020differential"></d-cite>, which served as a notable motivation for this initial study by DeepMind.
 
 This introduction section continues with a brief discussion of topics related to mode-switching policies, ranging from different temporal granularities to previous algorithms that exhibit mode-switching behavior. We emphasize practical understanding rather than attempting to present an exhaustive survey of the subject. Afterwards, we discuss our motivation and rationale for this blog post: the authors of the initial mode-switching study <d-cite key="pislar2021should"></d-cite> showed that training with mode-switching behavior policies surpassed the performance of training with monolithic behavior policies on hard-exploration ATARI games; we augment their work by presenting observed differences between mode-switching and monolithic behavior policies through supplementary experiments on the ATARI benchmark and other illustrative environments. Possible avenues for future investigations are emphasized throughout the discussion of the construction and results of each experiment. It is assumed that the interested reader has basic knowledge in RL techniques and challenges before proceeding to the rest of this blog post. 
 
@@ -115,7 +148,7 @@ The authors of the initial study on mode-switching behavior policies performed e
 
 We extend the initial study on mode-switching policies and progress towards further understanding of these methods in this blog post through additional experiments. The following experiments each discuss an observed behavioral difference in mode-switching policies versus monolithic policies. We focus on behavioral differences in this work, as they are observable in the environment and are not unique to the architecture of certain agents <d-cite key="osband2019behaviour"></d-cite>. Our experiments are performed on 10 commonly-used ATARI games <d-cite key="agarwal2022reincarnating"></d-cite>, and we also provide another illustrative task or chart for each experiment to further enhance understanding. One highlight of this work is showcasing how mode-switching behavior policies not only influence exploration but also significantly influence exploitation. Our work serves as a first step in empirically delineating the differences mode-switching policies and monolithic policies for the use of practitioners and researchers alike.
 
-# 2. Experiments
+## 2. Experiments
 
 This section begins with a discussion on the experimental setup before delving into five experiments that highlight observational differences in mode-switching and monolithic behavior policies. We perform experiments on 10 commonly-used <d-cite key="agarwal2022reincarnating"></d-cite>  Atari games: Asterix, Breakout, Space Invaders, Seaquest, Q*Bert, Beam Rider, Enduro, MsPacman, Bowling, and River Raid. Environments follow the standard ATARI protocols <d-cite key="machado2018revisiting"></d-cite> of incorporating sticky actions and only providing a terminal signal when all lives are lost. We run a Stable-Baselines3 DQN policy <d-cite key="raffin2021stable"></d-cite> for 25 epochs of 100K time steps each, for a total of 2.5M time steps or 10M frames. The DQN policy explores 10% of the time after being linearly annealed from 100% after 250K time steps. Then we evaluated a mode-switching and monolithic policy that used the trained DQN policy's exploitation actions when in exploit mode. Evaluations were made for 100 episodes for each game and epoch. The monolithic policy was epsilon-greedy with 10% exploration rate. This mode-switching policy randomly switches to uniform random explore mode 0.7% of the time and randomly chooses an explore mode length from the set [5, 10, 15, 20, 25] with probabilities [0.05, 0.20, 0.50, 0.20, 0.05]. Through testing, we determined that this switching policy explored at a nearly identical rate to the monolithic policy (10%). The complete details of the agent and environments are concisely outlined in the [(anonymized for peer review) GitHub repository](https://anonymous.4open.science/r/vienna-2852/README.md).
 
@@ -232,7 +265,13 @@ The results are best illustrated through plotting the switching and monolithic e
 While the previous discussion has illustrated that some mode-switching episodes exploit more and generate more return, they don't specifically explain why training with mode-switching is superior; in particular, the slightly greater return by those best policies is not necessary for learning an optimal policy as long as a similar state distribution is reached by a suboptimal policy. One possibility is the fact that mode-switching policies train on a more diverse set of behavior and must generalize to that diversity. Reinforcement learning algorithms are notorious at overfitting <d-cite key="cobbe2019quantifying,cobbe2020leveraging"></d-cite>, and future work may investigate the extent to which generalization is improved upon using mode-switching. 
 
 
-# 3. Conclusion
+## 3. Conclusion
 
 This blog post highlighted five observational differences between mode-switching and monolithic behavior policies on ATARI and other illustrative tasks. The analysis showcased the flexibility of mode-switching policies, such as the ability to explore earlier in episodes and exploit at a notably higher rate. As the original study of mode-switching behavior by DeepMind was primarily concerned with performance, the experiments in this blog post supplement the study by providing a better understanding of the strengths and weaknesses of mode-switching exploration. Due to the vast challenges in RL, we envision that mode-switching policies will need to be tailored to specific environments to achieve the greatest performance gains over monolithic policies. Pending a wealth of future studies, we believe that mode-switching has the potential to become the default behavioral policy to be used by researchers and practitioners alike. 
 
+### Acknowledgements
+
+We thank Nathan Bittner for a few helpful discussions on the topic of 
+mode-switching exploration. We also thank Theresa Schlangen (Theresa 
+Anderson at the time of publication) for helping polish some of the 
+figures. 
