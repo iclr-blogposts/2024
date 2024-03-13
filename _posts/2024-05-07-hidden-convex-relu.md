@@ -103,6 +103,8 @@ $$
 \def\cone{ {\color{cvblue}{1}} }
 
 \def\max{\mathop{\mathrm{max}}}
+\def\sgn{\mathop{\mathrm{sgn}}}
+
 
 $$
 </div>
@@ -163,7 +165,7 @@ In this blogpost we will first work out the intuition needed to understand why a
 
 The question of how neural networks learn is a very active domain of research with many different paths of investigation. Its main goal is to lay a mathematical foundation for deep learning and for that goal, shallow neural networks act as a stepping stone for studying deeper and more complex networks.
 
-For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019b"></d-cite><d-cite key="duGradientDescentProvably2018"></d-cite><d-cite key="jacotNeuralTangentKernel2018"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018a"></d-cite>. <a href="https://rajatvd.github.io/NTK/">Studying the NTK</a> amounts to studying the first-order Taylor expansion of the network, treating the network as a linear regression over a feature map. This approximation is accurate if the neurons are initialized at a large scale, large enough that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2019"></d-cite>, in contrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex. While it is noticeable,  we are also interested here in a feature-learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignment, incremental learning<d-cite key="berthierIncrementalLearningDiagonal2023"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022d"></d-cite>.
+For networks with a hidden layer of infinite width, it is proven that gradient descent converges to one of the global minima<d-cite key="allen-zhuConvergenceTheoryDeep2019b"></d-cite><d-cite key="duGradientDescentProvably2018"></d-cite><d-cite key="jacotNeuralTangentKernel2018"></d-cite> under the _NTK regime_, or by studying Wasserstein gradient flows<d-cite key="chizatGlobalConvergenceGradient2018a"></d-cite>. <a href="https://rajatvd.github.io/NTK/">Studying the NTK</a> amounts to studying the first-order Taylor expansion of the network, treating the network as a linear regression over a feature map. This approximation is accurate if the neurons are initialized with a large scale(far from zero), large enough that neurons do not move far from their initialization. This is also called the _lazy regime_ <d-cite key="chizatLazyTrainingDifferentiable2019"></d-cite>, in contrast with the _feature learning regime_ where neurons align themselves to a finite amount of directions. The behavior is thus mostly convex. While it is noticeable,  we are also interested here in a feature-learning regime with small initialization where we can observe actual non-convex behavior such as neuron alignment, incremental learning<d-cite key="berthierIncrementalLearningDiagonal2023"></d-cite> and saddle to saddle dynamic<d-cite key="boursierGradientFlowDynamics2022d"></d-cite>.
 
 Studying the loss landscape reveals that shallow networks with more neurons than data points always have a non-increasing path to a global minimum<d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>. This is a favorable property for (stochastic) gradient convergence. In '_The Hidden Convex Optimization Landscape of Regularized Two-Layer ReLU Networks_'<d-cite key="wangHiddenConvexOptimization2021"></d-cite><d-cite key="pilanciNeuralNetworksAre2020"></d-cite>, the authors extend those results by adding the famous weight decay regularization. 
 
@@ -203,9 +205,25 @@ The figure below shows the plot of the loss.
 
 #### Multiplicative non-convexity
 
-Putting ReLU aside briefly, minimizing $$(x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)$$ is a non-convex problem because we are multiplying two variables together: $w_1 ~ \alpha_1$. However, this non-convexity can be ignored by considering the equivalent convex function  $$u_1 \mapsto (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert$$ where $u_1$ takes the role of the product $w_1 \alpha_1$. We can solve the minimization problem with only $$u_1$$ and then map it back to the two variable problem. Because we have a regularization term, the mapping has to be $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$ so that the two outputs match. The global minima are the same as they have the same expressivity, we can say the two problems are equivalent.
+Let's briefly put ReLU aside and consider the simpler problem of minimizing 
 
-Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u_1) $$ do not have the same expressivity in general as $$\alpha_1$$ can be negative (to produce negative outputs)! We split the role of a non-convex variable into two: $$u_1$$ and $$v_1$$. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
+<p>
+\begin{equation}\label{eq:ncvx1}
+w_1, \alpha_1 \in \RR \rightarrow (x_1 w_1 \alpha_1 - y_1)^2 + \frac{\lambda}{2} (\vert w_1 \vert^2 + \vert \alpha_1 \vert^2)
+\end{equation}
+</p>
+
+\eqref{eq:ncvx1} is a non-convex problem because we are multiplying $w_1$ and $\alpha_1$ together. However, this non-convexity can be ignored by considering an equivalent convex function 
+
+<p>
+\begin{equation}\label{eq:cvx1}
+u_1 \in \RR \rightarrow (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert
+\end{equation}
+</p>
+
+where $u_1$ takes the role of the product $w_1 \alpha_1$. We can solve \eqref{eq:cvx1} to get an optimal $u_1$ and then use a mapping $$(w_1, \alpha_1) = (u_1, 1)$$, but plugging this in \eqref{eq:ncvx1} shows that the regularization term would not be equal (and even larger even). If $\lambda > 0$, the mapping has to be $$(w_1, \alpha_1) = (\sgn(u_1) ~ \sqrt{\vert u_1 \vert}, \sqrt{\vert u_1\vert})$$. The global minima of the two problems have the same value as they have the same expressivity, we can say the two problems are equivalent in the sense that we can solve one to get the solution of the other by a simple mapping.
+
+We add back the ReLU activation to our network and we'd like to apply the same process. However, there's a caveat: $$ \max(0, x ~ w_1) \alpha_1 $$ can be negative but not $$ \max(0, x ~ u_1) $$, therefore they do not have the same expressivity. Considering a second variable, $\max(0, x_1 ~ u_1) - \max(0, x_1 ~ v_1)$ has the same expressivity by essentially splitting the role of the neuron into two. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
 
 <p>
 \begin{equation*}
@@ -213,7 +231,7 @@ Back to ReLU, there's a caveat: $$ \max(0, x w_1) \alpha_1 $$ and $$ \max(0, x u
 \end{equation*}
 </p>
 
-This is indeed a convex objective. At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\frac{u_1}{\sqrt{u_1}}, \sqrt{u_1})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to a negative value: $$(w_1, \alpha_1) = (\frac{v_1}{\sqrt{v_1}}, -\sqrt{v_1})$$.
+That is a convex objective. At the optimum, only one of the two $\max$ terms will be non-zero. Thus, if $u_1$ is positive, then $$(w_1, \alpha_1) = (\sgn(v_1) ~ \sqrt{\vert v_1 \vert}, \sqrt{\vert v_1 \vert})$$  as before. However, if the negative $$v_1$$ neuron is non-zero, we have to set the second layer to a negative value: $$(w_1, \alpha_1) = (\sgn(v_1) ~ \sqrt{\vert v_1 \vert}, -\sqrt{\vert v_1 \vert})$$.
 
 With a bit of effort, the two problems share the same global minima as we can easily map back and forth without altering the loss.
 
