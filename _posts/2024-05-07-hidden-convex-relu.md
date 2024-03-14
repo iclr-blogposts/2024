@@ -207,7 +207,7 @@ The figure below shows the plot of the loss.
 
 #### Multiplicative non-convexity
 
-Let's briefly put ReLU aside and consider the simpler problem of minimizing 
+Let's briefly put ReLU aside and consider a network with linear activation. The problem corresponding to a single linear neuron and a single data sample is
 
 <p>
 \begin{equation}\label{eq:ncvx1}
@@ -225,7 +225,7 @@ u_1 \in \RR \rightarrow (x_1 u_1  - y_1)^2 + \lambda \vert u_1 \vert
 
 where $u_1$ takes the role of the product $w_1 \alpha_1$. We can solve \eqref{eq:cvx1} to get an optimal $u_1$ and then use a mapping $$(w_1, \alpha_1) = (u_1, 1)$$, but plugging this in \eqref{eq:ncvx1} shows that the regularization term would not be equal (and even larger even). If $\lambda > 0$, the mapping has to be $$(w_1, \alpha_1) = (\sgn(u_1) ~ \sqrt{\vert u_1 \vert}, \sqrt{\vert u_1\vert})$$. The global minima of the two problems have the same value as they have the same expressivity, we can say the two problems are equivalent in the sense that we can solve one to get the solution of the other by a simple mapping.
 
-We add back the ReLU activation to our network and we'd like to apply the same process. However, there's a caveat: $$ \max(0, x ~ w_1) \alpha_1 $$ can be negative but not $$ \max(0, x ~ u_1) $$, therefore they do not have the same expressivity. Considering a second variable, $\max(0, x_1 ~ u_1) - \max(0, x_1 ~ v_1)$ has the same expressivity by essentially splitting the role of the neuron into two. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
+We add back the ReLU activation to our network and we'd like to apply the same process. However, there's a caveat: $$ \max(0, x ~ w_1) \alpha_1 $$ can be negative but not $$ \max(0, x ~ u_1) $$, therefore they do not have the same expressivity. Let's add a second variable: $\max(0, x_1 ~ u_1) - \max(0, x_1 ~ v_1)$ has the same expressivity by essentially splitting the role of the neuron into two. The variable $$u_i$$ represents a neuron with a positive second layer and $$v_i$$ a neuron with a negative second layer. We rewrite the loss:  
 
 <p>
 \begin{equation*}
@@ -238,6 +238,8 @@ That is a convex objective. At the optimum, only one of the two $\max$ terms wil
 With a bit of effort, the two problems share the same global minima as we can easily map back and forth without altering the loss.
 
 #### Activation
+
+Consider a single ReLU neuron with no second layer (simply set $\alpha_1$ to zero in the example above)
 
 As noticed previously, the activation of data points plays a crucial role in the loss. Assuming that we only need a positive neuron, the considered loss is:
 
@@ -268,6 +270,7 @@ then the obtained problem is convex and has a unique solution. The formula can b
 </p>
 
 If we solve this problem, we only find **one** of the two local optima of our neural net loss. If we choose the wrong activation matrix, it will not be the global optimum of the non-convex network. If we change the activation matrix to $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ we would get the only other local minimum.
+
 
 
 #### Equivalent Convex problem
@@ -320,9 +323,9 @@ $$\pmb{X} \in \RR^{n \times d}$$ is the data matrix with labels $$\pmb{y} \in \R
 
 By analogy with what we saw earlier, an equivalent convex problem can be found as
 <p>
-\begin{equation*}
+\begin{equation}\label{eq:thecvx}
     \min_{\pmb{U}, \pmb{V} \in \mathcal{K}} \| \sum_{i=1}^m \pmb{D}_i \pmb{X} (\pmb{u}_i - \pmb{v}_i) - \pmb{y} \|^2_2 + \lambda \sum_{i=1}^m \| \pmb{u}_i \|_2 + \| \pmb{v}_i \|_2,
-\end{equation*}
+\end{equation}
 </p>
 where $$\pmb{D}_i$$ are the activation matrix/pattern as described above. For each neuron $$u_i$$, it is constrained so that it keeps its ReLU activation pattern once mapped back: $$(2 \pmb{D}_i - \pmb{I}_n) X \pmb{u}_i \geq 0$$ (subtracting the identity to $$\pmb{D}_1 = (\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ yields $$(\begin{smallmatrix} \cone & 0 \\ 0 & \color{cred}{-1} \end{smallmatrix})$$, which is simply a short-hand notation for writing the constraints $$\geq$$ and $$\leq$$). The set of the constraints $$\mathcal{K}$$ is the concatenation of these constraints for all the neurons plus the non-negativity constraints. It is directly convex.
 
@@ -345,9 +348,11 @@ A few questions are thus left unanswered: how many different activation patterns
 
 Two problems are considered equivalent when their global optima can be seamlessly mapped back and forth.
 
-As seen before, there are only two possible activation patterns in the one-dimensional case (a single neuron can either activate all the positive data point and none of the negative, or the opposite), but close to $$2^n$$ when the data dimension is higher. If we consider all the possible activation patterns, the unique solution of the convex problem corresponds to the global optima of the non-convex network with at least as many neurons as the convex one. This comes from the fact that having more than one non-zero neuron per activation will not improve our loss (because our loss is evaluating our network _only_ on data points).
+As seen before, there are only two possible activation patterns in the one-dimensional case (a single neuron can either activate all the positive data point and none of the negative, or the opposite), but close to $$2^n$$ when the data dimension is higher. 
 
-If we only consider a subset of all patterns, the convex problem corresponds to a local optimum of the non-convex network. Indeed, it is not as expressive as before. This would either correspond to a non-convex network with not enough neurons, or with too many neurons concentrated in the same regions.
+The (unique) optimal loss of the convex problem \eqref{eq:thecvx} with all possible activation patterns(for fixed data) $$D_i$$ is the best loss any non-convex network can reach. Following sections are dedicated to understanding why adding more neurons than there are activation pattern will not improve the loss.
+
+However, if we only consider a subset of all patterns, the convex problem corresponds to a local optimum of the non-convex network. Indeed, it is not as expressive as before. This would either correspond to a non-convex network with not enough neurons, or with too many neurons concentrated in the same regions.
 
 Let us see this through the same example with one-dimensional data.
 
