@@ -177,17 +177,6 @@ Other convex approaches are limited to an infinite amount of neurons, or to opti
 
 To sum up, the convex reformulation approach described in this post contrasts itself from what precedes by presenting results for a shallow network with __finite width layers__, starting from one neuron and incorporating __regularization__ in a __regression__ setting with frequently used __ReLU__ activation.
 
-#### bin
-
-<p>
-\begin{equation}\label{eq:one_neuron_loss_lel}
-\begin{split}
-{\color{cvred}{\mathcal{L}(w_1, \alpha_1)}} = (\max(0, x_1 w_1) \alpha_1 - y_1)^2+(\max(0, x_2 w_1) \alpha_1 - y_2)^2  \\
-+ \frac{\lambda}{2} \left(|w_1|^2 + |\alpha_1|^2\right)
-\end{split}
-\end{equation}
-</p>
-
 ## II. Convex reformulation
 
 ### Small example walkthrough
@@ -206,15 +195,15 @@ Below is the loss of a single ReLU neuron ($$w_1 \in \RR$$) trained on two data 
 
 Because our only trainable parameter is one dimensional, we can directly the plot the entire loss landscape.
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside_correct.png" class="img-fluid" %} only the right part
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/redloss.png" class="img-fluid" %}
 
 <p class="legend"> \(\color{cvred}{\mathcal{L}}\) is non-convex in a strong sense: two local minima exists and have distinct values (\(y_1^2\) and \(y_2^2\)). In practice, a gradient descent will never be able to switch from fitting one data point to the other (switching from positive to a negative weight $w_1$ can only be done by increasing the loss).</p>
 
-We say that the ReLU neuron can _activate_ one or more data points if the output of its ReLU is non-zero. The output of a one-neuron ReLU is $$\color{cblue}{\max(0, x ~ w_1)$$, we can plot both the output and the two data points on the same graph.
+We say that the ReLU neuron can _activate_ one or more data points if the output of its ReLU is non-zero. The output of a one neuron ReLU network is $$\color{cblue}{\max(0, x ~ w_1)}$$, we can plot both the output and the two data points on the same graph.
 
 {% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside_correct.png" class="img-fluid" %} only left part
 
-<p class="legend">Plot of the output of a one-neuron ReLU net with a positive weight $w_1$. The ReLU only <em>activates</em> the second data point (as $x_2>0$ and $w_1 > 0$) so the network can fit the second data point. However, doing so means it cannot activate $x_1$ and will incur a constant loss $(y_1)^2$. Overall, depending on the sign of $w_1$ we will have a loss consisting of a constant term for not activating one example and a quadratic term for matching the output for the activated data point. (TODO incur?)
+<p class="legend">Plot of the output of a one neuron ReLU network with a positive weight $w_1$. The ReLU only <em>activates</em> the second data point (as $x_2>0$ and $w_1 > 0$) so the network can fit the second data point. However, doing so means it cannot activate $x_1$ and will incur a constant loss $(y_1)^2$. Overall, depending on the sign of $w_1$ we will have a loss consisting of a constant term for not activating one example and a quadratic term for matching the output for the activated data point. (TODO incur?)
 </p>
 
 Before moving on, the important fact here is that we have a real non-convexity of the loss without a single layer nor regularization. Now we will see how we can make it convex. (TODO bad sentence?)
