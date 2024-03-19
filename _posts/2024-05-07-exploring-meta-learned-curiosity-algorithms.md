@@ -8,7 +8,7 @@ htmlwidgets: true
 
 # Anonymize when submitting
 authors:
-  - name: Anonymous
+  - name: Batsi Ziki
 
 # authors:
 #   - name: Batsi Ziki
