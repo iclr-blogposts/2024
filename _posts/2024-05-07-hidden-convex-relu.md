@@ -199,9 +199,9 @@ Because our only trainable parameter is one dimensional, we can directly the plo
 
 <p class="legend"> \(\color{cvred}{\mathcal{L}}\) is non-convex in a strong sense: two local minima exists and have distinct values (\(y_1^2\) and \(y_2^2\)). In practice, a gradient descent will never be able to switch from fitting one data point to the other (switching from positive to a negative weight $w_1$ can only be done by increasing the loss).</p>
 
-We say that the ReLU neuron can _activate_ one or more data points if the output of its ReLU is non-zero. The output of a one neuron ReLU network is $$\color{cblue}{\max(0, x ~ w_1)}$$, we can plot both the output and the two data points on the same graph.
+We say that the ReLU neuron can _activate_ one or more data points if the output of its ReLU is non-zero. The output of a one neuron ReLU network is $$\color{cvblue}{\max(0, x ~ w_1)}$$, we can plot both the output and the two data points on the same graph.
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/sidebyside_correct.png" class="img-fluid" %} only left part
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/blueoutput.png" class="img-fluid" %}
 
 <p class="legend">Plot of the output of a one neuron ReLU network with a positive weight $w_1$. The ReLU only <em>activates</em> the second data point (as $x_2>0$ and $w_1 > 0$) so the network can fit the second data point. However, doing so means it cannot activate $x_1$ and will incur a constant loss $(y_1)^2$. Overall, depending on the sign of $w_1$ we will have a loss consisting of a constant term for not activating one example and a quadratic term for matching the output for the activated data point. (TODO incur?)
 </p>
@@ -440,15 +440,17 @@ Let us see this through the same example with one-dimensional data.
 
 #### 1-D EXAMPLE, ONE NEURON
 
-In the non-convex problem with only one neuron, there are two local minima:
+In the non-convex problem with only one neuron, there are exactly two local minima.
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned1.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oneneuron.png" class="img-fluid" %}
 
-As seen in the previous section, each local minimum can be found exactly by solving the convex problem with a subset of all possible activations, that is  $$(\begin{smallmatrix} \czero & 0 \\ 0 & \cone\end{smallmatrix})$$ on the left and $$(\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})$$ on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one because the global minimum of the non-convex cannot be achieved in the convex problem. However, once we reach a local minimum in the non-convex gradient descent, then it can be described as a convex problem, by considering one pattern or the other.
+<p class="legend">Plot of the output of a ReLU Network with one neuron, one for each of the parameter's local minima. The parameter on the left can be formulated as a solution of a convex problem with one convex neuron using the activation matrix \((\begin{smallmatrix} \czero & 0 \\ 0 & \cone\end{smallmatrix})\), and \((\begin{smallmatrix} \cone & 0 \\ 0 & \czero \end{smallmatrix})\) for the right output.</p>
+
+As seen in the previous section, each local minimum can be found exactly by solving the convex problem with a subset of all possible activations, that is   on the left and  on the right. Here we cannot say that the convex problem (that considers only one pattern) is equivalent to the non-convex one because the global minimum of the non-convex cannot be achieved in the convex problem. However, once we reach a local minimum in the non-convex gradient descent, then it can be described as a convex problem, by considering one pattern or the other.
 
 #### 1-D EXAMPLE, TWO NEURONS
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned2.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/twoneuron.png" class="img-fluid" %}
 
 <p class="legend"> The non-convex problem initialized at random and optimized with gradient descent will have three possible local minima (if there is some regularization, otherwise there's an infinite number of them). Either we initialize a neuron for each activation and it will reach the global optima (<b>left</b>), or two of them will end up in the same pattern (<b>right</b>), activating the same data point.</p>
 
@@ -468,7 +470,7 @@ is equivalent to the non-convex problem <em>i.e.</em> solving it will give the g
 
 #### 1-D EXAMPLE, MANY NEURONS
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/oned3.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/manyneurons.png" class="img-fluid" %}
 
 <p class="legend">Plotting the positive part of many ReLU neurons. Summed up, they form a network output that perfectly fits the data.</p>
 
@@ -497,9 +499,9 @@ The activation pattern of $$\pmb{w}_1$$ is $$\pmb{D}_1=\left(\begin{smallmatrix}
 
 One point of interest is the data for which the ReLU will be 0. This is where the output changes its slope: $$a_1 = -\frac{w_1^2}{w_1^1}$$ where $$w_1^i$$ is the i-th coordinate of $$\pmb{w}_i$$. Here, $$a_1 = 0.5$$. We call this the _activation point_ of the neuron $$\pmb{w}_1$$.
 
-We plot the output, $$\color{cblue}{\max(0,  (x, 1) ~ \pmb{w}_1^\top)}$$, of the network as a function of the first dimension of the data $$x^1$$ (here simply written $$x$$): 
+We plot the output, $$\color{cvblue}{\max(0,  (x, 1) ~ \pmb{w}_1^\top)}$$, of the network as a function of the first dimension of the data $$x^1$$ (here simply written $$x$$): 
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/firstexpl.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/twodim.png" class="img-fluid" %}
 
 <p class="legend">A neuron initialized so that it activates only one data point <em>i.e.</em> its activation point is between the two samples, and its slope tells us if it activates on the left or on the right like in this case.</p>
 
@@ -513,31 +515,11 @@ In the animation below, we train this network using classic gradient descent on 
 
 Adding more neurons will not create additional activation patterns, only adding more data points will. With only $$\pmb{x}_1$$ and $$\pmb{x}_2$$ we only had 4 possible patterns, with four data points we have 10 possible patterns. 
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/manyexpl.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/annoying.png" class="img-fluid" %}
 
 <p class="legend">Plotting individual output and activation points of each of these ten possible ReLU neurons in blue. Those are the 10 (20 with negative ones) neurons that need to be considered to get the global optima using the convex equivalent. When moving the activation point between two data points, the activation pattern does not change.</p>
 
 <p class="remark"> Notice that it is not possible to only activate the data points in the middle. However, if we increase the data's dimension, this becomes possible. This is also possible with a second layer of ReLU. In higher dimensions, we cannot visualize the activation patterns as easily, but we can understand that as dimensionality increases, more patterns are possible as it's easier to separate different data points.</p>
-
-<div style="display: none">
-{<% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/simple_dataspace.gif" class="img-fluid" %}
-Now we define an activation region as the set of all neurons with $$\pmb{D}_1=\left(\begin{smallmatrix} \czero & 0 \\ 0 & \cone \end{smallmatrix}\right)$$ as their activation pattern. We can plot this region on the data graph, as data and neurons have the same dimension.
-
-<style>
-  .hcenter {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .fifty {
-    max-height: 500px;
-    width: auto;
-   }
-</style>
-
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/gra6.png" class="img-fluid hcenter fifty" %}
-, on the __right__ we plot the two regions divided by the neuron's activation line $$\{ \pmb{a} \in \RR^2 : \pmb{w}^\top \pmb{a} = 0\}$$. 
-</div>
 
 ### Extensions of the convex reformulation to other settings
 
