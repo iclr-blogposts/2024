@@ -6,15 +6,10 @@ date: 2024-05-07
 future: true
 htmlwidgets: true
 
-# Anonymize when submitting
 authors:
-  - name: Batsi Ziki
-
-# authors:
-#   - name: Batsi Ziki
-#     affiliations:
-#       name: University of Cape Town
-
+  - name: Batsirayi Mupamhi Ziki
+    affiliations: 
+      name: University of Cape Town
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-exploring-meta-learned-curiosity-algorithms.bib  
@@ -260,7 +255,8 @@ In other words, once we apply a forward transformation to the random embedding o
 Let us look at the second term in $$\mathcal{L}_b$$ given by $$\|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|_2$$. We apply a forward and then a backward transformation to the random embedding of state $$s_{t+1}$$, so we should end up with just the random embedding of state $$s_{t+1}$$. We then apply $$fr_{\theta_3}$$ to state $$s_t$$ and end up with the forwarded random embedding of state $$s_t$$, which should equal the random embedding of $$s_{t+1}$$.
 
 The intrinsic reward confuses us. Looking at the DAG of CCIM, we see that the output is given by the L2 distance between $$\mathcal{L}_f$$ and $$\mathcal{L}_b$$; hence, we initially thought the intrinsic reward was given by $$ \|b_{\theta_2}(fr_{\theta_3}(s_{t+1}))-fr_{\theta_3}(s_t)\|$$. The difference between this equation and the original intrinsic reward equation is that the backward model, $$b_{\theta_2}$$, is not applied to the $$fr_{\theta_3}(s_t)$$ term. Looking at the original formula of the intrinsic reward, we can see that it is just the difference between the random embedding of 
-the current state and the next state<d-footnote>If we assume that the backward network can undo the forward transformation.</d-footnote>, so it is not clear to us as to how the intrinsic reward will decrease as the agent explores.
+the current state and the next state<d-footnote>If we assume that the backward network can undo the forward transformation.</d-footnote>, so it is not clear to us as to how the intrinsic reward 
+will decrease as the agent explores.
 Not only that, but we also noticed unexpected behaviour in the loss function of the $$fr_{\theta_3}$$ network in our experiments. We then watched Alet et al.'s presentation of their paper to see where we went wrong, and we noticed in the presentation they swapped the labels for $$fr_{\theta_3}$$ and $$b_{\theta_2}$$ networks. 
 After reaching out to them about this discrepancy, they did confirm that the equations in the paper are correct, and the labels in the talk are wrong. So for our implementation, we used the equations as found in the paper.
 
@@ -280,7 +276,7 @@ This slimmed down version of CCIM was much easier to implement. Since the sum of
 ### Emperical Design
 
 
-In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase is derived from PureJaxRL<d-cite key="lu2022discovered"></d-cite>. 
+In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase<d-footnote>Our codebase can be found [here](https://github.com/Ziksby/MetaLearnCuriosity).</d-footnote> is derived from PureJaxRL<d-cite key="lu2022discovered"></d-cite>. 
 Specifically, we leverage PureJaxRL's Proximal Policy Optimization (PPO) implementation as our chosen reinforcement learning (RL) algorithm. 
 We compare each meta-learned curiosity algorithm to a non-curious agent (normal PPO) and our baselines.
 The foundation of our experiments is laid upon a JAX implementation of Minigrid's grid-world environment <d-cite key="MinigridMiniworld23"></d-cite>, which uses gymnax's API <d-cite key="gymnax2022github"></d-cite>. Additionally, we make use of gymnax's deep sea environment implementation as well.
@@ -396,7 +392,8 @@ each algorithm and kept track of the paths each seed took. Looking at Figure 13 
 
 #### FAST
 
-Let us now turn our attention to how FAST performed. We began with the deep sea environment. The left side of Figure 14 indicates that FAST produces more consistent agents than PPO; however, our baselines exhibit a lower sample standard deviation. To further explore this, we plot the sample deviation for the first 10,000 steps, as we observe no significant difference beyond this point.
+Let us now turn our attention to how FAST performed. We began with the deep sea environment. In Figure 15 we plot the sample deviation for the first 10,000 steps, as we observe no significant difference beyond this point.
+The left side of Figure 15 indicates that PPO and our curiosity-driven baselines produces more consistent agents than FAST as they exhibit a lower sample standard deviation.
 
 On the right side of Figure 15, we see that FAST, similar to CCIM, performs poorly on this environment compared to our baselines. Notably, during training we noticed the intrinsic reward of the FAST agents also increased.
 
@@ -413,7 +410,7 @@ On the right side of Figure 15, we see that FAST, similar to CCIM, performs poor
     Figure 15. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
 
-FAST's performance in the empty grid-world is better than its performance in the deep sea environment; it is now comparable to our baselines despite its intrinsic rewards also increasing over time. Once again, similar to CCIM's results, we observe overlapping confidence intervals in the empty grid-world.
+The right side of Figure 16 shows FAST's performance in the empty grid-world is better than its performance in the deep sea environment; it is now comparable to our baselines despite its intrinsic rewards also increasing over time. Once again, similar to CCIM's results, we observe overlapping confidence intervals in the empty grid-world. Figure 16 not only has its performace improved in the empty grid-world but it now produces more consistent agents than RND and PPO as its sample standard deviation is lower.
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_std.png" class="img-fluid"  %}
@@ -443,7 +440,7 @@ We once again plot the heatmap of FAST and compare it to PPO's heatmap using the
 
 ## Discussion
 
-Alet et al. provided a unique approach to meta-learning. The performance of CCIM and FAST in the empty grid-world then did not surprise us as that was the environment used to search for the algorithms. Note in Figure 16 that the 15 best seeds of FAST covered more of the map, i.e., most of the seeds took different parts to the goal compared to PPO. 
+Alet et al. provided a unique approach to meta-learning. The performance of CCIM and FAST in the empty grid-world then did not surprise us as that was the environment used to search for the algorithms. Note in Figure 17 that the 15 best seeds of FAST covered more of the map, i.e., most of the seeds took different parts to the goal compared to PPO. 
 However for the CCIM and CCIM-slimmed heatmaps we notice that these algorithms only slightly covered more of the map then PPO. And from sample standard deviation plots FAST and CCIM-slimmed both produce more 
 consistent agents than PPO. CCIM however is only able to do this in the empty grid-world environment. It should be noted that by looking at the heat maps that 
 CCIM-slimmed, CCIM, and FAST both covered more of the map than our baselines which makes sense given Alet et al. looked for curiosity that optimise the number of distinct cells visited when searching for the curiosity algorithms.
@@ -454,7 +451,7 @@ $$
 \hat{r}_t = \frac{(1+ri_t-t/T)\cdot ri_t+ r_t\cdot t/T}{1+ri_t}.
 $$
 
-Now if $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithms that the intrinsic reward decreases as the agent becomes more familiar with its environment. We believe that this is why CCIM-slimmed performed better than CCIM and FAST in the deep sea environment. Another concern we have is how the CCIM random and forward network's loss inreased during training. It is possible that there's a bug somewhere in our code which we have not found yet.
+Now if $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithms that the intrinsic reward decreases as the agent becomes more familiar with its environment. We believe that this is why CCIM-slimmed performed better than CCIM and FAST in the deep sea environment. Another concern we have is how the CCIM random and forward network's loss increased during training. It is possible that there's a bug somewhere in our code which we have not found yet.
 
 In the future we think it will be interesting to repeat this experiment using the deep sea environment to find the curiosity algorithms that output the intrinsic reward. 
 Additionally, exploring the use of a variant of FAST or CCIM to find a reward combiner is also of interest to us. We wonder why a variant of FAST or CCIM wasn't employed for this purpose, as a variant of RND was used to find the reward combiner. We would also like to increase the number of seeds used to reduce the confidence intervals since we are training end-to-end in JAX in simple environments and so the increase in the number of seeds should not be much of an issue.
