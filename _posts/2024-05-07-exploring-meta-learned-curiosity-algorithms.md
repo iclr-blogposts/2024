@@ -276,7 +276,7 @@ This slimmed down version of CCIM was much easier to implement. Since the sum of
 ### Emperical Design
 
 
-In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase<d-footnote>Our codebase can be found [here](https://github.com/Ziksby/MetaLearnCuriosity).</d-footnote> is derived from PureJaxRL<d-cite key="lu2022discovered"></d-cite>. 
+In devising the methodology for our experiments, we sought guidance from the principles outlined in Patterson et al.'s cookbook, "Empirical Design in Reinforcement Learning" <d-cite key="patterson2023empirical"></d-cite>. Our codebase is derived from PureJaxRL<d-cite key="lu2022discovered"></d-cite> and can be found [here](https://github.com/Ziksby/MetaLearnCuriosity). 
 Specifically, we leverage PureJaxRL's Proximal Policy Optimization (PPO) implementation as our chosen reinforcement learning (RL) algorithm. 
 We compare each meta-learned curiosity algorithm to a non-curious agent (normal PPO) and our baselines.
 The foundation of our experiments is laid upon a JAX implementation of Minigrid's grid-world environment <d-cite key="MinigridMiniworld23"></d-cite>, which uses gymnax's API <d-cite key="gymnax2022github"></d-cite>. Additionally, we make use of gymnax's deep sea environment implementation as well.
