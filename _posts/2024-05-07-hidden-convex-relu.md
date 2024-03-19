@@ -282,6 +282,9 @@ Later sections will investigate what we can say about a ReLU network with more t
 
 #### Multiplicative non-convexity from the second layer
 
+
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/vraitroisd.png" class="img-fluid" %}
+
 <p>
 \begin{equation}\label{eq:ncvxlin}
 \min_{(x, y) \in \RR^2} (x ~ y - 1)^2
@@ -290,7 +293,7 @@ Later sections will investigate what we can say about a ReLU network with more t
 
 \eqref{eq:ncvxlin} is not convex. Simply replace the term $x ~ y$ by a new variable $z$, and use a simple mapping such as $z \rightarrow (1, z)$ to get the solution of \eqref{eq:ncvxlin} from the solution of the convex problem: $$\min_{z \in \RR} (z-1)^2$$.
 
-If we add a L2 regularization to the initial problem, it stays non convex:
+The initial problem\eqref{eq:ncvxlin} with L2 regularization is non-convex as well:
 
 <p>
 \begin{equation*}
