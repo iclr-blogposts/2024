@@ -8,9 +8,8 @@ htmlwidgets: true
 
 authors:
   - name: Batsirayi Mupamhi Ziki
-    affiliations:
+    affiliations: 
       name: University of Cape Town
-
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-exploring-meta-learned-curiosity-algorithms.bib  
