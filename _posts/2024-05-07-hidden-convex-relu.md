@@ -147,7 +147,7 @@ Because there is only two layers, we will integrate the biases of the neuron dir
 
 Even the simplest ReLU models have non-trivial non-convexity as depicted in the figure below. We plot the loss function $$\mathcal{L}$$ of a network with two neurons on one-dimensional data. We only optimize the first layer here so we have a total of two parameters to optimize. Despite the simple setup, a gradient descent starting from a random initialization can converge to three different values, two of them being bigger than zero. However, there always exists a path of non-increasing loss from initialization to the global minimum (as predicted by a <d-cite key="sharifnassabBoundsOverParameterizationGuaranteed2019"></d-cite>).
 
-{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/nonconvex.png" class="img-fluid" %}
+{% include figure.html path="assets/img/2024-05-07-hidden-convex-relu/threed.png" class="img-fluid" %}
 
 <p class="legend">Loss landscape of a network with two parameters, one for each ReLU neuron, and two data points: $(x_1, y_1) = (-1, 1)$ and $(x_2, y_2) = (1, 2)$ are fixed. Since all labels are positive, we fix the second layer $\alpha_1, \alpha_2$ to 1 to plot the loss in 2D without a loss of generality. The black lines represent the loss for only one neuron (since the other is equal to 0). The red lines(critical points) are path of parameters for which the loss is constant and gradient is zero. They represent the parameters for which the neuron fits exactly one data point and is deactivated for the other and thus suffers a loss of $(y_1)^2$ for the red line on the left, and $(y_2)^2$ for the other. The exact formula to compute each point of the loss landscape is:
 
@@ -210,7 +210,7 @@ Before moving on, the important fact here is that we have a real non-convexity o
 
 #### Activation
 
-We want to find the global minima of the one neuron ReLU network\eqref{eq:one_neuron_loss}. Recall that it has two local minima: $y_2^2$ for $w_1=-\frac{y_1}{x_1}$ and $y_1^2$ for $w_1=\frac{y_2}{x_2}$.
+We want to find the global minima of the one neuron ReLU network\eqref{eq:one_neuron_loss}. Recall that it has two local minima: $y_2^2$ for $w_1=\frac{y_1}{x_1}$ and $y_1^2$ for $w_1=\frac{y_2}{x_2}$.
 
 As we can notice, the activation of data points plays a crucial role in the loss. In the specific example above where $x_2>0$ is activated and is not $x_1<0$. If we fix the ReLU's activation to this behavior and __replace the max__ by simply $$\czero$$ or $$\cone$$:
 
