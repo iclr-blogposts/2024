@@ -6,8 +6,6 @@ date: 2024-05-07
 future: true
 htmlwidgets: true
 
-us
-
 authors:
   - name: Batsirayi Mupamhi Ziki
     affiliations:
