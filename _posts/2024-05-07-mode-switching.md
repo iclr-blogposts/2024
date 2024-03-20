@@ -53,21 +53,7 @@ toc:
 # Below is an example of injecting additional post-specific styles.
 # This is used in the 'Layouts' section of this post.
 # If you use this post as a template, delete this _styles block.
-_styles: >
-  .fake-img {
-    background: #bbb;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 12px;
-  }
-  .fake-img p {
-    font-family: monospace;
-    color: white;
-    text-align: left;
-    margin: 12px 0;
-    text-align: center;
-    font-size: 16px;
-  }
+
 ---
 
 ## 1. Introduction
@@ -94,7 +80,7 @@ before going back to bed?
 
 {% include figure.html path="assets/img/2024-05-07-mode-switching/bike.png" class="img-fluid" %}
 <div class="caption">
-    Figure 1. Illustrative difference between monolithic and mode-switching 
+    Figure 1: Illustrative difference between monolithic and mode-switching 
 behavior policies <d-cite key="pislar2021should"></d-cite>.
 </div>
 
@@ -118,8 +104,8 @@ costa2019subcortical, waltz2020differential"></d-cite>, which served as a notabl
 
 This introduction section continues with a brief discussion of topics 
 related to mode-switching behavior policies, ranging from different temporal 
-granularities to previous algorithms that exhibit mode-switching behavior. 
-We emphasize practical understanding rather than attempting to present an 
+granularities to algorithms in the literature that exhibit mode-switching 
+behavior. We emphasize practical understanding rather than attempting to present an 
 exhaustive classification or survey of the subject. Afterwards, we discuss 
 our motivation and rationale for this blog post: the authors of the initial 
 mode-switching study showed that training with mode-switching 
@@ -141,7 +127,8 @@ monolithic policies and the previous exploration literature. Figure 2
 illustrates the high-level, pivotal difference between switching and 
 monolithic policies: at the beginning of each time step, the agent may use 
 all of its available information to determine its behavior mode 
-for the current time step and then output a behavior policy to determine 
+for the current time step and then output a corresponding behavior policy to 
+determine 
 the action. A key distinction is that switching policies can drastically 
 change between time steps since the modes can be tailored to a variety of 
 different purposes (e.g. exploration, exploitation, mastery, novelty). As 
@@ -150,7 +137,8 @@ algorithm that it was not exhaustively characterized in the initial study.
 
 {% include figure.html path="assets/img/2024-05-07-mode-switching/box.png" class="img-fluid" %}
 <div class="caption">
-    Figure 2. Introduction of mode-switching behavior to standard agent-environment RL interaction.
+    Figure 2: Introduction of mode-switching behavior to standard 
+agent-environment RL interaction.
 </div>
 
 A **mode period** is defined as a sequence of time steps in a single mode.
@@ -158,7 +146,8 @@ At the finest granularity, *step-level* periods only last one step in
 length; the primary example is $\epsilon$-greedy exploration because its 
 behavior policy switches between explore and exploit mode at the level of 
 one time step <d-cite key="mnih2015human"></d-cite>. At the other extreme, 
-*experiment-level* periods encompass the entire training duration, possibly to be used in offline RL (ORL) algorithms <d-cite key="kumar2020conservative,dabney2018implicit,janner2021offline"></d-cite>. A finer granularity is *episode-level*, in which a single behavior policy is chosen for one entire episode at a time, such as when diversifying the stochasticity of a policy throughout training <d-cite key="kapturowski2018recurrent"></d-cite>. The switching policies analyzed in this blog post produce *intra-episodic* periods at a granularity between step-level periods and episode-level periods. Intra-episodic periods generally occur at least a few times during an episode and last for more than a few time steps. The practice and study of interpolating between extremes has occured in areas such as $n$-step returns <d-cite key="sutton2018reinforcement"></d-cite> and colored noise <d-cite key="eberhard2022pink"></d-cite> with notable success, making the study of intra-episodic mode periods even more enticing. 
+*experiment-level* periods encompass the entire training duration, possibly 
+to be used in offline RL (ORL) algorithms <d-cite key="kumar2020conservative,dabney2018implicit,janner2021offline"></d-cite>. A finer granularity is *episode-level*, in which a single behavior policy is chosen for one entire episode at a time, such as when diversifying the stochasticity of a policy throughout training <d-cite key="kapturowski2018recurrent"></d-cite>. The switching policies analyzed in this blog post produce *intra-episodic* periods at a granularity between step-level periods and episode-level periods. Intra-episodic periods generally occur at least a few times during an episode and last for more than a few time steps. The practice and study of interpolating between extremes has occurred in areas such as $n$-step returns <d-cite key="sutton2018reinforcement"></d-cite> and colored noise <d-cite key="eberhard2022pink"></d-cite> with notable success, making the study of intra-episodic mode periods even more enticing. 
 
 The question investigated by the initial mode-switching study is *when to 
 switch*. This blog post and the initial study only perform experiments 
@@ -201,7 +190,7 @@ interesting consideration of switching policies. An *informed* trigger
 incorporates aspects of the state, action, and reward signals; it is actuated after crossing a prespecified threshold such as the 
 difference between the expected and realized reward. A *blind* trigger acts 
 independently of these signals; for example, it can be actuated after a 
-certain number of time steps are elapsed or actuated randomly at each time 
+certain number of time steps has elapsed or actuated randomly at each time 
 step with a prespecified probability. A **bandit meta-controller** <d-cite 
 key="schaul2019adapting"></d-cite> may be employed to choose the switching 
 hyperparameters (e.g. termination probability, mode length, informed threshold) at the beginning of each episode to maximize episodic return and prevent additional hyperparameter tuning. Finally, **homeostasis** <d-cite key="turrigiano2004homeostatic"></d-cite> can be added when using trigger thresholds (e.g. for informed triggers), which adapts the switching threshold to a target rate across the course of training, again for ease of hyperparameter tuning. Note that these dimensions are so richly diverse that we end the associated discussion to maintain any notion of brevity, and we summarize these facets of mode-switching in Table 1.
@@ -218,7 +207,8 @@ hyperparameters (e.g. termination probability, mode length, informed threshold) 
 
 
 <div class="caption">
-    Table 1. Various facets of mode-switching policies <d-cite key="pislar2021should"></d-cite>.
+    Table 1: Various facets of mode-switching policies <d-cite 
+key="pislar2021should"></d-cite>.
 </div>
 
 ### Blog Post Motivation
@@ -252,7 +242,7 @@ the differences between switching policies and monolithic policies for the use o
 This section begins with a discussion on the experimental setup before 
 delving into five experiments that highlight observational differences in 
 switching and monolithic behavior policies. The complete details of the 
-agent and environments can be found in the accompanying [(anonymized for peer review) GitHub repository](https://anonymous.4open.science/r/vienna-2852/README.md).
+agent and environments can be found in the accompanying [GitHub repository](https://github.com/LorenJAnderson/when-to-explore).
 - The experimental testbed is comprised of 10 commonly-used <d-cite 
 key="agarwal2022reincarnating"></d-cite>  Atari games: Asterix, Breakout, 
   Space Invaders, Seaquest, Q*Bert, Beam Rider, Enduro, MsPacman, Bowling, 
@@ -284,7 +274,7 @@ topic.
 - The DQN policy was trained using a monolithic policy, and unsurprisingly, 
 monolithic policies had slightly higher evaluation scores. Additional 
   studies may use exploitation actions from a policy trained with switching 
-  policies for comparison. 
+  behavior for comparison. 
 - Many of our experiments aim to evaluate the effect of exploration 
   or exploitation actions on some aspect of agent behavior. Due to delayed 
   gratification in RL, the credit assignment problem <d-cite 
@@ -340,7 +330,9 @@ concentrate terminal states to specific areas of an agent's trajectory.
     </div>
 </div>
 <div class="caption">
-    Figure 3. (Left) Terminal states are more concentrated after switching exploration modes. Figure 4 (Right) Switching policies perform better on cliffwalk environments.
+    Figure 3 (Left): Terminal states are more concentrated after switching 
+exploration periods. Figure 4 (Right): Switching policies perform better on 
+cliffwalk environments.
 </div>
 
 We showcase a quick illustrative example of the ability of switching 
@@ -372,7 +364,7 @@ the safety constraints are closely aligned with terminal states (e.g. aerospace 
 
 ### Early Exploration
 
-Monolithic policies uniformly take exploration action throughout an episode,
+Monolithic policies uniformly take exploration actions throughout an episode,
 and as a result, the exploration steps are less concentrated than those of 
 switching policies. While the expected number of exploration steps may be 
 the same per episode in monolithic policies, certain situations may require 
@@ -390,15 +382,15 @@ to encounter more diverse data <d-cite key="silver2016mastering"></d-cite>. We i
 We perform an experiment to determine how quickly a policy takes a 
 prespecified number of exploration actions. Specifically, we compute the 
 average number of time steps it takes for a policy to take at least $x$ 
-total exploration actions across its top 10 of 100 fastest episodes to 
-achieve the feat, and we repeat this process for $x \in \\{1, 2, 3, \ldots, 
+total exploration actions across its top 10 of 100 fastest episodes, and we repeat this process for $x \in \\{1, 2, 3, \ldots, 
 20\\}$. We compare the top 10 fastest episodes because we are only 
 interested in gauging the flexibility of switching behavior of being able 
 to achieve this specific facet of exploration (beginning exploration) 
 during a small percentage of episodes and not for each episode. Note that 
-this experiment did not need to utilize the Atari signals, so we averaged 
-the results again over each game. The results are shown in Figure 5. It is 
-clear that some episodes contain many more exploration actions concentrated 
+this experiment did not need to utilize the Atari signals, so we only used 
+data from the last epoch. Results were again averaged over each game and 
+shown in Figure 5. It is clear that some episodes contain many more 
+exploration actions concentrated 
 in the beginning few time steps with switching policies. This makes sense 
 intuitively, as only one switch needs to occur early in an episode with a 
 switching policy for many exploration actions to be taken immediately 
@@ -413,8 +405,8 @@ afterwards. The difference increases roughly linearly for greater number of nece
     </div>
 </div>
 <div class="caption">
-    Figure 5. (Left) Switching policies can explore more frequently earlier 
-during the episode. Figure 6 (Right) Switching policies have better 
+    Figure 5 (Left): Switching policies can explore more frequently earlier 
+during the episode. Figure 6 (Right): Switching policies have better 
 exploration near the start state on downwalk environments.
 </div>
 
@@ -423,7 +415,7 @@ agent attempts to first move to the middle column and then down the middle
 column to the white 'x' (Figure 6). The agent starts in the 
 second row in the middle column at the white circle, and visitation 
 frequencies across 1K episodes are shown for all states aside from those 
-starting at the white circle and ending at the white 'x'. We chose to 
+between the white circle and the white 'x', inclusive. We chose to 
 analyze this environment because it is a crude approximation of the trajectory of agents that have learned a single policy and immediately move away from the initial start state at the beginning of an episode. The switching and monolithic policies are the same as before, and switching produces much higher visitation counts at states further from the obvious exploitation trajectory. 
 
 Environments that may benefit from flexible early exploration are sparse 
@@ -477,7 +469,9 @@ lower return while in explore mode.
     </div>
 </div>
 <div class="caption">
-    Figure 7. (Left) Switching policies concentrate return in exploitation mode. Figure 8 (Right) Switching policies concentrate return in the beginning of episodes.
+    Figure 7 (Left): Switching policies concentrate return in exploitation 
+mode. Figure 8 (Right): Switching policies concentrate return in the 
+beginning of episodes.
 </div>
 
 One notable case in which exploitation steps are concentrated together is in 
@@ -528,8 +522,9 @@ greater than that of monolithic policies. Like most of the previous results, thi
     </div>
 </div>
 <div class="caption">
-    Figure 9. (Left) Switching policies produce action distributions 
-with higher entropy after exploration periods. Figure 10 (Right) Agent has random exploitation actions in states that are visited less frequently.
+    Figure 9 (Left): Switching policies produce action distributions 
+with higher entropy after exploration periods. Figure 10 (Right): Agent has 
+random exploitation actions in states that are visited less frequently.
 </div>
 
 To illustrate this idea, we create a gridworld environment that provides 
@@ -537,16 +532,15 @@ the agent a reward of -1 for each time step that the agent is still on the
 grid; the agent's goal is to leave the grid as quickly as possible. The 
 agent begins in the center of the grid and learns through discrete 
 Q-learning. Distinct actions have separate colors in Figure 10, with arrows 
-showing the greedy action. The agent learns that it is fastest to exit the 
+showing the exploit action. The agent learns that it is fastest to exit the 
 grid by going left or right. Notably, the actions near the top and bottom 
-of the grid are seemingly random, as the agent has not seen and learned 
-those states as frequently as the others. Switching 
+of the grid are seemingly random, as the agent has not seen and learned from those states as frequently as the others. Switching 
 policies are more likely to reach the top and bottom areas of the gridworld 
 state space and consequently would be more likely to have a higher entropy 
 of the action distribution after exploration.
 
 The difference in the entropy of the action distributions suggests that 
-more diverse areas of the state space are encountered after exploration 
+more diverse areas of the state space may be encountered after exploration 
 modes with switching policies. This phenomenon is closely tied to the 
 notion of *detachment* <d-cite key="ecoffet2019go"></d-cite>, whereby 
 agents forget how to return or are *detached* from areas of high reward, 
@@ -560,18 +554,18 @@ mode is very low, there may be some episodes where the switch seldom happens
 if at all. This creates a distribution of exploitation action proportions 
 per episode that is more extreme than that of monolithic policies, yet it 
 is still not as extreme as using a single mode throughout the entire 
-episode. Investigations of methods with having similar interpolative 
+episode. Investigations of methods having similar interpolative 
 characteristics have been conducted recently; for example, an action noise 
 called pink noise <d-cite key="eberhard2022pink"></d-cite> was recently 
 introduced that achieved better performance than white and red noise. Pink 
 noise is more temporally-correlated than white noise but not as much as red noise. Here, we investigate the return of the most extreme episodes in exploitation proportion.
 
-We perform an experiment to compare the the return of the episodes with 
+We perform an experiment to compare the return of the episodes with 
 highest exploitation proportions between switching and monolithic policies. 
-The proportions of  top 10 of 100 episodes of each epoch and game 
-were averaged for each mode. Then, a ratio between the averages of switching 
-and monolithic policies was computed for epoch and game and then averaged 
-across games. The results are plotted in Figure 11. 
+The returns of the top 10 of 100 episodes ranked by exploitation proportion 
+of each epoch and game were averaged. Then, a ratio between the averages of 
+switching and monolithic policies was computed and averaged across games. The 
+results are plotted in Figure 11. 
 There does not appear to be a clear trend aside from the ratio hovering mostly above 1.00, indicating that the top exploitation episodes of switching policies accrue more return than those of monolithic policies. 
 
 <div class="row mt-3">
@@ -583,13 +577,15 @@ There does not appear to be a clear trend aside from the ratio hovering mostly a
     </div>
 </div>
 <div class="caption">
-    Figure 11. (Left) Switching policies have better return for episodes with largest exploit proportion. Figure 12 (Right) Switching policies have more extreme exploration and exploitation proportions per episode.
+    Figure 11 (Left): Switching policies have higher return for episodes 
+with largest exploit proportion. Figure 12 (Right): Switching policies have 
+more extreme exploration and exploitation proportions per episode.
 </div>
 
 The results are best illustrated through plotting the switching and 
-monolithic exploitation percentages for 1K episodes (10 games of the last 
+monolithic exploitation proportions for 1K episodes (10 games of the last 
 epoch) as shown in Figure 12.  The top 100 episodes with highest 
-exploitation proportion take more exploitation actions than *any* monolithic 
+exploitation proportion take more exploitation actions than any monolithic 
 episode. Therefore, the corresponding distribution is indeed more 
 extreme.
 
@@ -597,7 +593,7 @@ While the previous discussion has illustrated that some switching episodes
 exploit more and generate more return, they don't specifically explain why 
 training with mode-switching is superior; in particular, the slightly 
 greater return is not necessary for learning an optimal policy as long as a 
-similar state distribution is reached by a suboptimal policy. One 
+similar state distribution is reached during training. One 
 possibility is the fact that mode-switching policies train on a more 
 diverse set of behavior and must generalize to that diversity. 
 Reinforcement learning algorithms are notorious at overfitting <d-cite 
