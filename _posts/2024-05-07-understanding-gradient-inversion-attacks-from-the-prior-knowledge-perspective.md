@@ -8,7 +8,16 @@ htmlwidgets: true
 
 #Anonymize when submitting
 authors:
-  - name: Anonymous
+  - name: Yanbo Wang
+    affiliations:
+      name: School of AI, UCAS & CRIPAC, CASIA
+  - name: Liang Jian
+    affiliations:
+      name: School of AI, UCAS & CRIPAC, CASIA
+  - name: Ran He
+    affiliations:
+      name: School of AI, UCAS & CRIPAC, CASIA
+      
 
 
 # must be the exact same name as your blogpost
@@ -132,6 +141,39 @@ Realizing the information discards, reviewing the recent paper through the prior
 ### Unparameterized regularization terms
 In IG<d-cite key="geiping2020inverting"></d-cite>, they utilize the total variance as a regularization because they believe a real image taken from nature should have a small total variance. That is the first prior knowledge term utilized in the gradient matching function, and it turns out to function well. After that, in GradInversion<d-cite key="yin2021see"></d-cite> this regularization term is extended to include batch normalization supervision, $$l_2$$ norms and group consistency. This is a stronger prior knowledge implying that a real input image, or batched real images, except for total variance, should also possess lower $$l_2$$ norms, proper intermediate mean and the variance for batch normalization layers. Apart from that, all reconstructions from different random initializations ought to reach a group consistency. These terms are unparameterized, and it is clearly demonstrated in their ablation experiments that these terms matter significantly in reconstructing high-quality images.
 
+To further illustrate the benefits such regulariztaion terms have on the data reconstruction processes, here is an example of adding total variance for `batchsize=2` image reconstruction. The scale of total variance ranges from $$10^{-4}$$ to $$10^{-1}$$.
+
+<div class="row">
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos_tv0.0001.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos_tv0.001.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos_tv0.01.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos_tv0.1.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos1_tv0.0001.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos1_tv0.001.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos1_tv0.01.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-3 offset-md-0">
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs2_cos1_tv0.1.gif" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+      Image reconstruction with cosine similarity loss and total variance on LeNet. The scale of the total variance starts from $10^{-4}$ for the very left column to $10^{-1}$ with 10 times as the interval.
+</div>
+
+With identical learning rate, images with higher total variance are reconstructed faster. Because the total variance penalizes obvious distinctions for adjacent pixels, images with higher total variance are also more blurred. On the other side, reconstructions with insufficient total variance fail to generate recognizable images. 
 ### Generative models
 Keep following the logic that recent works require some other conditions as prior knowledge to reinforce the information discards from gradients, generative models, especially GANs, could serve as a strong tool to encode what "real images" should be. The way to add GAN's generator in gradient matching processes is simple<d-cite key="jeon2021gradient"></d-cite>: instead of optimizing direct image pixels, with the generator we could keep the backpropagation way back to the latent space, then alter the latent code as well as the parameters of the generator to produce recovered images. Pre-trained generators naturally encode a likely distribution of the input data, which is a stronger prior knowledge compared with previous unparameterized regularization terms.
 {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/Picture2.jpg" class="img-fluid" %}
