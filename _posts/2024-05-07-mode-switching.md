@@ -268,7 +268,9 @@ key="agarwal2022reincarnating"></d-cite>  Atari games: Asterix, Breakout,
   game and epoch. The monolithic policy was $\epsilon$-greedy with a 10% 
   exploration rate. The switching policy we chose to examine 
   incorporates blind switching; we leave an analogous investigation of 
-  informed switching policies to future work. The policy begins in 
+  informed switching policies to future work (see initial study for 
+  background and experiments using informed switching policies). 
+  The policy begins in 
   exploit mode and randomly switches to uniform random explore mode 0.7% of 
   the time. It randomly chooses an explore mode length from the set $\\{5,
   10, 15, 20, 25\\}$ with probabilities $\\{0.05, 0.20, 0.50, 0.20, 0.05\\}
@@ -502,9 +504,20 @@ that do not allow for manual resets such as model-free RL.
 
 ### Post-Exploration Entropy
 
-The use of monolithic exploration policies such as epsilon-greedy will produce a behavior policy that is nearly on-policy when any exploration constants have been annealed. In contrast, the exploration periods of switching policies are meant to free the agent from its current exploitation policy and allow it to experience significantly different trajectories than usual. If the states in those trajectories are more diverse, then the exploitation actions at those states are more likely to have greater diversity as well due to random initialization of the policy and lack of learning at those states. In this experiment, we investigate the diversity of the action distribution after exploration periods. 
+Monolithic policies such as $\epsilon$-greedy are nearly on-policy when any 
+exploration constants have been annealed. In contrast, the exploration 
+periods of switching policies are meant to free the agent from its current 
+exploitation policy and allow the agent to experience significantly 
+different trajectories than usual. Due to the lack of meaningful learning at 
+states that are further from usual on-policy trajectories, the exploitation actions at those states are more likely to have greater diversity. In this experiment, we investigate the diversity of the action distribution after exploration periods. 
 
-We quantify the diversity of the realized action distribution in the time step immediately after each exploration period. The diversity is quantified by entropy that has higher values for more random data and vice versa. An action distribution is constructed for each mode and for each training epoch, and the entropies across games are averaged. The results are shown in Figure 9. The entropy of the action distribution for mode-switching policies is distinctly greater than that of monolithic policies. Like most of the previous results, this quantity only plateaus until roughly 2M frames have elapsed.
+We quantify the diversity of the realized action distribution in the time 
+step immediately after each exploration period. The diversity is quantified 
+by entropy that has higher values for more random data and vice versa. An 
+action distribution is constructed for each game and epoch, and 
+the entropies across games are averaged. The results are shown in Figure 9. 
+The entropy of the action distribution for switching policies is distinctly 
+greater than that of monolithic policies. Like most of the previous results, this quantity only plateaus until roughly 2M frames have elapsed.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -515,18 +528,51 @@ We quantify the diversity of the realized action distribution in the time step i
     </div>
 </div>
 <div class="caption">
-    Figure 9. (Left) Switching policies produce action distributions with higher entropy after exploration periods. Figure 10 (Right) Agent has random exploitation actions in states that are visited less frequently.
+    Figure 9. (Left) Switching policies produce action distributions 
+with higher entropy after exploration periods. Figure 10 (Right) Agent has random exploitation actions in states that are visited less frequently.
 </div>
 
-To illustrate this idea, we create a gridworld environment that provides the agent a reward of -1 for each time step that the agent is still on the grid; the agent's goal is to leave the grid as quickly as possible. The agent begins in the center of the grid and learns through discrete Q-learning. Distinct actions have separate colors in Figure 10. The agent learns that it is fastest to exit the grid by going left or right. Notably, the actions near the top and bottom of the grid are seemingly random, as the agent has not seen those states and learned from them as frequently as the others.
+To illustrate this idea, we create a gridworld environment that provides 
+the agent a reward of -1 for each time step that the agent is still on the 
+grid; the agent's goal is to leave the grid as quickly as possible. The 
+agent begins in the center of the grid and learns through discrete 
+Q-learning. Distinct actions have separate colors in Figure 10, with arrows 
+showing the greedy action. The agent learns that it is fastest to exit the 
+grid by going left or right. Notably, the actions near the top and bottom 
+of the grid are seemingly random, as the agent has not seen and learned 
+those states as frequently as the others. Switching 
+policies are more likely to reach the top and bottom areas of the gridworld 
+state space and consequently would be more likely to have a higher entropy 
+of the action distribution after exploration.
 
-The difference in the entropy of the action distributions suggests that more diverse areas of the state space are encountered after exploration modes with switching policies. This phenomenon is closely tied to the notion of *detachment* <d-cite key="ecoffet2019go"></d-cite>, whereby agents forget how to return to areas of high reward, perhaps by focusing too unimodally on one region of the state space. The concentrated behavior of mode-switching policies may provide enough consecutive exploration actions to explore a more diverse set of trajectories. Future work could investigate the ability of mode-switching policies to curb detachment on environments with multiple regions of the state space with high reward.
+The difference in the entropy of the action distributions suggests that 
+more diverse areas of the state space are encountered after exploration 
+modes with switching policies. This phenomenon is closely tied to the 
+notion of *detachment* <d-cite key="ecoffet2019go"></d-cite>, whereby 
+agents forget how to return or are *detached* from areas of high reward, 
+perhaps by focusing too unimodally on one region of the state space. The concentrated behavior of switching policies may provide enough consecutive exploration actions to explore a more diverse set of trajectories. Future work could investigate the ability of switching policies to curb detachment on environments with multiple regions of the state space with high reward.
 
 ### Top Exploitation Proportions
 
-Our final investigation involves the change in exploitation proportion under mode-switching policies. Since the probability of switching to explore mode is so low, there may be some episodes where it seldom happens if at all. This creates a distribution of exploit action proportions per episode that is more extreme than that of monolithic policies, yet it is still not as extreme as using a single mode throughout the entire episode. An action noise called pink noise <d-cite key="eberhard2022pink"></d-cite> was recently introduced that achieved better performance than white and red noise, having similar interpolative characteristics: pink noise is more temporally-correlated than white noise but not as much as red noise. Here, we investigate the return of the most extreme episodes in exploitation proportion.
+Our final investigation involves the change in exploitation proportion 
+under switching policies. Since the probability of switching to explore 
+mode is very low, there may be some episodes where the switch seldom happens 
+if at all. This creates a distribution of exploitation action proportions 
+per episode that is more extreme than that of monolithic policies, yet it 
+is still not as extreme as using a single mode throughout the entire 
+episode. Investigations of methods with having similar interpolative 
+characteristics have been conducted recently; for example, an action noise 
+called pink noise <d-cite key="eberhard2022pink"></d-cite> was recently 
+introduced that achieved better performance than white and red noise. Pink 
+noise is more temporally-correlated than white noise but not as much as red noise. Here, we investigate the return of the most extreme episodes in exploitation proportion.
 
-We perform an experiment to compare the the return of the episodes with highest exploitation proportions between switching and monolithic policies. The returns of the top 10 of 100 episodes were recorded and averaged, and a ratio between the averages between switching and monolithic policies was computed for each game and averaged again. The results are plotted in Figure 11. There does not appear to be a clear trend aside that the ratio hovers mostly above 1.00, indicating that the top exploitation episodes of switching policies accrue more return than those of monolithic policies. 
+We perform an experiment to compare the the return of the episodes with 
+highest exploitation proportions between switching and monolithic policies. 
+The proportions of  top 10 of 100 episodes of each epoch and game 
+were averaged for each mode. Then, a ratio between the averages of switching 
+and monolithic policies was computed for epoch and game and then averaged 
+across games. The results are plotted in Figure 11. 
+There does not appear to be a clear trend aside from the ratio hovering mostly above 1.00, indicating that the top exploitation episodes of switching policies accrue more return than those of monolithic policies. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -540,14 +586,30 @@ We perform an experiment to compare the the return of the episodes with highest 
     Figure 11. (Left) Switching policies have better return for episodes with largest exploit proportion. Figure 12 (Right) Switching policies have more extreme exploration and exploitation proportions per episode.
 </div>
 
-The results are best illustrated through plotting the switching and monolithic exploration percentages for 1000 episodes (10 games of epoch 25) as shown in Figure 12.  The top 100 episodes with highest exploitation proportion appear to exploit more than *any* monolithic episode. Therefore, the corresponding distribution is indeed more extreme.
+The results are best illustrated through plotting the switching and 
+monolithic exploitation percentages for 1K episodes (10 games of the last 
+epoch) as shown in Figure 12.  The top 100 episodes with highest 
+exploitation proportion take more exploitation actions than *any* monolithic 
+episode. Therefore, the corresponding distribution is indeed more 
+extreme.
 
-While the previous discussion has illustrated that some mode-switching episodes exploit more and generate more return, they don't specifically explain why training with mode-switching is superior; in particular, the slightly greater return by those best policies is not necessary for learning an optimal policy as long as a similar state distribution is reached by a suboptimal policy. One possibility is the fact that mode-switching policies train on a more diverse set of behavior and must generalize to that diversity. Reinforcement learning algorithms are notorious at overfitting <d-cite key="cobbe2019quantifying,cobbe2020leveraging"></d-cite>, and future work may investigate the extent to which generalization is improved upon using mode-switching. 
+While the previous discussion has illustrated that some switching episodes 
+exploit more and generate more return, they don't specifically explain why 
+training with mode-switching is superior; in particular, the slightly 
+greater return is not necessary for learning an optimal policy as long as a 
+similar state distribution is reached by a suboptimal policy. One 
+possibility is the fact that mode-switching policies train on a more 
+diverse set of behavior and must generalize to that diversity. 
+Reinforcement learning algorithms are notorious at overfitting <d-cite 
+key="cobbe2019quantifying,cobbe2020leveraging"></d-cite>, and future work 
+may investigate the extent to which generalization is improved upon using switching policies. 
 
 
 ## 3. Conclusion
 
-This blog post highlighted five observational differences between mode-switching and monolithic behavior policies on ATARI and other illustrative tasks. The analysis showcased the flexibility of mode-switching policies, such as the ability to explore earlier in episodes and exploit at a notably higher rate. As the original study of mode-switching behavior by DeepMind was primarily concerned with performance, the experiments in this blog post supplement the study by providing a better understanding of the strengths and weaknesses of mode-switching exploration. Due to the vast challenges in RL, we envision that mode-switching policies will need to be tailored to specific environments to achieve the greatest performance gains over monolithic policies. Pending a wealth of future studies, we believe that mode-switching has the potential to become the default behavioral policy to be used by researchers and practitioners alike. 
+This blog post highlighted five observational differences between 
+mode-switching and monolithic behavior policies on Atari and other 
+illustrative tasks. The analysis showcased the flexibility of mode-switching policies, such as the ability to explore earlier in episodes and exploit at a notably higher rate. As the original study of mode-switching behavior by DeepMind was primarily concerned with performance, the experiments in this blog post supplement the study by providing a better understanding of the strengths and weaknesses of mode-switching exploration. Due to the vast challenges in RL, we envision that mode-switching policies will need to be tailored to specific environments to achieve the greatest performance gains over monolithic policies. Pending a wealth of future studies, we believe that mode-switching has the potential to become the default behavioral policy to be used by researchers and practitioners alike. 
 
 ### Acknowledgements
 
