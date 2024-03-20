@@ -112,7 +112,11 @@ $$
 
 where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network.
 We normalise $$r_i$$ by dividing it by the running estimate of the standard deviations of
-the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. The figure below illustrates the process of RND.
+the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. 
+Another key aspect of RND is to normalise the observations the random network and the predictor network receives by subtracting the running mean and dividing it by the running standard deviation.
+The next process is to then clip the normalised rewards to be between -5 and 5.
+The reason for this is that the lack of normalising can result in the output of the random network having low variance and therefore it has little information about what was inputted into the random network.
+The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
 <div class="caption">
@@ -135,6 +139,12 @@ $$
 $$
 
 Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss. Importantly, the loss $$\mathcal{L}_p$$ serves as the intrinsic reward that the RL agent receives at each step. We normalise the intrinsic rewards by dividing it by the EMA estimate of their standard deviation.
+BYOL-Explore Lite also something known as reward prioritisation. Reward prioritisation involves focusing on parts of the environment where the agent receives high intrinsic rewards while disregarding those with low intrinsic rewards. This enables the agent to concentrate on areas it understands the least. Over time, if the previously ignored areas with low intrinsic rewards remain, they become the priority for the agent. To do this we take the EMA mean relative to the successive batch of normalised intrinsic rewards, $\mu$. Note that $\mu$ is used as a threshold
+to separate the high intrinsic rewards and the low intrinsic rewards. Therefore, the intrinsic rewards that agent obtains at timestep $t$ is
+$$
+i_t=\max(ri_t-\mu,0),
+$$
+where $ri_t$ is the normalised intrinsic reward.
 
 ## Meta-learning curiosity algorithms
 
