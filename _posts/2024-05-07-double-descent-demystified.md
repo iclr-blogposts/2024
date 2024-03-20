@@ -8,41 +8,41 @@ htmlwidgets: true
 
 authors:
   - name: Rylan Schaeffer
-    url: "https://rylanschaeffer.github.io/"
+    url: "https://scholar.google.com/citations?user=6tMEGz8AAAAJ&hl=en"
     affiliations:
-      name: Stanford
+      name: Stanford University
   - name: Zachary Robertson
-    url: "https://zrobertson466920.github.io/about/"
+    url: "https://scholar.google.com/citations?user=769PIisAAAAJ&hl=en&oi=ao"
     affiliations:
-      name: Stanford
+      name: Stanford University
   - name: Akhilan Boopathy
     url: "https://scholar.google.com/citations?user=21alU7EAAAAJ&hl=en"
     affiliations:
       name: MIT
   - name: Mikail Khona
-    url: "https://mikailkhona.github.io/"
+    url: "https://scholar.google.com/citations?user=K5f0SYQAAAAJ&hl=en&oi=ao"
     affiliations:
       name: MIT
   - name: Kateryna Pistunova
     url: "https://scholar.google.com/citations?user=V7QY5j0AAAAJ&hl=en"
     affiliations:
-      name: Stanford
+      name: Stanford University
   - name: Jason W. Rocks
     url: "https://scholar.google.com/citations?user=rFHAzMUAAAAJ"
     affiliations:
       name: Boston University
   - name: Ila R. Fiete
-    url: "https://fietelab.mit.edu/"
+    url: "https://scholar.google.com/citations?user=uE-CihIAAAAJ&hl=en&oi=ao"
     affiliations:
       name: MIT
   - name: Andrey Gromov
-    url: "https://sites.google.com/view/andreygromov/pi"
+    url: "https://scholar.google.com/citations?user=D056qfMAAAAJ&hl=en&oi=ao"
     affiliations:
       name: UMD & Meta AI FAIR
   - name: Sanmi Koyejo
-    url: "https://cs.stanford.edu/~sanmi/"
+    url: "https://scholar.google.com/citations?user=EaaOeJwAAAAJ&hl=en&oi=ao"
     affiliations:
-      name: Stanford
+      name: Stanford University
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-double-descent-demystified.bib  
