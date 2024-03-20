@@ -113,9 +113,9 @@ $$
 where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network.
 We normalise $$r_i$$ by dividing it by the running estimate of the standard deviations of
 the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. 
-Another key aspect of RND is to normalise the observations the random network and the predictor network receives by subtracting the running mean and dividing it by the running standard deviation.
-The next process is to then clip the normalised rewards to be between -5 and 5.
-The reason for this is that the lack of normalising can result in the output of the random network having low variance and therefore it has little information about what was inputted into the random network.
+#Another key aspect of RND is to normalise the observations the random network and the predictor network receives by subtracting the running mean and dividing it by the running standard deviation.
+#The next process is to then clip the normalised rewards to be between -5 and 5.
+#The reason for this is that the lack of normalising can result in the output of the random network having low variance and therefore it has little information about what was inputted into the random network.
 The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
@@ -139,11 +139,14 @@ $$
 $$
 
 Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss. Importantly, the loss $$\mathcal{L}_p$$ serves as the intrinsic reward that the RL agent receives at each step. We normalise the intrinsic rewards by dividing it by the EMA estimate of their standard deviation.
-BYOL-Explore Lite also something known as reward prioritisation. Reward prioritisation involves focusing on parts of the environment where the agent receives high intrinsic rewards while disregarding those with low intrinsic rewards. This enables the agent to concentrate on areas it understands the least. Over time, if the previously ignored areas with low intrinsic rewards remain, they become the priority for the agent. To do this we take the EMA mean relative to the successive batch of normalised intrinsic rewards, $\mu$. Note that $\mu$ is used as a threshold
-to separate the high intrinsic rewards and the low intrinsic rewards. Therefore, the intrinsic rewards that agent obtains at timestep $t$ is
+
+BYOL-Explore Lite also makes use of something known as reward prioritisation. Reward prioritisation involves focusing on parts of the environment where the agent receives high intrinsic rewards while disregarding those with low intrinsic rewards. This enables the agent to concentrate on areas it understands the least. Over time, if the previously ignored areas with low intrinsic rewards remain, they become the priority for the agent. To do this we take the EMA mean relative to the successive batch of normalised intrinsic rewards, $\mu$. Note that $\mu$ is used as a threshold
+to separate the high intrinsic rewards and the low intrinsic rewards. Therefore, the intrinsic rewards that agent obtains after reward prioritisation is,
+
 $$
 i_t=\max(ri_t-\mu,0),
 $$
+
 where $ri_t$ is the normalised intrinsic reward.
 
 ## Meta-learning curiosity algorithms
@@ -227,7 +230,8 @@ This is different from RND and BYOL-Explore Lite. The intrinsic reward is not gi
 We understood the above formula as the L2 difference between the logits of the current state and the next state.
 The agent is then rewarded if the next state's logits is different from the current state. 
 Importantly, the agent isn't rewarded for taking a different action in the next state. Alet et al. pointed out that if an agent has a uniform distribution over the action space in all states, it will receive an intrinsic reward of zero.
-We hypothesize that this algorithm may not perform well in environments where the optimal policy requires the agent to visit states with very similar probability distributions. While the agent explores by going to different states, ideally, we wish for the intrinsic rewards to decrease as the agent explores. Looking at the output of FAST it is not clear to use how the intrinsic reward decreases, and we expect that this could cause issues.
+We hypothesize that this algorithm may not perform well in environments where the optimal policy requires the agent to visit states with very similar action probability distributions.
+While the agent explores by going to different states, ideally, we wish for the intrinsic rewards to decrease as the agent explores. Looking at the output of FAST it is not clear to use how the intrinsic reward decreases, and we expect that this could cause issues.
 
 
 
@@ -451,9 +455,14 @@ We once again plot the heatmap of FAST and compare it to PPO's heatmap using the
 ## Discussion
 
 Alet et al. provided a unique approach to meta-learning. The performance of CCIM and FAST in the empty grid-world then did not surprise us as that was the environment used to search for the algorithms. Note in Figure 17 that the 15 best seeds of FAST covered more of the map, i.e., most of the seeds took different parts to the goal compared to PPO. 
-However for the CCIM and CCIM-slimmed heatmaps we notice that these algorithms only slightly covered more of the map then PPO. And from sample standard deviation plots FAST and CCIM-slimmed both produce more 
-consistent agents than PPO. CCIM however is only able to do this in the empty grid-world environment. It should be noted that by looking at the heat maps that 
-CCIM-slimmed, CCIM, and FAST both covered more of the map than our baselines which makes sense given Alet et al. looked for curiosity that optimise the number of distinct cells visited when searching for the curiosity algorithms.
+However for the CCIM and CCIM-slimmed heatmaps we notice that these algorithms only slightly covered more of the map then PPO. It should be noted that by looking at the heat maps that 
+CCIM-slimmed, CCIM, and FAST both covered more of the map than our baselines which makes sense given Alet et al. looked for curiosity that optimise the number of distinct cells visited when searching for the curiosity algorithms. 
+
+From the sample deviation plots, we can see that FAST and CCIM do not produce consistent agents than PPO and the curiosity-driven baselines in the deep sea environment. While CCIM-slimmed produced more consistent agents than PPO but not the baselines. However, in the empty grid-world environment FAST, CCIM, and CCIM-slimmed is able to produce more consistent agents than PPO and RND.
+In the mean episode return plots, CCIM, CCIM-slimmed, and FAST perform better than PPO and RND in the empty grid-world environment which makes sense as the empty grid-world environment was used to find these curiosity algorithms. However, in the deep sea environment we see that the meta-learned curiosity algorithms perform worse than our curiosity-driven baselines.
+
+From the plots we can see that BYOL-Explore Lite seems to be the best performing algorithm where even in the empty grid-world environment it performs better than the meta-learned curiosity algorithms.
+We believe this is because of the reward prioritisation implemented in BYOL-Explore. This could explain its performance is better than the meta-learned curiosity algorithms and why it produces the most consistent agents.
 
 One major concern we still have is how the intrinsic rewards for FAST and CCIM increased during training for both environments used in our experiments<d-footnote>The intrinsic rewards for CCIM-slimmed decreased during training.</d-footnote>. Even with the reward combiner we still believe this could cause an issue like it did with the deep sea environment. Recall that the reward combiner has the following formula, 
 
@@ -464,13 +473,13 @@ $$
 Now if $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithms that the intrinsic reward decreases as the agent becomes more familiar with its environment. We believe that this is why CCIM-slimmed performed better than CCIM and FAST in the deep sea environment. Another concern we have is how the CCIM random and forward network's loss increased during training. It is possible that there's a bug somewhere in our code which we have not found yet.
 
 In the future we think it will be interesting to repeat this experiment using the deep sea environment to find the curiosity algorithms that output the intrinsic reward. 
-Additionally, exploring the use of a variant of FAST or CCIM to find a reward combiner is also of interest to us. We wonder why a variant of FAST or CCIM wasn't employed for this purpose, as a variant of RND was used to find the reward combiner. We would also like to increase the number of seeds used to reduce the confidence intervals since we are training end-to-end in JAX in simple environments and so the increase in the number of seeds should not be much of an issue.
+Additionally, exploring the use of a variant of FAST or CCIM to find a reward combiner is also of interest to us. We wonder why a variant of FAST or CCIM wasn't employed for this purpose, as a variant of RND was used to find the reward combiner. As stated earlier, FAST, CCIM and CCIM-slimmed do no not make use reward prioritisation like BYOL-Explore Lite does. Therefore, repeating the experiments with the meta-learned curiosity algorithms where some form of reward prioritisation is implemented is another interesting path we hope to explore. We would also like to increase the number of seeds used to reduce the confidence intervals. Since we are training end-to-end in JAX in simple environments, increasing the number of seeds should not be much of an issue.
 
 ## Conclusion
 
 In this blog post, we studied two meta-learned curiosity algorithms, namely FAST and CCIM. We compared them to a non-curious agent and our baselines for the curiosity algorithms: RND and BYOL-Explore. Our experiments were conducted using both the empty grid-world environment and the deep-sea environment.
 
 FAST and CCIM both performed well in the empty grid-world, covering more of the map than the baselines when examining their heatmaps. This aligns with our expectations since this was the environment used to search for the curiosity algorithms. However, in the deep-sea environment, both algorithms did not perform well compared to the baselines. Conversely, CCIM-slimmed, a slimmed down version of CCIM, showed performance comparable to the baselines.
-We suspect that this is because the intrinsic reward decreased as the agent explored more. This behavior was not observed in FAST and CCIM, which we believe is not ideal and consider it the main flaw of these algorithms.
+We suspect that this is because the intrinsic reward decreased as the agent explored more. This behaviour was not observed in FAST and CCIM, which we believe is not ideal and consider it the main flaw of these algorithms.
 
-This approach of meta-learning curiosity algorithms is novel, and we believe there's interesting work that can be done following the same approach as Alet et al., trying it with different environments to search for curiosity algorithms such as the deep-sea environment. Another avenue is using the meta-learned curiosity algorithms to search for the reward combiner.
+This approach of meta-learning curiosity algorithms is novel, and we believe there's interesting work that can be done following the same approach as Alet et al., trying it with different environments to search for curiosity algorithms, such as the deep-sea environment. Moreover, BYOL-Explore makes use of reward prioritisation. Therefore, in the future, we hope to include reward prioritisation in our FAST, CCIM, and CCIM-slimmed implementations to see if it improves performance. Another avenue is using the meta-learned curiosity algorithms to search for the reward combiner.
