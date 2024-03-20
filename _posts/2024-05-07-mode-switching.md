@@ -249,15 +249,85 @@ the differences between switching policies and monolithic policies for the use o
 
 ## 2. Experiments
 
-This section begins with a discussion on the experimental setup before delving into five experiments that highlight observational differences in mode-switching and monolithic behavior policies. We perform experiments on 10 commonly-used <d-cite key="agarwal2022reincarnating"></d-cite>  Atari games: Asterix, Breakout, Space Invaders, Seaquest, Q*Bert, Beam Rider, Enduro, MsPacman, Bowling, and River Raid. Environments follow the standard ATARI protocols <d-cite key="machado2018revisiting"></d-cite> of incorporating sticky actions and only providing a terminal signal when all lives are lost. We run a Stable-Baselines3 DQN policy <d-cite key="raffin2021stable"></d-cite> for 25 epochs of 100K time steps each, for a total of 2.5M time steps or 10M frames. The DQN policy explores 10% of the time after being linearly annealed from 100% after 250K time steps. Then we evaluated a mode-switching and monolithic policy that used the trained DQN policy's exploitation actions when in exploit mode. Evaluations were made for 100 episodes for each game and epoch. The monolithic policy was epsilon-greedy with 10% exploration rate. This mode-switching policy randomly switches to uniform random explore mode 0.7% of the time and randomly chooses an explore mode length from the set [5, 10, 15, 20, 25] with probabilities [0.05, 0.20, 0.50, 0.20, 0.05]. Through testing, we determined that this switching policy explored at a nearly identical rate to the monolithic policy (10%). The complete details of the agent and environments are concisely outlined in the [(anonymized for peer review) GitHub repository](https://anonymous.4open.science/r/vienna-2852/README.md).
+This section begins with a discussion on the experimental setup before 
+delving into five experiments that highlight observational differences in 
+switching and monolithic behavior policies. The complete details of the 
+agent and environments can be found in the accompanying [(anonymized for peer review) GitHub repository](https://anonymous.4open.science/r/vienna-2852/README.md).
+- The experimental testbed is comprised of 10 commonly-used <d-cite 
+key="agarwal2022reincarnating"></d-cite>  Atari games: Asterix, Breakout, 
+  Space Invaders, Seaquest, Q*Bert, Beam Rider, Enduro, MsPacman, Bowling, 
+  and River Raid. Environments follow the standard Atari protocols <d-cite 
+  key="machado2018revisiting"></d-cite> of incorporating sticky actions and only providing a terminal signal when all lives are lost. 
+- A Stable-Baselines3 DQN policy <d-cite key="raffin2021stable"></d-cite> 
+  is trained on each game for 25 epochs of 100K time steps each, totaling 2.5M time steps or 10M frames due to frame skipping. The DQN policy 
+  takes an exploration action on 10% of time steps after being linearly 
+  annealed from 100% across the first 250K time steps.
+- A switching policy and monolithic policy were evaluated on the testbed 
+  using the greedy actions of the trained DQN policy when taking 
+  exploitation actions. Evaluations were made for 100 episodes for each 
+  game and epoch. The monolithic policy was $\epsilon$-greedy with a 10% 
+  exploration rate. The switching policy we chose to examine 
+  incorporates blind switching; we leave an analogous investigation of 
+  informed switching policies to future work. The policy begins in 
+  exploit mode and randomly switches to uniform random explore mode 0.7% of 
+  the time. It randomly chooses an explore mode length from the set $\\{5,
+  10, 15, 20, 25\\}$ with probabilities $\\{0.05, 0.20, 0.50, 0.20, 0.05\\}
+  $. During experimentation, we determined that this switching 
+  policy took exploration actions at an almost identical rate as the 
+  monolithic policy (10%).
 
-We briefly cite difficulties and possible confounding factors in our experimental design to aid other researchers in future studies on this topic. First, the DQN policy was trained using a monolithic behavior policy, and monolithic policies had slightly higher evaluation scores. Additional studies may use exploitation actions from a policy trained with mode-switching behavior for comparison. Second, many of our experiments aim to evaluate the effect of exploration or exploitation actions on some aspect of agent behavior. Due to delayed gratification in RL, the credit assignment problem <d-cite key="pignatelli2023survey"></d-cite> persists and confounds the association of actions to behaviors. To attempt to mitigate some confounding factors of this problem, we weight the behavior score of the agent at an arbitrary time step by the proportion of exploration (or exploitation) actions in the past few time steps; for example, in Experiment 1, we weight the effect of exploration actions on yielding a terminal state by calculating the proportion of exploration actions within 10 steps of yielding the terminal state. Then, we average the proportions across 100 evaluation episodes to compute a final score for a single epoch for a single game. Lastly, we only claim to have made observations about the behavioral differences, and we do not claim to have produced statistically significant results; we leave this analysis to future work. 
+We briefly cite difficulties and possible confounding factors in our 
+experimental design to aid other researchers during future studies on this 
+topic.
+- The DQN policy was trained using a monolithic policy, and unsurprisingly, 
+monolithic policies had slightly higher evaluation scores. Additional 
+  studies may use exploitation actions from a policy trained with switching 
+  policies for comparison. 
+- Many of our experiments aim to evaluate the effect of exploration 
+  or exploitation actions on some aspect of agent behavior. Due to delayed 
+  gratification in RL, the credit assignment problem <d-cite 
+  key="pignatelli2023survey"></d-cite> persists and confounds the 
+  association of actions to behaviors. To attempt to mitigate some 
+  confounding factors of this problem, we weight the behavior score of the 
+  agent at an arbitrary time step by the proportion of exploration or 
+  exploitation actions in a small window of past time steps; for example,
+  in the first experiment, we weight the effect of taking exploration 
+  actions on yielding terminal states by calculating the proportion of exploration 
+  actions within 10 time steps of reaching the terminal state. Then, we 
+  average the proportions across 100 evaluation episodes to compute a final score for a single epoch for a single game. 
+- Lastly, we only claim to have made observations about the behavioral differences, and we do not claim to have produced statistically significant results; we leave this analysis to future work. 
 
 ### Concentrated Terminal States
 
-Exploration actions are generally considered to be suboptimal and are incorporated to learn about the state space rather than accrue the most return. Many environments contain regions of the state space that simply do not need more exploration, such as critical states <d-cite key="kumar2022should"></d-cite> that require directed behavior for meaningful progress. For instance, a self-driving car needing to merge onto a highway is in a critical state, as it has few behaviors that will keep it driving correctly. In these critical states, poor or random actions may cause the agent to reach a terminal state more quickly than desired. We investigate if terminal states are more concentrated after an exploration period of a switching policy due to the many (possibly suboptimal) exploration actions taken in succession.
+Exploration actions are generally considered to be suboptimal and are 
+incorporated to learn about the state space rather than accrue the most 
+return. Many environments contain regions of the state space that simply do 
+not need more exploration, such as critical states <d-cite 
+key="kumar2022should"></d-cite> that require directed behavior for 
+meaningful progress. For instance, a self-driving car needing to merge onto 
+a highway is in a critical state, as it has few behaviors that will keep it 
+driving correctly. In these critical states, suboptimal action choices may 
+cause the agent to reach a terminal state more quickly than desired. We 
+investigate if terminal states are more concentrated after an exploration 
+period of a switching policy due to the many exploration actions taken in 
+succession.
 
-Our first experiment determines the proportion of terminal states encountered after an exploration period. Each terminal state is given an associated score equal to the proportion of exploration actions during the past 10 time steps. Final scores for each behavior policy and epoch are computed by averaging the scores of each terminal state across all 100 evaluation episodes and each game. The results are shown in Figure 3. Switching behavior produced terminal states that more closely followed exploration actions. Furthermore, the effect was more pronounced as the policies improved, most likely due to the increased disparity of optimality between exploitation and exploration actions which is more detrimental to switching policies that explore multiple times in succession. Note how the scores for monolithic policies are near 0.10 on average, which is the expected proportion of exploration actions per episode and therefore suggests that exploration actions had little effect. These results demonstrate that switching policies may be able to concentrate terminal states to specific areas of the state space.
+Our first experiment attempts to analyze the relationship between taking 
+many exploration actions in succession and reaching a terminal state. Each 
+terminal state is given a score equal 
+to the proportion of exploration actions during the past 10 time steps (see 
+second paragraph of Experiments section for rationale). Final scores for 
+each behavior policy and epoch are computed by averaging the scores of each terminal state across all 100 evaluation episodes and each game. The results are shown in 
+Figure 3. Switching policies produced terminal states that more closely 
+followed exploration actions. Furthermore, the effect was more pronounced 
+as the policies improved, most likely due to the increased disparity of 
+optimality between exploitation and exploration actions that seems more 
+detrimental to switching policies which explore multiple times in 
+succession. Note how the scores for monolithic policies are near 0.10 on 
+average, which is the expected proportion of exploration actions per 
+episode and therefore suggests that exploration actions had little effect. 
+These results demonstrate that switching policies may be able to 
+concentrate terminal states to specific areas of an agent's trajectory.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -271,9 +341,31 @@ Our first experiment determines the proportion of terminal states encountered af
     Figure 3. (Left) Terminal states are more concentrated after switching exploration modes. Figure 4 (Right) Switching policies perform better on cliffwalk environments.
 </div>
 
-We showcase a quick illustrative example of the ability of switching policies to concentrate terminal states more uniformly in a cliffwalk environment (Figure 4). The agent begins in the middle column and top row of an 11x101 grid. All squares aside from those in the middle column are terminal. When the exploitation policy is to move only downward and the behavior policies are the same as above, the agent incorporating a switching behavior policy reaches states further down the cliffwalk at a higher rate per episode. By concentrating the terminal states more in exploitation mode, the exploitation modes are longer, which allows the agent to reach states further in cliffwalk scenarios.     
+We showcase a quick illustrative example of the ability of switching 
+policies to concentrate terminal states more uniformly in a cliffwalk 
+environment (Figure 4). The agent starts at the black 'x' in the middle 
+column and top row of a 101$\times$11 grid and attempts to reach the white 
+star at the bottom. All states aside from those in the middle column are 
+terminal, and the heatmaps show the visitation frequency per episode of all 
+non-terminal states. When the exploitation policy is to move only downward 
+and the behavior policies are the usual policies in these experiments, the 
+agent incorporating a switching policy more heavily 
+concentrates the terminal states in exploration mode and visits states 
+further down the cliffwalk environment at a higher rate per episode.
 
-Environments that incorporate checkpoint states that agents must traverse to make substantial progress may benefit from switching policies that concentrate exploration periods away from the checkpoints. For example, the game of Montezuma's revenge <d-cite key="ecoffet2019go"></d-cite> sometimes requires that the agent retrieves a key before advancing through a door, and the agent may achieve faster learning by concentrating exploration actions away from states near the key after that action is learned. One notable and emerging area of RL research that may benefit from concentrating terminal states is safe RL <d-cite key="gu2022review"></d-cite>. In safe RL, certain safety constraints are required during the learning and deployment process. In some situations, the safety constraints are closely aligned with terminal states (e.g. aerospace <d-cite key="ravaioli2022safe"></d-cite>), and concentrating exploratory actions away from terminal states may aid in achieving those safety constraints. 
+
+Environments that incorporate checkpoint states that agents must traverse 
+to make substantial progress may benefit from switching policies that 
+concentrate exploration periods away from the checkpoints. For example, the 
+game of Montezuma's revenge <d-cite key="ecoffet2019go"></d-cite> sometimes 
+requires that the agent retrieves a key before advancing through a door, 
+and the agent may achieve faster learning by concentrating exploration 
+actions away from states near the key after that action is learned. One 
+notable and emerging area of RL research that may benefit from 
+concentrating terminal states is safe RL <d-cite 
+key="gu2022review"></d-cite>. In safe RL, certain safety constraints are 
+required during the learning and deployment process. In some situations, 
+the safety constraints are closely aligned with terminal states (e.g. aerospace <d-cite key="ravaioli2022safe"></d-cite>), and concentrating exploration actions away from terminal states may aid in achieving those safety constraints. 
 
 ### Early Exploration
 
