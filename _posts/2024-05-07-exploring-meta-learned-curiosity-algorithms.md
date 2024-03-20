@@ -458,7 +458,7 @@ CCIM-slimmed, CCIM, and FAST both covered more of the map than our baselines whi
 From the sample deviation plots, we can see that FAST and CCIM do not produce consistent agents than PPO and the curiosity-driven baselines in the deep sea environment. While CCIM-slimmed produced more consistent agents than PPO but not the baselines. However, in the empty grid-world environment FAST, CCIM, and CCIM-slimmed is able to produce more consistent agents than PPO and RND.
 In the mean episode return plots, CCIM, CCIM-slimmed, and FAST perform better than PPO and RND in the empty grid-world environment which makes sense as the empty grid-world environment was used to find these curiosity algorithms. However, in the deep sea environment we see that the meta-learned curiosity algorithms perform worse than our curiosity-driven baselines.
 
-From the plots we can see that BYOL-Explore Lite seems to be the best performing algorithm. Even in the empty grid-world environment it performs better than the meta-learned curiosity algorithms.
+From the mean episode return plots we can see that BYOL-Explore Lite is the best performing algorithm. Even in the empty grid-world environment it performs better than the meta-learned curiosity algorithms.
 We believe this is because of the reward prioritisation implemented in BYOL-Explore. This could explain its performance is better than the meta-learned curiosity algorithms and why it produces the most consistent agents.
 
 One major concern we still have is how the intrinsic rewards for FAST and CCIM didn't decrease during training for both environments used in our experiments. However, we noted that the 
