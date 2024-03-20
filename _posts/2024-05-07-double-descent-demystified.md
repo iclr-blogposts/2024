@@ -285,7 +285,7 @@ $$
 &= \vec{x}_{test} \cdot X^T (X X^T)^{-1}  Y\\
 &= \vec{x}_{test} \cdot X^T (X X^T)^{-1} (X \beta^* + E)\\
 \hat{y}_{test,over} - y_{test}^* &= \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^* \\
-&\quad\quad  + \quad \vec{x}_{test} \cdot X^T (X^T X)^{-1} E\\
+&\quad\quad  + \quad \vec{x}_{test} \cdot X^T (X X^T)^{-1} E\\
  &= \vec{x}_{test} \cdot (X^T (X X^T)^{-1} X - I_D) \beta^* \\
 &\quad\quad  + \quad  \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E),
 \end{align*}
