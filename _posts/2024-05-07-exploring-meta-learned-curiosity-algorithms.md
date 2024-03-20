@@ -229,7 +229,7 @@ $$
 This is different from RND and BYOL-Explore Lite. The intrinsic reward is not given by a predictive error or the loss function of one of the networks in the program.
 We understood the above formula as the L2 difference between the logits of the current state and the next state.
 The agent is then rewarded if the next state's logits is different from the current state. 
-Importantly, the agent isn't rewarded for taking a different action in the next state. Alet et al. pointed out that if an agent has a uniform distribution over the action space in all states, it will receive an intrinsic reward of zero.
+Importantly, the agent isn't rewarded for taking a different action in the next state. Alet et al. pointed out that if the policy-mimicking network has a uniform distribution over the action space in all states, the agent will receive an intrinsic reward of zero. Therefore, in environments where the action probability distributions outputted by the policy-mimicking network vary across states, we expect this algorithm to generate intrinsic rewards.
 We hypothesize that this algorithm may not perform well in environments where the optimal policy requires the agent to visit states with very similar action probability distributions.
 While the agent explores by going to different states, ideally, we wish for the intrinsic rewards to decrease as the agent explores. Looking at the output of FAST it is not clear to use how the intrinsic reward decreases, and we expect that this could cause issues.
 
