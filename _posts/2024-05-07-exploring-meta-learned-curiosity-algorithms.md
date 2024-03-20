@@ -464,7 +464,9 @@ In the mean episode return plots, CCIM, CCIM-slimmed, and FAST perform better th
 From the plots we can see that BYOL-Explore Lite seems to be the best performing algorithm where even in the empty grid-world environment it performs better than the meta-learned curiosity algorithms.
 We believe this is because of the reward prioritisation implemented in BYOL-Explore. This could explain its performance is better than the meta-learned curiosity algorithms and why it produces the most consistent agents.
 
-One major concern we still have is how the intrinsic rewards for FAST and CCIM increased during training for both environments used in our experiments<d-footnote>The intrinsic rewards for CCIM-slimmed decreased during training.</d-footnote>. Even with the reward combiner we still believe this could cause an issue like it did with the deep sea environment. Recall that the reward combiner has the following formula, 
+One major concern we still have is how the intrinsic rewards for FAST and CCIM didn't decrease during training for both environments used in our experiments. However, we noted that the 
+intrinsic rewards for CCIM-slimmed decreased during training. We believe the decrease in intrinsic rewards as training progresses is one of the main reasons why BYOL-Explore and RND are 
+effective and why we see the improved performance of the CCIM-slimmed algorithm. Even with the reward combiner, we still believe that the intrinsic rewards not decreasing could potentially cause an issue, as it did with the deep-sea environment.Recall that the reward combiner has the following formula, 
 
 $$
 \hat{r}_t = \frac{(1+ri_t-t/T)\cdot ri_t+ r_t\cdot t/T}{1+ri_t}.
