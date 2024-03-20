@@ -6,23 +6,43 @@ date: 2024-05-07
 future: true
 htmlwidgets: true
 
-# Anonymize when submitting
 authors:
-   - name: Anonymous
-
-#authors:
-#  - name: Albert Einstein
-#    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
-#    affiliations:
-#      name: IAS, Princeton
-#  - name: Boris Podolsky
-#    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-#    affiliations:
-#      name: IAS, Princeton
-#  - name: Nathan Rosen
-#    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-#    affiliations:
-#      name: IAS, Princeton
+  - name: Rylan Schaeffer
+    url: "https://rylanschaeffer.github.io/"
+    affiliations:
+      name: Stanford
+  - name: Zachary Robertson
+    url: "https://zrobertson466920.github.io/about/"
+    affiliations:
+      name: Stanford
+  - name: Akhilan Boopathy
+    url: "https://scholar.google.com/citations?user=21alU7EAAAAJ&hl=en"
+    affiliations:
+      name: MIT
+  - name: Mikail Khona
+    url: "https://mikailkhona.github.io/"
+    affiliations:
+      name: MIT
+  - name: Kateryna Pistunova
+    url: "https://scholar.google.com/citations?user=V7QY5j0AAAAJ&hl=en"
+    affiliations:
+      name: Stanford
+  - name: Jason W. Rocks
+    url: "https://scholar.google.com/citations?user=rFHAzMUAAAAJ"
+    affiliations:
+      name: Boston University
+  - name: Ila R. Fiete
+    url: "https://fietelab.mit.edu/"
+    affiliations:
+      name: MIT
+  - name: Andrey Gromov
+    url: "https://sites.google.com/view/andreygromov/pi"
+    affiliations:
+      name: UMD & Meta AI FAIR
+  - name: Sanmi Koyejo
+    url: "https://cs.stanford.edu/~sanmi/"
+    affiliations:
+      name: Stanford
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-double-descent-demystified.bib  
@@ -69,6 +89,13 @@ _styles: >
   }
 ---
 
+## Introduction
+
+Machine learning models, while incredibly powerful, can sometimes act unpredictably. One of the most intriguing
+behaviors is when the test loss suddenly diverges at the interpolation threshold, a phenomenon is
+distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite><d-cite key="krogh1991simple"></d-cite><d-cite key="geman1992neural"></d-cite><d-cite key="krogh1992generalization"></d-cite><d-cite key="opper1995statistical"></d-cite><d-cite key="duin2000classifiers"></d-cite><d-cite key="spigler2018jamming"></d-cite><d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite><d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite><d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite><d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite><d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite><d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite><d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite><d-cite key="curth2024u"></d-cite>.
+
+
 <div id="fig_unablated_all">
     <div class="row mt-3">
         <div class="col-sm mt-3 mt-md-0">
@@ -90,20 +117,14 @@ _styles: >
        Figure 1. <b>Double descent in ordinary linear regression.</b> 
        Three real datasets (California Housing, Diabetes, and WHO Life Expectancy) and one synthetic dataset (Student-Teacher) all exhibit double descent, 
         with test loss spiking at the interpolation threshold.
+        <span style="color:blue;">Blue is training error.</span> <span style="color:orangered;">Orange is test error.</span>
     </div>
 </div>
 
-
-## Introduction
-
-Machine learning models, while incredibly powerful, can sometimes act unpredictably. One of the most intriguing
-behaviors is when the test loss suddenly diverges at the interpolation threshold, a phenomenon is
-distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite><d-cite key="krogh1991simple"></d-cite><d-cite key="geman1992neural"></d-cite><d-cite key="krogh1992generalization"></d-cite><d-cite key="opper1995statistical"></d-cite><d-cite key="duin2000classifiers"></d-cite><d-cite key="spigler2018jamming"></d-cite><d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite><d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite><d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite><d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite><d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite><d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite><d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite>.
 While significant theoretical work has been done to comprehend why double descent occurs, it can be difficult
 for a newcomer to gain a general understanding of why the test loss behaves in this manner, and under what conditions
-one should expect similar misbehavior.
-
-
+one should expect similar misbehavior. In this blog post, where we say double descent, we mean the divergence at the interpolation
+threshold, and not whether overparameterized models generalize (or fail to generalize).
 
 In this work, we intuitively and quantitatively explain why the test loss diverges at the interpolation threshold,
 with as much generality as possible and with as simple of mathematical machinery as possible, but also without sacrificing rigor.
@@ -173,7 +194,9 @@ The solution is the ordinary least squares estimator based on the second moment 
 
 $$\hat{\vec{\beta}}_{under} = (X^T X)^{-1} X^T Y.$$
 
-If the model is overparameterized, the optimization problem is ill-posed since we have fewer constraints than parameters. Consequently, we choose a different (constrained) optimization problem:
+If the model is overparameterized, the optimization problem is ill-posed since we have fewer constraints than parameters. 
+Consequently, we choose a different (constrained) optimization problem that asks for the minimum norm parameters that 
+still perfectly interpolate the training data:
 
 
 $$
@@ -239,14 +262,17 @@ $$
 $$
 
 This equation is important, but opaque. To extract the intuition,
-replace $X$ with its singular value decomposition $X = U \Sigma V^T$. 
+replace $X$ with its singular value decomposition $X = U S V^T$. 
 Let $R \, := \, \text{rank}(X)$ and let $\sigma_1 > \sigma_2 > ... > \sigma_R > 0$ be
-$X$'s (non-zero) singular values. We can decompose the underparameterized prediction error 
+$X$'s (non-zero) singular values. Let $S^+$ denote the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse); 
+in this context, this means that if a singular value $\sigma_r$ is non-zero, then in $S^+$, it becomes its reciprocal
+$1/\sigma_r$, but if the singular value is zero, then in $S^+$, it remains $0$.
+We can decompose the underparameterized prediction error 
 along the orthogonal singular modes:
 
 $$
 \begin{align*}
-\hat{y}_{test, under} - y_{test}^* &= \vec{x}_{test} \cdot V \Sigma^{+} U^T E\\
+\hat{y}_{test, under} - y_{test}^* &= \vec{x}_{test} \cdot V S^{+} U^T E\\
 &= \sum_{r=1}^R  \frac{1}{\sigma_r} (\vec{x}_{test} \cdot \vec{v}_r) (\vec{u}_r \cdot E).
 \end{align*}
 $$
@@ -297,14 +323,21 @@ More formally, the inverse (non-zero) singular values of the _training features_
 More formally: how $\vec{x}_{test}$ projects onto $X$'s right singular vectors $V$:
 
     $$\vec{x}_{test} \cdot \vec{v}_r$$
-    
+
 3. How well the best possible model in the model class can correlate the variance in the training features with the training regression targets. 
 More formally: how the residuals $E$ of the best possible model in the model class (i.e. insurmountable "errors" from the "perspective" of the model class) project onto $X$'s left singular vectors $U$:
     
     $$\vec{u}_r \cdot E$$
 
+We use the term "vary" when discussing $\vec{v}_r$ because $V$ can be related to the empirical (or sample) covariance
+matrix oftentimes studied in Principal Component Analysis. That is, if the SVD of $X$ is $U S V^T$, then
+$\frac{1}{N} X^T X = \frac{1}{N} V S^2 V^T$. If the training data are centered
+(a common preprocessing step), then this is the empirical covariance
+matrix and its eigenvectors $\vec{v}_1, ..., \vec{v}_R$ identify the orthogonal directions of variance. We'll return
+to this in [Fig 6](#fig_geometric_smallest_nonzero_singular_value).
 
-When (1) and (3) co-occur, the model's parameters along this singular mode are likely incorrect. 
+**Why does the test error diverge?** When (1) and (3) are both present in the learning problem, the model's 
+parameters along this singular mode are likely incorrect. 
 When (2) is added to the mix by a test datum $\vec{x}_{test}$ with a large projection along this mode, 
 the model is forced to extrapolate significantly beyond what it saw in the training data, in a direction where
 the training data had an error-prone relationship between its predictions and the training targets, using
@@ -341,7 +374,7 @@ parameters that are likely wrong. As a consequence, the test squared error explo
 The test loss will not diverge if any of the three required factors are absent. What could cause that?
 One way is if small-but-nonzero singular values do not appear in the training data features. One way to
 accomplish this is by setting all singular values below a selected threshold to exactly 0. To test our understanding, 
-we independently ablate all small singular values in the training features. Sepcifically, as we run the
+we independently ablate all small singular values in the training features. Specifically, as we run the
 ordinary linear regression fitting process, and as we sweep the number of training data, we also sweep different
 singular value cutoffs and remove all singular values of the training features $X$ below the cutoff ([Fig 2](#fig_factor_1_small_singular_values)).
 
@@ -594,7 +627,7 @@ information necessary for the best model in the model class to perform well ([Fi
 ## Adversarial Test Data and Adversarial Training Data
 
 Our key equation (Eqn. \ref{eq:variance}) also reveals _why_ adversarial test data and adversarial training data exist
-and _how_ mechanistically they function. For convenience, we repeat the equation:
+(at least in linear regression) and _how_ mechanistically they function. For convenience, we repeat the equation:
 
 $$
 \begin{equation*}
