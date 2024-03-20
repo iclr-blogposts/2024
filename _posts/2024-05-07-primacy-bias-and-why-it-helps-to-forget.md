@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: "It's Time to Move On: Primacy Bias and Why It Helps to Forget"
-description: "'The Primacy Bias in Deep Reinforcement Learning' (Nikishin et al. 2022) [1] demonstrates how the first experiences of a deep learning model can cause catastrophic memorization [2] and how this can be prevented. In this post we describe primacy bias, summarize the authors' key findings, and present a simple environment to experiment with primacy bias."
+description: "'The Primacy Bias in Deep Reinforcement Learning' demonstrates how the first experiences of a deep learning model can cause catastrophic memorization and how this can be prevented. In this post we describe primacy bias, summarize the authors' key findings, and present a simple environment to experiment with primacy bias."
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -11,14 +11,14 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: Anonymous
-    url: Anonymous
+  - name: Matthew Kielo
+    url: https://mkiel.org/
     affiliations:
-      name: Anonymous
-  - name: Anonymous
-    url: Anonymous
+      name: Georgia Institute of Technology
+  - name: Vladimir Lukin
+    url: https://github.com/divannyteoretik
     affiliations:
-      name: Anonymous
+      name: Georgia Institute of Technology
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-primacy-bias-and-why-it-helps-to-forget.bib  
@@ -72,23 +72,21 @@ _styles: >
 
 Primacy bias occurs when a model's training is damaged by overfitting to its first experiences. This can be caused by poor hyperparameter selection, the underlying dynamics of the system being studied, or simply bad luck. 
 
-In this post we explore the paper “Primacy Bias in Deep Reinforcement Learning” by Nikishin et al. and presented at ICML 2022. We will present primacy bias and how it applies to deep reinforcement learning, discuss how the authors prevent primacy bias, and finish by experimenting with our own toy example of primacy bias.
+In this post we explore the paper “Primacy Bias in Deep Reinforcement Learning” by Nikishin et al. and presented at ICML 2022 <d-cite key="https://doi.org/10.48550/arxiv.2205.07802"></d-cite>. We will present primacy bias and how it applies to deep reinforcement learning, discuss how the authors prevent primacy bias, and finish by experimenting with our own toy example of primacy bias. 
 
-Like many deep learning concepts, primacy bias takes inspiration from psychology [4]. For example, you might have a friend who “doesn’t like math” because they had a bad experience in primary school. Now, they avoid the subject despite having an aptitude for it. It turns out that for humans and machines, first impressions matter more than they should. This is primacy bias.
+Like many deep learning concepts, primacy bias takes inspiration from psychology <d-cite key="Marshall1972"></d-cite>. For example, you might have a friend who “doesn’t like math” because they had a bad experience in primary school. Now, they avoid the subject despite having an aptitude for it. It turns out that for humans and machines, first impressions matter more than they should. This is primacy bias.
 
 ## Off Policy Deep Reinforcement Learning
 
-Nikishin et al. discuss a specific type of model that is particularly sensitive to primacy bias: *off-policy deep reinforcement learning*. Here, the goal is to learn a model (*policy*) that makes good decisions in an interactive environment. The algorithm does this by switching between two modes:
+Nikishin et al. discuss a specific type of model that is particularly sensitive to primacy bias: *off-policy deep reinforcement learning*. Here, the goal is to learn a  (*policy*) that makes good decisions in an interactive environment. Off-policy algorithms achieve this by separating decision-making from learning. Deep Q-Learning (DQN) <d-cite key="https://doi.org/10.48550/arxiv.1312.5602"></d-cite> was one of the first popular off-policy algorithms, which separates the learning process into two steps:
 
-1.  Exploration: use the current policy to interact with the environment and save memories to a dataset called the *replay buffer*.
+1.  Data Collection: use the current policy to interact with the environment and save memories to a dataset called the *replay buffer*.
 2.  Learning: sample from the replay buffer to perform gradient updates on the policy.
-
-In human terms, step 1 is the algorithm living its day-to-day life. At the end of the day, it goes to sleep, and overnight the algorithm's lifetime of experiences are referenced to update its beliefs (step 2).
 
 ### Are we Overcomplicating?
 For those without a reinforcement learning background, this might seem needlessly complicated. Why can’t we simply explore with a random policy and then fit a model all at once?
 
-Althought this is sometimes done [5], the quality of the memories in the replay buffer is proportionate to the quality of the policy that gathered the experience. Consider an agent learning to play chess. A random policy might have enough data to learn how to play the start of the game effectively, but it will never learn how to chase an opponent’s king around an empty board. If a policy isn’t smart enough to get the agent out of the ‘early' game, it will never collect experiences to learn the ‘mid’ or ‘late' games.
+Although this is sometimes done <d-cite key="https://doi.org/10.48550/arxiv.1812.02900"></d-cite>, the quality of the memories in the replay buffer is proportionate to the quality of the policy that gathered the experience. Consider an agent learning to play chess. A random policy might have enough data to learn how to play the start of the game effectively, but it will never learn how to chase an opponent’s king around an empty board. If a policy isn’t smart enough to get the agent out of the ‘early' game, it will never collect experiences to learn the ‘mid’ or ‘late' games.
 
 
 ## Selecting a Replay Ratio
@@ -103,7 +101,7 @@ In deep reinforcement learning, the replay ratio is typically set to one. Unfort
 
 To quantify this, Nikishin et al. perform an experiment with heavy priming. The goal is to train an agent on the "quadruped-run" environment, where an agent learns to manipulate joint movement to travel forward.
 
-First, a baseline is trained with default parameters. Next, to create heavy priming, the agent collects 100 interactions and then trains for 100K steps. The model with heavy priming fails to ever recover in an example of catastrophic memorization. [2]
+First, a baseline is trained with default parameters. Next, to create heavy priming, the agent collects 100 interactions and then trains for 100K steps. The model with heavy priming fails to ever recover in an example of catastrophic memorization. <d-cite key="Robins"></d-cite>
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -111,7 +109,7 @@ First, a baseline is trained with default parameters. Next, to create heavy prim
     </div>
   </div>
   <div class="caption">
-    Example of Heavy Priming by Nikishi et al. [1]
+    Example of Heavy Priming by Nikishi et al. <d-cite key="https://doi.org/10.48550/arxiv.2205.07802"></d-cite>
   </div>
 
 
@@ -138,14 +136,14 @@ After 100 steps, the first observation will have been sampled on average 5.19 ti
 </div>
 
 
-Some solutions to mitigate this include recency weighting [9] or using prioritized experience replay [10], however, weight resets offer a theoretically parameter free way to fix this. If weights are trained from scratch at every step then all prior observations will have equal influence.
+Some solutions to mitigate this include recency weighting <d-cite key="https://doi.org/10.48550/arxiv.1910.02208"></d-cite> or using prioritized experience replay <d-cite key="https://doi.org/10.48550/arxiv.1511.05952"></d-cite>, however, weight resets offer a theoretically parameter free way to fix this. If weights are trained from scratch at every step then all prior observations will have equal influence.
 
 In practice, weight resets are a bit more complicated. Ideally, we retrain the model from scratch after each observation. Unfortunately this isn’t realistic (on my computer). This leaves us with two decisions:
 
 1.  Select a reset frequency.
 2.  Decide what to reset.
 
-Resetting often will prevent primacy bias but this requires a high replay ratio. This trade-off is discussed in detail in the follow up work "Sample-Efficient Reinforcement Learning by Breaking the Replay Ratio Barrier" [3] published at ICLR in 2023. In particular, a heatmap is shared showing the trade-off between data and computation budget on a dynamic motion control problem:
+Resetting often will prevent primacy bias but this requires a high replay ratio. This trade-off is discussed in detail in the follow up work "Sample-Efficient Reinforcement Learning by Breaking the Replay Ratio Barrier" <d-cite key="d'oro2022sampleefficient"></d-cite> published at ICLR in 2023. In particular, a heatmap is shared showing the trade-off between data and computation budget on a dynamic motion control problem:
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -153,7 +151,7 @@ Resetting often will prevent primacy bias but this requires a high replay ratio.
     </div>
   </div>
   <div class="caption">
-  "Performance of SR-SAC in DMC15 as a function of the number of interactions and of the number of agent updates, determined by the replay ratio." [3]
+  "Performance of SR-SAC in DMC15 as a function of the number of interactions and of the number of agent updates, determined by the replay ratio." <d-cite key="d'oro2022sampleefficient"></d-cite>
   </div>
 
 
@@ -175,7 +173,7 @@ These results are consistent across multiple algorithms and environments, includ
     </div>
   </div>
   <div class="caption">
-  Figure 4, [1]
+  Figure 4, <d-cite key="https://doi.org/10.48550/arxiv.2205.07802"></d-cite>
   </div>
 </details>
 
@@ -187,7 +185,7 @@ These results are consistent across multiple algorithms and environments, includ
     </div>
   </div>
   <div class="caption">
-  Figure 18, from Appendix C) [1]
+  Figure 18, from Appendix C) <d-cite key="https://doi.org/10.48550/arxiv.2205.07802"></d-cite>
   </div>
 </details>
 
@@ -200,7 +198,7 @@ These results are consistent across multiple algorithms and environments, includ
     </div>
   </div>
   <div class="caption">
-  Table 7, from Appendix C) [1]
+  Table 7, from Appendix C) <d-cite key="https://doi.org/10.48550/arxiv.2205.07802"></d-cite>
   </div>
 </details>
 
@@ -213,14 +211,14 @@ After seeing the success of resets, it is reasonable to wonder how weight resets
     </div>
   </div>
   <div class="caption">
-  Comparison of Base Algorithm, Resets (+ resets), Dropout (+ dropout), and L2 (+ L2). Averaged over 10 runs. [1]
+  Comparison of Base Algorithm, Resets (+ resets), Dropout (+ dropout), and L2 (+ L2). Averaged over 10 runs. <d-cite key="https://doi.org/10.48550/arxiv.2205.07802"></d-cite>
   </div>
 
 
 
 ### What's The Catch?  
 
-While these results are impressive, they come at a cost. At minimum, increasing the replay ratio increases the compute time linearly. D'Oro et al 2023 [3] note that running the full dynamic control benchmark with a replay ratio of 32 takes 4 GPU days with a NVIDIA V100. Using a replay ratio of 16 on Atari 100K requires 5 GPU hours per run.
+While these results are impressive, they come at a cost. At minimum, increasing the replay ratio increases the compute time linearly. D'Oro et al 2023 <d-cite key="d'oro2022sampleefficient"></d-cite> note that running the full dynamic control benchmark with a replay ratio of 32 takes 4 GPU days with a NVIDIA V100. Using a replay ratio of 16 on Atari 100K requires 5 GPU hours per run.
 
 Additionally, implementing weight resets requires a sneaky number of design decisions. The results from the paper show reset rules specifically chosen for each environment and algorithm.
 
@@ -236,11 +234,11 @@ These are open questions. For weight resets to become widely used new heuristics
 
 ## Implementing Primacy Bias
 
-The best way to learn something is through practice. In this section we will present a minimum example of primacy bias with the associated code to be released as a notebook on GitHub.
+The best way to learn something is through practice. In this section we will present a minimum example of primacy bias. The associated code is [released as a notebook](https://github.com/mkielo3/iclr-blog2024-primacy-bias) along with additional experiments.
 
-The biggest obstacle to studying primacy bias is the compute resources required. Training time scales linearly with replay ratio, and a high replay ratio is necessary to extract maximal information per sample and to recover after each reset. To work around this, we present an MVP: Minimum Viable Primacy (bias).
+The biggest obstacle to studying primacy bias is the compute required. Training time scales linearly with replay ratio, and a high replay ratio is necessary to extract maximal information per sample and to recover after each reset. To work around this, we present an MVP: Minimum Viable Primacy (bias).
 
-We use a modified version of the Frozen Lake environment provided by Farama Gymnasium [6] with a DQN model (the first model to popularize a replay buffer) [7] based on the CleanRL implementation [8].
+We use a modified version of the Frozen Lake environment provided by Farama Gymnasium <d-cite key="towers_gymnasium_2023"></d-cite> with a DQN model (one of first models to popularize a replay buffer) based on the CleanRL implementation <d-cite key="https://doi.org/10.48550/arxiv.2111.08819"></d-cite>.
 
 
 ### 2x2 Switching Frozen Lake
@@ -258,11 +256,12 @@ To simplify the problem, we restrict the map size to 2x2 and keep the environmen
     </div>
 </div>
 
-The agent attempts to cross the lake 10,000 times. To force primacy bias, we show the agent Map 1 for the first 2,000 crossings, and Map 2 for the last 8,000. The maps are deliberately chosen to have opposite solutions. After 4,000 crossings the agent will have experienced each map equally and afterwards the agent should begin to prefer Map 2 with increasing confidence. Our agent is maximally exploitative and will always take the action it thinks is best.
 
-Each trial is considered expensive (our agent doesn't want to freeze). A good algorithm will maximize the number of successful crossings in the 10,000 attempts. Each attempt is saved to the replay buffer and any reset will fully reinitialize all weights.
+The agent attempts to cross the lake 1,000 times. To force primacy bias, we show the agent Map 1 for the first 200 crossings, and Map 2 for the last 800. The maps are deliberately chosen to have opposite solutions. After 400 crossings the agent will have experienced each map equally and afterwards the agent should begin to prefer Map 2 with increasing confidence. Our agent is maximally exploitative and will always take the action it thinks is best.
 
-The advantage of this environment is that it is very fast. A trial of 10,000 crossings with a replay ratio of 1 completes in 10 seconds on a CPU. The disadvantage of this environment is that it's incredibly simple, and findings might not generalize to more complex problems.
+Each trial is considered expensive (our agent doesn't want to freeze). A good algorithm will maximize the number of successful crossings in the 1,000 attempts. Each attempt is saved to the replay buffer and any reset will fully reinitialize all network weights.
+
+The advantage of this environment is that it is very fast. A trial of 1,000 crossings with a replay ratio of 1 completes in less than 5 seconds on a CPU. The disadvantage of this environment is that it's incredibly simple, and findings might not generalize to more complex problems.
 
 ### Results
 
@@ -270,55 +269,145 @@ The first thing we do is inspect how our model scores its first action with and 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/dqn-actionsovertime.jpeg" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/q_vals/01.svg" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-  Model scores for first action overtime (after softmax), with and without resets. Replay ratio of 16.
+  Model scores for first action overtime (after softmax), with and without resets. The correct first action is down for the first 200 episodes and right afterwards. Replay ratio of 16 with results averaged over 25 seeds.
 </div>
 
+<details close>
+<summary>Additional action values overtime for various learning rates.</summary>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/q_vals/001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/q_vals/0001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/q_vals/00005.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/q_vals/00001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
 
-Both models quickly determine that moving down is correct. The resetting model will periodically score actions equally before quickly recovering. Without resets, the map switch is only recognized after the 7000th crossing. With resets, this switch happens around 5,000. We also see that after the map switch the model without resets tries to adjust by increasing the scores for the incorrect left and up actions (which led to failure in two steps instead of one).
+ <div class="caption">
+  </div>
+</details>
 
-We can also plot the reward per crossing, averaged over 25 seeds. Similar to the first result, the model with resets periodically fails, but also adapts to the map switch much faster. 
+<br>
+
+Both models quickly determine that moving down is correct. The resetting model will periodically score actions equally before quickly recovering. Without resets, the map switch is only recognized after the 800th crossing. With resets, this switch happens around crossing 500. We also see that after the map switch the model without resets tries to adjust by increasing the scores for the incorrect left and up actions (which led to failure in two steps instead of one).
+
+We can also plot the reward per crossing, averaged over 25 seeds. Similar to the first result, the model with resets periodically fails, but also adapts to the map switch faster. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/dqn_overtime.jpeg" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/reward/01.svg" class="img-fluid rounded z-depth-1" %}
     </div>
-    <div class="caption" style="width: 30%">
-      Model score overtime, with and without resets. Replay ratio of 16. Average of 25 seeds.
-    </div>
+</div>
+<div class="caption">
+  Model score overtime, with and without resets. Replay ratio of 16. Average of 25 seeds.
 </div>
 
 
-Next, we conduct a hyperparameter sweep with replay ratios 1, 4, 16 and reset frequencies 0, 500, 1000, 4000. We then compare the average number of successful crossings. The results are shown in the figure below with the expected performance of a random policy marked in red (correct 1/16 of the time).
+<details close>
+<summary>Additional scores overtime for various learning rates.</summary>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/reward/001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/reward/0001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/reward/00005.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/reward/00001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+
+ <div class="caption">
+  </div>
+</details>
+
+<br>
+
+
+Next, we conduct a hyperparameter sweep with replay ratios 1, 4, 16 and reset frequencies 0, 50, 100, 500. We then compare the average number of successful crossings. A random policy will earn the reward 1/16 of the time.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/rr-sweep.jpeg" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="caption" style="width: 30%">
-      Full period average score, averaged across all crossings. Average of 25 seeds.
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/grid/01.svg" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
+<div class="caption">
+  Full period average score, averaged across all crossings. Average of 25 seeds.
+</div>
 
+<details close>
+<summary>Additional averages scores for various learning rates.</summary>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/grid/001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/grid/0001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/grid/00005.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/grid/00001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
 
-The results match our expectations. A higher replay ratio improves results in 11 of the 12 parameterizations and having resets is always helpful. If we take the results of replay ratio 16 at face value, there is a ‘sweet spot’ for reset frequency. Settings resets to be too frequent (every 500 crossings) sends the model into a frozen hole more than necessary. Resetting too infrequently (every 4000 crossings) leaves the model impacted by primacy bias longer than necessary.
+ <div class="caption">
+  </div>
+</details>
 
+<br>
 
-As a final experiment, we vary model size. We compare a much smaller two layer DQN architecture to the larger three layer model used in prior experiments. We note that the largest difference in performance between models comes from reset frequencies of 500 and 1000. 
+In general, the results match our expectations. With a learning rate of 0.01 a higher replay ratio improves results and having resets is always helpful. A high replay ratio with resets is necessary to achieve a score over 0.6 for all learning rates. Reset frequency and replay ratio must be adjusted alongside learning rate which scales how quickly the network can adapt in a non-stationary environment.
+
+As a final experiment, we vary model size. We compare a much smaller two layer DQN architecture to the larger three layer model used in prior experiments. Interestingly, this produces the highest score yet with a reset frequency of 10 steps although the result quickly disappears with a lower learning rate.
+
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/dqn_by_size.jpeg" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="caption" style="width: 30%">
-      Full period average score, averaged across all crossings. Average of 25 seeds. Split by Network Size with Replay Ratio of 4.
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/little/01-2.svg" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
+<div class="caption">
+  Full period average score. Average of 25 seeds. Split by Network Size with Replay Ratio of 16.
+</div>
 
+<details close>
+<summary>Additional averages scores for various learning rates by network size.</summary>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/little/001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/little/0001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/little/00005.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/little/00001.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
 
+ <div class="caption">
+  </div>
+</details>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/2024-05-07-primacy-bias-and-why-it-helps-to-forget/little/misc.svg" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+  Comparison of 3 layer and 2 layer networks. Reset every 10 steps with a replay ratio of 16. Average of 25 seeds.
+</div>
+
+<br>
 
 ## Conclusions
 
@@ -331,117 +420,3 @@ Even as the theory continues to develop, there is little harm in attempting peri
 Finally, primacy bias might not always be a bad thing. If you decide to take a new shortcut to work by walking down an alley and the first thing you notice is how dark and unsafe it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
 
 
-## References (To be migrated to bibtex)
-
-[1] @misc{https://doi.org/10.48550/arxiv.2205.07802,
-  doi = {10.48550/ARXIV.2205.07802},
-  url = {https://arxiv.org/abs/2205.07802},
-  author = {Nikishin,  Evgenii and Schwarzer,  Max and D'Oro,  Pierluca and Bacon,  Pierre-Luc and Courville,  Aaron},
-  keywords = {Machine Learning (cs.LG),  Artificial Intelligence (cs.AI),  Machine Learning (stat.ML),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
-  title = {The Primacy Bias in Deep Reinforcement Learning},
-  publisher = {arXiv},
-  year = {2022},
-  copyright = {arXiv.org perpetual,  non-exclusive license}
-}
-
-[2] @inproceedings{Robins,
-  title = {Catastrophic forgetting in neural networks: the role of rehearsal mechanisms},
-  url = {http://dx.doi.org/10.1109/ANNES.1993.323080},
-  DOI = {10.1109/annes.1993.323080},
-  booktitle = {Proceedings 1993 The First New Zealand International Two-Stream Conference on Artificial Neural Networks and Expert Systems},
-  publisher = {IEEE Comput. Soc. Press},
-  author = {Robins,  A.}
-}
-
-
-[3] @inproceedings{
-d'oro2022sampleefficient,
-title={Sample-Efficient Reinforcement Learning by Breaking the Replay Ratio Barrier},
-author={Pierluca D'Oro and Max Schwarzer and Evgenii Nikishin and Pierre-Luc Bacon and Marc G Bellemare and Aaron Courville},
-booktitle={Deep Reinforcement Learning Workshop NeurIPS 2022},
-year={2022},
-url={https://openreview.net/forum?id=4GBGwVIEYJ}
-}
-
-[4] @article{Marshall1972,
-  title = {The effects of the elimination of rehearsal on primacy and recency},
-  volume = {11},
-  ISSN = {0022-5371},
-  url = {http://dx.doi.org/10.1016/S0022-5371(72)80049-5},
-  DOI = {10.1016/s0022-5371(72)80049-5},
-  number = {5},
-  journal = {Journal of Verbal Learning and Verbal Behavior},
-  publisher = {Elsevier BV},
-  author = {Marshall,  Philip H. and Werder,  Pamela R.},
-  year = {1972},
-  month = oct,
-  pages = {649–653}
-}
-
-[5] @misc{https://doi.org/10.48550/arxiv.1812.02900,
-  doi = {10.48550/ARXIV.1812.02900},
-  url = {https://arxiv.org/abs/1812.02900},
-  author = {Fujimoto,  Scott and Meger,  David and Precup,  Doina},
-  keywords = {Machine Learning (cs.LG),  Artificial Intelligence (cs.AI),  Machine Learning (stat.ML),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
-  title = {Off-Policy Deep Reinforcement Learning without Exploration},
-  publisher = {arXiv},
-  year = {2018},
-  copyright = {arXiv.org perpetual,  non-exclusive license}
-}
-
-[6] @misc{towers_gymnasium_2023,
-        title = {Gymnasium},
-        url = {https://zenodo.org/record/8127025},
-        abstract = {An API standard for single-agent reinforcement learning environments, with popular reference environments and related utilities (formerly Gym)},
-        urldate = {2023-07-08},
-        publisher = {Zenodo},
-        author = {Towers, Mark and Terry, Jordan K. and Kwiatkowski, Ariel and Balis, John U. and Cola, Gianluca de and Deleu, Tristan and Goulão, Manuel and Kallinteris, Andreas and KG, Arjun and Krimmel, Markus and Perez-Vicente, Rodrigo and Pierré, Andrea and Schulhoff, Sander and Tai, Jun Jet and Shen, Andrew Tan Jin and Younis, Omar G.},
-        month = mar,
-        year = {2023},
-        doi = {10.5281/zenodo.8127026},
-}
-
-[7] @misc{https://doi.org/10.48550/arxiv.1312.5602,
-  doi = {10.48550/ARXIV.1312.5602},
-  url = {https://arxiv.org/abs/1312.5602},
-  author = {Mnih,  Volodymyr and Kavukcuoglu,  Koray and Silver,  David and Graves,  Alex and Antonoglou,  Ioannis and Wierstra,  Daan and Riedmiller,  Martin},
-  keywords = {Machine Learning (cs.LG),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
-  title = {Playing Atari with Deep Reinforcement Learning},
-  publisher = {arXiv},
-  year = {2013},
-  copyright = {arXiv.org perpetual,  non-exclusive license}
-}
-
-[8] @misc{https://doi.org/10.48550/arxiv.2111.08819,
-  doi = {10.48550/ARXIV.2111.08819},
-  url = {https://arxiv.org/abs/2111.08819},
-  author = {Huang,  Shengyi and Dossa,  Rousslan Fernand Julien and Ye,  Chang and Braga,  Jeff},
-  keywords = {Machine Learning (cs.LG),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
-  title = {CleanRL: High-quality Single-file Implementations of Deep Reinforcement Learning Algorithms},
-  publisher = {arXiv},
-  year = {2021},
-  copyright = {Creative Commons Attribution 4.0 International}
-}
-
-[9] @misc{https://doi.org/10.48550/arxiv.1910.02208,
-  doi = {10.48550/ARXIV.1910.02208},
-  url = {https://arxiv.org/abs/1910.02208},
-  author = {Wang,  Che and Wu,  Yanqiu and Vuong,  Quan and Ross,  Keith},
-  keywords = {Machine Learning (cs.LG),  Artificial Intelligence (cs.AI),  Machine Learning (stat.ML),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
-  title = {Striving for Simplicity and Performance in Off-Policy DRL: Output Normalization and Non-Uniform Sampling},
-  publisher = {arXiv},
-  year = {2019},
-  copyright = {arXiv.org perpetual,  non-exclusive license}
-}
-
-
-[10] @misc{https://doi.org/10.48550/arxiv.1511.05952,
-  doi = {10.48550/ARXIV.1511.05952},
-  url = {https://arxiv.org/abs/1511.05952},
-  author = {Schaul,  Tom and Quan,  John and Antonoglou,  Ioannis and Silver,  David},
-  keywords = {Machine Learning (cs.LG),  FOS: Computer and information sciences,  FOS: Computer and information sciences},
-  title = {Prioritized Experience Replay},
-  publisher = {arXiv},
-  year = {2015},
-  copyright = {arXiv.org perpetual,  non-exclusive license}
-}
