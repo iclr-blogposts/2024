@@ -101,13 +101,13 @@ It is not surprising that $l_2$ gradient matching functions could recover the in
 However, when it comes to CNNs, such inversion gets harder. For convolution layers, the gradients of convolution kernels are aggregated through the whole feature map, therefore even if we set batchsize=1, gradients may still experience information discards, affecting the attack performance. This problem is also mentioned in R-GAP<d-cite key="zhu2021r"></d-cite>, which executes the GIA from an equation-solving perspective. If equations are "rank-deficient", then we cannot get a unique solution, indicating obvious information discards. Here, for better illustration, we first show CIFAR-10 image reconstructions on LeNet with `batchsize=1`. Ground-truth one-hot labels are provided.
 <div class="row">
     <div class="col-sm-4 offset-md-0">
-        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_l2.gif" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_l2_f.gif" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm-4 offset-md-0">
         {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos_gt.jpg" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm-4 offset-md-0">
-        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos.gif" class="img-fluid rounded z-depth-1" %}
+        {% include figure.html path="assets/img/2024-05-07-understanding-gradient-inversion-attacks-from-the-prior-knowledge-perspective/bs1_cos_f.gif" class="img-fluid rounded z-depth-1" %}
     </div>
 <div class="caption">
       Image reconstruction on LeNet with CIFAR-10 dataset when batchsize=1. we show the ground-truth image in the middle and attach the reconstruction process on two sides ($l_2$ loss on the left and cosine similarity loss on the right).
