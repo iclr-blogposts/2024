@@ -11,7 +11,7 @@ authors:
   - name: Yanbo Wang
     affiliations:
       name: School of AI, UCAS $\n$ CRIPAC & MAIS, CASIA
-  - name: Liang Jian
+  - name: Jian Liang
     affiliations:
       name: School of AI, UCAS $\n$ CRIPAC & MAIS, CASIA
   - name: Ran He
