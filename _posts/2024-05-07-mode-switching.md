@@ -343,11 +343,12 @@ concentrate terminal states to specific areas of an agent's trajectory.
 
 We showcase a quick illustrative example of the ability of switching 
 policies to concentrate terminal states more uniformly in a cliffwalk 
-environment (Figure 4). The agent starts at the black 'x' in the middle 
+environment (Figure 4). The agent starts at the black circle in the middle 
 column and top row of a 101$\times$11 grid and attempts to reach the white 
-star at the bottom. All states aside from those in the middle column are 
+'x' at the bottom. All states aside from those in the middle column are 
 terminal, and the heatmaps show the visitation frequency per episode of all 
-non-terminal states. When the exploitation policy is to move only downward 
+non-terminal states across 10K episodes. When the exploitation policy is to 
+move only downward 
 and the behavior policies are the usual policies in these experiments, the 
 agent incorporating a switching policy more heavily 
 concentrates the terminal states in exploration mode and visits states 
@@ -369,14 +370,37 @@ the safety constraints are closely aligned with terminal states (e.g. aerospace 
 
 ### Early Exploration
 
-Monolithic policies uniformly take exploration action throughout an episode, and as a result, the exploration steps are less concentrated than those of switching policies. While the expected number of exploration steps may be the same per episode in monolithic policies, certain situations may require more concentrated exploration during the beginning of episodes. For example, the build orders in StarCraft II  <d-cite key="vinyals2019grandmaster"></d-cite> significantly influence the possible future strategies, making exploration crucial throughout the beginning time steps. Early suboptimal actions have also been manually implemented to achieve certain effects: passive actions are taken in ATARI games to prevent memorization of trajectories, and 30 random actions were taken in Go at the beginning of games during training to force agents to analyze more diverse data <d-cite key="silver2016mastering"></d-cite>. We investigate the flexibility of switching policies to concentrate exploration actions in the beginning of episodes.
+Monolithic policies uniformly take exploration action throughout an episode,
+and as a result, the exploration steps are less concentrated than those of 
+switching policies. While the expected number of exploration steps may be 
+the same per episode in monolithic policies, certain situations may require 
+more concentrated exploration during the beginning of episodes. For example,
+the build orders in StarCraft II  <d-cite 
+key="vinyals2019grandmaster"></d-cite> significantly influence the possible 
+future strategies, making exploration crucial throughout the beginning time 
+steps. Early suboptimal actions have also been manually implemented to 
+achieve certain effects: passive actions are taken in Atari games to 
+prevent memorization of trajectories <d-cite 
+key="machado2018revisiting"></d-cite>, and 30 random actions were taken at 
+the beginning of Go games when training the AlphaGo engine to force agents 
+to encounter more diverse data <d-cite key="silver2016mastering"></d-cite>. We investigate the flexibility of switching policies to concentrate exploration actions in the beginning of episodes.
 
 We perform an experiment to determine how quickly a policy takes a 
 prespecified number of exploration actions. Specifically, we compute the 
 average number of time steps it takes for a policy to take at least $x$ 
-total exploration actions across its top 10 of 100 fastest episodes, and we 
-repeat this process for $x \in \\{1, 2, 3, \ldots, 20\\}$. We compare the top 
-10 fastest episodes because we are only interested in gauging the flexibility of switching behavior of being able to achieve this specific facet of exploration (beginning exploration) during a small percentage of episodes and not for each episode. Note that this experiment did not need to utilize the ATARI signals, so we averaged the results again over each game. The results are shown in Figure 5. It is clear that some episodes contain many more exploration actions concentrated in the beginning with switching policies. This makes sense intuitively, as only one switch needs to occur early in an episode with a switching policy for many exploratory actions to be taken immediately afterwards. The difference increases roughly linearly as for greater number of necessary exploration actions and shows that switching natively produces more episodes with exploration concentrated in the beginning. 
+total exploration actions across its top 10 of 100 fastest episodes to 
+achieve the feat, and we repeat this process for $x \in \\{1, 2, 3, \ldots, 
+20\\}$. We compare the top 10 fastest episodes because we are only 
+interested in gauging the flexibility of switching behavior of being able 
+to achieve this specific facet of exploration (beginning exploration) 
+during a small percentage of episodes and not for each episode. Note that 
+this experiment did not need to utilize the Atari signals, so we averaged 
+the results again over each game. The results are shown in Figure 5. It is 
+clear that some episodes contain many more exploration actions concentrated 
+in the beginning few time steps with switching policies. This makes sense 
+intuitively, as only one switch needs to occur early in an episode with a 
+switching policy for many exploration actions to be taken immediately 
+afterwards. The difference increases roughly linearly for greater number of necessary exploration actions and shows that switching natively produces more episodes with exploration concentrated in the beginning. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -387,18 +411,60 @@ repeat this process for $x \in \\{1, 2, 3, \ldots, 20\\}$. We compare the top
     </div>
 </div>
 <div class="caption">
-    Figure 5. (Left) Switching policies can explore more frequently earlier in the episode. Figure 6 (Right) Switching policies have better exploration near the start state on downwalk environments.
+    Figure 5. (Left) Switching policies can explore more frequently earlier 
+during the episode. Figure 6 (Right) Switching policies have better 
+exploration near the start state on downwalk environments.
 </div>
 
-We illustrate beginning exploration with a downwalk environment in which an agent attempts to first move to the middle column and then down the middle column until it falls off the grid (Figure 6). The agent begins in the second row in the middle column. We chose this environment because it is a crude approximation of the trajectory of agents that have learned a single policy and immediately move towards a goal state at the beginning of an episode. The switching and monolithic policies are the same as before, and switching produces much higher visitation counts across 1000 episodes at states further from the obvious exploitation trajectory. 
+We illustrate beginning exploration with a downwalk environment in which an 
+agent attempts to first move to the middle column and then down the middle 
+column to the white 'x' (Figure 6). The agent starts in the 
+second row in the middle column at the white circle, and visitation 
+frequencies across 1K episodes are shown for all states aside from those 
+starting at the white circle and ending at the white 'x'. We chose to 
+analyze this environment because it is a crude approximation of the trajectory of agents that have learned a single policy and immediately move away from the initial start state at the beginning of an episode. The switching and monolithic policies are the same as before, and switching produces much higher visitation counts at states further from the obvious exploitation trajectory. 
 
-Environments that may benefit from flexible early exploration are sparse reward environments that provide a single nonzero reward at the terminal state. Many game environments fall into this category, since a terminal reward of 1 can be provided for a win, -1 for a loss, and 0 for a draw. In such environments, agents usually need to learn at states near the sparse reward region before learning at states further away, also known as cascading <d-cite key="huan2016sequential"></d-cite>. After learning near the sparse reward region, the agent may need to reconsider earlier actions, and switching behavior natively allows for this type of exploration. Future work may consider the extent to which switching aids in relearning policies near the start state. 
+Environments that may benefit from flexible early exploration are sparse 
+reward environments that provide a single nonzero reward at the terminal 
+state. Many game environments fall into this category, since a terminal 
+reward of 1 can be provided for a win, -1 for a loss, and 0 for a draw. In 
+such environments, agents usually need to learn at states near the sparse 
+reward region before learning at states further away, also known as 
+cascading <d-cite key="huan2016sequential"></d-cite>. After learning near 
+the sparse reward region, the agent may need to reconsider earlier actions, 
+and switching policies natively allow for this type of exploration. Future 
+work may consider the extent to which switching aids in improving policies 
+near the start state in sparse reward environments. 
 
 ### Concentrated Return
 
-In contrast to the investigation in the first experiment, exploitation actions are generally considered to be presumably optimal. Since agents aim to maximize the expected return in an environment, exploitation is often aimed accruing the most expected return. For example, the initial results of DQN <d-cite key="mnih2015human"></d-cite> and double DQN (DDQN) <d-cite key="van2016deep"></d-cite> decreased the exploration constant, thereby increasing exploitation, during testing runs to achieve higher scores and ultimately demonstrate superhuman performance on ATARI. In this subsection, we investigate the effect of the concentrated exploitation actions of switching policies on expected return. 
+In contrast to the investigation in the first experiment, exploitation 
+actions of a trained agent are presumed to be better than all other 
+alternatives. Since agents aim to maximize the expected return in an 
+environment, exploitation actions often accrue relatively large amounts of 
+expected return. For example, the initial experiments of DQN <d-cite 
+key="mnih2015human"></d-cite> and double DQN (DDQN) <d-cite 
+key="van2016deep"></d-cite> decreased the exploration constant (thereby 
+increasing exploitation) during testing runs to achieve higher scores and 
+ultimately demonstrate superhuman performance on Atari. In this subsection, we investigate the effect of the concentrated exploitation actions of switching policies on expected return. 
 
-We perform an experiment to determine the proportion of return that is concentrated during exploitation periods. Each reward during an episode is weighted by the proportion of exploitation actions during the past 10 time steps. The score for each episode is the exploitation proportion divided by the total rewards. Scores for each behavior policy and epoch are computed by averaging scores across all games. The results are shown in Figure 7. Quite quickly, exploitation steps contain a greater percentage of the return with switching policies than monolithic policies. This trend seems fairly constant after roughly 2M frames, with switching having roughly 95% of the return in exploitation steps and monolithic having roughly 90% of the return; from another point of view, exploration yields 5% of the return for switching and 10% of the return for monolithic policies. These results agree with Experiment 1, as switching modes will generally reach terminal states outside of exploitation mode (i.e. when in exploration mode in our case), and receive no more rewards. Since most of the rewards in our selected ATARI games are positive, this should result in lower return in exploitation mode. 
+We perform an experiment to determine the proportion of return that is 
+concentrated during exploitation periods. Each reward during an episode is 
+weighted by the proportion of exploitation actions during the past 10 time 
+steps. The score for each episode is the sum of weighted rewards divided by 
+the total rewards. Scores for each behavior policy and epoch are computed 
+by averaging scores across all games. The results are shown in Figure 7. 
+Quite quickly, exploitation steps of switching policies contain a greater 
+percentage of the return than those of monolithic policies. This trend seems 
+fairly constant after roughly 2M frames, with switching policies having 
+roughly 95% of the return in exploitation steps and monolithic policies 
+having roughly 90% of the return; from another point of view, exploration 
+steps yield 5% of the return for switching policies and 10% of the return for
+monolithic policies. These results agree with Experiment 1, as switching 
+policies will generally reach terminal states more frequently in explore 
+mode and will not receive more rewards. Since most of the rewards in our 
+selected Atari games are positive, switching policies should accrue 
+lower return while in explore mode. 
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -412,9 +478,27 @@ We perform an experiment to determine the proportion of return that is concentra
     Figure 7. (Left) Switching policies concentrate return in exploitation mode. Figure 8 (Right) Switching policies concentrate return in the beginning of episodes.
 </div>
 
-One notable case in which exploitation steps are concentrated is in resetting methods such as Go-Explore <d-cite key="ecoffet2019go"></d-cite> that reset to promising states at the beginning of the episode and explore from there. Promising states are usually defined as those that are involved in accruing the most reward. More generally, resetting methods aim to prevent derailment, whereby an agent is unable to return or is *derailed* from returning to promising states through its exploratory mechanisms, such as the random actions in epsilon-greedy exploration. Since our mode-switching agent begins in exploitation mode which aims to accrue the most return, we provide an illustrative example of how mode-switching policies incorporate aspects of resetting that are meant to prevent derailment.
+One notable case in which exploitation steps are concentrated together is in 
+resetting methods such as Go-Explore <d-cite key="ecoffet2019go"></d-cite> 
+that reset to promising states at the beginning of the episode and explore 
+from there. Promising states are usually defined as states that are 
+frequently traversed in trajectories that accrue high return. More 
+generally, resetting methods aim to prevent *derailment*, whereby an agent 
+is unable to return or is *derailed* from returning to promising states 
+through its exploratory mechanisms. Since our switching agent begins in 
+exploit mode which aims to accrue the most return, we investigate to see if 
+switching policies possess characteristics that are inherent to resetting 
+methods.
 
-In Figure 8, we plot the proportion of return across the proportion of episode that is completed using data from the last training epoch. The results show that mode-switching concentrates its return more towards the beginning of each episode, most likely because its first exploit mode is much longer than that of a monolithic policy. Future work involves determining the extent to which beginning exploitation serves as a flexible alternative to resetting. If it is indeed viable, then mode-switching may be used to mimic resetting in settings that do not allow for manual resets such as model-free RL. 
+In Figure 8, we plot the proportion of episode return over the past 5% of 
+the episode versus the current proportion of episode that is complete. Data 
+is taken from the last training epoch. The results show that switching 
+policies concentrate return more towards the beginning of each episode,
+most likely because its first exploit mode of switching policies is 
+relatively long. Future work involves determining the extent to which the 
+beginning exploitation mode of switching policies serves as a flexible 
+alternative to resetting, which would have applications in situations 
+that do not allow for manual resets such as model-free RL.
 
 ### Post-Exploration Entropy
 
