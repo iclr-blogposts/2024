@@ -68,7 +68,7 @@ RL is inspired by how biological systems learn as animals are to able learn thro
 
 From the figure we can see that the agent observes a state and then takes action. The agent can then decide on its next action based on the next state it observes and the rewards it receives from the critic in the environment. The critic decides on what reward the agent receives at every time-step by evaluating its behaviour.
 
-As Sutton et al. highlighted in <d-cite key="sutton2018intro"></d-cite> Figure 1 can be misleading though. It implies that the agent-environment boundary is similar to the physical boundary between an organism entire body and the outside world. In RL we consider anything that the agent cannot change through its actions as the environment. For example, if a human was an RL agent their skeletal structure or their muscles could be considered part of the environment. So we can then see that when it comes to RL we have two types of environments: The internal environment, such as sensory organs of an animal, and the external environment. Also, the reward the agent receives is not always from the external environment. The rewards can be seen as reward signals like a human's brain releasing dopamine when one achieves an objective.
+As Sutton et al. highlighted in <d-cite key="sutton2018intro"></d-cite> Figure 1 can be misleading though. It implies that the agent-environment boundary is similar to the physical boundary between an organism's entire body and the outside world. In RL we consider anything that the agent cannot change through its actions as the environment. For example, if a human was an RL agent their skeletal structure or their muscles could be considered part of the environment. So we can then see that when it comes to RL we have two types of environments: The internal environment, such as sensory organs of an animal, and the external environment. Also, the reward the agent receives is not always from the external environment. The rewards can be seen as reward signals like a human's brain releasing dopamine when one achieves an objective.
 Thus, the critic can also be in inside the RL agent.
 The figure below shows an extended view of the agent-environment interactions.
 
@@ -113,9 +113,6 @@ $$
 where $$ \hat{f}_t$$ is the output of the predictor network. The formula above also serves as the loss function of the predictor network.
 We normalise $$r_i$$ by dividing it by the running estimate of the standard deviations of
 the intrinsic returns. We do this because the intrinsic rewards can be very different in various environments. Normalising the intrinsic rewards make it easier to pick hyperparameters that work across a wide range of environments. As the agent explores more the predictor network will get better and the intrinsic rewards will decrease. The key idea in RND is that the predictor network is trying to predict the output of a network that is deterministic, the target network. 
-#Another key aspect of RND is to normalise the observations the random network and the predictor network receives by subtracting the running mean and dividing it by the running standard deviation.
-#The next process is to then clip the normalised rewards to be between -5 and 5.
-#The reason for this is that the lack of normalising can result in the output of the random network having low variance and therefore it has little information about what was inputted into the random network.
 The figure below illustrates the process of RND.
 
 {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/RND.png" class="img-fluid" %}
@@ -125,14 +122,14 @@ The figure below illustrates the process of RND.
 
 ### BYOL-Explore
 
-BYOL-Explore builds upon Bootstrap Your Own Latent (BYOL) <d-cite key="grill2020bootstrap"></d-cite>, a self-supervised learning algorithm used in computer vision and representation learning. BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> is similar to RND in that there's a network that tries to predict the output of a target network. In BYOL-Explore we have an online network that consists of: an encoder, a close-loop recurrent neural network (RNN) cell, an open-loop RNN cell and a predictor. While the target network just consists of an encoder. The key difference is that the target's network parameters do not stay fixed like in RND. We update the target network using the exponential moving average (EMA) of the online network's predictor. The update is performed using the formula below:
+BYOL-Explore builds upon Bootstrap Your Own Latent (BYOL) <d-cite key="grill2020bootstrap"></d-cite>, a self-supervised learning algorithm used in computer vision and representation learning. BYOL-Explore <d-cite key="guo2022byolexplore"></d-cite> is similar to RND in that there's a network that tries to predict the output of a target network. In BYOL-Explore we have an online network that consists of an encoder, a close-loop recurrent neural network (RNN) cell, an open-loop RNN cell and a predictor. While the target network just consists of an encoder. The key difference is that the target's network parameters do not stay fixed like in RND. We update the target network's parameters using the exponential moving average (EMA) of the online network's predictor parameters. The update is performed using the formula below:
 
 $$
 \phi \leftarrow \alpha\phi + (1-\alpha)\theta.
 $$
 
-In the above equation, $$\phi$$, is the target network's parameters, $$\theta$$ is the online network's predictor's parameters and $$\alpha$$ is the EMA smoothing factor. In our implementation of BYOL-Explore we do not make use of the RNN cells as we are dealing with simple environments, we call our implementation BYOL-Explore Lite.
-In our implementation the online network is composed of a multilayer perceptron (MLP) encoder and a predictor. The target network, $$h$$, is just composed of an MLP encoder. In the BYOL-Explore Lite process the current state of the environment, $$s_t$$, is inputted into the encoder $$f$$, which outputs a feature representation of the state, $$f(s_t)$$. This feature representation is then passed to both the RL agent and the predictor $$g$$. The RL agent uses $$f(s_t)$$ to decide on its next action and determine the value of that state. The predictor uses $$f(s_t)$$ to predict $$h(s_{t+1})$$, attempting to predict the target network's output for the next state. There are two losses namely the encoder loss and the predictor loss. The predictor loss is given by,
+In the above equation, $$\phi$$, is the target network's parameters, $$\theta$$ is the online network's predictor parameters and $$\alpha$$ is the EMA smoothing factor. In our implementation of BYOL-Explore we do not make use of the RNN cells as we are dealing with simple environments, we call our implementation BYOL-Explore Lite.
+In our implementation the online network is composed of a multilayer perceptron (MLP) encoder and a predictor. The target network, $$h$$, is just composed of an MLP encoder. In the BYOL-Explore Lite process the current state of the environment, $$s_t$$, is inputted into the encoder $$f$$, which outputs a feature representation of the state, $$f(s_t)$$. This feature representation is then passed to both the RL agent and the predictor $$g$$. The RL agent uses $$f(s_t)$$ to decide on its next action and determine the value of that state. The predictor uses $$f(s_t)$$ to predict $$h(s_{t+1})$$, i.e., the predictor is attempting to predict the target network's output for the next state. There are two losses namely the encoder loss and the predictor loss. The predictor loss is given by,
 
 $$
 \mathcal{L}_p=\left\|\frac{g(f(s_{t}))}{\|g(f(s_{t}))\|_2}-\frac{h(s_{t+1})}{\|h(s_{t+1})\|_2}\right\|_2^2.
@@ -140,11 +137,11 @@ $$
 
 Since the RL agent and the predictor both make use of the online network's encoder its loss is given by the sum of the RL loss and the predictor loss. Importantly, the loss $$\mathcal{L}_p$$ serves as the intrinsic reward that the RL agent receives at each step. We normalise the intrinsic rewards by dividing it by the EMA estimate of their standard deviation.
 
-BYOL-Explore Lite also makes use of something known as reward prioritisation. Reward prioritisation involves focusing on parts of the environment where the agent receives high intrinsic rewards while disregarding those with low intrinsic rewards. This enables the agent to concentrate on areas it understands the least. Over time, if the previously ignored areas with low intrinsic rewards remain, they become the priority for the agent. To do this we take the EMA mean relative to the successive batch of normalised intrinsic rewards, $\mu$. Note that $\mu$ is used as a threshold
+BYOL-Explore Lite also makes use of something known as reward prioritisation. Reward prioritisation involves focusing on parts of the environment where the agent receives high intrinsic rewards while disregarding those with low intrinsic rewards. This enables the agent to concentrate on areas it understands the least. Over time the previously ignored areas with low intrinsic rewards become the priority for the agent. To do this we take the EMA mean relative to the successive batch of normalised intrinsic rewards, $\mu$. Note that $\mu$ is used as a threshold
 to separate the high intrinsic rewards and the low intrinsic rewards. Therefore, the intrinsic rewards that agent obtains after reward prioritisation is,
 
 $$
-i_t=\max(ri_t-\mu,0),
+i_t=\max(ri_t-\mu,\,0),
 $$
 
 where $ri_t$ is the normalised intrinsic reward.
@@ -353,7 +350,7 @@ We start with the deep sea environment. The left of Figure 11 shows the sample s
     Figure 11. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
 
-Next we move onto the empty grid-world. Looking at the left Figure 12 we can see that all curiosity algorithms produce more consistent agents than PPO due to their sample 
+Next we move onto the empty grid-world. Looking at the left of Figure 12 we can see that all curiosity algorithms produce more consistent agents than PPO due to their sample 
 standard deviations being lower. CCIM and CCIM-slimmed both actually produce more consistent agents than RND and PPO in this environment. The right of Figure 12 also indicate that CCIM performed much better in the empty grid-world and was closer to the baselines. However in this environment we did once again notice the raw intrinsic reward 
 increased then plateaued and the loss of random forward network increased during training. It should also be noted the confidence intervals of all the RL algorithms overlap in the empty grid-world environment. 
 
@@ -424,7 +421,7 @@ On the right side of Figure 15, we see that FAST, similar to CCIM, performs poor
     Figure 15. The sample standard deviation during training (left) and the average episode return (right) in deep sea environment.
 </div>
 
-The right side of Figure 16 shows FAST's performance in the empty grid-world is better than its performance in the deep sea environment; it is now comparable to our baselines despite its intrinsic rewards also increasing over time. Once again, similar to CCIM's results, we observe overlapping confidence intervals in the empty grid-world. Figure 16 not only has its performace improved in the empty grid-world but it now produces more consistent agents than RND and PPO as its sample standard deviation is lower.
+The right side of Figure 16 shows FAST's performance in the empty grid-world is better than its performance in the deep sea environment; it is now comparable to our baselines despite its intrinsic rewards also increasing over time. Once again, similar to CCIM's results, we observe overlapping confidence intervals in the empty grid-world. Figure 16 shows that not only has its performance improved in the empty grid-world but it now produces more consistent agents than RND and PPO as its sample standard deviation is lower.
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-exploring-meta-learned-curiosity-algorithms/Empty-misc_FAST_mean_seeds_std.png" class="img-fluid"  %}
@@ -461,7 +458,7 @@ CCIM-slimmed, CCIM, and FAST both covered more of the map than our baselines whi
 From the sample deviation plots, we can see that FAST and CCIM do not produce consistent agents than PPO and the curiosity-driven baselines in the deep sea environment. While CCIM-slimmed produced more consistent agents than PPO but not the baselines. However, in the empty grid-world environment FAST, CCIM, and CCIM-slimmed is able to produce more consistent agents than PPO and RND.
 In the mean episode return plots, CCIM, CCIM-slimmed, and FAST perform better than PPO and RND in the empty grid-world environment which makes sense as the empty grid-world environment was used to find these curiosity algorithms. However, in the deep sea environment we see that the meta-learned curiosity algorithms perform worse than our curiosity-driven baselines.
 
-From the plots we can see that BYOL-Explore Lite seems to be the best performing algorithm where even in the empty grid-world environment it performs better than the meta-learned curiosity algorithms.
+From the plots we can see that BYOL-Explore Lite seems to be the best performing algorithm. Even in the empty grid-world environment it performs better than the meta-learned curiosity algorithms.
 We believe this is because of the reward prioritisation implemented in BYOL-Explore. This could explain its performance is better than the meta-learned curiosity algorithms and why it produces the most consistent agents.
 
 One major concern we still have is how the intrinsic rewards for FAST and CCIM didn't decrease during training for both environments used in our experiments. However, we noted that the 
@@ -475,7 +472,7 @@ $$
 Now if $$t=T$$ then the $$\hat{r}_t \approx r_t $$ if $$ 0 \leq ri_t \ll 1$$. However for us the intrinsic rewards were not much less than zero during training. We believe that it is important for curiosity algorithms that the intrinsic reward decreases as the agent becomes more familiar with its environment. We believe that this is why CCIM-slimmed performed better than CCIM and FAST in the deep sea environment. Another concern we have is how the CCIM random and forward network's loss increased during training. It is possible that there's a bug somewhere in our code which we have not found yet.
 
 In the future we think it will be interesting to repeat this experiment using the deep sea environment to find the curiosity algorithms that output the intrinsic reward. 
-Additionally, exploring the use of a variant of FAST or CCIM to find a reward combiner is also of interest to us. We wonder why a variant of FAST or CCIM wasn't employed for this purpose, as a variant of RND was used to find the reward combiner. As stated earlier, FAST, CCIM and CCIM-slimmed do no not make use reward prioritisation like BYOL-Explore Lite does. Therefore, repeating the experiments with the meta-learned curiosity algorithms where some form of reward prioritisation is implemented is another interesting path we hope to explore. We would also like to increase the number of seeds used to reduce the confidence intervals. Since we are training end-to-end in JAX in simple environments, increasing the number of seeds should not be much of an issue.
+Additionally, exploring the use of a variant of FAST or CCIM to find a reward combiner is also of interest to us. We wonder why a variant of FAST or CCIM wasn't employed for this purpose, as a variant of RND was used to find the reward combiner. As stated earlier, FAST, CCIM and CCIM-slimmed do not make use reward prioritisation like BYOL-Explore Lite does. Therefore, repeating the experiments with the meta-learned curiosity algorithms where some form of reward prioritisation is implemented is another interesting path we hope to explore. We would also like to increase the number of seeds used to reduce the confidence intervals. Since we are training end-to-end in JAX in simple environments, increasing the number of seeds should not be much of an issue.
 
 ## Conclusion
 
