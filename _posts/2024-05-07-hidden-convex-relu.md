@@ -657,4 +657,3 @@ Despite advancements in understanding the optimization landscape of neural netwo
 ## Acknowledgements
 
 <em>This work is partly funded by the ANR JCJC project ANR-21-CE23-0022-01.</em>
-
