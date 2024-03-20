@@ -10,13 +10,13 @@ htmlwidgets: true
 authors:
   - name: Yanbo Wang
     affiliations:
-      name: School of AI, UCAS & CRIPAC, CASIA
+      name: School of AI, UCAS $\n$ CRIPAC & MAIS, CASIA
   - name: Liang Jian
     affiliations:
-      name: School of AI, UCAS & CRIPAC, CASIA
+      name: School of AI, UCAS $\n$ CRIPAC & MAIS, CASIA
   - name: Ran He
     affiliations:
-      name: School of AI, UCAS & CRIPAC, CASIA
+      name: School of AI, UCAS $\n$ CRIPAC & MAIS, CASIA
       
 
 
