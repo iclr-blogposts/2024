@@ -92,7 +92,7 @@ _styles: >
 ## Introduction
 
 Machine learning models, while incredibly powerful, can sometimes act unpredictably. One of the most intriguing
-behaviors is when the test loss suddenly diverges at the interpolation threshold, a phenomenon is
+behaviors is when the test loss suddenly diverges at the interpolation threshold, a phenomenon
 distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite><d-cite key="krogh1991simple"></d-cite><d-cite key="geman1992neural"></d-cite><d-cite key="krogh1992generalization"></d-cite><d-cite key="opper1995statistical"></d-cite><d-cite key="duin2000classifiers"></d-cite><d-cite key="spigler2018jamming"></d-cite><d-cite key="belkin2019reconciling"></d-cite><d-cite key="bartlett2020benign"></d-cite><d-cite key="belkin2020twomodels"></d-cite><d-cite key="nakkiran2021deep"></d-cite><d-cite key="poggio2019double"></d-cite><d-cite key="advani2020high"></d-cite><d-cite key="liang2020just"></d-cite><d-cite key="adlam2020understanding"></d-cite><d-cite key="rocks2022memorizing"></d-cite><d-cite key="rocks2021geometry"></d-cite><d-cite key="rocks2022bias"></d-cite><d-cite key="mei2022generalization"></d-cite><d-cite key="hastie2022surprises"></d-cite><d-cite key="bach2023highdimensional"></d-cite><d-cite key="curth2024u"></d-cite>.
 
 
@@ -123,7 +123,7 @@ distinctly observed in **double descent** <d-cite key="vallet1989hebb"></d-cite>
 
 While significant theoretical work has been done to comprehend why double descent occurs, it can be difficult
 for a newcomer to gain a general understanding of why the test loss behaves in this manner, and under what conditions
-one should expect similar misbehavior. In this blog post, where we say double descent, we mean the divergence at the interpolation
+one should expect similar misbehavior. In this blog post, when we say double descent, we mean the divergence at the interpolation
 threshold, and not whether overparameterized models generalize (or fail to generalize).
 
 In this work, we intuitively and quantitatively explain why the test loss diverges at the interpolation threshold,
