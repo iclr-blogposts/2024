@@ -1,7 +1,7 @@
 ---
 layout: distill
 title: 'Towards Robust Foundation Models: Adversarial Contrastive Learning'
-description: Foundation models pre-trained on large-scale unlabelled datasets using self-supervision can be generalizable to a wide range of downstream tasks. Existing work has shown that there exist adversarial attacks that can effectively fool any downstream model obtained by fine-tuning foundation models. The existence of such adversarial attacks necessitates the development of robust foundation models which can yield both standard generalization and adversarial robustness in safety-critical downstream tasks. Currently, adversarial contrastive learning (ACL) is one of the most effective methods for building robust foundation models. ACL incorporates contrastive learning with adversarial data to effectively learn robust representations without requiring costly annotations. In this blog, based on two NeurIPS 2023 publications, we will introduce two techniques for enhancing ACL's effectiveness and efficiency, respectively. (1) This blog introduces Adversarial Invariant Regularization (AIR) which is the state-of-the-art ACL algorithm. A causal theoretical framework is built to interpret ACL and the AIR algorithm is derived from the causal framework to regulate and improve ACL. (2) This blog introduces a Robustness-aware Coreset Selection (RCS) method to speed up ACL. RCS does not require label information and searches for an informative training subset that helps maintain the adversarial robustness of the representation. RCS for the first time applies the ACL on the large-scale ImageNet-1K dataset. 
+description: Foundation models pre-trained on large-scale unlabelled datasets using self-supervision can be generalizable to a wide range of downstream tasks. Existing work has shown that adversarial attacks can effectively fool any downstream models fine-tuned from a pre-trained foundation model. The existence of such adversarial attacks necessitates the development of robust foundation models which can yield both standard generalization and adversarial robustness to safety-critical downstream tasks. Currently, adversarial contrastive learning (ACL) is one of the most effective methods for outputting a robust foundation model. ACL incorporates contrastive learning with adversarial data to effectively output a robust representation without requiring costly annotations. In this blog, we introduced two NeurIPS 2023 publications that can enhance ACL's efficacy and efficiency, respectively. (1) This blog introduces Adversarial Invariant Regularization (AIR) which is a state-of-the-art ACL algorithm. A causal theoretical framework is built to interpret ACL, and then the AIR algorithm is derived from the causal framework to regulate and improve the ACL. (2) This blog also introduces a Robustness-aware Coreset Selection (RCS) method to speed up ACL. RCS does not require label information and searches for an informative training subset that can maintain the adversarial robustness. For the first time, RCS enables the application of ACL on the large-scale ImageNet-1K dataset. 
 # Your blog post's abstract. 
   # Please add your abstract or summary here and not in the main body of your text. 
   # Do not include math/latex or hyperlinks.
@@ -455,7 +455,7 @@ We provide an illustration of AIR for ACL. The AIR aims to maximize the agreemen
   Intuitively, AIR aims to maximize the agreements among different natural views, different adversarial views, and original data.  
 </div>
 
-**Learning objective of AIR.**
+**Learning objective of AIR enhanced ACL.**
 
 The learning objective of AIR is formulated as follows:
 
@@ -670,7 +670,7 @@ To speed up ACL, RCS takes an intuitive idea which is to find an informative tra
  RCS generates an informative coreset to make ACL efficiently obtain an effective robust foundation model.<d-footnote>Image from https://medium.com/analytics-vidhya/sampling-statistical-approach-in-machine-learning-4903c40ebf86.</d-footnote>
 </div>
 
-**Representational Distance (RD) as a measurement of $$f$$'s adversarial robustness.** 
+**Representational Distance (RD) as a measurement of $$f$$'s adversarial robustness without labels.** 
 
 RD of a data point $$\ell_\mathrm{RD}(x;\theta)$$ is quantified by the representational distance between the natural data and its adversarial counterpart, i.e., 
 
@@ -710,27 +710,10 @@ The set function $$G_\theta(S)$$ is proved as submodular<d-footnote>In reality, 
 - Monotonicity: As more data is added to the set, the representation becomes better.<br> $$G(x\mid X)=G(S \cup \{x\}) - G(S) \geq 0$$ for any $$ S \subseteq X$$ and $$x \in X \setminus S$$.
 - Diminishing returns: As the set has more data, the marginal gain of extra data for learning representations gradually diminishes. <br> $$\mathop{\forall}\limits_{A,B \mid A \subseteq B} G_\theta(x \mid A) \geq G_\theta(x \mid B)$$.
 
-Therefore, RCS greedily searches for the data that has the largest marginal gain and then adds them into the coreset, where the marginal gain of data $$x$$ is calculated as follows:
+Therefore, RCS greedily searches for the data $$x$$ that has the largest marginal gain and then adds them into the coreset.  
 
-$$\begin{aligned}
-G_\theta(x \mid S) &= G_\theta(S \cup \{x\}) - G_\theta(S) \\
-&= -\mathcal{L}_\mathrm{RD} \big(U; \theta(S) - \eta \nabla_\theta \mathcal{L}_{\mathrm{ACL}}(\{x\}; \theta) \big) + \mathcal{L}_\mathrm{RD}(U;\theta(S))\\
-&\approx -\big(\mathcal{L}_\mathrm{RD}(U; \theta(S)) - \eta \nabla_\theta\mathcal{L}_\mathrm{RD}(U; \theta(S))^\top \nabla_\theta\mathcal{L}_{\mathrm{ACL}}(\{x\}; \theta) + \xi \big) + \mathcal{L}_\mathrm{RD}(U; \theta(S))\\
-&\approx \eta \nabla_\theta\mathcal{L}_\mathcal{RD}(U; \theta(S))^\top \nabla_\theta\mathcal{L}_\mathrm{ACL}(\{x\}; \theta)
-\end{aligned}
-$$
 
-The following is the explanation for the above derivation: 
-- The 1st line is obtained by the definition of the marginal gain;
-- The 2nd line is obtained by $$G_\theta(S)= - \mathcal{L}_\mathrm{RD}(U; \theta(S))$$;
-- The 3rd line is obtained by applying Taylor expansion to the term $$\mathcal{L}_\mathrm{RD} \big(U; \theta(S) - \eta \nabla_\theta \mathcal{L}_{\mathrm{ACL}}(\{x\}; \theta) \big)$$ where $$\xi \rightarrow 0$$ is the remainder;
-- The 4th line is obtained by omitting the remainder.
-
-Intuitively, RCS greedily selects and adds the data $$x$$ whose training loss gradient (i.e., $$\nabla_\theta\mathcal{L}_\mathrm{ACL}(\{x\}, \theta)$$) and validation loss gradient (i.e, $$\nabla_\theta\mathcal{L}_\mathcal{RD}(U; \theta(S))$$) have the most similarity into the coreset. In this way, training on the data selected by RCS is most beneficial in optimizing the RD loss, which is thus most helpful to improve $$f$$'s adversarial robustness.
-
-**Algorithm of efficient ACL via RCS.**
-
-We demonstrate the pseudo-code of efficient ACL via RCS as follows:
+**Pseudo-code of efficient ACL via RCS.**
 
 - Step 1 (Warm-up): Warm up training on the entire training set to find a better starting point $$f_\theta$$.
 - **Step 2.1 (RCS)**: $$S \gets\emptyset$$. $$\theta' \gets \theta$$. Compute gradients $$ Q \gets \{ q_k = \nabla_\theta \mathcal{L}_\mathrm{ACL}(x_k; \theta) \mid \forall x_k \in X \}$$ on unlabeled training dataset $$X$$.
@@ -739,7 +722,7 @@ We demonstrate the pseudo-code of efficient ACL via RCS as follows:
 - **Step 2.4 (RCS)**: $$S \gets S \cup \{x_k\}$$, $$X \gets X \setminus \{ x_k \}$$, $$\theta' \gets \theta' - \eta' q_k$$.
 - **Step 2.5 (RCS)**: Repeat Steps 2.2-2.4 until $$\mid S\mid/\mid X\mid = k$$.
 - Step 3 (ACL training): Update parameters $$\theta \gets \theta - \eta \nabla_\theta \mathcal{L}_\mathrm{ACL}(S; \theta)$$.
-- Step 4: Every $$I$$ epochs, go to Step 2.1 to generate a new coreset; otherwise go to Step 3 to update model parameters. The algorithm stops when reaching the final training epoch.
+- Step 4: Every a few epochs, go to Step 2.1 to generate a new coreset; otherwise go to Step 3 to update model parameters. The algorithm stops when reaching the final training epoch.
 
 
 <div class="row mt-3">
@@ -750,6 +733,8 @@ We demonstrate the pseudo-code of efficient ACL via RCS as follows:
 <div class="caption">
     A pipeline of efficient ACL via RCS. After the warm-up periods, the model is trained on the coreset. Thus, RCS makes the training procedure much more efficient by decreasing the number of training data. 
 </div>
+
+Intuitively, RCS greedily selects and adds the data $$x$$ whose training loss gradient (i.e., $$\nabla_\theta\mathcal{L}_\mathrm{ACL}(\{x\}, \theta)$$) and validation loss gradient (i.e, $$\nabla_\theta\mathcal{L}_\mathcal{RD}(U; \theta(S))$$) have the most similarity into the coreset. In this way, training on the data selected by RCS is most beneficial in optimizing the RD loss, which is thus most helpful to improve $$f$$'s adversarial robustness.
 
 The official code of RCS is available at [https://github.com/GodXuxilie/Efficient_ACL_via_RCS](https://github.com/GodXuxilie/Efficient_ACL_via_RCS).
 
