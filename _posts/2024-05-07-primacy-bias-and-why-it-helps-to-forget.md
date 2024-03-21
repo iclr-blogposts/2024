@@ -419,4 +419,7 @@ Even as the theory continues to develop, there is little harm in attempting peri
 
 Finally, primacy bias might not always be a bad thing. If you decide to take a new shortcut to work by walking down an alley and the first thing you notice is how dark and unsafe it seems then maybe it’s a good idea to turn back. As always, it is an important decision for the modeller to decide if primacy bias should be treated in their problem.
 
+## Acknowledgements
+
+This blogpost is derived from our work that began in Dr. Zsolt Kira's excellent Deep Learning course at Georgia Tech.
 
