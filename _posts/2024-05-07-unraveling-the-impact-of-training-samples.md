@@ -304,7 +304,7 @@ The ModelDiff shows that the data attribution methods can be key tools for under
 Except for comparing learning algorithms, we can also leverage the importance score to find training samples which are most relevant to the model prediction. By empirically observing the training samples with different importance magnitude, Harshay et al. <d-cite key="shah2022modeldiff"></d-cite> find that the training samples with large importance magnitude consistently look similar to the test sample which also follows the intuition: _training samples most similar to the test sample are most relevant to the prediction_ (see the first line of the figure).
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/model_diff_3.png" class="img-fluid" %}
-_Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms" <d-cite key="shah2022modeldiff"></d-cite>_
+\_Source: Figure 3 in the paper "MODELDIFF: A Framework for Comparing Learning Algorithms" <d-cite key="shah2022modeldiff"></d-cite>
 <br>
 
 {% include figure.html path="assets/img/2024-05-07-unraveling-the-impact-of-training-samples/cat_data_leakage.png" class="img-fluid" %}
