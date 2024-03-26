@@ -8,21 +8,21 @@ htmlwidgets: true
 
 # Anonymize when submitting
 authors:
-  - name: Anonymous
+  - name: Daiwei Chen
+  - url: "https://chendaiwei-99.github.io"
+  - affiliations: 
+    - name: UW-Madison
+  
+  - name: Jane Zhang
+  - url: "https://openreview.net/profile?id=~Jane_Zhang2"
+  - affiliations: 
+    - name: UW-Madison
 
-# authors:
-#   - name: Albert Einstein III
-#     url: "https://en.wikipedia.org/wiki/Albert_Einstein"
-#     affiliations:
-#       name: IAS, Princeton
-#   - name: Boris Podolsky
-#     url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
-#     affiliations:
-#       name: IAS, Princeton
-#   - name: Nathan Rosen
-#     url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
-#     affiliations:
-#       name: IAS, Princeton
+  - name: Ramya Korlakai Vinayak
+  - url: "https://ramyakv.github.io"
+  - affiliations: 
+    - name: UW-Madison
+
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-unraveling-the-impact-of-training-samples.bib  
