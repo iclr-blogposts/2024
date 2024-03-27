@@ -11,10 +11,10 @@ htmlwidgets: true
 #   - name: Anonymous
 
 authors:
-  - name: Anonymous
-    url: Anonymous
+  - name: MaryBeth Defrance
+    url: https://orcid.org/my-orcid?orcid=0000-0002-6570-8857
     affiliations:
-      name: Anonymous, Anonymous
+      name: University of Ghent
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-fairness-ai-two-phil-or-just-one.bib  
@@ -77,7 +77,7 @@ The question of what is fair does not have a single answer. Even when stepping a
 Two main philosophies can be found in research. The first one, often called explainable AI, aims to either create explainable models or to create explanations for the results obtained from a model. This can also be described as aiming for procedural fairness. The second philosophy is called group fairness. Group fairness focusses on outcome fairness. This means that the predictions from the AI system should have similar properties across groups that only differ in a certain personal attribute. 
 
 ### Explainable AI
-The most famous example of explainable AI is __fairness through unawareness__. Fairness through unawareness means that no personal attributes are passed into the system, unless these are relevant for the prediction. The system does therefore not have access to the personal attributes, which means it cannot directly discriminate. Fairness through unawareness is often used as the basic model for fairness. However, the systems from both the COMPAS and Amazon example used fairness through unawareness and they still exhibited disparate treatment. The personal attributes that were removed from the data still had an influence on the data set itself. For instance, a ZIP code can function as a proxy for race or someone's gender influenced their writing style. 
+The most famous example of explainable AI is __fairness through unawareness__. Fairness through unawareness means that no personal attributes are passed into the system, unless these are relevant for the prediction. The system does therefore not have access to the personal attributes, which means it cannot directly discriminate. Fairness through unawareness is often used as the basic model for fairness. However, the systems from both the COMPAS and Amazon example used fairness through unawareness and they still exhibited disparate treatment. The personal attributes that were removed from the data still had an influence on the dataset itself. For instance, a ZIP code can function as a proxy for race or someone's gender influenced their writing style. 
 
 <div class="row mt-3">
 {% include figure.html path="assets/img/2024-05-07-fairness-ai-two-phil-or-just-one/Feature_selection.png" class="img-fluid" %}
@@ -118,22 +118,22 @@ __Demographic parity__<d-cite key="Dem_parity"></d-cite> requires that the selec
     Figure 5: A representation of demographic parity. Two groups are distinguished one male, one female. The circled individuals are the ones to receive a positive prediction. 
 </div>
 
-A second fairness measure used in group fairness in __equalized odds__<d-cite key="Equal_opportunity"></d-cite>. This fairness measure requires that both the true positive and true negative rates are equal across groups. This means that given the ground truth, there is an equal chance of given a positive prediction irrespective of a person's group. In other words equalized odds requires the prediction is independent of the personal attribute given the ground truth. Unlike demographic parity, equalized odds is dependent on the ground truth. 
+A second fairness measure used in group fairness in __equalized odds__<d-cite key="Equal_opportunity"></d-cite>. This fairness measure requires that both the true positive and true negative rates are equal across groups. This means that given the ground truth, there is an equal chance of giving a positive prediction irrespective of a person's group. In other words equalized odds requires the prediction is independent of the personal attribute given the ground truth. Unlike demographic parity, equalized odds is dependent on the ground truth. 
 
 <div class="row mt-3">
 {% include figure.html path="assets/img/2024-05-07-fairness-ai-two-phil-or-just-one/Equalized_odds.png" class="img-fluid" %}
 </div>
 <div class="caption">
-    Figure 5: A representation of predictions which satisfy equalized odds. Two groups are distinguished one male, one female. The circled individuals are the ones to receive a positive prediction. The colors of the individuals indicates the ground truth of the samples. The male groups has a base rate of 0.8 and the female group a base rate of 0.6. 
+    Figure 6: A representation of predictions which satisfy equalized odds. Two groups are distinguished one male, one female. The circled individuals are the ones to receive a positive prediction. The colors of the individuals indicates the ground truth of the samples. The male groups has a base rate of 0.8 and the female group a base rate of 0.6. 
 </div>
 
-The final common fairness measure in group fairness is __conditional use accuracy equality__<d-cite key="Fairness_definitions_explained"></d-cite>. In order to satisfy conditional use accuracy equality, the precision and false omission rate must be equal between groups. Similar to equalized odds, conditional use accuracy equality requires two statistical properties to be equal between groups, namely precision and false omission rate. Put differently, this requires that given the prediction there is an equal chance that this prediction if correct regardless of the group a person belongs to. Conditional use accuracy equality is therefore defined similarly yo equalized odds; the roles of the prediction and ground truth are simply reversed. This equality also holds for the independent condition, conditional use accuracy equality requires that the ground truth is independent of the personal attribute if the prediction is known. 
+The final common fairness measure in group fairness is __conditional use accuracy equality__<d-cite key="Fairness_definitions_explained"></d-cite>. In order to satisfy conditional use accuracy equality, the precision and false omission rate must be equal between groups. Similar to equalized odds, conditional use accuracy equality requires two statistical properties to be equal between groups, namely precision and false omission rate. Put differently, this requires that given the prediction there is an equal chance that this prediction is correct regardless of the group a person belongs to. Conditional use accuracy equality is therefore defined similarly to equalized odds; the roles of the prediction and ground truth are simply reversed. This equality also holds for the independent condition, conditional use accuracy equality requires that the ground truth is independent of the personal attribute if the prediction is known. 
 
 <div class="row mt-3">
 {% include figure.html path="assets/img/2024-05-07-fairness-ai-two-phil-or-just-one/Conditional_use_accuracy_equality.png" class="img-fluid" %}
 </div>
 <div class="caption">
-    Figure 5: A representation of predictions which satisfy conditional use accuracy equality. Two groups are distinguished one male, one female. The circled individuals are the ones to receive a positive prediction. The colors of the individuals indicates the ground truth of the samples. The male groups has a base rate of 0.8 and the female group a base rate of 0.6. 
+    Figure 7: A representation of predictions which satisfy conditional use accuracy equality. Two groups are distinguished one male, one female. The circled individuals are the ones to receive a positive prediction. The colors of the individuals indicates the ground truth of the samples. The male groups has a base rate of 0.8 and the female group a base rate of 0.6. 
 </div>
 
 ## Unifying these philosophies
@@ -159,10 +159,10 @@ In the following section $$ Y $$ symbolises the perceived label, $$ D $$ the pre
 {% include figure.html path="assets/img/2024-05-07-fairness-ai-two-phil-or-just-one/Measurement_error.png" class="img-fluid" %}
 </div>
 <div class="caption">
-    Figure 6: A directed acyclic graph showing the relation between the prediction and the data, in the situation of measurement error.
+    Figure 8: A directed acyclic graph showing the relation between the prediction and the data, in the situation of measurement error.
 </div>
 
-Measurement error is a first type of dependence that can by resolved in order to be counterfactually fair. Measurement errors means that there is some bias on the perceived ground truth in the dataset. For example in system that determines whether pulling a car over is justified or not (if a crime was committed not). More crimes can be uncovered if a full car search happens, however a car search is not always undertaken resulting in a bias of more positive samples for a population where a car search is more likely to happen<d-cite key="Simoiu_Corbett-Davies_Goel_2017"></d-cite>. In this situation the label is whether or not a crime was detected, not wether a crime was committed. The imbalance car searches for a group with a certain personal attribute will then have an effect on the label. This influence of the personal attributes on the label, but not the ground truth is shown in Figure 6. 
+Measurement error is a first type of dependence that can be resolved in order to be counterfactually fair. Measurement errors means that there is some bias on the perceived ground truth in the dataset. For example in system that determines whether pulling a car over is justified or not (whether a crime was committed or not). More crimes can be uncovered if a full car search happens, however a car search is not always undertaken resulting in a bias of more positive samples for a population where a car search is more likely to happen<d-cite key="Simoiu_Corbett-Davies_Goel_2017"></d-cite>. In this situation the label is whether or not a crime was detected, not wether a crime was committed. The imbalance car searches for a group with a certain personal attribute will then have an effect on the label. This influence of the personal attributes on the label, but not the ground truth is shown in Figure 6. 
 
 A second example of measurement error can be found in healthcare prediction<d-cite key="Guerdan2023"></d-cite>. Predicting someone's health is abstract as this is not quantifiable. A proxy for health is the costs related to the healthcare an individual receives. However, costs are not universal for each group in society. Certain groups can thus have lower costs while managing more health problem due to the care that they receive or perhaps not receive. This faulty proxy is another example of measurement errors.
 
@@ -174,10 +174,10 @@ This system is thus made counterfactually fair if the dependence between the per
 {% include figure.html path="assets/img/2024-05-07-fairness-ai-two-phil-or-just-one/Selection_on_label.png" class="img-fluid" %}
 </div>
 <div class="caption">
-    Figure 7: A directed acyclic graph showing the relation between the prediction and the data, in the situation of selection on label.
+    Figure 9: A directed acyclic graph showing the relation between the prediction and the data, in the situation of selection on label.
 </div>
 
-Selection on label is a type of bias that arises by that not only someone's label affects their adoption in the dataset but also their personal attribute. A subtype of this type of bias is self-selection bias. This means that certain groups of the population are more represented in certain dataset due to that certain groups are more likely to interact with the data collection system. An example of this is in voluntary studies where certain groups are more likely to participate than others leading to a skewed data set in favor of the participating group. A study around self-selection bias in nutrition trials also found that a person's ground truth influences their participation in the trial (healthy eaters were more likely to apply for the trail)<d-cite key="Young_Gauci_Scholey_White_Pipingas_2020"></d-cite>.
+Selection on label is a type of bias that arises by that not only someone's label affects their adoption in the dataset but also their personal attribute. A subtype of this type of bias is self-selection bias. This means that certain groups of the population are more represented in certain dataset due to that certain groups are more likely to interact with the data collection system. An example of this is in voluntary studies where certain groups are more likely to participate than others leading to a skewed dataset in favor of the participating group. A study around self-selection bias in nutrition trials also found that a person's ground truth influences their participation in the trial (healthy eaters were more likely to apply for this trial)<d-cite key="Young_Gauci_Scholey_White_Pipingas_2020"></d-cite>.
 
 The directed acyclic graph in Figure 7 shows how to decouple the label itself with the personal attribute by introducing the variable of the selection bias in S, which is an observed variable.  $$ A $$ and $$ X^{\bot}_A $$ are only connected through a path that includes $$ Y $$ which means that given $$ Y $$, $$ A $$ and $$ X^{\bot}_A $$ are independent, which is the condition of equalized odds. 
 
@@ -187,7 +187,7 @@ The directed acyclic graph in Figure 7 shows how to decouple the label itself wi
 {% include figure.html path="assets/img/2024-05-07-fairness-ai-two-phil-or-just-one/Selection_on_predictor.png" class="img-fluid" %}
 </div>
 <div class="caption">
-    Figure 8: A directed acyclic graph showing the relation between the prediction and the data, in the situation of selection on predictor.
+    Figure 10: A directed acyclic graph showing the relation between the prediction and the data, in the situation of selection on predictor.
 </div>
 
 Selection on predictor is similar to selection on label, but instead of the label influencing the prediction is it the features themselves that influence the prediction together with the personal attributes. An example of this can be seen in the student population of engineering degrees. A relevant feature such as what a person studied in high school influence their choice to do engineering. However, there is a large discrepancy in the number of male versus female student who pursue engineering even though that difference does not exist in that degree when graduating high school. This shows that both relevant features, but also personal attributes influence their presence in a dataset about engineering students. 
@@ -195,7 +195,9 @@ Selection on predictor is similar to selection on label, but instead of the labe
 The acyclic graph in Figure 8 for selection on predictor is similar to that for selection on label. The features and label are simply reversed in this situation. This is also in accordance with the similarity seen between equalized odds and conditional use accuracy equality. Through $$ X^{\bot}_A $$, are $$ A $$ and $$ Y $$ connected, which means that if the prediction is known, which is captured in $$ X^{\bot}_A $$, then $$ A $$ and $$ Y $$ are independent, which is necessary to satisfy conditional use accuracy. 
 
 ### Confirmation with experiments
-This relation between counterfactual fairness and group fairness is supported by experiments<d-cite key="Causal_context"></d-cite>. These experiments were done on a synthetic version of the Adult dataset<d-cite key="Kohavi"></d-cite>. Table 2 shows that satisfying a certain counterfactual fairness will satisfy the corresponding fairness measure, confirming the theoretical results above. 
+This relation between counterfactual fairness and group fairness is supported by experiments<d-cite key="Causal_context"></d-cite>. These experiments were done on a synthetic version of the Adult dataset<d-cite key="Kohavi"></d-cite>. A simulated protected class A was added where the incidence is balanced (50/50 odds of belonging to the protected class or not). If someone belonged to the protected class, then there is a causal effect of A on X: $$P(race=other) = 0.8 $$. This thus means that A will loosely relate to someone's race being noted as "other". This dataset serves as the target distribution for the biased datasets. 
+
+A counterfactually fair model is achieved by by taking the average prediction of an instance if it were part of the protected class and if it was not. Three biased datasets are created based on the directed acyclic graphs in Figures 8, 9, and 10. Table 2 shows that satisfying counterfactual fairness for a certain type of dataset will satisfy a corresponding fairness measure, confirming the theoretical results above. 
 
 <div class="caption">
     Table 2: The results of applying counterfactual fairness to a model with its performance on different fairness measures.
