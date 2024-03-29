@@ -41,8 +41,6 @@ bibliography: 2024-05-07-deqalg-reasoning.bib
 toc:
   - name: What is Algorithmic Reasoning?
   - name: Why care about fixed points?
-    subsections:
-    - name: Interactive Figures
   - name: How can we do fixed points with DNNs?
   - name: How well does it work?
   - name: What's the problem?
