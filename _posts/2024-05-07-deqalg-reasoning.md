@@ -8,22 +8,28 @@ future: true
 htmlwidgets: true
 
 # Anonymize when submitting
-# authors:
-#   - name: Anonymous
 
 authors:
-  - name: Albert Einstein
-    url: "https://en.wikipedia.org/wiki/Albert_Einstein"
+  - name: Sophie Xhonneux
+    url: "https://scholar.google.com/citations?user=9TQM9k4AAAAJ&hl=en"
     affiliations:
       name: IAS, Princeton
-  - name: Boris Podolsky
-    url: "https://en.wikipedia.org/wiki/Boris_Podolsky"
+  - name: Yu He
+    url: "https://dransyhe.github.io/"
     affiliations:
       name: IAS, Princeton
-  - name: Nathan Rosen
-    url: "https://en.wikipedia.org/wiki/Nathan_Rosen"
+  - name: Andreea Deac
+    url: "https://andreeadeac22.github.io/"
     affiliations:
-      name: IAS, Princeton
+      name: Mila, Universite de Montreal
+  - name: Jian Tang
+    url: "https://jian-tang.com/"
+    affiliations:
+      name: Mila, HEC Montreal
+  - name: Gauthier Gidel
+    url: "https://gauthiergidel.github.io/"
+    affiliations:
+      name: Mila, Universite de Montreal
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-deqalg-reasoning.bib  
@@ -75,7 +81,7 @@ First, let's remember that for $$x_0$$ to be a fixed-point of a function $$f$$ i
 
 An example algorithm would be the Bellman-Ford algorithm to compute the shortest-distance to a given node in a graph. Here the update rule looks like $$x_i^{(t+1)} =\min(x_i^{(t)}, \min \{x_j^{(t)} + e_{ij}\}_{j\in N(i)})$$, where $$x_i^{(t)}$$ is the shortest distance estimate to the source node at time $$t$$, $$e_{ij}$$ is the distance between nodes $$i$$ and $$j$$, and $$\{j\}_{j\in N(i)}$$ are the neighbours of node $$i$$. The algorithm says to apply this rule until there is no more change---a fixed point.
 
-Interestingly, denotational semantics<d-cite key="scott1970"></d-cite>---a theoretical field of computer science---has shown you can represent Turing complete programming languages as mathematical functions. This is mostly quite trivial with the exception of the while loop (which is also the key ingredient to make it Turing complete). Here the trick is a special mathematical operator that returns the minimum fixed point of a function! (If there is no fixed point to a function then the corresponding while loop doesn't terminate.) And thus we can see that fixed-points are reached by all programs that terminate, and yet they aren't used in neural networks that try to learn how to do reasoning. A missed inductive bias perhaps?
+Interestingly, denotational semantics<d-cite key="scott1970"></d-cite>---a theoretical field of computer science---has shown you can represent Turing complete programming languages as mathematical functions. This is mostly quite trivial with the exception of the while loop (which is also the key ingredient to make it Turing complete). Here the trick is a special mathematical operator that returns the minimum fixed point of a function! (If there is no fixed point to a function then the corresponding while loop doesn't terminate.) And thus we can see that fixed-points are reached by all programs that terminate, and yet they aren't used in neural networks that try to learn how to do reasoning. A missed inductive bias perhaps? 
 
 ## The details
 ### Task specification
@@ -95,7 +101,6 @@ The CLRS paper<d-cite key="velickovic2022clrs"></d-cite> provides us with a benc
 
 The high-level architecture is that of an encoder-processor-decoder. The motivation is that neural networks perform well in high-dimensional spaces but that classical algorithms tend to operate on very low-dimensional variables, e.g. in BellmanFord the shortest distance would be a single scalar. Thus the encoder projects the state into a high-dimensional space $$z_t$$ where the main computation is then done by the processor network---typically a Graph Neural Network. The output of the processor $$z_{t+1}$$ is then decoded back into the low-dimensional space by the decoder. The encoder and decoders mostly consist of linear layers with the occasional exception, e.g. a softmax for categorical variables. The processor will be a graph neural network, for which several different architectures have been explored, for example in<d-cite key="ibarz2022generalist"></d-cite>. We either use the TripletMPNN from<d-cite key="ibarz2022generalist"></d-cite> which adds edge message passing or a simple MPNN with a linear message layer.
 
-
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.html path="assets/img/2024-05-07-deqalg-reasoning/architecture.png" class="img-fluid rounded z-depth-1" %}
@@ -104,6 +109,8 @@ The high-level architecture is that of an encoder-processor-decoder. The motivat
 <div class="caption">
     High-level architecture employed
 </div>
+
+The processor is supposed to do the main computation of the network, in particular, the hope is that one iteration of the processor is equal to one iteration of the algorithm. In our example of BellmanFord, it would be one iteration of the update rule $$x_i^{(t+1)} =\min(x_i^{(t)}, \min \{x_j^{(t)} + e_{ij}\}_{j\in n(i)})$$ (see also the Figure below). Thus, the processor should indicate termination by no longer changing it's output $$z$$.
 
 ### Training
 
