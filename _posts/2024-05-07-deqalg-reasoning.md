@@ -13,23 +13,23 @@ authors:
   - name: Sophie Xhonneux
     url: "https://scholar.google.com/citations?user=9TQM9k4AAAAJ&hl=en"
     affiliations:
-      name: IAS, Princeton
+      name: Mila, Université de Montréal
   - name: Yu He
     url: "https://dransyhe.github.io/"
     affiliations:
-      name: IAS, Princeton
+      name: University of Cambridge
   - name: Andreea Deac
     url: "https://andreeadeac22.github.io/"
     affiliations:
-      name: Mila, Universite de Montreal
+      name: Mila, Université de Montréal
   - name: Jian Tang
     url: "https://jian-tang.com/"
     affiliations:
-      name: Mila, HEC Montreal
+      name: Mila, HEC Montréal
   - name: Gauthier Gidel
     url: "https://gauthiergidel.github.io/"
     affiliations:
-      name: Mila, Universite de Montreal
+      name: Mila, Université de Montréal
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-deqalg-reasoning.bib  
