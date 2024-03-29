@@ -16,7 +16,13 @@ htmlwidgets: true
 
 # Anonymize when submitting
 authors:
-  - name: Anonymous
+  - name: Maternus Herold
+    affiliations: 
+      name: BMW Group
+      name: appliedAI Institute for Europe gGmbH
+  - name: Faried Abu Zaid
+    affiliations:
+      name: appliedAI Institute for Europe gGmbH
 
 # must be the exact same name as your blogpost
 bibliography: 2024-05-07-elaborating-on-the-value-of-flow-matching-for-density-estimation.bib  
