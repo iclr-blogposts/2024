@@ -18,8 +18,7 @@ htmlwidgets: true
 authors:
   - name: Maternus Herold
     affiliations: 
-      name: BMW Group
-      name: appliedAI Institute for Europe gGmbH
+      name: BMW Group & appliedAI Institute for Europe gGmbH
   - name: Faried Abu Zaid
     affiliations:
       name: appliedAI Institute for Europe gGmbH
@@ -76,7 +75,7 @@ For most of the time, flows were based on chaining several differentiable and
 invertible transformations. However, these diffeomorphic transformations limit
 the flows in their complexity as such have to be simple. Furthermore, this leads
 to trade-off sampling speed and evaluation performance <d-cite
-key="papamakarios_normalizing_2019"></d-cite>. Their continuous couterpart,
+key="papamakarios_normalizing_2019"></d-cite>. Their continuous counterpart,
 Continuous Normalizing Flows (CNFs) have been held back by limitations in their
 simulation-based maximum likelihood training <d-cite
 key="tong_improving_2023"></d-cite>. By utilizing Flow Matching, this limitation
