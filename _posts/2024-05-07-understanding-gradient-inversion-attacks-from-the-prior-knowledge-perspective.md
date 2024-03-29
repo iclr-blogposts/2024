@@ -2,7 +2,7 @@
 layout: distill
 title: Understanding gradient inversion attacks from the prior knowledge perspective
 description: In this blogpost, we mention multiple works in gradient inversion attacks, point out the chanllenges we need to solve in GIAs, and provide a perspective from the prior knowledge to understand the logic behind recent papers.
-date: 2024-11-27
+date: 2024-05-07
 future: true
 htmlwidgets: true
 
