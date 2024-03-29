@@ -5,11 +5,11 @@ description:  The transfer of matching-based training from Diffusion Models to N
               Flows allows to fit expressive continuous normalizing flows 
               efficiently and therefore enables their usage for different kinds 
               of density estimation tasks. One particularly interesting task is 
-              Simulation-based Inference, where Flow Matching enabled several 
+              Simulation-Based Inference, where Flow Matching enabled several 
               improvements. The post shall focus on the discussion of Flow 
               Matching for Continuous Normalizing Flows. To highlight the 
               relevance and the practicality of the method, their use and 
-              advantages for Simulation-based Inference is elaborated. 
+              advantages for Simulation-Based Inference is elaborated. 
 date: 2024-05-07
 future: true
 htmlwidgets: true
@@ -38,10 +38,10 @@ toc:
     - name: Gaussian conditional probability paths
     # - name: Generalized Flow-Based Models
   - name: Empirical Results
-  - name: Application of Flow Matching in Simulation-based Inference 
+  - name: Application of Flow Matching in Simulation-Based Inference 
     subsections:
-    - name: Primer on Simulation-based Inference
-    - name: Flow Matching for Simulation-based Inference 
+    - name: Primer on Simulation-Based Inference
+    - name: Flow Matching for Simulation-Based Inference 
   - name: A Personal Note 
 
 # Below is an example of injecting additional post-specific styles.
@@ -77,14 +77,14 @@ the flows in their complexity as such have to be simple. Furthermore, this leads
 to trade-off sampling speed and evaluation performance <d-cite
 key="papamakarios_normalizing_2019"></d-cite>. Their continuous counterpart,
 Continuous Normalizing Flows (CNFs) have been held back by limitations in their
-simulation-based maximum likelihood training <d-cite
+Simulation-Based maximum likelihood training <d-cite
 key="tong_improving_2023"></d-cite>. By utilizing Flow Matching, this limitation
 has been overcome and CNFs have been shown to be a powerful tool for density
 estimation. 
 
 In the following sections, CNFs and Flow Matching are explained. Following the
 explanation, the empirical results of Flow Matching are presented. Finally, the
-application of Flow Matching in Simulation-based Inference is discussed, which
+application of Flow Matching in Simulation-Based Inference is discussed, which
 shall highlight their wide applicability and consistent improvement.
 
 # Continuous Normalizing Flows
@@ -405,10 +405,10 @@ in comparison to state-of-the-art models. The results suggest that Flow
 Matching presents a promising approach for generative modeling with notable
 advantages in terms of model efficiency and sample quality.
 
-# Application of Flow Matching in Simulation-based Inference 
+# Application of Flow Matching in Simulation-Based Inference 
 
 A very specifically interesting application of density estimation, i.e.
-Normalizing Flows, is in Simulation-based Inference (SBI). In SBI, Normalizing
+Normalizing Flows, is in Simulation-Based Inference (SBI). In SBI, Normalizing
 Flows are used to estimate the posterior distribution of model parameters given
 some observations. An important factor here are the sample efficiency,
 scalability, and expressivity of the density model. Especially for the later
@@ -418,7 +418,7 @@ the more complex transformations allowed by continuous normalizing flows. To
 start out, a brief introduction to SBI shall be given as not many might be
 familiar with this topic.
 
-## Primer on Simulation-based Inference
+## Primer on Simulation-Based Inference
 
 In many practical scenarios, the likelihood function of a model is intractable
 and cannot be described analytically. This might be the case for where the
@@ -468,7 +468,7 @@ SBI and their performance with respect to certain tasks, an excellent overview
 is provided in <d-cite key="lueckmann_benchmarking_2021"></d-cite>. For the sake
 of this post, a more abstract understanding is enough.
 
-## Flow Matching for Simulation-based Inference 
+## Flow Matching for Simulation-Based Inference 
 
 The approach using the Flow Matching formulation to fit the density network is
 presented by Dax et al. <d-cite key="dax_flow_2023"></d-cite>. In the setting
