@@ -18,7 +18,7 @@ htmlwidgets: true
 authors:
   - name: Maternus Herold
     affiliations: 
-      name: BMW Group & appliedAI Institute for Europe gGmbH
+      name: BMW Group, appliedAI Institute for Europe gGmbH & University of the Bundeswehr Munich
   - name: Faried Abu Zaid
     affiliations:
       name: appliedAI Institute for Europe gGmbH
