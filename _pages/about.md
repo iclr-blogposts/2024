@@ -103,6 +103,9 @@ Due to the large diversity of topics that can be discussed in a blog post, we de
 **[Exploring Meta-learned Curiosity Algorithms]({% post_url 2024-05-07-exploring-meta-learned-curiosity-algorithms %})**
 : &nbsp;&nbsp;&nbsp;&nbsp; _Batsirayi Mupamhi Ziki_
 
+**[Unraveling The Impact of Training Samples]({% post_url 2024-05-07-unraveling-the-impact-of-training-samples %})**
+: &nbsp;&nbsp;&nbsp;&nbsp; _Daiwei Chen, Jane Zhang, Ramya Korlakai Vinayak_
+
 **[RLHF without RL - Direct Preference Optimization]({% post_url 2024-05-07-rlhf-without-rl %})**
 : &nbsp;&nbsp;&nbsp;&nbsp; _Michael Panchenko_
 
